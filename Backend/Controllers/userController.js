@@ -23,7 +23,7 @@ const generateAndSendOTP = async (user, email) => {
 
 const RegisterUser = async(req,res)=>{
     try {
-        const {name,email,password,dateOfBirth,phone} = req.body;
+        const {name,email,password,dateOfBirth,phone,age,gender} = req.body;
         
         // Check if user already exists and is active
         const existingUser = await User.findOne({email});
@@ -42,6 +42,8 @@ const RegisterUser = async(req,res)=>{
             existingUser.password = hashedPassword;
             existingUser.dateOfBirth = dateOfBirth;
             existingUser.phone = phone;
+            existingUser.age = age;
+            existingUser.gender = gender;
             user = existingUser;
             console.log("Updated user:", user);
             console.log("Existing user:", existingUser);
@@ -53,6 +55,8 @@ const RegisterUser = async(req,res)=>{
                 password: hashedPassword,
                 dateOfBirth,
                 phone,
+                age,
+                gender,
                 isActive: false
             });
         }

@@ -126,22 +126,54 @@ const SignUp = () => {
                 <input
                   type="tel"
                   id="phone"
-                  placeholder="Enter your phone number"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            
-            {...register("phone", {
-              required: "Phone number is required",
-              minLength: {
-                value: 10,
-                message: "Phone number should be at least 10 characters"
-              },
-              maxLength: {
-                value: 10,
-                message: "Phone number should not exceed 10 characters"
-              }
-            })}
+                  {...register("phone", {
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: "Please enter a valid 10-digit phone number"
+                    }
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <input 
+                  type="number" 
+                  id="age"
+                  {...register("age", {
+                    required: "Age is required",
+                    min: {
+                      value: 1,
+                      message: "Age must be at least 1"
+                    },
+                    max: {
+                      value: 120,
+                      message: "Age must be less than 120"
+                    }
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+                {errors.age && <p className="text-red-500">{errors.age.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <select
+                  id="gender"
+                  {...register("gender", {
+                    required: "Gender is required"
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
               </div>
 
               <div>
@@ -149,11 +181,10 @@ const SignUp = () => {
                 <input
                   type="date"
                   id="dateOfBirth"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                
-                {...register("dateOfBirth", {
-                  required: "Date of birth is required"
-                })}
+                  {...register("dateOfBirth", {
+                    required: "Date of birth is required"
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.dateOfBirth && <p className="text-red-500">{errors.dateOfBirth.message}</p>}
               </div>
@@ -164,15 +195,14 @@ const SignUp = () => {
                   type="password"
                   id="password"
                   placeholder="Create a password"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password should be at least 8 characters"
-                  }
-                })}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password should be at least 8 characters"
+                    }
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               </div>
@@ -183,12 +213,11 @@ const SignUp = () => {
                   type="password"
                   id="confirmPassword"
                   placeholder="Confirm your password"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-               
-               {...register("confirmPassword", {
-                required: "Confirm password is required",
-                validate: (value) => value === getValues("password")
-              })}
+                  {...register("confirmPassword", {
+                    required: "Confirm password is required",
+                    validate: (value) => value === getValues("password")
+                  })}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
               </div>

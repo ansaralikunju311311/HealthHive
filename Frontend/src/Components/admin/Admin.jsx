@@ -15,7 +15,7 @@ const Admin = () => {
             console.log("checkingadmin====",response.data.Admin)
              if (response.data.Admin) {
             
-                navigate('/home')
+                navigate('/admin-dashboard')
              }
         } catch (error) {
             console.error('Login error:', error.response?.data?.message);
