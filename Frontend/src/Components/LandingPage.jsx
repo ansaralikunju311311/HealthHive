@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { setUser, setToken } from './redux/Features/userSlice';
 import Bannerdoctor from '../assets/Bannerdoctor.png';
 import DoctorsList from '../assets/doctorslist.png';
 import Treatment from '../assets/treatment 1.png';
@@ -10,6 +12,11 @@ import DoctorFour from '../assets/doctorfour.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
+  console.log("user from redux:", user);
+  useEffect(() => {
+
+  }, [user]);
 
   const SignUp = () => {
     navigate('/Signup');
@@ -20,7 +27,9 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+       <>
+       {!user ? (<>
+        <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +49,7 @@ const LandingPage = () => {
                 Appointment
               </button>
               <button onClick={() => navigate('/contact')} className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                Contact Us
+                Contact
               </button>
             </div>
 
@@ -264,6 +273,25 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* Doctor Signup Banner */}
+      <div className="bg-gradient-to-r from-blue-500 to-blue-600 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">Are You a Doctor?</h2>
+            <p className="text-xl text-blue-100 mb-8">Join our network of healthcare professionals and help more patients.</p>
+            <button
+              onClick={() => navigate('/doctor-signup')}
+              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-flex items-center space-x-2"
+            >
+              <span>Sign Up as a Doctor</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Testimonials */}
       <div className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -356,7 +384,11 @@ const LandingPage = () => {
         </div>
       </footer>
     </div>
+       </>):(<>user is exist</>)}
+    
+    </>
   );
+  
 };
 
 export default LandingPage;

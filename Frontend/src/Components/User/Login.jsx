@@ -3,13 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, setToken } from '../../Components/redux/Features/userSlice';
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
+  console.log("user from redux:", user);
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = async (data) => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/login', data);
       console.log(response.data);
+
+      // Save user data in Redux store and session storage
+      sessionStorage.setItem('useraccessToken', response.data.accessToken);
+      dispatch(setUser(response.data.user));
+      dispatch(setToken(response.data.accessToken));
       navigate('/');
     } catch (error) {
       console.error(error);

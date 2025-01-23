@@ -12,10 +12,11 @@ const SignUp = () => {
     try {
       // First register the user
       const response = await axios.post('http://localhost:5000/api/user/signup', data);
-      console.log(response.data);
+      console.log("signup response:", response.data.user);
 
-      
-      
+      // Save user data in Redux store
+      // dispatch(setToken(response.data.token));
+
       // Navigate to OTP verification page
       navigate('/generate-otp', { state: { email: data.email } });
     } catch (error) {

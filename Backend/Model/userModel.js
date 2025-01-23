@@ -21,18 +21,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // otp: {
-    //     type: String,
-    //     required: false,
-    //     default: null
-    // },
-    // otpExpiresAt: {
-    //     type: Date,
-    //     required: false,
-    //     default: null
-    // },
-   
+    isActive: {
+        type: Boolean,
+        default: false
+    },
+    otp: {
+        type: String,
+        required: false,
+    },
+    otpExpiresAt: {
+        type: Date,
+        required: false,
+    }
 });
-const User = mongoose.model('User', userSchema);
 
+const User = mongoose.model('User', userSchema);
 export default User;
