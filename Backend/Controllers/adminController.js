@@ -36,7 +36,11 @@ export const patients = async (req,res)=>
 {
     try {
         const patients = await User.find({isActive:true});
-        res.send(patients);
+        const patientsWithIndex = patients.map((patient, index) => ({
+            ...patient.toObject(),
+            serialNumber: index + 1
+        }));
+        res.send(patientsWithIndex);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

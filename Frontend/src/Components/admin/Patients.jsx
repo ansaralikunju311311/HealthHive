@@ -23,10 +23,8 @@ const [patients, setPatients] = useState([]);
         {
             try {
                 const response = await axios.get('http://localhost:5000/api/admin/patients');
-            
-                    
-                    
                         setPatients(response.data);
+                        console.log(response.data);
                
             } catch (error) {
                 console.log(error);
@@ -34,9 +32,6 @@ const [patients, setPatients] = useState([]);
         }
         fetchPatients();
        },[])
-   
-    // const response = await axios.get('http://localhost:5000/api/admin/patients');
-    // console.log(response.data);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   return (
@@ -140,10 +135,10 @@ const [patients, setPatients] = useState([]);
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-gray-50">
+                {patients.map((patient,index) => (
+                  <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {patient.id}
+                      {patient.serialNumber}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {patient.name}

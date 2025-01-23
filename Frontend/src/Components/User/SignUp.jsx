@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 
@@ -8,10 +9,32 @@ import axios from 'axios';
 const SignUp = () => {
   const {register, handleSubmit, formState: {errors}, getValues} = useForm();
   const navigate = useNavigate();
+
+
+  const [image, setImage] = useState(null);
+  const handleImageUpload = async (file)=>
+  {
+    if(!file) return;
+    try {
+           const data = new FormData();
+           console.log(data)
+           data.append("file",file);
+           data.append("upload_preset",'testing');
+           const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload',data);
+           const imageUrl = response.data.url;
+           console.log(imageUrl)
+           setImage(imageUrl)
+    } catch (error) {
+        console.log(error)
+    }
+  }
   const onSubmit = async (data) => {
     try {
       // First register the user
-      const response = await axios.post('http://localhost:5000/api/user/signup', data);
+      const response = await axios.post('http://localhost:5000/api/user/signup', {
+        ...data,
+        image: image
+      });
       console.log("signup response:", response.data.user);
 
       // Save user data in Redux store
@@ -76,6 +99,7 @@ const SignUp = () => {
 
           <form className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">
+           
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
                 <input
@@ -222,7 +246,10 @@ const SignUp = () => {
                 {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
               </div>
             </div>
-
+            <div>
+              <input type="file" {...register("image")} onChange={(e) => handleImageUpload(e.target.files[0])} />
+              {errors.image && <span className="text-red-500">{errors.image.message}</span>}
+            </div>
             <div>
               <button
                 type="submit"

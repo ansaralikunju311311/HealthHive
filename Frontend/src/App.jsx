@@ -10,7 +10,9 @@ import GenerateOtp from './Components/User/GenerateOtp'
 import Admin from './Components/admin/Admin'
 import AdminDashboard from './Components/admin/AdminDashboard'
 import DoctorVerification from './Components/admin/DoctorVerification'
+import ForgotPassword from './Components/User/ForgotPassword'
 // import VerifyOtp from './Components/User/VerifyOtp'
+import ResetPassword from './Components/User/ResetPassword'
 import DoctorSignUp from './Components/Doctor/SignUp'
 import DoctorLogin from './Components/Doctor/Login'
 import Patients from './Components/admin/Patients'
@@ -33,7 +35,8 @@ const App = () => {
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
       <Route path="/doctor-verification" element={<DoctorVerification />} />
       <Route path="/patients" element={<Patients />} />
-      
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
     
     </Routes>
   )

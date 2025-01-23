@@ -68,7 +68,6 @@ const GenerateOtp = () => {
       dispatch(setUser(response.data.user));
       sessionStorage.setItem('useraccessToken',response.data.accessToken);
     console.log("this token:",dispatch(setToken(response.data.accessToken)));
-      
       setTimeout(() => {
         navigate('/');
       }, 2000);

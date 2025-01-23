@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
@@ -93,9 +93,10 @@ const Login = () => {
                 </div>
 
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                  {/* <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                     Forgot password?
-                  </a>
+
+                  </a> */}    <p><Link to="/forgot-password">Forgot password?</Link></p>
                 </div>
               </div>
 

@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    image:{
+        type:String,
+        required:true
+    },
     otp: {
         type: String,
         required: false,

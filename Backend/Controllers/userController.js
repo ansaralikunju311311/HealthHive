@@ -23,7 +23,7 @@ const generateAndSendOTP = async (user, email) => {
 
 const RegisterUser = async(req,res)=>{
     try {
-        const {name,email,password,dateOfBirth,phone,age,gender} = req.body;
+        const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
         
         // Check if user already exists and is active
         const existingUser = await User.findOne({email});
@@ -44,6 +44,7 @@ const RegisterUser = async(req,res)=>{
             existingUser.phone = phone;
             existingUser.age = age;
             existingUser.gender = gender;
+            existingUser.image = image;
             user = existingUser;
             console.log("Updated user:", user);
             console.log("Existing user:", existingUser);
@@ -56,6 +57,7 @@ const RegisterUser = async(req,res)=>{
                 dateOfBirth,
                 phone,
                 age,
+                image,
                 gender,
                 isActive: false
             });
@@ -111,7 +113,8 @@ const verifyOtp = async(req,res)=>{
                 email: user.email,
                 name: user.name,
                 phone: user.phone,
-                dateOfBirth: user.dateOfBirth
+                dateOfBirth: user.dateOfBirth,
+                isActive: user.isActive
             },
             accessToken: userAccessToken,
             refreshToken: userRefreshToken
@@ -224,5 +227,54 @@ const resendOtp = async(req, res) => {
         });
     }
 };
+ const forgotPassword = async(req, res) => {
+    try {
+        const { email } = req.body;
+        
+        // Find user
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found. Please register first.' });
+        }
 
-export {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp};
+        // Generate and send OTP
+        await generateAndSendOTP(user, email);
+        
+        res.status(200).json({
+            message: "Verification code sent to your email",
+            email
+        });
+    } catch (error) {
+        console.error('Error in forgotPassword:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
+const resetPassword = async(req, res) => {
+    try {
+        const { email, otp, new_password } = req.body;
+        console.log("req.body=====",req.body)
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found. Please register first.' });
+        }
+        if(user.otp !== otp){
+            return res.status(400).json({ message: 'Invalid verification code' });
+        }
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(new_password, salt);
+        
+        // Save new password
+        user.password = hashedPassword;
+        await user.save();
+        
+        res.status(200).json({ message: 'Password reset successful' });
+    } catch (error) {
+        console.error('Error in resetPassword:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp,forgotPassword,resetPassword};
