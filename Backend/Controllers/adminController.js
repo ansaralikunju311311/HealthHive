@@ -1,5 +1,6 @@
 import Admin from '../Model/adminModel.js';
 import User from '../Model/userModel.js';
+import doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 
 export const LoginAdmin = async (req, res) => {
@@ -45,4 +46,14 @@ export const patients = async (req,res)=>
         res.status(500).json({ message: error.message });
     }
    
+}
+export const pendingDoctors = async (req,res)=>
+{
+    try {
+        const doctors = await doctor.find({isActive:false});
+        res.send(doctors);
+        console.log("doctors=====",doctors);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }

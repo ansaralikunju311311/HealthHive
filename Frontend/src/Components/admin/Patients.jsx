@@ -17,23 +17,37 @@ import {
 const Patients = () => {
 
 const [patients, setPatients] = useState([]);
+const [searchTerm, setSearchTerm] = useState('');
+const [filteredPatients, setFilteredPatients] = useState([]);
 
-       useEffect(() => {
-        const fetchPatients = async ()=>
-        {
-            try {
-                const response = await axios.get('http://localhost:5000/api/admin/patients');
-                        setPatients(response.data);
-                        console.log(response.data);
-               
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        fetchPatients();
-       },[])
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
+useEffect(() => {
+  const fetchPatients = async ()=> {
+      try {
+          const response = await axios.get('http://localhost:5000/api/admin/patients');
+          setPatients(response.data);
+          setFilteredPatients(response.data);
+          console.log(response.data);
+      } catch (error) {
+          console.log(error);
+      }
+  }
+  fetchPatients();
+}, [])
+
+// Search functionality
+useEffect(() => {
+  const results = patients.filter(patient =>
+    patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    patient.serialNumber?.toString().includes(searchTerm) ||
+    patient.gender?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  setFilteredPatients(results);
+}, [searchTerm, patients]);
+
+const viewDetails = (patient) => {
+  navigate(`/patient-details/${patient._id}`);
+}
+const navigate = useNavigate();
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -104,7 +118,7 @@ const [patients, setPatients] = useState([]);
           <div className="mb-6 relative">
             <input
               type="text"
-              placeholder="Search by Patient Name or ID"
+              placeholder="Search by Patient Name or Serial Number"
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -121,6 +135,9 @@ const [patients, setPatients] = useState([]);
                     Patient ID
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Profile
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -135,10 +152,29 @@ const [patients, setPatients] = useState([]);
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {patients.map((patient,index) => (
+                {filteredPatients.map((patient,index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {patient.serialNumber}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="h-10 w-10 flex-shrink-0">
+                          {patient.image ? (
+                            <img
+                              className="h-10 w-10 rounded-full object-cover"
+                              src={patient.image}
+                              alt={`${patient.name}'s profile`}
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-gray-500 text-sm">
+                                {patient.name?.charAt(0)?.toUpperCase() || 'U'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {patient.name}
@@ -150,7 +186,7 @@ const [patients, setPatients] = useState([]);
                       {patient.gender}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <button className="text-blue-600 hover:text-blue-900 mr-3">
+                      <button className="text-blue-600 hover:text-blue-900 mr-3" onClick={() => viewDetails(patient)}>
                         View Details
                       </button>
                       <button className="text-red-600 hover:text-red-900 mr-3">
