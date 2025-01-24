@@ -1,7 +1,9 @@
-import Admin from '../Model/adminModel.js';
+import Admin from '../Model/AdminModel/adminModel.js';
 import User from '../Model/userModel.js';
 import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
+import RejectedDoctor from '../Model/RejectedDoctors.js';
+
 
 export const LoginAdmin = async (req, res) => {
     try {
@@ -80,11 +82,52 @@ export const approveDoctor = async (req,res)=>
         res.status(500).json({ message: error.message });
     }
 }
+export const rejectDoctor = async(req,res)=>
+{
+    try{
+        const {doctorid} = req.params;
+        const doctorData = await Doctor.findById(doctorid);
+        if(!doctorData){
+            return res.status(404).json({message:"Doctor is not found"})
+        }
+        const rejectedDoctor = new RejectedDoctor({
+            name: doctorData.name,
+            email: doctorData.email,
+            phone: doctorData.phone,
+            // dateOfBirth: doctorData.dateOfBirth,
+            yearsOfExperience: doctorData.yearsOfExperience,
+            specialization: doctorData.specialization,
+            password: doctorData.password,
+            // isActive: doctorData.isActive,
+            profileImage: doctorData.profileImage,
+            medicalLicense: doctorData.medicalLicense,
+            idProof: doctorData.idProof,
+            gender: doctorData.gender,
+            about: doctorData.about,
+            consultFee: doctorData.consultFee
+        });
+        await rejectedDoctor.save();
+        await Doctor.findByIdAndDelete(doctorid);
+        res.status(200).json({message:"Doctor rejected and removed successfully"});
+
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+
 export const doctors = async (req,res)=>
 {
     try {
           const doctors = await Doctor.find({isActive:true});
-          res.status(200).json(doctors);
+          const doctorsWithIndex = doctors.map((doctor, index) => ({
+            ...doctor.toObject(),
+            serialNumber: index + 1
+          }));
+          res.status(200).json(doctorsWithIndex);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

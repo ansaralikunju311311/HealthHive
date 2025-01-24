@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import Sidebar from './Sidebar';
 import {
   FaUsers,
   FaUserMd,
@@ -49,68 +50,16 @@ const DoctorVerification = () => {
      const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`);
      console.log(response.data);
   }
+  const handleReject = async(doctorid)=>
+  {
+    console.log("=======",doctorid);
+     const response = await axios.put(`http://localhost:5000/api/admin/reject-doctor/${doctorid}`);
+     console.log(response.data);
+  }
   const navigate = useNavigate();
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-[#1a2b4b] text-white h-screen fixed left-0 top-0">
-        <div className="p-6 border-b border-blue-800">
-          <h2 className="text-2xl font-bold text-blue-400">HealthHive</h2>
-        </div>
-        <nav className="mt-6 px-4">
-          <button 
-            onClick={() => navigate('/admin-dashboard')}
-            className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-all mb-2"
-          >
-            <FaTachometerAlt className="mr-3" />
-            Dashboard
-          </button>
-          <button 
-            className="flex items-center w-full px-4 py-3 text-left bg-blue-800 text-white rounded-lg transition-all mb-2"
-          >
-            <FaUserCheck className="mr-3" />
-            Doctor Verification
-          </button>
-          <button 
-            onClick={() => navigate('/doctors')}
-            className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-all mb-2"
-          >
-            <FaUserMd className="mr-3" />
-            Doctors
-          </button>
-          <button 
-            onClick={() => navigate('/departments')}
-            className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-all mb-2"
-          >
-            <FaHospital className="mr-3" />
-            Departments
-          </button>
-          <button 
-            onClick={() => navigate('/patients')}
-            className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-all mb-2"
-          >
-            <FaUsers className="mr-3" />
-            Patients
-          </button>
-          <button 
-            onClick={() => navigate('/doctor-payment')}
-            className="flex items-center w-full px-4 py-3 text-left text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-all mb-2"
-          >
-            <FaWallet className="mr-3" />
-            Doctor Payment
-          </button>
-          <div className="border-t border-blue-800 mt-4 pt-4">
-            <button 
-              onClick={() => navigate('/admin')}
-              className="flex items-center w-full px-4 py-3 text-left text-red-400 hover:bg-red-900/30 hover:text-red-300 rounded-lg transition-all"
-            >
-              <FaSignOutAlt className="mr-3" />
-              Logout
-            </button>
-          </div>
-        </nav>
-      </div>
-
+      <Sidebar activePage="/doctor-verification" />
       {/* Main Content */}
       <div className="flex-1 ml-64 p-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
@@ -178,6 +127,7 @@ const DoctorVerification = () => {
                     </button>
                     <button
                       className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    onClick={handleReject(doctor._id)}
                     >
                       Rejected
                     </button>

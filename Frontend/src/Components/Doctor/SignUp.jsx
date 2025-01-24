@@ -113,7 +113,7 @@ const SignUp = () => {
             console.log("responnse come backend",response.data);
             console.log("debuggin isActivate======",response.data.user.isActive)
     console.log("user details======",response.data.user);
-                   
+            
             if(response.data.user.isActive===false){
                 navigate('/before-verification')
             }

@@ -1,4 +1,5 @@
 import doctor from "../Model/doctorModel.js";
+import RejectedDoctor from "../Model/RejectedDoctors.js";
 import bcrypt from 'bcrypt';
 
 export const RegisterDoctor = async(req,res)=>{
@@ -7,6 +8,13 @@ export const RegisterDoctor = async(req,res)=>{
         
         // Check if user already exists and is active
         const existingUser = await doctor.findOne({email});
+        const rejectedDoctor = await RejectedDoctor.findOne({email})
+         
+
+        if(rejectedDoctor)
+        {
+            return res.status(400).json({message:"this is rejeced user please contact admin"});
+        }
         if(existingUser && existingUser.isActive){
             return res.status(400).json({message:"User already exists"});
         }
