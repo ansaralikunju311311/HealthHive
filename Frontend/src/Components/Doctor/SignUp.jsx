@@ -103,9 +103,17 @@ const SignUp = () => {
                 idProof: idProofUrl
             });
             
-            console.log(response.data);
+            console.log("responnse come backend",response.data);
+            console.log("debuggin isActivate======",response.data.user.isActive)
+            if(response.data.user.isActive===false){
+                navigate('/before-verification')
+            }
+            else{
+                navigate('/doctor-login');
+            }
+            
             // Navigate to login on successful signup
-            navigate('/doctor-login');
+            
         } catch(error) {
             console.log('Error during signup:', error);
         }

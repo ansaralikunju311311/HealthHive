@@ -13,11 +13,11 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:5000/api/doctor/login', data)
             console.log(response.data)
-            if (response.data.doctor.isActive) {
-                navigate('/')
+            if (response.data.doctor.isActive===false) {
+                navigate('/before-verification')
             }
             else {
-                navigate('/doctor-login')
+                navigate('/')
             }
         } catch (error) {
             console.log('Error:', error.response?.data?.message);
@@ -80,11 +80,11 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {error && (
+                    {/* {error && (
                         <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
                             <p className="text-red-500 text-center">{error}</p>
                         </div>
-                    )}
+                    )} */}
 
                     <div className="flex items-center justify-between">
                         <div className="text-sm">

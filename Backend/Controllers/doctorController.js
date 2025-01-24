@@ -61,7 +61,11 @@ export const LoginDoctor = async(req,res)=>{
         console.log(existingDoctor.isActive);
         // Check if user is active
         if(!existingDoctor.isActive){
-            return res.status(400).json({message:"Please verify your account first"});
+            return res.status(200).json({message:"Please verify your account first",
+                doctor:{
+                    isActive: existingDoctor.isActive
+                }
+            });
         }
         
         // Check password

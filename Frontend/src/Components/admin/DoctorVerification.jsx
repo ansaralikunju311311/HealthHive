@@ -19,7 +19,6 @@ const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredDoctors, setFilteredDoctors] = useState([]);
-
   useEffect(()=>{
     const fetchDoctors = async ()=>{
       try {
@@ -39,14 +38,6 @@ const DoctorVerification = () => {
 
   },[searchTerm,doctors])
   const navigate = useNavigate();
-
-  // Sample data for UI demonstration
-  // const doctors = [
-  //   { name: "Dr. John Doe", department: "Cardiology", date: "2023-10-01" },
-  //   { name: "Dr. Jane Smith", department: "Neurology", date: "2023-10-02" },
-  //   { name: "Dr. Emily Johnson", department: "Orthopedics", date: "2023-10-03" }
-  // ];
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}

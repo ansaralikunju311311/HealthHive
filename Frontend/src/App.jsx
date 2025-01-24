@@ -16,6 +16,8 @@ import ResetPassword from './Components/User/ResetPassword'
 import DoctorSignUp from './Components/Doctor/SignUp'
 import DoctorLogin from './Components/Doctor/Login'
 import Patients from './Components/admin/Patients'
+// import BeforeVerification from './Components/Doctor/BeforeVerification'
+import BeforeVerification from './Components/Doctor/BeforeVerifcation'
 const App = () => {
   return (
     <Routes>
@@ -37,6 +39,7 @@ const App = () => {
       <Route path="/patients" element={<Patients />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/before-verification" element={<BeforeVerification />} />
     
     </Routes>
   )
