@@ -1,6 +1,6 @@
 import Admin from '../Model/adminModel.js';
 import User from '../Model/userModel.js';
-import doctor from '../Model/doctorModel.js';
+import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 
 export const LoginAdmin = async (req, res) => {
@@ -50,9 +50,41 @@ export const patients = async (req,res)=>
 export const pendingDoctors = async (req,res)=>
 {
     try {
-        const doctors = await doctor.find({isActive:false});
-        res.send(doctors);
+        const doctors = await Doctor.find({isActive:false});
+        res.status(200).json(doctors);
         console.log("doctors=====",doctors);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+export const approveDoctor = async (req,res)=>
+{
+    try {
+        const {doctorid} = req.params;
+        const doctorData = await Doctor.findById(doctorid);
+        if(!doctorData){
+            return res.status(404).json({message:"Doctor is not found"})
+        }
+        doctorData.isActive= true;
+        await doctorData.save();
+        res.status(200).json({message:"Doctor approved successfully"
+        ,doctor:{
+            _id: doctorData._id,
+            name: doctorData.name,
+            email: doctorData.email,
+            isActive: doctorData.isActive
+        }
+        })
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+export const doctors = async (req,res)=>
+{
+    try {
+          const doctors = await Doctor.find({isActive:true});
+          res.status(200).json(doctors);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

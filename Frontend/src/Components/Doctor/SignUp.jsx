@@ -3,18 +3,21 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { setDoctor,} from '../../Components/redux/Features/doctorSlice';
 
 const SignUp = () => {
     const [profileImageUrl, setProfileImageUrl] = useState('');
     const [medicalLicenseUrl, setMedicalLicenseUrl] = useState('');
     const [idProofUrl, setIdProofUrl] = useState('');
     const [isUploading, setIsUploading] = useState(false);
+
     
     // For local preview before upload
     const [profilePreview, setProfilePreview] = useState('');
     const [licensePreview, setLicensePreview] = useState('');
     const [idProofPreview, setIdProofPreview] = useState('');
-
+   const dispatch = useDispatch();
     const { register, handleSubmit, formState: { errors }, getValues } = useForm()
     const navigate = useNavigate()
 
@@ -100,11 +103,17 @@ const SignUp = () => {
                 specialization: data.specialization,  
                 profileImage: profileImageUrl,
                 medicalLicense: medicalLicenseUrl,
-                idProof: idProofUrl
+                about: data.about,
+                consultFee: data.consultationFee,
+                gender: data.gender,
+                idProof: idProofUrl,
+
             });
-            
+            dispatch(setDoctor(response.data.user));
             console.log("responnse come backend",response.data);
             console.log("debuggin isActivate======",response.data.user.isActive)
+    console.log("user details======",response.data.user);
+                   
             if(response.data.user.isActive===false){
                 navigate('/before-verification')
             }
@@ -200,6 +209,27 @@ const SignUp = () => {
                             </div>
                         </div>
 
+                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
+                            <h2 className="text-2xl font-bold text-white mb-6">Personal Information</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-300 mb-2">Gender</label>
+                                    <select 
+                                        className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white focus:outline-none focus:border-purple-400 transition-colors"
+                                        {...register("gender", {
+                                            required: "Gender is required"
+                                        })}
+                                    >
+                                        <option value="" className="bg-gray-900">Select Gender</option>
+                                        <option value="female" className="bg-gray-900">Female</option>
+                                        <option value="male" className="bg-gray-900">Male</option>
+                                        <option value="other" className="bg-gray-900">Other</option>
+                                    </select>
+                                    {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Professional Details */}
                         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
                             <h2 className="text-2xl font-bold text-white mb-6">Professional Information</h2>
@@ -210,17 +240,31 @@ const SignUp = () => {
                                         type="number"
                                         className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 transition-colors"
                                         placeholder="Enter phone number"
-                                     {...register("phone", {
-                                        required: "Phone number is required",
-                                        pattern: {
-                                            value: /^\d{10}$/,
-                                            message: "Please enter a valid 10-digit phone number"
-                                        }
-                                    })}
+                                        {...register("phone", {
+                                            required: "Phone number is required",
+                                            pattern: {
+                                                value: /^\d{10}$/,
+                                                message: "Please enter a valid 10-digit phone number"
+                                            }
+                                        })}
                                     />
-                                   
-                                   {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+                                    {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
                                 </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-purple-300 mb-2">Consultation Fee</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 transition-colors"
+                                        placeholder="Enter consultation fee"
+                                        {...register("consultationFee", {
+                                            required: "Consultation fee is required",
+                                            minLength: 3
+                                        })}
+                                    />
+                                    {errors.consultationFee && <p className="text-red-500">{errors.consultationFee.message}</p>}
+                                </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-purple-300 mb-2">Specialization</label>
                                     <select 
@@ -239,6 +283,7 @@ const SignUp = () => {
                                     </select>
                                     {errors.specialization && <p className="text-red-500">{errors.specialization.message}</p>}
                                 </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-purple-300 mb-2">Years of Experience</label>
                                     <input
@@ -254,6 +299,22 @@ const SignUp = () => {
                                         })}
                                     />
                                     {errors.yearsOfExperience && <p className="text-red-500">{errors.yearsOfExperience.message}</p>}
+                                </div>
+
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-purple-300 mb-2">About</label>
+                                    <textarea
+                                        className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 transition-colors h-32 resize-none"
+                                        placeholder="Tell us about your medical background and expertise..."
+                                        {...register("about", {
+                                            required: "About section is required",
+                                            minLength: {
+                                                value: 20,
+                                                message: "Please provide at least 20 characters"
+                                            }
+                                        })}
+                                    />
+                                    {errors.about && <p className="text-red-500">{errors.about.message}</p>}
                                 </div>
                             </div>
                         </div>

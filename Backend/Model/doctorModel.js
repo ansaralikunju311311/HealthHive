@@ -44,7 +44,20 @@ const doctorSchema = new mongoose.Schema({
     idProof: {
         type: String,
         required: true,
+    },
+    gender: {
+        type: String,
+        required: true,
+    },
+    about: {
+        type: String,
+        required: true,
+    },
+    consultFee: {
+        type: String,
+        required: true,
     }
+
 });
 const doctor = mongoose.model('doctor',doctorSchema)
 export default doctor;

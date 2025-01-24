@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 import {
   FaUsers,
   FaUserMd,
@@ -13,18 +14,21 @@ import {
   FaChevronLeft,
   FaChevronRight
 } from 'react-icons/fa';
+import DetailsModel from '../Doctor/DetailsModel';
 
 const DoctorVerification = () => {
-
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(()=>{
     const fetchDoctors = async ()=>{
       try {
         const response = await axios.get('http://localhost:5000/api/admin/pending-doctors');
         setDoctors(response.data);
-        console.log(response.data);
+        console.log("api response",response.data);
       } catch (error) {
         console.log(error);
       }
@@ -37,6 +41,14 @@ const DoctorVerification = () => {
     setFilteredDoctors(result);
 
   },[searchTerm,doctors])
+
+
+  const handleApprove = async(doctorid)=>
+  {
+    console.log("=======",doctorid);
+     const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`);
+     console.log(response.data);
+  }
   const navigate = useNavigate();
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -149,15 +161,19 @@ const DoctorVerification = () => {
                  
                   <div>
                     <button 
-                      className="text-blue-600 hover:text-blue-800"
-                    >
+                      onClick={() => {
+                        console.log("in model details ====", doctor);
+                        setSelectedDoctor(doctor);
+                        setShowModal(true);
+                      }}
+                      className="text-blue-600 hover:text-blue-800">
                       View Details
                     </button>
                   </div>
                   <div className="flex space-x-2">
                     <button
                       className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                    >
+                      onClick={() => handleApprove(doctor._id)} >
                       Approve
                     </button>
                     <button
@@ -191,6 +207,13 @@ const DoctorVerification = () => {
           </div>
         </div>
       </div>
+
+      {/* Details Modal */}
+      <DetailsModel
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        doctor={selectedDoctor}
+      />
     </div>
   );
 };

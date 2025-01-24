@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 export const RegisterDoctor = async(req,res)=>{
     try {
-        const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof} = req.body;
+        const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender} = req.body;
         
         // Check if user already exists and is active
         const existingUser = await doctor.findOne({email});
@@ -23,6 +23,13 @@ export const RegisterDoctor = async(req,res)=>{
             existingUser.yearsOfExperience = yearsOfExperience;
             existingUser.specialization = specialization;
             existingUser.phone = phone;
+            existingUser.profileImage = profileImage;
+            existingUser.medicalLicense = medicalLicense;
+            existingUser.idProof = idProof;
+            existingUser.about = about;
+            existingUser.gender = gender;
+            existingUser.consultFee = consultFee;
+            existingUser.isActive = true;
             user = existingUser;
             console.log("Updated user:", user);
             console.log("Existing user:", existingUser);
@@ -38,6 +45,9 @@ export const RegisterDoctor = async(req,res)=>{
                 profileImage,
                 medicalLicense,
                 idProof,
+                about,
+                consultFee,
+                gender,
                 isActive: false
             });
             console.log("New user:", user);
