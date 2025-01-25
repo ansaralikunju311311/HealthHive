@@ -54,7 +54,7 @@ const HomePageUser = () => {
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem('useraccessToken');
-    navigate('/login');
+    navigate('/');
   };
 
   if (loading) {
