@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
     age:{
         type:String,
         required:true
-
     },
     gender:{
         type:String,
@@ -26,17 +25,37 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    image: {
+        type: String,
+        default: ''
+    },
     password: {
         type: String,
         required: true,
     },
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
+    isDoctor: {
+        type: Boolean,
+        default: false,
+    },
+    serialNumber: {
+        type: Number,
+        unique: true,
+    },
     isActive: {
         type: Boolean,
-        default: false
+        default: true,
     },
-    image:{
-        type:String,
-        required:true
+    bloodGroup: {
+        type: String,
+        required: true,
+    },
+    address: {
+        type: String,
+        required: true,
     },
     otp: {
         type: String,
