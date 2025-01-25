@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'
 import {
   FaUsers,
   FaUserMd,
@@ -34,6 +35,14 @@ const revenueData = [
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('admintoken');
+    if(!token) {
+      navigate('/admin');
+      return;
+    }
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

@@ -22,27 +22,27 @@ const Sidebar = ({ activePage }) => {
     {
       title: 'Doctor Verification',
       icon: FaUserCheck,
-      path: '/doctor-verification',
+      path: '/admin/doctor-verification',
     },
     {
       title: 'Doctors',
       icon: FaUserMd,
-      path: '/doctors',
+      path: '/admin/doctors',
     },
     {
       title: 'Departments',
       icon: FaHospital,
-      path: '/departments',
+      path: '/admin/departments',
     },
     {
       title: 'Patients',
       icon: FaUsers,
-      path: '/patients',
+      path: '/admin/patients',
     },
     {
       title: 'Doctor Payment',
       icon: FaWallet,
-      path: '/doctor-payment',
+      path: '/admin/doctor-payment',
     },
   ];
 

@@ -3,9 +3,12 @@ import User from '../Model/userModel.js';
 import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
+import jwt from 'jsonwebtoken';
+import {jwtToken} from '../utils/auth.js';
 
+// const jwtSecret = 'your_jwt_secret'; // Replace with your secret key
 
-export const LoginAdmin = async (req, res) => {
+ const LoginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -20,7 +23,7 @@ export const LoginAdmin = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-
+        const adminToken = jwtToken(existingAdmin);
         // Send response
         res.status(200).json({
             message: "Login successful",
@@ -28,7 +31,8 @@ export const LoginAdmin = async (req, res) => {
                 _id: existingAdmin._id, 
                 email: existingAdmin.email,
                
-            }
+            },
+            adminToken:adminToken
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -132,3 +136,15 @@ export const doctors = async (req,res)=>
         res.status(500).json({ message: error.message });
     }
 }
+
+ const verifyAdminToken = async (req, res) => {
+    try {
+        // req.admin is set by the protectAdmin middleware
+        res.status(200).json({ admin: req.admin });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { LoginAdmin, verifyAdminToken };

@@ -31,11 +31,12 @@ const DoctorVerification = () => {
         setDoctors(response.data);
         console.log("api response",response.data);
       } catch (error) {
-        console.log(error);
+        console.error('Error fetching doctors:', error);
       }
     }
-    fetchDoctors();
+    fetchDoctors()
   },[])
+
   useEffect(()=>{
     const result = doctors.filter((doctor)=>doctor.name.toLowerCase().includes(searchTerm.toLowerCase())||doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase()))
     // setDoctors(result);

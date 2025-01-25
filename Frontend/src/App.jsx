@@ -17,6 +17,8 @@ import Doctor from './Components/admin/Doctor'
 import BeforeVerification from './Components/Doctor/BeforeVerifcation'
 import HomePageUser from './Components/User/HomePageUser'
 import DoctorDash from './Components/Doctor/DoctorDash'
+import AdminProtected from './Components/admin/Protected/AdminProtected';
+
 const App = () => {
   return (
     <Routes>
@@ -42,10 +44,26 @@ const App = () => {
 
       {/* Admin Routes */}
       <Route path="/admin" element={<Admin />} />
-      <Route path="/doctors" element={<Doctor />} />
-      <Route path="/admin-dashboard" element={<AdminDashboard />} />
-      <Route path="/doctor-verification" element={<DoctorVerification />} />
-      <Route path="/patients" element={<Patients />} />
+      <Route path="/admin-dashboard" element={
+        <AdminProtected>
+          <AdminDashboard />
+        </AdminProtected>
+      } />
+      <Route path="/admin/doctors" element={
+        <AdminProtected>
+          <Doctor />
+        </AdminProtected>
+      } />
+      <Route path="/admin/patients" element={
+        <AdminProtected>
+          <Patients />
+        </AdminProtected>
+      } />
+      <Route path="/admin/doctor-verification" element={
+        <AdminProtected>
+          <DoctorVerification />
+        </AdminProtected>
+      } />
     </Routes>
   )
 }

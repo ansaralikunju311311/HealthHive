@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../Model/userModel.js';
 import doctor from '../Model/doctorModel.js';
+import Admin from '../Model/AdminModel/adminModel.js';
 
 export const protect = async (req, res, next) => {
     try {
@@ -65,6 +66,40 @@ export const protectDoctor = async (req, res, next) => {
         next();
     } catch (error) {
         console.error('Doctor auth middleware error:', error);
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' });
+        }
+        res.status(401).json({ message: 'Not authorized' });
+    }
+};
+
+export const protectAdmin = async (req, res, next) => {
+    try {
+        // Get token from header
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ message: 'Not authorized, no token' });
+        }
+
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Get admin from token
+        const admin = await Admin.findById(decoded.userId).select('-password');
+        
+        if (!admin) {
+            return res.status(401).json({ message: 'Not authorized, admin not found' });
+        }
+
+        // Add admin to request object
+        req.admin = admin;
+        next();
+    } catch (error) {
+        console.error('Admin auth middleware error:', error);
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ message: 'Invalid token' });
         }

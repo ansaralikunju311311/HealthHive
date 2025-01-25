@@ -24,14 +24,12 @@ const Doctor = () => {
         const response = await axios.get('http://localhost:5000/api/admin/doctors');
         setDoctors(response.data);
         setFilteredDoctors(response.data);
-        console.log("api responsedoctordssss", response.data);
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
       }
-      catch (error) {
-        console.log(error)
-      }
-    }
-    fetchDoctors()
-  }, [])
+    };
+    fetchDoctors();
+  }, []);
 
   useEffect(() => {
     const result = doctors.filter((doctor) =>

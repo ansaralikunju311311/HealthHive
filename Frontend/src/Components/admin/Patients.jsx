@@ -15,7 +15,17 @@ const Patients = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/patients');
+        const token = localStorage.getItem('admintoken');
+        console.log("this is the token", token);
+        if(!token) {
+          navigate('/admin');
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/admin/patients', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }     
+        });
         setPatients(response.data);
         setFilteredPatients(response.data);
         console.log(response.data);
