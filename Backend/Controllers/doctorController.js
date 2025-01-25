@@ -1,8 +1,9 @@
 import doctor from "../Model/doctorModel.js";
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import bcrypt from 'bcrypt';
+import {jwtToken} from '../utils/auth.js'
 
-export const RegisterDoctor = async(req,res)=>{
+ const RegisterDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender} = req.body;
         
@@ -67,7 +68,7 @@ export const RegisterDoctor = async(req,res)=>{
     }
 }
 
-export const LoginDoctor = async(req,res)=>{
+ const LoginDoctor = async(req,res)=>{
     try {
         const {email,password} = req.body;
         
@@ -91,7 +92,7 @@ export const LoginDoctor = async(req,res)=>{
         if(!isMatch){
             return res.status(400).json({message:"Invalid credentials"});
         }
-        
+        const doctorToken = jwtToken(existingDoctor);
         // Generate tokens
         res.status(200).json({
             message:"Login successful",
@@ -107,8 +108,21 @@ export const LoginDoctor = async(req,res)=>{
                 idProof: existingDoctor.idProof,
                 isActive: existingDoctor.isActive
             },
+            token: doctorToken
         });
     } catch (error) {
         res.status(500).json({message:error.message});
     }
 }
+
+ const verifyDoctorToken = async (req, res) => {
+    try {
+        // req.doctor is set by the protectDoctor middleware
+        res.status(200).json({ doctor: req.doctor });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { RegisterDoctor, LoginDoctor, verifyDoctorToken };

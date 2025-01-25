@@ -16,7 +16,7 @@ import Patients from './Components/admin/Patients'
 import Doctor from './Components/admin/Doctor'
 import BeforeVerification from './Components/Doctor/BeforeVerifcation'
 import HomePageUser from './Components/User/HomePageUser'
-
+import DoctorDash from './Components/Doctor/DoctorDash'
 const App = () => {
   return (
     <Routes>
@@ -29,15 +29,16 @@ const App = () => {
 
       {/* Protected Routes */}
       <Route path="/home" element={
-        <Protected>
+        // <Protected>
           <HomePageUser />
-        </Protected>
+        // </Protected>
       } />
 
       {/* Doctor Routes */}
       <Route path="/doctor-signup" element={<DoctorSignUp />} />
       <Route path="/doctor-login" element={<DoctorLogin />} />
       <Route path="/before-verification" element={<BeforeVerification />} />
+      <Route path="/doctor-dashboard" element={<DoctorDash />} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<Admin />} />

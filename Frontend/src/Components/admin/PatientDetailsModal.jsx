@@ -2,14 +2,13 @@ import React from 'react';
 
 const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
   if (!isOpen || !patient) return null;
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-2xl p-6 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-        >
+   >
           <svg
             className="h-6 w-6"
             fill="none"
@@ -22,7 +21,6 @@ const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
             <path d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
-
         <div className="flex items-center mb-6">
           <div className="mr-4">
             {patient.image ? (

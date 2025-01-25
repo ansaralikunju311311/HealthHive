@@ -24,17 +24,14 @@ const generateAndSendOTP = async (user, email) => {
 const RegisterUser = async(req,res)=>{
     try {
         const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
-        
         // Check if user already exists and is active
         const existingUser = await User.findOne({email});
         if(existingUser && existingUser.isActive){
             return res.status(400).json({message:"User already exists"});
         }
-
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
-        
         let user;
         if (existingUser) {
             // Update existing inactive user
@@ -62,7 +59,6 @@ const RegisterUser = async(req,res)=>{
                 isActive: false
             });
         }
-
         // Generate and send OTP
         await generateAndSendOTP(user, email);
         
@@ -75,7 +71,6 @@ const RegisterUser = async(req,res)=>{
         res.status(500).json({error:error.message});
     }
 }
-
 const verifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
@@ -277,41 +272,19 @@ const resetPassword = async(req, res) => {
     }
 }
 
-// Verify token endpoint
- const verifyToken = async (req, res) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
-        
-        if (!token) {
-            return res.status(401).json({ message: 'No token provided' });
-        }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-        
+
+const verifyToken = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        res.status(200).json({
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                dateOfBirth: user.dateOfBirth,
-                image: user.image
-            }
-        });
+        res.status(200).json({ user });
     } catch (error) {
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.log(error);
+        res.status(500).json({ message: error.message });
     }
 };
 
-export {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp,forgotPassword,resetPassword, verifyToken};
+export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken };
