@@ -66,10 +66,10 @@ const GenerateOtp = () => {
       
       // Dispatch both user and token to Redux
       dispatch(setUser(response.data.user));
-      sessionStorage.setItem('useraccessToken',response.data.accessToken);
-    console.log("this token:",dispatch(setToken(response.data.accessToken)));
+      localStorage.setItem('useraccessToken',response.data.userToken);
+    console.log("this token:",dispatch(setToken(response.data.userToken)));
       setTimeout(() => {
-        navigate('/');
+        navigate('/home');
       }, 2000);
     } catch (error) {
       console.error('Error verifying OTP:', error);

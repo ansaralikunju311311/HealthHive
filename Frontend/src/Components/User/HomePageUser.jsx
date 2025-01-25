@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { logout } from '../redux/Features/userSlice';
+import axios from 'axios';
+import { setUser, logout } from '../redux/Features/userSlice';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import DoctorOne from '../../assets/Doctorone.png';
 import DoctorTwo from '../../assets/doctortwo.png';
@@ -9,16 +10,68 @@ import DoctorThree from '../../assets/doctorthree.png';
 import DoctorFour from '../../assets/doctorfour.png';
 
 const HomePageUser = () => {
+   const [userData, setUserData] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const verifyToken = async () => {
+      try {
+        const token = localStorage.getItem('useraccessToken');
+        
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        const response = await axios.get('http://localhost:5000/api/user/verify-token', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("from the backend data",response.data.user)
+        setUserData(response.data.user);
+        dispatch(setUser(response.data.user));
+        setLoading(false);
+      } catch (error) {
+        console.error('Token verification failed:', error);
+        if (error.response?.status === 401) {
+          // Token invalid or expired
+          dispatch(logout());
+          localStorage.removeItem('useraccessToken');
+          navigate('/login');
+        }
+        setError('Authentication failed');
+        setLoading(false);
+      }
+    };
+
+    verifyToken();
+  }, [dispatch, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('useraccessToken');
-    localStorage.removeItem('userData');
     dispatch(logout());
-    navigate('/');
+    localStorage.removeItem('useraccessToken');
+    navigate('/login');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -49,7 +102,9 @@ const HomePageUser = () => {
               <div className="flex items-center space-x-3">
                 <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                   <span className="text-blue-600 font-medium">
-                    {userData?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    
+                    <img src={userData?.image} alt="Profile" className="h-8 w-8 rounded-full" />
+                    {/* {userData?.image} */}
                   </span>
                 </div>
                 <span className="text-gray-700">{userData?.name}</span>
@@ -89,7 +144,7 @@ const HomePageUser = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Welcome back, {userData?.name}!
+                Welcome back!
               </h1>
               <p className="text-lg text-gray-600 mb-8">
                 Book appointments, view your medical records, and manage your healthcare journey all in one place.

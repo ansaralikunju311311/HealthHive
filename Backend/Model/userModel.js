@@ -27,36 +27,20 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: ''
+        required: true,
     },
     password: {
         type: String,
         required: true,
     },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-    isDoctor: {
-        type: Boolean,
-        default: false,
-    },
-    serialNumber: {
-        type: Number,
-        unique: true,
-    },
+    
+    
     isActive: {
         type: Boolean,
         default: true,
     },
-    bloodGroup: {
-        type: String,
-        required: true,
-    },
-    address: {
-        type: String,
-        required: true,
-    },
+    
+    
     otp: {
         type: String,
         required: false,

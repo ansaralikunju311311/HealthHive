@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
-import {accessToken,refreshToken} from '../utils/auth.js';
+import {jwtToken} from '../utils/auth.js';
 // Helper function to generate OTP and update user
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -102,8 +102,9 @@ const verifyOtp = async(req,res)=>{
         user.otpExpiresAt = undefined;
         
         // Generate token
-        const userAccessToken = accessToken(user);
-        const userRefreshToken = refreshToken(user);
+        // const userAccessToken = accessToken(user);
+        // const userRefreshToken = refreshToken(user);
+        const userToken = jwtToken(user);
         await user.save();
        
         res.status(200).json({
@@ -116,8 +117,8 @@ const verifyOtp = async(req,res)=>{
                 dateOfBirth: user.dateOfBirth,
                 isActive: user.isActive
             },
-            accessToken: userAccessToken,
-            refreshToken: userRefreshToken
+            userToken: userToken,
+            // refreshToken: userRefreshToken
         });
     } catch (error) {
         console.error('Error verifying OTP:', error);
@@ -147,9 +148,9 @@ const LoginUser = async(req,res)=>{
         }
         
         // Generate tokens
-        const userAccessToken = accessToken(user);
-        const userRefreshToken = refreshToken(user);
-        
+        // const userAccessToken = accessToken(user);
+        // const userRefreshToken = refreshToken(user);
+           const userToken = jwtToken(user);
         res.status(200).json({
             message:"Login successful",
             user:{
@@ -159,8 +160,7 @@ const LoginUser = async(req,res)=>{
                 phone:user.phone,
                 dateOfBirth:user.dateOfBirth
             },
-            accessToken: userAccessToken,
-            refreshToken: userRefreshToken
+            userToken: userToken
         });
     } catch (error) {
         res.status(500).json({error:error.message});
@@ -277,4 +277,41 @@ const resetPassword = async(req, res) => {
     }
 }
 
-export {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp,forgotPassword,resetPassword};
+// Verify token endpoint
+ const verifyToken = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                dateOfBirth: user.dateOfBirth,
+                image: user.image
+            }
+        });
+    } catch (error) {
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' });
+        }
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp,forgotPassword,resetPassword, verifyToken};

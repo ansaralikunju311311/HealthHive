@@ -17,9 +17,13 @@ const Login = () => {
       console.log(response.data);
 
       // Save user data in Redux store and session storage
-      sessionStorage.setItem('useraccessToken', response.data.accessToken);
+      localStorage.setItem('useraccessToken', response.data.userToken);
       dispatch(setUser(response.data.user));
-      dispatch(setToken(response.data.accessToken));
+      dispatch(setToken(response.data.userToken));
+
+
+
+
       navigate('/home');
     } catch (error) {
       console.error(error);
