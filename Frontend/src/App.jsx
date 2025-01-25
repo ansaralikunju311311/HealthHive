@@ -19,6 +19,7 @@ import Patients from './Components/admin/Patients'
 import Doctor from './Components/admin/Doctor'
 // import BeforeVerification from './Components/Doctor/BeforeVerification'
 import BeforeVerification from './Components/Doctor/BeforeVerifcation'
+import HomePageUser from './Components/User/HomePageUser'
 const App = () => {
   return (
     <Routes>
@@ -30,6 +31,9 @@ const App = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
+
+      <Route path="/home" element={<HomePageUser />} />
+
     
       <Route path="/generate-otp" element={<GenerateOtp />} />      
       <Route path="/doctor-signup" element={<DoctorSignUp />} />

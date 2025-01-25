@@ -20,7 +20,7 @@ const Login = () => {
       sessionStorage.setItem('useraccessToken', response.data.accessToken);
       dispatch(setUser(response.data.user));
       dispatch(setToken(response.data.accessToken));
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error(error);
     }
