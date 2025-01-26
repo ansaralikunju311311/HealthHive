@@ -19,7 +19,6 @@ const HomePageUser = () => {
   const [error, setError] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
-
   useEffect(() => {
     const verifyToken = async () => {
       try {
@@ -53,7 +52,6 @@ const HomePageUser = () => {
         setLoading(false);
       }
     };
-
     verifyToken();
   }, [dispatch, navigate]);
 

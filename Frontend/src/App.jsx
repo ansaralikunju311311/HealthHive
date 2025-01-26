@@ -20,8 +20,9 @@ import BeforeVerification from './Components/Doctor/BeforeVerifcation'
 import HomePageUser from './Components/User/HomePageUser'
 import DoctorDash from './Components/Doctor/DoctorDash'
 import AdminProtected from './Components/admin/Protected/AdminProtected';
+import DoctorProtected from './Components/Doctor/Protected/DoctorProtected';
 // import NavBar from './Components/Common/NavBaar';
-
+import Pro from './Components/User/Pro';
 const App = () => {
   return (
     <>
@@ -45,6 +46,14 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
+
+<Route path="/user/appointments" element={
+  <Protected>
+    <Pro />
+  </Protected>
+} />
+
+
         {/* Protected Routes */}
         <Route path="/home" element={
           <Protected>
@@ -56,7 +65,16 @@ const App = () => {
         <Route path="/doctor-signup" element={<DoctorSignUp />} />
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="/before-verification" element={<BeforeVerification />} />
-        <Route path="/doctor-dashboard" element={<DoctorDash />} />
+
+
+     <Route path="/doctor-protected" element={
+      <DoctorProtected>
+        <DoctorDash />
+      </DoctorProtected>
+     }/>
+
+
+        {/* <Route path="/doctor-dashboard" element={<DoctorDash />} /> */}
 
         {/* Admin Routes */}
         <Route path="/admin" element={<Admin />} />

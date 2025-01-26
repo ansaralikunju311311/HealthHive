@@ -275,6 +275,7 @@ const resetPassword = async(req, res) => {
 
 
 const verifyToken = async (req, res) => {
+    console.log(" happen after middlware verify token=====",req.user);
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {

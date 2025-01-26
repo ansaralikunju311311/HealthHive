@@ -23,6 +23,8 @@ const DoctorDash = () => {
         });
 
         setDoctor(response.data.doctor);
+        
+        console.log(response.data.doctor);
         setLoading(false);
       } catch (error) {
         console.log(error);

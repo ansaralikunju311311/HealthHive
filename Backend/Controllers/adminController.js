@@ -145,6 +145,7 @@ export const doctors = async (req,res)=>
     try {
         // req.admin is set by the protectAdmin middleware
         res.status(200).json({ admin: req.admin });
+        console.log("req.admin=====",req.admin);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
