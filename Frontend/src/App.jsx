@@ -21,7 +21,10 @@ import HomePageUser from './Components/User/HomePageUser'
 import DoctorDash from './Components/Doctor/DoctorDash'
 import AdminProtected from './Components/admin/Protected/AdminProtected';
 import DoctorProtected from './Components/Doctor/Protected/DoctorProtected';
+import ReverseProtected from './Components/User/UserProtcted/Protctedun';
 // import NavBar from './Components/Common/NavBaar';
+import DcotorReve from './Components/Doctor/Protected/RevProtected'
+import AdminReve from './Components/admin/Protected/ReverseProtected'
 import Pro from './Components/User/Pro';
 const App = () => {
   return (
@@ -39,19 +42,43 @@ const App = () => {
         theme="light"
       />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/generate-otp" element={<GenerateOtp />} />      
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={
+                    <ReverseProtected>
+                    <LandingPage />
+                    </ReverseProtected>  } />
+        <Route path="/signup" element={
+          <ReverseProtected>
+          <SignUp />
+          </ReverseProtected>} />
 
 
+
+        <Route path="/login" element={
+          <ReverseProtected>
+            <Login />
+          </ReverseProtected>} />
+        <Route path="/generate-otp" element={
+          <ReverseProtected>
+          <GenerateOtp />
+          </ReverseProtected>
+          } />      
+        <Route path="/forgot-password" element={
+          <ReverseProtected>
+          <ForgotPassword />
+          </ReverseProtected>
+          } />
+        <Route path="/reset-password" element={
+          <ReverseProtected>
+          <ResetPassword />
+          </ReverseProtected>
+          } />
+
+{/* 
 <Route path="/user/appointments" element={
   <Protected>
     <Pro />
   </Protected>
-} />
+} /> */}
 
 
         {/* Protected Routes */}
@@ -62,12 +89,29 @@ const App = () => {
         } />
 
         {/* Doctor Routes */}
-        <Route path="/doctor-signup" element={<DoctorSignUp />} />
-        <Route path="/doctor-login" element={<DoctorLogin />} />
-        <Route path="/before-verification" element={<BeforeVerification />} />
 
 
-     <Route path="/doctor-protected" element={
+
+
+        <Route path="/doctor-signup" element={
+          <DcotorReve>
+          <DoctorSignUp />
+          </DcotorReve>
+          } />
+        <Route path="/doctor-login" element={
+          <DcotorReve>
+          <DoctorLogin />
+          </DcotorReve>
+          } />
+        <Route path="/before-verification" element={
+          <DcotorReve>
+          <BeforeVerification />
+          </DcotorReve>
+          } />
+           
+
+
+     <Route path="/doctor-dashboard" element={
       <DoctorProtected>
         <DoctorDash />
       </DoctorProtected>
@@ -77,7 +121,11 @@ const App = () => {
         {/* <Route path="/doctor-dashboard" element={<DoctorDash />} /> */}
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={
+          <AdminReve>
+          <Admin />
+          </AdminReve>
+          } />
         <Route path="/admin-dashboard" element={
           <AdminProtected>
             <AdminDashboard />
