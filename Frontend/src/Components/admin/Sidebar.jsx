@@ -13,6 +13,11 @@ import {
 const Sidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem('admintoken');
+    navigate('/admin');
+  };
+
   const menuItems = [
     {
       title: 'Dashboard',
@@ -68,7 +73,7 @@ const Sidebar = ({ activePage }) => {
         ))}
         <div className="border-t border-blue-800 mt-4 pt-4">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={handleLogout}
             className="flex items-center w-full px-4 py-3 text-left text-red-400 hover:bg-red-900/30 hover:text-red-300 rounded-lg transition-all"
           >
             <FaSignOutAlt className="mr-3" />

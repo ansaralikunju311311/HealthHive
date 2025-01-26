@@ -1,34 +1,43 @@
-import React from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
-import {useForm} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setToken } from '../../Components/redux/Features/userSlice';
+import { toast } from 'react-toastify';
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   console.log("user from redux:", user);
   const { register, handleSubmit, formState: { errors } } = useForm();
+
   const onSubmit = async (data) => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/login', data);
-      console.log(response.data);
 
-      // Save user data in Redux store and session storage
+      if (response.data.blocked) {
+        toast.error('Your account has been blocked. Please contact support.');
+        return;
+      }
+
       localStorage.setItem('useraccessToken', response.data.userToken);
       dispatch(setUser(response.data.user));
       dispatch(setToken(response.data.userToken));
-
-
-
-
+      toast.success('Login successful! Welcome back.');
       navigate('/home');
     } catch (error) {
-      console.error(error);
+      console.error('Login error:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Login failed. Please try again.');
+      }
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
     
@@ -57,7 +66,7 @@ const Login = () => {
                     id="email"
                     placeholder="Enter your email"
                     className="appearance-none rounded-xl relative block w-full pl-10 px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                {...register('email', { required: true })}
+                    {...register('email', { required: true })}
                   />
                   {errors.email && <span className="text-red-500">This field is required</span>}
                 </div>
@@ -78,7 +87,7 @@ const Login = () => {
                     id="password"
                     placeholder="Enter your password"
                     className="appearance-none rounded-xl relative block w-full pl-10 px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                 {...register('password', { required: true })}
+                    {...register('password', { required: true })}
                   />
                   {errors.password && <span className="text-red-500">This field is required</span>}
                 </div>
@@ -98,10 +107,11 @@ const Login = () => {
                 </div>
 
                 <div className="text-sm">
-                  {/* <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                    Forgot password?
-
-                  </a> */}    <p><Link to="/forgot-password">Forgot password?</Link></p>
+                  <p>
+                    <Link to="/forgot-password" onClick={() => toast.info('Redirecting to password reset')}>
+                      Forgot password?
+                    </Link>
+                  </p>
                 </div>
               </div>
 
@@ -118,7 +128,10 @@ const Login = () => {
             <div className="text-center text-sm">
               <span className="text-gray-600">Don't have an account?</span>
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => {
+                  navigate('/signup');
+                  toast.info('Redirecting to signup page');
+                }}
                 className="ml-2 font-medium text-blue-600 hover:text-blue-500"
               >
                 Sign up
@@ -164,4 +177,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;

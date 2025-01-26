@@ -1,63 +1,65 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 
-// import useForm form 'react-hook-form'
-import { useForm } from 'react-hook-form';
-import axios from 'axios';
 const SignUp = () => {
-  const {register, handleSubmit, formState: {errors}, getValues} = useForm();
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
   const navigate = useNavigate();
-
 
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  
-  const handleImageUpload = async (file)=>
-  {
-    if(!file) return;
+
+  const handleImageUpload = async (file) => {
+    if (!file) return;
     try {
-           // Create a preview URL
-           setImagePreview(URL.createObjectURL(file));
-           
-           const data = new FormData();
-           console.log(data)
-           data.append("file",file);
-           data.append("upload_preset",'testing');
-           const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload',data);
-           const imageUrl = response.data.url;
-           console.log(imageUrl)
-           setImage(imageUrl)
+      // Create a preview URL
+      setImagePreview(URL.createObjectURL(file));
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", 'testing');
+      const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload', data);
+      const imageUrl = response.data.url;
+      setImage(imageUrl)
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
   }
+
   const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
     try {
-      // First register the user
       const response = await axios.post('http://localhost:5000/api/user/signup', {
         ...data,
         image: image
       });
-      console.log("signup response:", response.data.user);
 
-      // Save user data in Redux store
-      // dispatch(setToken(response.data.token));
-
-      // Navigate to OTP verification page
+      toast.success('Registration successful! Please verify your email.');
       navigate('/generate-otp', { state: { email: data.email } });
     } catch (error) {
-      console.error(error);
+      console.error('Registration error:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Registration failed. Please try again.');
+      }
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
       {/* Left Side - Image */}
       <div className="hidden lg:block lg:w-1/2 relative">
-        <img 
-          src={Bannerdoctor} 
-          alt="Healthcare Professional" 
+        <img
+          src={Bannerdoctor}
+          alt="Healthcare Professional"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-blue-800/90 flex items-center justify-center">
@@ -104,7 +106,6 @@ const SignUp = () => {
 
           <form className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">
-           
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
                 <input
@@ -112,21 +113,18 @@ const SignUp = () => {
                   id="name"
                   placeholder="Enter your username"
                   className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-           
-              
 
-{...register("name", {
-  required: "Name is required",
-  minLength: {
-    value: 3,
-    message: "Name should be at least 3 characters"
-  },
-  maxLength: {
-    value: 20,
-    message: "Name should not exceed 20 characters"
-  }
-})}
-
+                  {...register("name", {
+                    required: "Name is required",
+                    minLength: {
+                      value: 3,
+                      message: "Name should be at least 3 characters"
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Name should not exceed 20 characters"
+                    }
+                  })}
                 />
                 {errors.name && <p className="text-red-500">{errors.name.message}</p>}
               </div>
@@ -138,14 +136,14 @@ const SignUp = () => {
                   id="email"
                   placeholder="Enter your email"
                   className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Invalid email address"
-                }
-              })}
+
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  })}
                 />
                 {errors.email && <p className="text-red-500">{errors.email.message}</p>}
               </div>
@@ -169,8 +167,8 @@ const SignUp = () => {
 
               <div>
                 <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   id="age"
                   {...register("age", {
                     required: "Age is required",
@@ -253,22 +251,22 @@ const SignUp = () => {
             </div>
             <div className="space-y-4">
               <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
-              <input 
-                type="file" 
+              <input
+                type="file"
                 id="image"
                 accept="image/*"
-                {...register("image")} 
-                onChange={(e) => handleImageUpload(e.target.files[0])} 
+                {...register("image")}
+                onChange={(e) => handleImageUpload(e.target.files[0])}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
               {errors.image && <span className="text-red-500">{errors.image.message}</span>}
-              
+
               {/* Image Preview */}
               {imagePreview && (
                 <div className="mt-4">
-                  <img 
-                    src={imagePreview} 
-                    alt="Profile preview" 
+                  <img
+                    src={imagePreview}
+                    alt="Profile preview"
                     className="w-32 h-32 object-cover rounded-full mx-auto border-2 border-gray-200"
                   />
                 </div>
@@ -286,7 +284,10 @@ const SignUp = () => {
             <div className="text-center text-sm">
               <span className="text-gray-600">Already have an account?</span>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => {
+                  navigate('/login');
+                  toast.info('Redirecting to login page');
+                }}
                 className="ml-2 font-medium text-blue-600 hover:text-blue-500"
               >
                 Sign in

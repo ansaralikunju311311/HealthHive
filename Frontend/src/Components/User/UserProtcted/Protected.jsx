@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { setToken } from '../../Components/redux/Features/userSlice.js'
+import { setToken } from '../../redux/Features/userSlice.js'
 
 export const Protected = ({ children }) => {
     console.log(children)
