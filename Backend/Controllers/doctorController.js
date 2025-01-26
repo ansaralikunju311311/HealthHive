@@ -125,4 +125,34 @@ import {jwtToken} from '../utils/auth.js'
     }
 };
 
-export { RegisterDoctor, LoginDoctor, verifyDoctorToken };
+const fetchDoctors = async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+        const doctorData = await doctor.findOne({ email, isActive: true });
+        if (doctorData) {
+            return res.status(200).json({ 
+                isVerified: true,
+                doctor: doctorData 
+            });
+        }
+        // Check if doctor exists but is not verified
+        const pendingDoctor = await doctor.findOne({ email, isActive: false });
+        if (pendingDoctor) {
+            return res.status(200).json({ 
+                isVerified: false,
+                message: "Your account is pending verification" 
+            });
+        }
+        return res.status(404).json({ 
+            isVerified: false,
+            message: "Doctor not found" 
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors };

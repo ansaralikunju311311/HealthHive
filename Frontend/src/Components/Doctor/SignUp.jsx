@@ -115,7 +115,7 @@ const SignUp = () => {
     console.log("user details======",response.data.user);
             
             if(response.data.user.isActive===false){
-                navigate('/before-verification')
+                navigate('/before-verification', { state: { email: data.email } });
             }
             else{
                 navigate('/doctor-login');
