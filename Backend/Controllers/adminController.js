@@ -67,22 +67,26 @@ export const approveDoctor = async (req,res)=>
 {
     try {
         const {doctorid} = req.params;
+        console.log("doctorid=====",doctorid);
         const doctorData = await Doctor.findById(doctorid);
+        console.log("doctorData=====",doctorData);
         if(!doctorData){
             return res.status(404).json({message:"Doctor is not found"})
         }
-        doctorData.isActive= true;
+        doctorData.isActive = true;
         await doctorData.save();
-        res.status(200).json({message:"Doctor approved successfully"
-        ,doctor:{
-            _id: doctorData._id,
-            name: doctorData.name,
-            email: doctorData.email,
-            isActive: doctorData.isActive
-        }
-        })
+        res.status(200).json({
+            message: "Doctor approved successfully",
+            doctor:{
+                _id: doctorData._id,
+                name: doctorData.name,
+                email: doctorData.email,
+                isActive: doctorData.isActive
+            }
+        });
     }
     catch (error) {
+        console.error("Error in approveDoctor:", error);
         res.status(500).json({ message: error.message });
     }
 }
