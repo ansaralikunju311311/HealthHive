@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
+import cookies from 'js-cookie'
 const Admin = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('');
@@ -11,7 +12,8 @@ const Admin = () => {
             const response = await axios.post('http://localhost:5000/api/admin/login', data)
             console.log(response.data)
             console.log("checkingadmin====",response.data.Admin)
-            localStorage.setItem('admintoken',response.data.adminToken);
+            // localStorage.setItem('admintoken',response.data.adminToken);
+            cookies.set('admintoken',response.data.adminToken);
              if (response.data.adminToken) {
                 navigate('/admin-dashboard');
              }

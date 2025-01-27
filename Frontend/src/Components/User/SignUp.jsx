@@ -40,7 +40,7 @@ const SignUp = () => {
         ...data,
         image: image
       });
-
+    console.log('signup 1')
       toast.success('Registration successful! Please verify your email.');
       navigate('/generate-otp', { state: { email: data.email } });
     } catch (error) {
@@ -301,3 +301,4 @@ const SignUp = () => {
 };
 
 export default SignUp;
+

@@ -85,7 +85,7 @@ const App = () => {
         <Route path="/home" element={
           <Protected>
             <HomePageUser />
-          </Protected>
+          </Protected> 
         } />
 
         {/* Doctor Routes */}
@@ -153,3 +153,5 @@ const App = () => {
 }
 
 export default App
+
+

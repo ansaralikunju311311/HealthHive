@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { setUser, logout } from '../redux/Features/userSlice';
+// import { setUser, logout } from '../redux/Features/userSlice';
 import { FaUserCircle, FaHome, FaCalendarAlt, FaInfoCircle, FaEnvelope, FaChevronDown, FaUser, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
@@ -10,7 +10,7 @@ import DoctorOne from '../../assets/Doctorone.png';
 import DoctorTwo from '../../assets/doctortwo.png';
 import DoctorThree from '../../assets/doctorthree.png';
 import DoctorFour from '../../assets/doctorfour.png';
-
+import cookies from 'js-cookie';
 const HomePageUser = () => {
   const [userData, setUserData] = useState('');
   const navigate = useNavigate();
@@ -20,9 +20,13 @@ const HomePageUser = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
   useEffect(() => {
+    console.log("useeffectvjfnjfnjnfjfjfjfjcalled");
     const verifyToken = async () => {
       try {
-        const token = localStorage.getItem('useraccessToken');
+        console.log("useeffefjnfngfjgnfjgnfjgnfjgnfjgnfjctvjfnjfnjnfjfjfjfjcalled");
+        // const token = localStorage.getItem('useraccessToken');
+        const token = cookies.get('useraccessToken');
+        console.log("token from the cookie   home pahe=====",token);
         if (!token) {
           toast.error('Please login to continue');
           navigate('/login');
@@ -30,21 +34,25 @@ const HomePageUser = () => {
         }
 
         const response = await axios.get('http://localhost:5000/api/user/verify-token', {
+       
+
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          withCredentials:true,
         });
         console.log("from the backend data",response.data.user)
         setUserData(response.data.user);
-        dispatch(setUser(response.data.user));
+        // dispatch(setUser(response.data.user));
         toast.success('Welcome back ' + response.data.user.name);
         setLoading(false);
       } catch (error) {
         console.error('Token verification failed:', error);
         if (error.response?.status === 401) {
           toast.error('Session expired. Please login again');
-          dispatch(logout());
-          localStorage.removeItem('useraccessToken');
+          // dispatch(logout());
+          // localStorage.removeItem('useraccessToken');
+          cookies.remove('useraccessToken');
           navigate('/login');
         }
         setError('Authentication failed');
@@ -57,8 +65,9 @@ const HomePageUser = () => {
 
   const handleLogout = () => {
     toast.success('Logged out successfully');
-    dispatch(logout());
-    localStorage.removeItem('useraccessToken');
+    // dispatch(logout());
+    // localStorage.removeItem('useraccessToken');
+    cookies.remove('useraccessToken');
     navigate('/');
   };
 

@@ -5,12 +5,18 @@ import mongoose from 'mongoose';
 import user from './Routes/userRoutes.js';
 import doctor from './Routes/doctorRoutes.js';
 import admin from './Routes/adminRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 dotenv.config();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5177',
+    credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false}));
 
 const ConnectDB = async () => {
     try {

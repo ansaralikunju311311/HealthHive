@@ -4,7 +4,8 @@ import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
 import jwt from 'jsonwebtoken';
-import {jwtToken} from '../utils/auth.js';
+import cookies from 'js-cookie';
+import {setToken} from '../utils/auth.js';
 
 // const jwtSecret = 'your_jwt_secret'; // Replace with your secret key
 
@@ -23,7 +24,8 @@ import {jwtToken} from '../utils/auth.js';
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        const adminToken = jwtToken(existingAdmin);
+        // const adminToken = jwtToken(existingAdmin);
+           const adminToken = setToken(existingAdmin,res);
         // Send response
         res.status(200).json({
             message: "Login successful",

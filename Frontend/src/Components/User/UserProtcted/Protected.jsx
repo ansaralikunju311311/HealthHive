@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 // import { useSelector } from 'react-redux'
 // import { setToken } from '../../redux/Features/userSlice.js'
 import axios from 'axios';
-
+import cookies from 'js-cookie';
 export const Protected = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [verified, setVerified] = useState(false);
@@ -12,27 +12,38 @@ export const Protected = ({ children }) => {
 
     useEffect(() => {
         const verifyToken = async () => {
+            // console.log("useeffecvjjvjvjvjvjvjvjjvjvjjvjjvvvjt called");
             try {
-                const token = localStorage.getItem('useraccessToken');
+                const token = cookies.get('useraccessToken');
+                console.log("token from the cookie cncncncnncnncnnc  protected=====",token);
+                // console.log("token from the cookie cncncncnncnncnnc  protected=====",token);
                 if (!token) {
+                    console.log("token not found");
                     navigate('/login');
                     return;
                 }
+                console.log('warp protcted route 1 veridy')
                 const response = await axios.get('http://localhost:5000/api/user/verify-token', {
                     headers: {
                         Authorization: `Bearer ${token}`
-                    }
+                    },
+                   withCredentials:true,
                 });
+                console.log("response from the backend=====",response.data);
+
 
                 if (response.data.user) {
                     setVerified(true);
                 } else {
-                    localStorage.removeItem('useraccessToken');
+                    console.log("user not found  vbvhj");
+                    cookies.remove('useraccessToken');
                     navigate('/login');
                 }
             } catch (error) {
+                console.log('second time error')
+                console.log("error in verify  this ojfjf andatr will token");
                 console.error('Error verifying token:', error);
-                localStorage.removeItem('useraccessToken');
+                cookies.remove('useraccessToken');
                 navigate('/login');
             } finally {
                 setLoading(false);

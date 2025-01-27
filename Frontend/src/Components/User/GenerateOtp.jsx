@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setUser, setToken } from '../../Components/redux/Features/userSlice';
-
+// import { useDispatch } from 'react-redux';
+// import { setUser, setToken } from '../../Components/redux/Features/userSlice';
+import  cookies  from 'js-cookie';
 const GenerateOtp = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -62,15 +62,25 @@ const GenerateOtp = () => {
       });
       
       setSuccess(response.data.message);
-      console.log("verify otp response:", response.data);
+      // console.log("verify otp response:", response.data);
       
       // Dispatch both user and token to Redux
-      dispatch(setUser(response.data.user));
-      localStorage.setItem('useraccessToken',response.data.userToken);
-    console.log("this token:",dispatch(setToken(response.data.userToken)));
-      setTimeout(() => {
-        navigate('/home');
-      }, 2000);
+      // dispatch(setUser(response.data.user));
+      // localStorage.setItem('useraccessToken',response.data.userToken);
+      // setToken(response.data.userToken);
+
+      // console.log("this token   generator token:",response.data.userToken);
+      // console.log("this token:",dispatch(setToken(response.data.userToken)));
+
+      if(response.data.userToken){
+        console.log('otp generate going to protected route warp')
+        // console.log("this token   comen rthidfhbilhdsbfhlabhr:",response.data.userToken);
+        cookies.set('useraccessToken', response.data.userToken);
+          navigate('/home');
+      
+      // navigate('/home');
+      // console.log("this token   hcbcbhjvbhjbhdbhdbhfbhbfhcomen rthidfhbilhdsbfhlabhr:",response.data.userToken);
+      }
     } catch (error) {
       console.error('Error verifying OTP:', error);
       setError(error.response?.data?.message || 'Error verifying OTP');

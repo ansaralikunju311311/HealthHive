@@ -2,7 +2,9 @@ import doctor from "../Model/doctorModel.js";
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import bcrypt from 'bcrypt';
 import {jwtToken} from '../utils/auth.js'
-
+import {setToken} from '../utils/auth.js';    
+    // import ClearToken from '../utils/auth.js';    
+ import cookies from 'js-cookie';
  const RegisterDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender} = req.body;
@@ -92,7 +94,7 @@ import {jwtToken} from '../utils/auth.js'
         if(!isMatch){
             return res.status(400).json({message:"Invalid credentials"});
         }
-        const doctorToken = jwtToken(existingDoctor);
+        const doctorToken = setToken(existingDoctor,res);
         // Generate tokens
         res.status(200).json({
             message:"Login successful",

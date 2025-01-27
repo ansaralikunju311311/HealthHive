@@ -22,23 +22,11 @@ const doctorSlice = createSlice({
         setToken: (state, action) => {
             state.token = action.payload;
         },
-        setLoading: (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setError: (state, action) => {
-            state.error = action.payload;
-        },
-        clearError: (state) => {
-            state.error = null;
-        },
         logout: (state) => {
             state.doctor = null;
             state.token = null;
             state.isAuthenticated = false;
             state.isActive = false;
-        },
-        updateProfile: (state, action) => {
-            state.doctor = { ...state.doctor, ...action.payload };
         },
         setVerificationStatus: (state, action) => {
             state.isActive = action.payload;
@@ -52,11 +40,7 @@ const doctorSlice = createSlice({
 export const {
     setDoctor,
     setToken,
-    setLoading,
-    setError,
-    clearError,
     logout,
-    updateProfile,
     setVerificationStatus
 } = doctorSlice.actions;
 

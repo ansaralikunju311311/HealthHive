@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import cookies from 'js-cookie';
 import {
   FaUsers,
   FaUserMd,
@@ -14,7 +15,8 @@ const Sidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('admintoken');
+    // localStorage.removeItem('admintoken');
+    cookies.remove('admintoken');
     navigate('/admin');
   };
 

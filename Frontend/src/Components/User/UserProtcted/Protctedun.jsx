@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
+import cookies from 'js-cookie'
 
 const AuthProtected = ({children}) => {
     const navigate = useNavigate();
@@ -8,13 +9,15 @@ const AuthProtected = ({children}) => {
     useEffect(() => {
         const verifyToken = async () => {
             try {
-                const token = localStorage.getItem('useraccessToken');
+                // const token = localStorage.getItem('useraccessToken');
+                const token = cookies.get('useraccessToken');
                 if (token) {
                     // If token exists, verify it
                     const response = await axios.get('http://localhost:5000/api/user/verify-token', {
                         headers: {
                             Authorization: `Bearer ${token}`
-                        }
+                        },
+                        withCredentials:true,
                     });
                     
                     // If token is valid, redirect to home page since user is already logged in
@@ -27,7 +30,9 @@ const AuthProtected = ({children}) => {
             } catch (error) {
                 // If token verification fails, clear it and allow access to login/signup
                 console.error('Error verifying token:', error);
-                localStorage.removeItem('useraccessToken');
+                // localStorage.removeItem('useraccessToken');
+                cookies.remove('useraccessToken');
+                navigate('/');
             }
         };
         

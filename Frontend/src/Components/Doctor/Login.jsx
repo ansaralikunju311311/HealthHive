@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
-
+import cookies from 'js-cookie'
 const Login = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('');
@@ -16,7 +16,8 @@ const Login = () => {
                 navigate('/before-verification')
             }
             else {
-                localStorage.setItem('doctortoken',response.data.token);
+                // localStorage.setItem('doctortoken',response.data.token);
+                cookies.set('doctortoken',response.data.token);
                 navigate('/doctor-dashboard');
             }
         } catch (error) {

@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 import {jwtToken} from '../utils/auth.js';
+import {setToken} from '../utils/auth.js';
 // Helper function to generate OTP and update user
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -66,6 +67,7 @@ const RegisterUser = async(req,res)=>{
             message: "Verification code sent to your email",
             email
         });
+        console.log('register 1')
     } catch (error) {
         console.error('Error in RegisterUser:', error);
         res.status(500).json({error:error.message});
@@ -99,7 +101,14 @@ const verifyOtp = async(req,res)=>{
         // Generate token
         // const userAccessToken = accessToken(user);
         // const userRefreshToken = refreshToken(user);
-        const userToken = jwtToken(user);
+        // const userToken = jwtToken(user);
+        //console.log("userToken=====",userToken);
+        const token = setToken(user,res);
+
+
+
+        console.log("token   coolesdsjdnfjdfjdfr=====",token);
+    
         await user.save();
        
         res.status(200).json({
@@ -112,8 +121,7 @@ const verifyOtp = async(req,res)=>{
                 dateOfBirth: user.dateOfBirth,
                 isActive: user.isActive
             },
-            userToken: userToken,
-            // refreshToken: userRefreshToken
+            userToken: token
         });
     } catch (error) {
         console.error('Error verifying OTP:', error);
@@ -145,7 +153,8 @@ const LoginUser = async(req,res)=>{
         // Generate tokens
         // const userAccessToken = accessToken(user);
         // const userRefreshToken = refreshToken(user);
-           const userToken = jwtToken(user);
+        //    const userToken = jwtToken(user);
+        const userToken = setToken(user,res);
         res.status(200).json({
             message:"Login successful",
             user:{
@@ -278,6 +287,7 @@ const verifyToken = async (req, res) => {
     console.log(" happen after middlware verify token=====",req.user);
     try {
         const user = await User.findById(req.user._id).select('-password');
+        console.log("user after select=====",user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import cookies from 'js-cookie';
 const DoctorDash = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
@@ -10,7 +10,8 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const token = localStorage.getItem('doctortoken');
+        // const token = localStorage.getItem('doctortoken');
+        const token = cookies.get('doctortoken');
         if (!token) {
           navigate('/doctor-login');
           return;
@@ -19,7 +20,8 @@ const DoctorDash = () => {
         const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          withCredentials:true,
         });
 
         setDoctor(response.data.doctor);
@@ -28,7 +30,9 @@ const DoctorDash = () => {
         setLoading(false);
       } catch (error) {
         console.log(error);
-        localStorage.removeItem('doctortoken');
+        // localStorage.removeItem('doctortoken');
+
+        cookies.remove('doctortoken');
         navigate('/doctor-login');
       }
     };
@@ -37,7 +41,8 @@ const DoctorDash = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('doctortoken');
+    // localStorage.removeItem('doctortoken');
+    cookies.remove('doctortoken');
     navigate('/doctor-login');
   };
 

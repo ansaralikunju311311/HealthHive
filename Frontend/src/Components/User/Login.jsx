@@ -3,29 +3,31 @@ import { useNavigate, Link } from 'react-router-dom';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setToken } from '../../Components/redux/Features/userSlice';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { setUser, setToken } from '../../Components/redux/Features/userSlice';
 import { toast } from 'react-toastify';
+import cookies from 'js-cookie';
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
-  console.log("user from redux:", user);
+  // const dispatch = useDispatch();
+  // const user = useSelector((state) => state.user.user);
+  // console.log("user from redux:", user);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/login', data);
 
-      if (response.data.blocked) {
-        toast.error('Your account has been blocked. Please contact support.');
-        return;
-      }
+      // if (response.data.blocked) {
+      //   toast.error('Your account has been blocked. Please contact support.');
+      //   return;
+      // }
 
-      localStorage.setItem('useraccessToken', response.data.userToken);
-      dispatch(setUser(response.data.user));
-      dispatch(setToken(response.data.userToken));
+      // localStorage.setItem('useraccessToken', response.data.userToken)
+      cookies.set('useraccessToken', response.data.userToken)
+      // dispatch(setUser(response.data.user));
+      // dispatch(setToken(response.data.userToken));
       toast.success('Login successful! Welcome back.');
       navigate('/home');
     } catch (error) {

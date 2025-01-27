@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
 import Sidebar from './Sidebar';
 import PatientDetailsModal from './PatientDetailsModal';
+import cookies from 'js-cookie';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -15,7 +16,8 @@ const Patients = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const token = localStorage.getItem('admintoken');
+        // const token = localStorage.getItem('admintoken');
+        const token = cookies.get('admintoken');
         console.log("this is the token", token);
         if(!token) {
           navigate('/admin');
@@ -24,7 +26,8 @@ const Patients = () => {
         const response = await axios.get('http://localhost:5000/api/admin/patients', {
           headers: {
             Authorization: `Bearer ${token}`
-          }     
+          },
+          withCredentials:true,
         });
         setPatients(response.data);
         setFilteredPatients(response.data);
