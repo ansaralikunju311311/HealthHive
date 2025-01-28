@@ -12,7 +12,7 @@ export const Protected = ({ children }) => {
 
     useEffect(() => {
         const verifyToken = async () => {
-            // console.log("useeffecvjjvjvjvjvjvjvjjvjvjjvjjvvvjt called");
+        
             try {
                 const token = cookies.get('useraccessToken');
                 console.log("token from the cookie cncncncnncnncnnc  protected=====",token);

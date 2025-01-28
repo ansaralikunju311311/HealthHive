@@ -110,7 +110,7 @@ const Login = () => {
 
                 <div className="text-sm">
                   <p>
-                    <Link to="/forgot-password" onClick={() => toast.info('Redirecting to password reset')}>
+                    <Link to="/demoforgot-password" onClick={() => toast.info('Redirecting to password reset')}>
                       Forgot password?
                     </Link>
                   </p>

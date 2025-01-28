@@ -93,6 +93,7 @@ const Admin = () => {
                         >
                             Sign in
                         </button>
+                        <p onClick={() => navigate('/admin/forgotpassword')}>forgot password?</p>
                     </div>
                 </form>
             </div>

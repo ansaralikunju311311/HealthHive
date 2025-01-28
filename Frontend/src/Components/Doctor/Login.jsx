@@ -96,6 +96,13 @@ const Login = () => {
                             >
                                 Don't have an account? Sign up
                             </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/doctor/forgotpassword')}
+                                className="font-medium text-purple-300 hover:text-purple-400 transition-colors ml-9"
+                            >
+                                Forgot password?
+                            </button>
                         </div>
                     </div>
 

@@ -255,7 +255,9 @@ const resendOtp = async(req, res) => {
 }
 const resetPassword = async(req, res) => {
     try {
+        
         const { email, otp, new_password } = req.body;
+
         console.log("req.body=====",req.body)
         // Find user by email
         const user = await User.findOne({ email });

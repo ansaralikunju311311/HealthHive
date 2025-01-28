@@ -109,7 +109,7 @@ const SignUp = () => {
                 idProof: idProofUrl,
 
             });
-            dispatch(setDoctor(response.data.user));
+            // dispatch(setDoctor(response.data.user));
             console.log("responnse come backend",response.data);
             console.log("debuggin isActivate======",response.data.user.isActive)
     console.log("user details======",response.data.user);
