@@ -39,12 +39,16 @@ import {setToken} from '../utils/auth.js';
         {
             return res.status(400).json({message:"this is rejeced user please contact admin"});
         }
+        if(existingUser && existingUser.isBlocked===true && existingUser.isActive===true){
+            return res.status(400).json({message:"User is blocked"});
+        }
         if(existingUser && !existingUser.isActive){
             return res.status(400).json({message:"User already exists   You are under verification process"});
         }
         if(existingUser && existingUser.isActive){
             return res.status(400).json({message:"User already exists"});
         }
+       
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
@@ -101,6 +105,9 @@ import {setToken} from '../utils/auth.js';
         const rejectedDoctor = await RejectedDoctor.findOne({email});
         if(!existingDoctor){
             return res.status(404).json({message:"User not found"});
+        }
+        if(existingDoctor.isBlocked===true && existingDoctor.isActive===true &&existingDoctor){
+            return res.status(200).json({message:"Your account is blocked. Please contact the admin."});
         }
         console.log(existingDoctor.isActive);
         // Check if user is active

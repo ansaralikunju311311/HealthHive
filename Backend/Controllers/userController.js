@@ -27,9 +27,13 @@ const RegisterUser = async(req,res)=>{
         const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
         // Check if user already exists and is active
         const existingUser = await User.findOne({email});
+        if(existingUser.isBlocked===true && existingUser.isActive===true){
+            return res.status(400).json({message:"User is blocked"});
+        }
         if(existingUser && existingUser.isActive){
             return res.status(400).json({message:"User already exists"});
         }
+        
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
@@ -138,7 +142,9 @@ const LoginUser = async(req,res)=>{
         if(!user){
             return res.status(404).json({message:"User not found"});
         }
-        
+        if(user.isBlocked===true){
+            return res.status(400).json({message:"User is blocked"});
+        }
         // Check if user is active
         if(!user.isActive){
             return res.status(400).json({message:"Please verify your account first"});
@@ -300,4 +306,5 @@ const verifyToken = async (req, res) => {
     }
 };
 
-export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken };
+
+export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

@@ -57,6 +57,10 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
     otp: {
         type: String,
     },

@@ -11,6 +11,7 @@ router.post('/login',LoginUser);
 router.get('/otp-remaining-time', getOtpRemainingTime);
 router.get('/verify-token', protect, verifyToken);
 router.post('/forgot-password', forgotPassword);
+
 router.post('/reset-password', resetPassword);
 
 

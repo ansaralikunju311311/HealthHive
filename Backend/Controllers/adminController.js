@@ -69,6 +69,7 @@ export const approveDoctor = async (req,res)=>
 {
     try {
         const {doctorid} = req.params;
+
         console.log("doctorid=====",doctorid);
         const doctorData = await Doctor.findById(doctorid);
         console.log("doctorData=====",doctorData);
@@ -154,4 +155,74 @@ export const doctors = async (req,res)=>
     }
 };
 
+
+
+export const blockDoctor = async (req, res) => {
+    try {
+        const { doctorid } = req.params;
+        console.log("doctorid=====",doctorid);
+        const doctor = await Doctor.findById(doctorid);
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        doctor.isBlocked = true;
+        await doctor.save();
+        res.status(200).json({ message: 'Doctor blocked successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+export const handleBlock = async (req, res) => {
+    try {
+        const { patientid } = req.params;
+        console.log("patientid=====",patientid);
+        const patient = await User.findById(patientid);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+        patient.isBlocked = true;
+        await patient.save();
+        res.status(200).json({ message: 'Patient blocked successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+export const patientUnblock = async (req, res) => {
+    try {
+        const { patientid } = req.params;
+        console.log("patientid=====",patientid);
+        const patient = await User.findById(patientid);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+        patient.isBlocked = false;
+        await patient.save();
+        res.status(200).json({ message: 'Patient unblocked successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+
+export const unblockDoctor = async (req, res) => {
+    try {
+        const { doctorid } = req.params;
+        console.log("doctorid=====",doctorid);
+        const doctor = await Doctor.findById(doctorid);
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        doctor.isBlocked = false;
+        await doctor.save();
+        res.status(200).json({ message: 'Doctor unblocked successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
 export { LoginAdmin, verifyAdminToken };
