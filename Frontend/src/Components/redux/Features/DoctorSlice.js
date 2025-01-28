@@ -4,6 +4,8 @@ const initialState = {
     doctor: null,
     token: null,
     isLoading: false,
+    isVerified: false,
+    isBlocked: false,
     error: null,
     isAuthenticated: false,
     isActive: false
@@ -17,7 +19,11 @@ const doctorSlice = createSlice({
             state.doctor = action.payload;
             state.isAuthenticated = true;
             state.isActive = action.payload.isActive;
+
             console.log("isdetails===",state.doctor);
+        },
+        isBlocked: (state, action) => {
+            state.isBlocked = action.payload;
         },
         setToken: (state, action) => {
             state.token = action.payload;

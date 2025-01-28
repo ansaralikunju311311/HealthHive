@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+// import { isBlocked } from '../../Components/redux/Features/DoctorSlice';
 const DoctorDash = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isBlocked } = useSelector((state) => state.doctor);
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,11 +27,16 @@ const DoctorDash = () => {
           },
           withCredentials:true,
         });
-
+    
         setDoctor(response.data.doctor);
-        
+        // console.log(dispatch(isBlocked(response.data.doctor.isBlocked)));
         console.log(response.data.doctor);
         setLoading(false);
+        if(response.data.doctor.isBlocked===true && response.data.doctor.isActive===true){
+          dispatch(isBlocked(true));
+          cookies.remove('doctortoken');
+            navigate('/doctor-login');
+        }
       } catch (error) {
         console.log(error);
         // localStorage.removeItem('doctortoken');
@@ -78,6 +87,15 @@ const DoctorDash = () => {
           <div className="hover:bg-gray-100 rounded-lg py-3 px-4 cursor-pointer transition-colors">
             Wallet
           </div>
+          <div>
+          <button 
+              onClick={handleLogout}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
+          
         </div>
       </div>
 
@@ -94,12 +112,7 @@ const DoctorDash = () => {
                 className="w-10 h-10 rounded-full object-cover"
               />
             )}
-            <button 
-              onClick={handleLogout}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Logout
-            </button>
+            
           </div>
         </div>
 

@@ -46,6 +46,10 @@ const HomePageUser = () => {
         // dispatch(setUser(response.data.user));
         toast.success('Welcome back ' + response.data.user.name);
         setLoading(false);
+        if(response.data.user.isBlocked===true && response.data.user.isActive===true){
+          cookies.remove('useraccessToken');
+          navigate('/login');
+        }
       } catch (error) {
         console.error('Token verification failed:', error);
         if (error.response?.status === 401) {

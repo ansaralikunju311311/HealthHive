@@ -1,6 +1,3 @@
-
-
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -54,7 +51,6 @@ const For = () => {
       const resetPasswordRoutes = {
         'doctor': '/doctor/reset-password',
         'user': '/user/reset-password',
-        'admin': '/admin/reset-password'
       };
 
       const route = resetPasswordRoutes[userType] || '/user/reset-password';

@@ -48,7 +48,24 @@ const Patients = () => {
     );
     setFilteredPatients(results);
   }, [searchTerm, patients]);
-
+   const handleBlock = async (patientid) => {
+    console.log("patientid=====", patientid);
+    try {
+        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`)
+        console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+   }
+   const handleUnblock = async (patientid) => {
+    console.log("patientid=====", patientid);
+    try {
+        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`)
+        console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+   }
   const navigate = useNavigate();
 
   return (
@@ -91,6 +108,9 @@ const Patients = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Gender
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Details
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Action
@@ -137,6 +157,20 @@ const Patients = () => {
                         className="text-blue-600 hover:text-blue-900"
                       >
                         View Details
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <button 
+                        className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
+                          patient.isBlocked === true 
+                            ? 'bg-green-500 hover:bg-green-600' 
+                            : 'bg-red-500 hover:bg-red-600'
+                        }`} 
+                        onClick={patient.isBlocked === true 
+                          ? () => handleUnblock(patient._id) 
+                          : () => handleBlock(patient._id)}
+                      >
+                        {patient.isBlocked === true ? 'Unblock' : 'Block'}
                       </button>
                     </td>
                   </tr>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import DetailsModel from '../Doctor/DetailsModel';
+import { useSelector, useDispatch } from 'react-redux';
 import Sidebar from './Sidebar';
 import {
   FaSearch,
@@ -17,13 +18,15 @@ const Doctor = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
+  // const dispatch = useDispatch();
+  // const {isBlocked} = useSelector((state) => state.doctor);
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/admin/doctors');
         setDoctors(response.data);
         setFilteredDoctors(response.data);
+        console.log("api response", response.data);
       } catch (error) {
         console.error('Error fetching doctors:', error);
       }
@@ -31,14 +34,35 @@ const Doctor = () => {
     fetchDoctors();
   }, []);
 
+
+
   useEffect(() => {
     const result = doctors.filter((doctor) =>
       doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredDoctors(result);
-  }, [searchTerm, doctors])
-
+  }, [searchTerm, doctors]);
+  const handleBlock = async (doctorid) => {
+    try{
+    // dispatch(isBlocked(true));
+    console.log("doctorid=====", doctorid);
+    const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`);
+    console.log(response.data);
+  }catch(error){
+    console.log(error);
+  }
+  }
+  const handleUnblock = async (doctorid) => {
+    try{
+      // dispatch(isBlocked(false));
+      console.log("doctorid=====", doctorid);
+      const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`);
+      console.log(response.data);
+    }catch(error){
+      console.log(error);
+    }
+  }
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />
@@ -65,6 +89,9 @@ const Doctor = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    S.No
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Name
                   </th>
@@ -74,9 +101,9 @@ const Doctor = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Specialization
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
-                  </th>
+                  </th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Details
                   </th>
@@ -112,11 +139,11 @@ const Doctor = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{doctor.specialization}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 text-green-600 bg-green-100 rounded-full text-sm">
                         Active
                       </span>
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button 
                         onClick={() => {
@@ -128,13 +155,23 @@ const Doctor = () => {
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                      <button className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors">
-                        Block
-                      </button>
-                      <button className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors">
-                        Unblock
-                      </button>
-                    </td>
+                      {/* <button className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors" onClick={() =>handleBlock(doctor._id)}>
+                           {doctor.isBlocked === true ? 'Unblock' : 'Block'}
+                      </button> */}
+                    
+                    
+                      <button 
+                        className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
+                          doctor.isBlocked === true 
+                            ? 'bg-green-500 hover:bg-green-600' 
+                            : 'bg-red-500 hover:bg-red-600'
+                        }`} 
+                        onClick={doctor.isBlocked === true 
+                          ? () => handleUnblock(doctor._id) 
+                          : () => handleBlock(doctor._id)}
+                      >
+                        {doctor.isBlocked === true ? 'Unblock' : 'Block'}
+                      </button></td>
                   </tr>
                 ))}
               </tbody>
