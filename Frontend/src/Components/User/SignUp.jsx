@@ -105,6 +105,39 @@ const SignUp = () => {
           </div>
 
           <form className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
+            {/* Image Upload Section at top */}
+            <div className="text-center mb-6">
+              <div className="relative w-32 h-32 mx-auto mb-4">
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Profile preview"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-blue-200"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-blue-200">
+                    <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                )}
+                <label htmlFor="image" className="absolute bottom-0 right-0 bg-blue-500 rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    {...register("image")}
+                    onChange={(e) => handleImageUpload(e.target.files[0])}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {errors.image && <span className="text-red-500 text-sm">{errors.image.message}</span>}
+            </div>
+
             <div className="space-y-5">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
@@ -249,29 +282,7 @@ const SignUp = () => {
                 {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
               </div>
             </div>
-            <div className="space-y-4">
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                {...register("image")}
-                onChange={(e) => handleImageUpload(e.target.files[0])}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              {errors.image && <span className="text-red-500">{errors.image.message}</span>}
-
-              {/* Image Preview */}
-              {imagePreview && (
-                <div className="mt-4">
-                  <img
-                    src={imagePreview}
-                    alt="Profile preview"
-                    className="w-32 h-32 object-cover rounded-full mx-auto border-2 border-gray-200"
-                  />
-                </div>
-              )}
-            </div>
+            
             <div>
               <button
                 type="submit"
