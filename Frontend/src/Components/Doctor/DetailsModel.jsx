@@ -1,7 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+const DocumentViewModal = ({ isOpen, onClose, imageUrl, title }) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+      <div className="bg-white rounded-2xl w-full max-w-3xl">
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-4">
+          <img
+            src={imageUrl}
+            alt={title}
+            className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/800x600?text=No+Document';
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const DetailsModel = ({ isOpen, onClose, doctor }) => {
+  const [selectedDocument, setSelectedDocument] = useState(null);
+
   if (!isOpen || !doctor) return null;
+
+  const DocumentCard = ({ title, imageUrl }) => (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+        <h5 className="font-semibold text-gray-800">{title}</h5>
+        <button 
+          onClick={() => setSelectedDocument({ title, imageUrl })}
+          className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+        >
+          <span>View Document</span>
+          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </button>
+      </div>
+      <div className="p-4">
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-48 object-cover rounded-lg cursor-pointer"
+          onClick={() => setSelectedDocument({ title, imageUrl })}
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/300x200?text=No+Document';
+          }}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -113,59 +175,26 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Medical License */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                  <h5 className="font-semibold text-gray-800">Medical License</h5>
-                  <a 
-                    href={doctor.medicalLicense} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
-                  >
-                    <span>View Document</span>
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </div>
-                <div className="p-4">
-                  <img
-                    src={doctor.medicalLicense}
-                    alt="Medical License"
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              </div>
-
-              {/* ID Proof */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                  <h5 className="font-semibold text-gray-800">ID Proof</h5>
-                  <a 
-                    href={doctor.idProof} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
-                  >
-                    <span>View Document</span>
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </div>
-                <div className="p-4">
-                  <img
-                    src={doctor.idProof}
-                    alt="ID Proof"
-                    className="w-full h-48 object-cover rounded-lg"
-                  />
-                </div>
-              </div>
+              <DocumentCard
+                title="Medical License"
+                imageUrl={doctor.medicalLicense}
+              />
+              <DocumentCard
+                title="ID Proof"
+                imageUrl={doctor.idProof}
+              />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Document View Modal */}
+      <DocumentViewModal
+        isOpen={!!selectedDocument}
+        onClose={() => setSelectedDocument(null)}
+        imageUrl={selectedDocument?.imageUrl}
+        title={selectedDocument?.title}
+      />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import doctor from "../Model/doctorModel.js";
+
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import bcrypt from 'bcrypt';
 import {jwtToken} from '../utils/auth.js'
@@ -319,39 +320,44 @@ const resetPassword = async (req, res) => {
 
 
 
-// const resetPassword = async (req, res) => {
+// const doctorProfile = async (req, res) => {
 //     try {
-//         const { email, otp, newPassword } = req.body;
-
-//         // Validate input
-//         if (!email || !otp || !newPassword) {
-//             return res.status(400).json({ message: 'Email, OTP, and new password are required' });
+//         const doctorId = req.doctor._id;
+//         const doctor = await doctor.findById(doctorId).select('-password');
+//         if (!doctor) {
+//             return res.status(404).json({ message: 'Doctor not found' });
 //         }
-
-//         // Find user
-//         const doctorData = await doctor.findOne({ email });
-//         if (!doctorData) return res.status(404).json({ message: 'Doctor not found. Please register first.' });
-
-//         // Validate OTP
-//         if (doctorData.resetPasswordOtp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
-
-//         // Check OTP expiration
-//         if (doctorData.resetPasswordOtpExpires < Date.now()) return res.status(400).json({ message: 'OTP has expired' });
-
-//         // Hash and update password
-//         const hashedPassword = await bcrypt.hash(newPassword, 10);
-//         doctorData.password = hashedPassword;
-//         doctorData.resetPasswordOtp = undefined;
-//         doctorData.resetPasswordOtpExpires = undefined;
-//         await doctorData.save();
-
-//         res.status(200).json({ message: 'Password reset successful' });
+//         res.status(200).json({ doctor });
 //     } catch (error) {
-//         console.error('Error in resetPassword:', error);
-//         res.status(500).json({ message: 'Error processing request' });
+//         console.error('Error in doctorProfile:', error);
+//         res.status(500).json({ message: error.message });
 //     }
 // };
 
 
+const doctorProfile = async (req, res) => {
+    try {
+        const doctorId = req.params.id;
 
-export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword };
+        console.log("Doctor ID:", doctorId);
+
+
+        // const doctorData = await doctor.findOne({ email });
+
+        const doctorData = await doctor.findById(doctorId).select('-password');
+
+
+
+        console.log("Doctor Data:", doctorData);
+        if (!doctorData) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        res.status(200).json({ doctorData });
+    } catch (error) {
+        console.log("Error in doctofjnjnfjnjfnfjnjrProfile:", error);
+        console.error('Error in doctorProfile:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

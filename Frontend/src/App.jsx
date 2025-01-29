@@ -24,6 +24,7 @@ import ForgotPassword from './Components/Common/Forgot';
 import DcotorReve from './Components/Doctor/Protected/RevProtected';
 import AdminReve from './Components/admin/Protected/ReverseProtected';
 import Protected from './Components/User/UserProtcted/Protected';
+import Profile from './Components/Doctor/Profile';
 
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
@@ -64,6 +65,7 @@ const App = () => {
         <Route path="/doctor-login" element={<ProtectedRoute wrapper={DcotorReve}><DoctorLogin /></ProtectedRoute>} />
         <Route path="/before-verification" element={<ProtectedRoute wrapper={DcotorReve}><BeforeVerification /></ProtectedRoute>} />
         <Route path="/doctor-dashboard" element={<ProtectedRoute wrapper={DoctorProtected}><DoctorDash /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute wrapper={DoctorProtected}><Profile /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />

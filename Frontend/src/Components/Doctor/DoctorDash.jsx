@@ -3,7 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-// import { isBlocked } from '../../Components/redux/Features/DoctorSlice';
+import { 
+  MdDashboard, 
+  MdEventAvailable,
+  MdSchedule,
+  MdChat,
+  MdAccountBalanceWallet,
+  MdExitToApp 
+} from 'react-icons/md';
+
 const DoctorDash = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -14,7 +22,6 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        // const token = localStorage.getItem('doctortoken');
         const token = cookies.get('doctortoken');
         if (!token) {
           navigate('/doctor-login');
@@ -29,7 +36,6 @@ const DoctorDash = () => {
         });
     
         setDoctor(response.data.doctor);
-        // console.log(dispatch(isBlocked(response.data.doctor.isBlocked)));
         console.log(response.data.doctor);
         setLoading(false);
         if(response.data.doctor.isBlocked===true && response.data.doctor.isActive===true){
@@ -39,8 +45,6 @@ const DoctorDash = () => {
         }
       } catch (error) {
         console.log(error);
-        // localStorage.removeItem('doctortoken');
-
         cookies.remove('doctortoken');
         navigate('/doctor-login');
       }
@@ -50,9 +54,12 @@ const DoctorDash = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    // localStorage.removeItem('doctortoken');
     cookies.remove('doctortoken');
     navigate('/doctor-login');
+  };
+  const profileClick = (id) => {
+    console.log(id);
+    navigate(`/profile`,{state:{userId:id}});
   };
 
   if (loading) {
@@ -67,35 +74,42 @@ const DoctorDash = () => {
     { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
   ];
 
+  const sidebarItems = [
+    { icon: <MdDashboard className="w-6 h-6" />, text: 'Dashboard', active: true },
+    { icon: <MdEventAvailable className="w-6 h-6" />, text: 'Appointments' },
+    { icon: <MdSchedule className="w-6 h-6" />, text: 'Current Schedules' },
+    { icon: <MdChat className="w-6 h-6" />, text: 'Chats' },
+    { icon: <MdAccountBalanceWallet className="w-6 h-6" />, text: 'Wallet' },
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6 space-y-4">
-          <div className="bg-blue-500 text-white rounded-lg py-3 px-4 cursor-pointer">
-            Dashboard
-          </div>
-          <div className="hover:bg-gray-100 rounded-lg py-3 px-4 cursor-pointer transition-colors">
-            Appointments
-          </div>
-          <div className="hover:bg-gray-100 rounded-lg py-3 px-4 cursor-pointer transition-colors">
-            Current Schedules
-          </div>
-          <div className="hover:bg-gray-100 rounded-lg py-3 px-4 cursor-pointer transition-colors">
-            Chats
-          </div>
-          <div className="hover:bg-gray-100 rounded-lg py-3 px-4 cursor-pointer transition-colors">
-            Wallet
-          </div>
-          <div>
-          <button 
-              onClick={handleLogout}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          {sidebarItems.map((item, index) => (
+            <div
+              key={index}
+              className={`flex items-center space-x-3 ${
+                item.active
+                  ? 'bg-blue-500 text-white'
+                  : 'hover:bg-gray-100 text-gray-700'
+              } rounded-lg py-3 px-4 cursor-pointer transition-colors`}
             >
-              Logout
+              {item.icon}
+              <span>{item.text}</span>
+            </div>
+          ))}
+          
+          <div>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-colors"
+            >
+              <MdExitToApp className="w-6 h-6" />
+              <span>Logout</span>
             </button>
           </div>
-          
         </div>
       </div>
 
@@ -105,14 +119,14 @@ const DoctorDash = () => {
         <div className="flex justify-between items-center mb-8">
           <div className="text-xl font-semibold">Welcome, Dr. {doctor?.name}</div>
           <div className="flex items-center space-x-4">
-            {doctor?.image && (
+            {doctor?.profileImage && (
               <img
-                src={doctor.image}
+                src={doctor.profileImage}
                 alt="Profile"
                 className="w-10 h-10 rounded-full object-cover"
+                onClick={() => profileClick(doctor._id)}
               />
             )}
-            
           </div>
         </div>
 
