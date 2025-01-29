@@ -22,22 +22,87 @@ const generateAndSendOTP = async (user, email) => {
     return true;
 };
 
-const RegisterUser = async(req,res)=>{
-    try {
-        const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
-        // Check if user already exists and is active
-        const existingUser = await User.findOne({email});
-        if(existingUser.isBlocked===true && existingUser.isActive===true){
-            return res.status(400).json({message:"User is blocked"});
-        }
-        if(existingUser && existingUser.isActive){
-            return res.status(400).json({message:"User already exists"});
-        }
+// const RegisterUser = async(req,res)=>{
+//     try {
+//         const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
+//         // Check if user already exists and is active
+//         const existingUser = await User.findOne({email});
+//         if(existingUser.isBlocked===true && existingUser.isActive===true){
+//             return res.status(400).json({message:"User is blocked"});
+//         }
+//         if(existingUser && existingUser.isActive){
+//             return res.status(400).json({message:"User already exists"});
+//         }
         
+//         // Hash password
+//         const salt = await bcrypt.genSalt(10);
+//         const hashedPassword = await bcrypt.hash(password,salt);
+//         let user;
+//         if (existingUser) {
+//             // Update existing inactive user
+//             existingUser.name = name;
+//             existingUser.password = hashedPassword;
+//             existingUser.dateOfBirth = dateOfBirth;
+//             existingUser.phone = phone;
+//             existingUser.age = age;
+//             existingUser.gender = gender;
+//             existingUser.image = image;
+//             user = existingUser;
+//             console.log("Updated user:", user);
+//             console.log("Existing user:", existingUser);
+//         } else {
+//             // Create new user
+//             user = new User({
+//                 name,
+//                 email,
+//                 password: hashedPassword,
+//                 dateOfBirth,
+//                 phone,
+//                 age,
+//                 image,
+//                 gender,
+//                 isActive: false,
+//                 isBlocked:false
+//             });
+//         }
+//         // Generate and send OTP
+//         await generateAndSendOTP(user, email);
+        
+//         res.status(201).json({
+//             message: "Verification code sent to your email",
+//             email
+//         });
+//         console.log('register 1')
+//     } catch (error) {
+//         console.error('Error in RegisterUser:', error);
+//         res.status(500).json({error:error.message});
+//     }
+// }
+
+
+
+const RegisterUser = async (req, res) => {
+    try {
+        const { name, email, password, dateOfBirth, phone, age, gender, image } = req.body;
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) { 
+            // Ensure existingUser is not null before accessing properties
+            if (existingUser.isBlocked === true && existingUser.isActive === true) {
+                return res.status(400).json({ message: "User is blocked" });
+            }
+            if (existingUser.isActive) {
+                return res.status(400).json({ message: "User already exists" });
+            }
+        }
+
         // Hash password
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password,salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
         let user;
+
         if (existingUser) {
             // Update existing inactive user
             existingUser.name = name;
@@ -48,8 +113,6 @@ const RegisterUser = async(req,res)=>{
             existingUser.gender = gender;
             existingUser.image = image;
             user = existingUser;
-            console.log("Updated user:", user);
-            console.log("Existing user:", existingUser);
         } else {
             // Create new user
             user = new User({
@@ -61,22 +124,102 @@ const RegisterUser = async(req,res)=>{
                 age,
                 image,
                 gender,
-                isActive: false
+                isActive: false,
+                isBlocked: false
             });
         }
+
         // Generate and send OTP
         await generateAndSendOTP(user, email);
-        
+
         res.status(201).json({
             message: "Verification code sent to your email",
             email
         });
-        console.log('register 1')
     } catch (error) {
         console.error('Error in RegisterUser:', error);
-        res.status(500).json({error:error.message});
+        res.status(500).json({ error: error.message });
     }
-}
+};
+
+
+
+
+
+
+
+
+
+
+// const RegisterUser = async(req, res) => {
+//     try {
+//         const { name, email, password, dateOfBirth, phone, age, gender, image } = req.body;
+//         // Check if user already exists and is active
+//         const existingUser = await User.findOne({ email });
+        
+//         if (existingUser) {
+//             if (existingUser.isBlocked === true && existingUser.isActive === true) {
+//                 return res.status(400).json({ message: "User is blocked" });
+//             }
+//             if (existingUser.isActive) {
+//                 return res.status(400).json({ message: "User already exists" });
+//             }
+//         }
+        
+//         // Hash password
+//         const salt = await bcrypt.genSalt(10);
+//         const hashedPassword = await bcrypt.hash(password, salt);
+//         let user;
+        
+//         if (existingUser) {
+//             // Update existing inactive user
+//             existingUser.name = name;
+//             existingUser.password = hashedPassword;
+//             existingUser.dateOfBirth = dateOfBirth;
+//             existingUser.phone = phone;
+//             existingUser.age = age;
+//             existingUser.gender = gender;
+//             existingUser.image = image;
+//             user = existingUser;
+
+//             console.log("Updated user:", user);
+//             console.log("Existing user:", existingUser);
+//         } else {
+//             // Create new user
+//             user = new User({
+//                 name,
+//                 email,
+//                 password: hashedPassword,
+//                 dateOfBirth,
+//                 phone,
+//                 age,
+//                 image,
+//                 gender,
+//                 isActive: false,
+//                 isBlocked: false
+//             });
+//         }
+        
+//         // Generate and send OTP
+//         await generateAndSendOTP(user, email);
+        
+//         res.status(201).json({
+//             message: "Verification code sent to your email",
+//             email
+//         });
+//         console.log('register 1');
+//     } catch (error) {
+//         console.error('Error in RegisterUser:', error);
+//         res.status(500).json({ error: error.message });
+//     }
+// }
+
+
+
+
+
+
+
 const verifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
