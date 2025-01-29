@@ -40,6 +40,7 @@ import {setToken} from '../utils/auth.js';
         {
             return res.status(400).json({message:"this is rejeced user please contact admin"});
         }
+        
         if(existingUser && existingUser.isBlocked===true && existingUser.isActive===true){
             return res.status(400).json({message:"User is blocked"});
         }
