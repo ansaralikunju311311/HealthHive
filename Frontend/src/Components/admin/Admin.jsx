@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import cookies from 'js-cookie'
+import { toast } from 'react-toastify'
+
 const Admin = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('');
@@ -15,6 +17,11 @@ const Admin = () => {
             // localStorage.setItem('admintoken',response.data.adminToken);
             cookies.set('admintoken',response.data.adminToken);
              if (response.data.adminToken) {
+                toast.success('Login successful!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "colored"
+                });
                 navigate('/admin-dashboard');
              }
              else {
@@ -22,6 +29,11 @@ const Admin = () => {
              }
         } catch (error) {
             console.error('Login error:', error.response?.data?.message);
+            toast.error(error.response?.data?.message || 'Login failed', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored"
+            });
             setError(error.response?.data?.message || 'An error occurred');
         }
     }

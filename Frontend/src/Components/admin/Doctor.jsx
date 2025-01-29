@@ -10,6 +10,7 @@ import {
   FaChevronLeft,
   FaChevronRight
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
@@ -44,25 +45,42 @@ const Doctor = () => {
     setFilteredDoctors(result);
   }, [searchTerm, doctors]);
   const handleBlock = async (doctorid) => {
-    try{
-    // dispatch(isBlocked(true));
-    console.log("doctorid=====", doctorid);
-    const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`);
-    console.log(response.data);
-  }catch(error){
-    console.log(error);
-  }
-  }
-  const handleUnblock = async (doctorid) => {
-    try{
-      // dispatch(isBlocked(false));
-      console.log("doctorid=====", doctorid);
-      const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`);
-      console.log(response.data);
-    }catch(error){
-      console.log(error);
+    try {
+        const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`);
+        toast.error('Doctor has been blocked', {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+        });
+        setDoctors(doctors.map(doctor => 
+            doctor._id === doctorid ? {...doctor, isBlocked: true} : doctor
+        ));
+    } catch(error) {
+        toast.error('Failed to block doctor', {
+            position: "top-right",
+            autoClose: 3000
+        });
     }
-  }
+}
+
+const handleUnblock = async (doctorid) => {
+    try {
+        const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`);
+        toast.success('Doctor has been unblocked', {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+        });
+        setDoctors(doctors.map(doctor => 
+            doctor._id === doctorid ? {...doctor, isBlocked: false} : doctor
+        ));
+    } catch(error) {
+        toast.error('Failed to unblock doctor', {
+            position: "top-right",
+            autoClose: 3000
+        });
+    }
+}
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import cookies from 'js-cookie'
+import { toast } from 'react-toastify';
 import {
   FaUsers,
   FaUserMd,
@@ -38,12 +39,15 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
-    // const token = localStorage.getItem('admintoken');
     const token = cookies.get('admintoken');
     if(!token) {
-      navigate('/admin');
-      return;
+        toast.error('Please login to continue', {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+        });
+        navigate('/admin');
+        return;
     }
   }, [navigate]);
 

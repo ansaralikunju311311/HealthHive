@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 import {
   FaUsers,
   FaUserMd,
@@ -15,9 +16,14 @@ const Sidebar = ({ activePage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // localStorage.removeItem('admintoken');
     cookies.remove('admintoken');
+    // First navigate, then show toast
     navigate('/admin');
+    toast.error('Logged out successfully', {
+      position: "top-right",
+      autoClose: 3000,
+      theme: "colored"
+    });
   };
 
   const menuItems = [

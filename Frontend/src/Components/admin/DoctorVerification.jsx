@@ -16,6 +16,7 @@ import {
   FaChevronRight
 } from 'react-icons/fa';
 import DetailsModel from '../Doctor/DetailsModel';
+import { toast } from 'react-toastify';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
@@ -51,8 +52,12 @@ const DoctorVerification = () => {
   const handleApprove = async (doctorid) => {
     try {
       const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`);
-      console.log(response.data);
       if (response.data.doctor) {
+        toast.success('Doctor approved successfully', {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
         // Remove the approved doctor from both states
         const updatedDoctors = doctors.filter(doctor => doctor._id !== doctorid);
         setDoctors(updatedDoctors);
@@ -60,19 +65,33 @@ const DoctorVerification = () => {
       }
     } catch (error) {
       console.error("Error approving doctor:", error);
+      toast.error('Failed to approve doctor', {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   };
 
   const handleReject = async (doctorid) => {
     try {
       const response = await axios.put(`http://localhost:5000/api/admin/reject-doctor/${doctorid}`);
-      console.log(response.data);
+      toast.error('Doctor application rejected', {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
       // Remove the rejected doctor from both states
       const updatedDoctors = doctors.filter(doctor => doctor._id !== doctorid);
       setDoctors(updatedDoctors);
       setFilteredDoctors(prevFiltered => prevFiltered.filter(doctor => doctor._id !== doctorid));
     } catch (error) {
       console.error("Error rejecting doctor:", error);
+      toast.error('Failed to reject doctor', {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored"
+      });
     }
   };
 

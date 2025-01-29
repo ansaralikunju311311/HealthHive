@@ -5,6 +5,7 @@ import { FaSearch } from 'react-icons/fa';
 import Sidebar from './Sidebar';
 import PatientDetailsModal from './PatientDetailsModal';
 import cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -49,23 +50,42 @@ const Patients = () => {
     setFilteredPatients(results);
   }, [searchTerm, patients]);
    const handleBlock = async (patientid) => {
-    console.log("patientid=====", patientid);
     try {
-        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`)
-        console.log(response.data);
+        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`);
+        toast.error('Patient has been blocked', {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+        });
+        setPatients(patients.map(patient => 
+            patient._id === patientid ? {...patient, isBlocked: true} : patient
+        ));
     } catch (error) {
-      console.log(error);
+        toast.error('Failed to block patient', {
+            position: "top-right",
+            autoClose: 3000
+        });
     }
-   }
-   const handleUnblock = async (patientid) => {
-    console.log("patientid=====", patientid);
+}
+
+const handleUnblock = async (patientid) => {
     try {
-        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`)
-        console.log(response.data);
+        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`);
+        toast.success('Patient has been unblocked', {
+            position: "top-right",
+            autoClose: 3000,
+            theme: "colored"
+        });
+        setPatients(patients.map(patient => 
+            patient._id === patientid ? {...patient, isBlocked: false} : patient
+        ));
     } catch (error) {
-      console.log(error);
+        toast.error('Failed to unblock patient', {
+            position: "top-right",
+            autoClose: 3000
+        });
     }
-   }
+}
   const navigate = useNavigate();
 
   return (
