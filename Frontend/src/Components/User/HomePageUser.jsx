@@ -23,57 +23,54 @@ const HomePageUser = () => {
     console.log("useeffectvjfnjfnjnfjfjfjfjcalled");
     const verifyToken = async () => {
       try {
-        console.log("useeffefjnfngfjgnfjgnfjgnfjgnfjgnfjctvjfnjfnjnfjfjfjfjcalled");
-        // const token = localStorage.getItem('useraccessToken');
         const token = cookies.get('useraccessToken');
-        console.log("token from the cookie   home pahe=====",token);
         if (!token) {
-          toast.error('Please login to continue');
           navigate('/login');
           return;
         }
 
         const response = await axios.get('http://localhost:5000/api/user/verify-token', {
-       
-
           headers: {
             Authorization: `Bearer ${token}`
           },
-          withCredentials:true,
+          withCredentials: true,
         });
-        console.log("from the backend data",response.data.user)
+        
         setUserData(response.data.user);
-        // dispatch(setUser(response.data.user));
-        toast.success('Welcome back ' + response.data.user.name);
-        setLoading(false);
-        if(response.data.user.isBlocked===true && response.data.user.isActive===true){
+        setLoading(false); // Add this line to stop loading once data is received
+
+        if(response.data.user.isBlocked && response.data.user.isActive) {
           cookies.remove('useraccessToken');
+          toast.error('Your account has been blocked', {
+            backgroundColor: '#ef4444',
+            icon: '⛔'
+          });
           navigate('/login');
+          return;
         }
       } catch (error) {
-        console.error('Token verification failed:', error);
+        console.error("Auth error:", error); // Add this for debugging
         if (error.response?.status === 401) {
-          toast.error('Session expired. Please login again');
-          // dispatch(logout());
-          // localStorage.removeItem('useraccessToken');
           cookies.remove('useraccessToken');
           navigate('/login');
         }
         setError('Authentication failed');
-        toast.error('Authentication failed');
-        setLoading(false);
+        setLoading(false); // Add this to stop loading on error
       }
     };
     verifyToken();
   }, [dispatch, navigate]);
 
   const handleLogout = () => {
-    toast.success('Logged out successfully');
-    // dispatch(logout());
-    // localStorage.removeItem('useraccessToken');
     cookies.remove('useraccessToken');
+    toast.error('Logged out successfully', {
+      backgroundColor: '#ef4444',
+      icon: '👋'
+    });
     navigate('/');
   };
+
+  const navigationToasts = {};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -120,10 +117,7 @@ const HomePageUser = () => {
             {/* Center Navigation */}
             <div className="hidden md:flex flex-1 justify-center items-center space-x-12">
               <button 
-                onClick={() => {
-                  navigate('/home');
-                  toast.info('Welcome to Home');
-                }} 
+                onClick={() => navigate('/home')} 
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 hover:bg-blue-50 rounded-lg group"
               >
                 <FaHome className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -131,10 +125,7 @@ const HomePageUser = () => {
               </button>
               
               <button 
-                onClick={() => {
-                  navigate('/user/appointments');
-                  toast.info('Viewing appointments');
-                }} 
+                onClick={() => navigate('/user/appointments')} 
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 hover:bg-blue-50 rounded-lg group"
               >
                 <FaCalendarAlt className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -203,7 +194,6 @@ const HomePageUser = () => {
                     onClick={() => {
                       navigate('/user/profile');
                       setIsProfileOpen(false);
-                      toast.info('Navigating to profile settings');
                     }}
                     className="flex items-center justify-between w-full px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors"
                   >
@@ -219,7 +209,6 @@ const HomePageUser = () => {
                     onClick={() => {
                       navigate('/user/medical-records');
                       setIsProfileOpen(false);
-                      toast.info('Viewing medical records');
                     }}
                     className="flex items-center justify-between w-full px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors"
                   >
@@ -258,20 +247,14 @@ const HomePageUser = () => {
         <div className="md:hidden border-t border-gray-100">
           <div className="px-2 py-3 space-y-1">
             <button 
-              onClick={() => {
-                navigate('/home');
-                toast.info('Welcome to Home');
-              }}
+              onClick={() => navigate('/home')}
               className="flex items-center space-x-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
             >
               <FaHome className="h-5 w-5" />
               <span>Home</span>
             </button>
             <button 
-              onClick={() => {
-                navigate('/user/appointments');
-                toast.info('Viewing appointments');
-              }}
+              onClick={() => navigate('/user/appointments')}
               className="flex items-center space-x-2 w-full px-4 py-2 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors"
             >
               <FaCalendarAlt className="h-5 w-5" />
@@ -414,9 +397,9 @@ const HomePageUser = () => {
 
       {/* Health Tips */}
       <div className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Health Tips & Resources</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Health Tips & Resources</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
                 title: "COVID-19 Updates",
@@ -431,10 +414,10 @@ const HomePageUser = () => {
                 description: "Resources and support for maintaining good mental health and managing stress."
               }
             ].map((tip, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{tip.title}</h3>
-                <p className="text-gray-600">{tip.description}</p>
-                <button className="mt-4 text-blue-600 hover:text-blue-800">Learn More →</button>
+              <div key={index} class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">{tip.title}</h3>
+                <p class="text-gray-600">{tip.description}</p>
+                <button class="mt-4 text-blue-600 hover:text-blue-800">Learn More →</button>
               </div>
             ))}
           </div>
@@ -442,27 +425,27 @@ const HomePageUser = () => {
       </div>
 
       {/* Stay Connected Form */}
-      <div className="py-16 bg-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-8">Stay connected with us</h2>
-            <form className="space-y-4">
+      <div class="py-16 bg-blue-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="max-w-md mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Stay connected with us</h2>
+            <form class="space-y-4">
               <input
                 type="email"
                 placeholder="Email Address"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
+                class="w-full px-4 py-2 rounded-md text-gray-900"
               />
               <input
                 type="text"
                 placeholder="Subject"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
+                class="w-full px-4 py-2 rounded-md text-gray-900"
               />
               <textarea
                 placeholder="Your Message"
                 rows="4"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
+                class="w-full px-4 py-2 rounded-md text-gray-900"
               ></textarea>
-              <button type="submit" className="w-full bg-white text-blue-600 px-6 py-3 rounded-md hover:bg-gray-100">
+              <button type="submit" class="w-full bg-white text-blue-600 px-6 py-3 rounded-md hover:bg-gray-100">
                 Submit
               </button>
             </form>
@@ -471,16 +454,16 @@ const HomePageUser = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">HealthHive</h3>
-              <p className="text-gray-400">Your trusted healthcare partner</p>
+              <h3 class="text-lg font-semibold mb-4">HealthHive</h3>
+              <p class="text-gray-400">Your trusted healthcare partner</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 class="text-lg font-semibold mb-4">Services</h3>
+              <ul class="space-y-2 text-gray-400">
                 <li>Emergency Care</li>
                 <li>Dental Care</li>
                 <li>Primary Care</li>
@@ -488,23 +471,23 @@ const HomePageUser = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
-              <ul className="space-y-2 text-gray-400">
+              <h3 class="text-lg font-semibold mb-4">Contact</h3>
+              <ul class="space-y-2 text-gray-400">
                 <li>Email: info@healthhive.com</li>
                 <li>Phone: (123) 456-7890</li>
                 <li>Address: 123 Medical Center Dr</li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" className="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" className="text-gray-400 hover:text-white">LinkedIn</a>
+              <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+              <div class="flex space-x-4">
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+                <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
               </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
             <p>&copy; {new Date().getFullYear()} HealthHive. All rights reserved.</p>
           </div>
         </div>

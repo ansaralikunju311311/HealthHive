@@ -311,7 +311,9 @@ const LoginUser = async(req,res)=>{
                 email:user.email,
                 name:user.name,
                 phone:user.phone,
-                dateOfBirth:user.dateOfBirth
+                dateOfBirth:user.dateOfBirth,
+                isActive:user.isActive,
+                
             },
             userToken: userToken
         });

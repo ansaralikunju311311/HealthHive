@@ -37,13 +37,10 @@ const App = () => {
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+        progress={undefined}
       />
 
       <Routes>

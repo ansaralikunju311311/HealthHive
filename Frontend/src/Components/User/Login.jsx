@@ -19,24 +19,34 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/login', data);
 
-      // if (response.data.blocked) {
-      //   toast.error('Your account has been blocked. Please contact support.');
-      //   return;
-      // }
-
-      // localStorage.setItem('useraccessToken', response.data.userToken)
-      cookies.set('useraccessToken', response.data.userToken)
-      // dispatch(setUser(response.data.user));
-      // dispatch(setToken(response.data.userToken));
-      toast.success('Login successful! Welcome back.');
-      navigate('/home');
-    } catch (error) {
-      console.error('Login error:', error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error('Login failed. Please try again.');
+      if (response.data.user.isBlocked) {
+        toast.error('Your account has been blocked. Please contact support.', {
+          backgroundColor: '#ef4444',
+          icon: '⛔'
+        });
+        return;
       }
+
+      if (!response.data.user.isActive) {
+        toast.error('Please verify your email first');
+        return;
+      }
+
+      // Make sure to set the cookie before navigation
+      cookies.set('useraccessToken', response.data.userToken);
+      
+      toast.success('Welcome back!', {
+        backgroundColor: '#22c55e',
+        icon: '👋'
+      });
+
+      // Add a small delay before navigation to ensure cookie is set
+      setTimeout(() => {
+        navigate('/home');
+      }, 100);
+      
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Login failed');
     }
   };
 
@@ -110,7 +120,7 @@ const Login = () => {
 
                 <div className="text-sm">
                   <p>
-                    <Link to="/demoforgot-password" onClick={() => toast.info('Redirecting to password reset')}>
+                    <Link to="/demoforgot-password">
                       Forgot password?
                     </Link>
                   </p>
@@ -130,10 +140,7 @@ const Login = () => {
             <div className="text-center text-sm">
               <span className="text-gray-600">Don't have an account?</span>
               <button
-                onClick={() => {
-                  navigate('/signup');
-                  toast.info('Redirecting to signup page');
-                }}
+                onClick={() => navigate('/signup')}
                 className="ml-2 font-medium text-blue-600 hover:text-blue-500"
               >
                 Sign up

@@ -15,17 +15,22 @@ const SignUp = () => {
   const handleImageUpload = async (file) => {
     if (!file) return;
     try {
-      // Create a preview URL
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+      
+      // Set preview immediately when file is selected
       setImagePreview(URL.createObjectURL(file));
-
+      
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", 'testing');
       const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload', data);
-      const imageUrl = response.data.url;
-      setImage(imageUrl)
+      setImage(response.data.url);
     } catch (error) {
-      console.log(error)
+      toast.error('Failed to upload image');
+      setImagePreview(null); // Clear preview on error
     }
   }
 
@@ -36,20 +41,15 @@ const SignUp = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/user/signup', {
+      await axios.post('http://localhost:5000/api/user/signup', {
         ...data,
         image: image
       });
-    console.log('signup 1')
-      toast.success('Registration successful! Please verify your email.');
+
+      toast.success('Account created successfully!');
       navigate('/generate-otp', { state: { email: data.email } });
     } catch (error) {
-      console.error('Registration error:', error);
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error('Registration failed. Please try again.');
-      }
+      toast.error(error.response?.data?.message || 'Registration failed');
     }
   };
 
@@ -284,10 +284,7 @@ const SignUp = () => {
             <div className="text-center text-sm">
               <span className="text-gray-600">Already have an account?</span>
               <button
-                onClick={() => {
-                  navigate('/login');
-                  toast.info('Redirecting to login page');
-                }}
+                onClick={() => navigate('/login')}
                 className="ml-2 font-medium text-blue-600 hover:text-blue-500"
               >
                 Sign in
