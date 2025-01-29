@@ -165,63 +165,144 @@ import {setToken} from '../utils/auth.js';
     }
 };
 
+// const fetchDoctors = async (req, res) => {
+//     try {
+//         const { email } = req.query;
+//         if (!email) {
+//             return res.status(400).json({ message: "Email is required" });
+//         }
+//         const doctorData = await doctor.findOne({ email});
+//         if (doctorData.isActive===true) {
+//             return res.status(200).json({ 
+//                 isVerified: true,
+//                 doctor: doctorData 
+//             });
+//         }
+//         else if(doctorData.isActive===false){
+//             return res.status(200).json({ 
+//                 isVerified: false,
+//                 message: "Your account is pending verification" 
+//             });
+
+
+//         }
+//         const rejectedDoctor = await RejectedDoctor.findOne({ email });
+//         if(rejectedDoctor){
+//             return res.status(200).json({
+//                 isRejected: true,
+//                 message: "Your registration has been rejected"
+//             });
+        
+//         // Check if doctor exists but is not verified
+//         // const pendingDoctor = await doctor.findOne({ email, isActive: false });
+//         // if (pendingDoctor) {
+//         //     return res.status(200).json({ 
+//         //         isVerified: false,
+//         //         message: "Your account is pending verification" 
+//         //     });
+//         // }
+//         return res.status(404).json({ 
+//             isVerified: false,
+//             message: "Doctor not found" 
+//         });
+//     }  catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const fetchDoctors = async (req, res) => {
     try {
         const { email } = req.query;
         if (!email) {
             return res.status(400).json({ message: "Email is required" });
         }
-        const doctorData = await doctor.findOne({ email, isActive: true });
-        if (doctorData) {
+
+        // Check if the doctor exists in rejected list first
+        const rejectedDoctor = await RejectedDoctor.findOne({ email });
+        if (rejectedDoctor) {
+            return res.status(200).json({
+                isRejected: true,
+                message: "Your registration has been rejected. Please contact the admin."
+            });
+        }
+
+        // Fetch the doctor from the main collection
+        const doctorData = await doctor.findOne({ email });
+        if (!doctorData) {
+            return res.status(404).json({ 
+                isVerified: false,
+                message: "Doctor not found. Please register first." 
+            });
+        }
+
+        // Check activation status
+        if (doctorData.isActive === true) {
             return res.status(200).json({ 
                 isVerified: true,
                 doctor: doctorData 
             });
-        }
-        // Check if doctor exists but is not verified
-        const pendingDoctor = await doctor.findOne({ email, isActive: false });
-        if (pendingDoctor) {
+        } 
+        
+        if (doctorData.isActive === false) {
             return res.status(200).json({ 
                 isVerified: false,
-                message: "Your account is pending verification" 
+                message: "Your account is pending verification." 
             });
         }
-        return res.status(404).json({ 
-            isVerified: false,
-            message: "Doctor not found" 
-        });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Error in fetchDoctors:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
-const forgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
-        
-        // Find user
-        const doctorData = await doctor.findOne({ email });
-        const rejectedDoctor = await RejectedDoctor.findOne({ email });
-        if (!doctorData) {
-            return res.status(404).json({ message: 'Doctor not found. Please register first.' });
+};
+
+    async function forgotPassword(req, res) {
+        try {
+            const { email } = req.body;
+
+            // Find user
+            const doctorData = await doctor.findOne({ email });
+            const rejectedDoctor = await RejectedDoctor.findOne({ email });
+            if (!doctorData) {
+                return res.status(404).json({ message: 'Doctor not found. Please register first.' });
+            }
+            if (!doctorData.isActive) {
+                return res.status(403).json({ message: 'Your account is not active. Please contact the admin.' });
+            }
+            if (rejectedDoctor) {
+                return res.status(403).json({ message: 'Your account is rejected. Please contact the admin.' });
+            }
+            if (doctorData.isBlocked === true) {
+                return res.status(403).json({ message: 'Your account is blocked. Please contact the admin.' });
+            }
+            // Generate and send OTP
+            await generateAndSendOTP(doctorData, email);
+
+            res.status(200).json({
+                message: "Verification code sent to your email",
+                email
+            });
+        } catch (error) {
+            console.error('Error in forgotPassword:', error);
+            res.status(500).json({ message: error.message });
         }
-        if(!doctorData.isActive){
-            return res.status(403).json({ message: 'Your account is not active. Please contact the admin.' });
-        }
-       if(rejectedDoctor){
-        return res.status(403).json({ message: 'Your account is rejected. Please contact the admin.' });
-       }
-        // Generate and send OTP
-        await generateAndSendOTP(doctorData, email);
-        
-        res.status(200).json({
-            message: "Verification code sent to your email",
-            email
-        });
-    } catch (error) {
-        console.error('Error in forgotPassword:', error);
-        res.status(500).json({ message: error.message });
     }
-}
 
 
 
