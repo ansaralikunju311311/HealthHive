@@ -6,11 +6,41 @@ import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 
 const SignUp = () => {
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
+  const { register, handleSubmit, formState: { errors }, getValues, setValue } = useForm();
   const navigate = useNavigate();
 
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [calculatedAge, setCalculatedAge] = useState("");
+
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return;
+    
+    const birth = new Date(birthDate);
+    const today = new Date();
+    
+    let years = today.getFullYear() - birth.getFullYear();
+    let months = today.getMonth() - birth.getMonth();
+    let days = today.getDate() - birth.getDate();
+    
+    // Adjust for negative days
+    if (days < 0) {
+      months--;
+      // Get the last day of the previous month
+      const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+      days += lastMonth.getDate();
+    }
+    
+    // Adjust for negative months
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    
+    const ageString = `${years} years, ${months} months, ${days} days`;
+    setCalculatedAge(ageString);
+    setValue('age', ageString); // Update the form value
+  };
 
   const handleImageUpload = async (file) => {
     if (!file) return;
@@ -201,20 +231,11 @@ const SignUp = () => {
               <div>
                 <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
                 <input
-                  type="number"
+                  type="text"
                   id="age"
-                  {...register("age", {
-                    required: "Age is required",
-                    min: {
-                      value: 1,
-                      message: "Age must be at least 1"
-                    },
-                    max: {
-                      value: 120,
-                      message: "Age must be less than 120"
-                    }
-                  })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  readOnly
+                  value={calculatedAge}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-md shadow-sm"
                 />
                 {errors.age && <p className="text-red-500">{errors.age.message}</p>}
               </div>
@@ -241,8 +262,10 @@ const SignUp = () => {
                 <input
                   type="date"
                   id="dateOfBirth"
+                  max={new Date().toISOString().split('T')[0]} // Prevents future dates
                   {...register("dateOfBirth", {
-                    required: "Date of birth is required"
+                    required: "Date of birth is required",
+                    onChange: (e) => calculateAge(e.target.value)
                   })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
