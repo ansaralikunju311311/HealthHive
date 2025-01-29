@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import axios from 'axios'
-// import { useDispatch } from 'react-redux'
-// import { setDoctor,} from '../../Components/redux/Features/doctorSlice';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
     const [profileImageUrl, setProfileImageUrl] = useState('');
@@ -17,13 +16,17 @@ const SignUp = () => {
     const [profilePreview, setProfilePreview] = useState('');
     const [licensePreview, setLicensePreview] = useState('');
     const [idProofPreview, setIdProofPreview] = useState('');
-//    const dispatch = useDispatch();
     const { register, handleSubmit, formState: { errors }, getValues } = useForm()
     const navigate = useNavigate()
 
     const handleImageUpload = async (file, type) => {
         if (!file) return;
         
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('File size should be less than 5MB');
+            return;
+        }
+
         // Create local preview
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -66,7 +69,7 @@ const SignUp = () => {
                     break;
             }
         } catch(error) {
-            console.log('Error uploading image:', error);
+            toast.error('Failed to upload image');
             // Reset preview on error
             switch(type) {
                 case 'profile':
@@ -90,7 +93,7 @@ const SignUp = () => {
         try {
             // Check if all required images are uploaded
             if (!profileImageUrl || !medicalLicenseUrl || !idProofUrl) {
-                console.log('Please upload all required images');
+                toast.error('Please upload all required documents');
                 return;
             }
 
@@ -109,22 +112,21 @@ const SignUp = () => {
                 idProof: idProofUrl,
 
             });
-            // dispatch(setDoctor(response.data.user));
             console.log("responnse come backend",response.data);
             console.log("debuggin isActivate======",response.data.user.isActive)
-    console.log("user details======",response.data.user);
+            console.log("user details======",response.data.user);
             
             if(response.data.user.isActive===false){
+                toast.success('Account created! Please wait for admin verification.');
                 navigate('/before-verification', { state: { email: data.email } });
             }
             else{
+                toast.success('Account created successfully!');
                 navigate('/doctor-login');
             }
             
-            // Navigate to login on successful signup
-            
         } catch(error) {
-            console.log('Error during signup:', error);
+            toast.error(error.response?.data?.message || 'Registration failed');
         }
     }
 

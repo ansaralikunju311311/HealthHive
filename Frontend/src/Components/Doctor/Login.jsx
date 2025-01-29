@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import cookies from 'js-cookie'
+import { toast } from 'react-toastify';
+
 const Login = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('');
@@ -12,17 +14,25 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:5000/api/doctor/login', data)
             console.log(response.data)
-            if (response.data.doctor.isActive===false) {
-                navigate('/before-verification')
-            }
-            else {
-                // localStorage.setItem('doctortoken',response.data.token);
-                cookies.set('doctortoken',response.data.token);
+            if (response.data.doctor.isActive === false) {
+                toast.error('Your account is pending verification');
+                navigate('/before-verification');
+            } else if (response.data.doctor.isBlocked) {
+                toast.error('Your account has been blocked. Please contact support.', {
+                    icon: '⛔',
+                    backgroundColor: '#ef4444'
+                });
+                return;
+            } else {
+                cookies.set('doctortoken', response.data.token);
+                toast.success('Welcome back, Dr. ' + response.data.doctor.name, {
+                    icon: '👋',
+                    backgroundColor: '#22c55e'
+                });
                 navigate('/doctor-dashboard');
             }
         } catch (error) {
-            console.log('Error:', error.response?.data?.message);
-            setError(error.response?.data?.message || 'An error occurred');
+            toast.error(error.response?.data?.message || 'Login failed');
         }
     }
 

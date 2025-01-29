@@ -11,6 +11,7 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -41,11 +42,16 @@ const DoctorDash = () => {
         if(response.data.doctor.isBlocked===true && response.data.doctor.isActive===true){
           dispatch(isBlocked(true));
           cookies.remove('doctortoken');
-            navigate('/doctor-login');
+          toast.error('Your account has been blocked', {
+            icon: '⛔',
+            backgroundColor: '#ef4444'
+          });
+          navigate('/doctor-login');
         }
       } catch (error) {
         console.log(error);
         cookies.remove('doctortoken');
+        toast.error('Session expired. Please login again');
         navigate('/doctor-login');
       }
     };
@@ -55,6 +61,9 @@ const DoctorDash = () => {
 
   const handleLogout = () => {
     cookies.remove('doctortoken');
+    toast.info('You have been logged out', {
+      icon: '👋'
+    });
     navigate('/doctor-login');
   };
   const profileClick = (id) => {
