@@ -25,7 +25,7 @@ const AdminProtected = ({ children }) => {
                 if (response.data.admin) {
                     setVerified(true);
                 } else {
-                    // localStorage.removeItem('admintoken');
+                   
                     cookies.remove('admintoken');
                     navigate('/admin');
                 }

@@ -52,13 +52,13 @@ const BeforeVerification = () => {
       }
     };
 
-    // Initial check
+    
     checkVerificationStatus();
 
-    // Set up polling every 5 seconds
+    
     intervalId = setInterval(checkVerificationStatus, 5000);
 
-    // Cleanup function to clear interval when component unmounts
+    
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
@@ -127,7 +127,6 @@ const BeforeVerification = () => {
                   Please note:
                 </p>
                 <ul className="space-y-2 text-left list-disc list-inside">
-                  <li>You can apply again after 30 days from today</li>
                   <li>Make sure to provide accurate and complete documentation</li>
                   <li>Ensure all credentials are valid and up-to-date</li>
                 </ul>

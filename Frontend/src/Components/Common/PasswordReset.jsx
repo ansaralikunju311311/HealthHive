@@ -26,12 +26,6 @@ const ResetPassword = () => {
       heading: "text-white",
       textColor: "text-gray-300"
     },
-    admin: {
-      background: "bg-gradient-to-br from-gray-800 to-gray-900",
-      button: "bg-red-600 hover:bg-red-700",
-      heading: "text-white",
-      textColor: "text-gray-300"
-    }
   };
 
   const theme = themeConfig[userType] || themeConfig.user;
@@ -42,7 +36,6 @@ const ResetPassword = () => {
       const endpointMap = {
         'user': 'http://localhost:5000/api/user/reset-password',
         'doctor': 'http://localhost:5000/api/doctor/reset-password',
-        'admin': 'http://localhost:5000/api/admin/reset-password'
       };
 
       const endpoint = endpointMap[userType] || endpointMap.user;
@@ -59,7 +52,6 @@ const ResetPassword = () => {
       const loginRoutes = {
         'user': '/login',
         'doctor': '/doctor-login',
-        'admin': '/admin/login'
       };
 
       navigate(loginRoutes[userType] || '/login');

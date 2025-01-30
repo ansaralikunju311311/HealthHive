@@ -91,11 +91,7 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* {error && (
-                        <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
-                            <p className="text-red-500 text-center">{error}</p>
-                        </div>
-                    )} */}
+                   
 
                     <div className="flex items-center justify-between">
                         <div className="text-sm">

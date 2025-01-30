@@ -157,11 +157,7 @@ const handleUnblock = async (doctorid) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{doctor.specialization}</div>
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-green-600 bg-green-100 rounded-full text-sm">
-                        Active
-                      </span>
-                    </td> */}
+                   
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button 
                         onClick={() => {
@@ -173,9 +169,7 @@ const handleUnblock = async (doctorid) => {
                       </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                      {/* <button className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors" onClick={() =>handleBlock(doctor._id)}>
-                           {doctor.isBlocked === true ? 'Unblock' : 'Block'}
-                      </button> */}
+                     
                     
                     
                       <button 

@@ -71,6 +71,7 @@ const Patients = () => {
 const handleUnblock = async (patientid) => {
     try {
         const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`);
+        console.log(response);
         toast.success('Patient has been unblocked', {
             position: "top-right",
             autoClose: 3000,

@@ -12,7 +12,6 @@ const For = () => {
   const getUserType = () => {
     const path = location.pathname;
     if (path === '/doctor/forgotpassword') return 'doctor';
-    if (path === '/admin/forgotpassword') return 'admin';
     return 'user';
   };
 
