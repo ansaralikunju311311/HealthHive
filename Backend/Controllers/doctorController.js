@@ -399,24 +399,6 @@ const resetPassword = async (req, res) => {
     }
 };
 
-
-
-
-// const doctorProfile = async (req, res) => {
-//     try {
-//         const doctorId = req.doctor._id;
-//         const doctor = await doctor.findById(doctorId).select('-password');
-//         if (!doctor) {
-//             return res.status(404).json({ message: 'Doctor not found' });
-//         }
-//         res.status(200).json({ doctor });
-//     } catch (error) {
-//         console.error('Error in doctorProfile:', error);
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
-
 const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;

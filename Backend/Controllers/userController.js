@@ -22,80 +22,7 @@ const generateAndSendOTP = async (user, email) => {
     return true;
 };
 
-// const RegisterUser = async(req,res)=>{
-//     try {
-//         const {name,email,password,dateOfBirth,phone,age,gender,image} = req.body;
-//         // Check if user already exists and is active
-//         const existingUser = await User.findOne({email});
-//         if(existingUser.isBlocked===true && existingUser.isActive===true){
-//             return res.status(400).json({message:"User is blocked"});
-//         }
-//         if(existingUser && existingUser.isActive){
-//             return res.status(400).json({message:"User already exists"});
-//         }
-        
-//         // Hash password
-//         const salt = await bcrypt.genSalt(10);
-//         const hashedPassword = await bcrypt.hash(password,salt);
-//         let user;
-//         if (existingUser) {
-//             // Update existing inactive user
-//             existingUser.name = name;
-//             existingUser.password = hashedPassword;
-//             existingUser.dateOfBirth = dateOfBirth;
-//             existingUser.phone = phone;
-//             existingUser.age = age;
-//             existingUser.gender = gender;
-//             existingUser.image = image;
-//             user = existingUser;
-//             console.log("Updated user:", user);
-//             console.log("Existing user:", existingUser);
-//         } else {
-//             // Create new user
-//             user = new User({
-//                 name,
-//                 email,
-//                 password: hashedPassword,
-//                 dateOfBirth,
-//                 phone,
-//                 age,
-//                 image,
-//                 gender,
-//                 isActive: false,
-//                 isBlocked:false
-//             });
-//         }
-//         // Generate and send OTP
-//         await generateAndSendOTP(user, email);
-        
-//         res.status(201).json({
-//             message: "Verification code sent to your email",
-//             email
-//         });
-//         console.log('register 1')
-//     } catch (error) {
-//         console.error('Error in RegisterUser:', error);
-//         res.status(500).json({error:error.message});
-//     }
-// }
-
-
-
-
-// const calculateAge = (dob) => {
-//     const birthDate = new Date(dob);
-//     const today = new Date();
-//     let age = today.getFullYear() - birthDate.getFullYear();
-//     const monthDiff = today.getMonth() - birthDate.getMonth();
-
-//     // Adjust age if birthday hasn't occurred yet this year
-//     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-//         age--;
-//     }
-
-//     return age;
-// };
-
+// Register user
 const RegisterUser = async (req, res) => {
     try {
         const { name, email, password, dateOfBirth, phone, age, gender, image } = req.body;
@@ -157,84 +84,7 @@ const RegisterUser = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-// const RegisterUser = async(req, res) => {
-//     try {
-//         const { name, email, password, dateOfBirth, phone, age, gender, image } = req.body;
-//         // Check if user already exists and is active
-//         const existingUser = await User.findOne({ email });
-        
-//         if (existingUser) {
-//             if (existingUser.isBlocked === true && existingUser.isActive === true) {
-//                 return res.status(400).json({ message: "User is blocked" });
-//             }
-//             if (existingUser.isActive) {
-//                 return res.status(400).json({ message: "User already exists" });
-//             }
-//         }
-        
-//         // Hash password
-//         const salt = await bcrypt.genSalt(10);
-//         const hashedPassword = await bcrypt.hash(password, salt);
-//         let user;
-        
-//         if (existingUser) {
-//             // Update existing inactive user
-//             existingUser.name = name;
-//             existingUser.password = hashedPassword;
-//             existingUser.dateOfBirth = dateOfBirth;
-//             existingUser.phone = phone;
-//             existingUser.age = age;
-//             existingUser.gender = gender;
-//             existingUser.image = image;
-//             user = existingUser;
-
-//             console.log("Updated user:", user);
-//             console.log("Existing user:", existingUser);
-//         } else {
-//             // Create new user
-//             user = new User({
-//                 name,
-//                 email,
-//                 password: hashedPassword,
-//                 dateOfBirth,
-//                 phone,
-//                 age,
-//                 image,
-//                 gender,
-//                 isActive: false,
-//                 isBlocked: false
-//             });
-//         }
-        
-//         // Generate and send OTP
-//         await generateAndSendOTP(user, email);
-        
-//         res.status(201).json({
-//             message: "Verification code sent to your email",
-//             email
-//         });
-//         console.log('register 1');
-//     } catch (error) {
-//         console.error('Error in RegisterUser:', error);
-//         res.status(500).json({ error: error.message });
-//     }
-// }
-
-
-
-
-
-
-
+// Verify OTP
 const verifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
@@ -260,11 +110,7 @@ const verifyOtp = async(req,res)=>{
         user.otp = undefined;
         user.otpExpiresAt = undefined;
         
-        // Generate token
-        // const userAccessToken = accessToken(user);
-        // const userRefreshToken = refreshToken(user);
-        // const userToken = jwtToken(user);
-        //console.log("userToken=====",userToken);
+        // Generate tokens
         const token = setToken(user,res);
 
 
@@ -315,9 +161,6 @@ const LoginUser = async(req,res)=>{
         }
         
         // Generate tokens
-        // const userAccessToken = accessToken(user);
-        // const userRefreshToken = refreshToken(user);
-        //    const userToken = jwtToken(user);
         const userToken = setToken(user,res);
         res.status(200).json({
             message:"Login successful",

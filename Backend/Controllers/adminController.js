@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
 
-// const jwtSecret = 'your_jwt_secret'; // Replace with your secret key
+
 
  const LoginAdmin = async (req, res) => {
     try {
@@ -24,7 +24,7 @@ import {setToken} from '../utils/auth.js';
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        // const adminToken = jwtToken(existingAdmin);
+    
            const adminToken = setToken(existingAdmin,res);
         // Send response
         res.status(200).json({
