@@ -26,6 +26,7 @@ const DocumentViewModal = ({ isOpen, onClose, imageUrl, title }) => {
               e.target.src = 'https://via.placeholder.com/800x600?text=No+Document';
             }}
           />
+
         </div>
       </div>
     </div>
@@ -36,8 +37,8 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
   const [selectedDocument, setSelectedDocument] = useState(null);
 
   if (!isOpen || !doctor) return null;
-
   const DocumentCard = ({ title, imageUrl }) => (
+    
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-4 border-b border-gray-100 flex justify-between items-center">
         <h5 className="font-semibold text-gray-800">{title}</h5>

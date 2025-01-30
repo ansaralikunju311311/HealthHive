@@ -165,67 +165,6 @@ import {setToken} from '../utils/auth.js';
     }
 };
 
-// const fetchDoctors = async (req, res) => {
-//     try {
-//         const { email } = req.query;
-//         if (!email) {
-//             return res.status(400).json({ message: "Email is required" });
-//         }
-//         const doctorData = await doctor.findOne({ email});
-//         if (doctorData.isActive===true) {
-//             return res.status(200).json({ 
-//                 isVerified: true,
-//                 doctor: doctorData 
-//             });
-//         }
-//         else if(doctorData.isActive===false){
-//             return res.status(200).json({ 
-//                 isVerified: false,
-//                 message: "Your account is pending verification" 
-//             });
-
-
-//         }
-//         const rejectedDoctor = await RejectedDoctor.findOne({ email });
-//         if(rejectedDoctor){
-//             return res.status(200).json({
-//                 isRejected: true,
-//                 message: "Your registration has been rejected"
-//             });
-        
-//         // Check if doctor exists but is not verified
-//         // const pendingDoctor = await doctor.findOne({ email, isActive: false });
-//         // if (pendingDoctor) {
-//         //     return res.status(200).json({ 
-//         //         isVerified: false,
-//         //         message: "Your account is pending verification" 
-//         //     });
-//         // }
-//         return res.status(404).json({ 
-//             isVerified: false,
-//             message: "Doctor not found" 
-//         });
-//     }  catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const fetchDoctors = async (req, res) => {
     try {
         const { email } = req.query;

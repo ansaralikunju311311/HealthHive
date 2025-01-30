@@ -118,11 +118,11 @@ const SignUp = () => {
             
             if(response.data.user.isActive===false){
                 toast.success('Account created! Please wait for admin verification.');
-                navigate('/before-verification', { state: { email: data.email } });
+                navigate('/beforeverification', { state: { email: data.email } });
             }
             else{
                 toast.success('Account created successfully!');
-                navigate('/doctor-login');
+                navigate('/doctor/login');
             }
             
         } catch(error) {
@@ -440,7 +440,7 @@ const SignUp = () => {
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <button
                                 type="button"
-                                onClick={() => navigate('/doctor-login')}
+                                onClick={() => navigate('/doctor/login')}
                                 className="text-purple-300 hover:text-purple-400 transition-colors"
                             >
                                 Already have an account? Sign in

@@ -12,7 +12,7 @@ const For = () => {
   const getUserType = () => {
     const path = location.pathname;
     if (path === '/doctor/forgotpassword') return 'doctor';
-    return 'user';
+    if (path === '/user/forgotpassword') return 'user';
   };
 
   // Theme configurations for different user types

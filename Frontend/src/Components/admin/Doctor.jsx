@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import DetailsModel from '../Doctor/DetailsModel';
-import { useSelector, useDispatch } from 'react-redux';
 import Sidebar from './Sidebar';
 import {
   FaSearch,
@@ -22,6 +21,7 @@ const Doctor = () => {
   // const dispatch = useDispatch();
   // const {isBlocked} = useSelector((state) => state.doctor);
   useEffect(() => {
+    
     const fetchDoctors = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/admin/doctors');

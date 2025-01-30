@@ -280,7 +280,7 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-white mb-4">Are You a Doctor?</h2>
             <p className="text-xl text-blue-100 mb-8">Join our network of healthcare professionals and help more patients.</p>
             <button
-              onClick={() => navigate('/doctor-signup')}
+              onClick={() => navigate('/doctor/signup')}
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-flex items-center space-x-2"
             >
               <span>Sign Up as a Doctor</span>

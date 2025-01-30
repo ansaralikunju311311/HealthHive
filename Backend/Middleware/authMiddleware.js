@@ -3,7 +3,7 @@ import User from '../Model/userModel.js';
 import doctor from '../Model/doctorModel.js';
 import Admin from '../Model/AdminModel/adminModel.js';
 import cookies from 'js-cookie'; 
-
+import RejectedDoctor from '../Model/RejectedDoctors.js';
 
 
 
@@ -103,8 +103,8 @@ export const protect = async (req, res, next) => {
 export const protectDoctor = async (req, res, next) => {
     try {
         // Get token from header
-        const token = req.headers.authorization?.split(' ')[1];
-
+        // const token = req.headers.authorization?.split(' ')[1];
+       const token = req.cookies.doctortoken;
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
@@ -114,7 +114,6 @@ export const protectDoctor = async (req, res, next) => {
 
         // Get doctor from token
         const doctorUser = await doctor.findById(decoded.userId).select('-password');
-        
         if (!doctorUser) {
             return res.status(401).json({ message: 'Not authorized, doctor not found' });
         }
@@ -122,6 +121,9 @@ export const protectDoctor = async (req, res, next) => {
         // Verify if doctor is active
         if (!doctorUser.isActive) {
             return res.status(401).json({ message: 'Account is not yet verified' });
+        }
+        if(doctorUser.isBlocked===true){
+            return res.status(401).json({ message: 'Account is blocked' });
         }
 
         // Add doctor to request object
@@ -143,7 +145,7 @@ export const protectAdmin = async (req, res, next) => {
     try {
         // Get token from header
         const token = req.headers.authorization?.split(' ')[1];
-
+        console.log('in admin protected===============', token)
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }

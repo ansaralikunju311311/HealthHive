@@ -64,7 +64,7 @@ const DoctorDash = () => {
     toast.info('You have been logged out', {
       icon: '👋'
     });
-    navigate('/doctor-login');
+    navigate('/doctor/login');
   };
   const profileClick = (id) => {
     console.log(id);

@@ -4,6 +4,7 @@ import axios from 'axios';
 // import { useDispatch } from 'react-redux';
 // import { setUser, setToken } from '../../Components/redux/Features/userSlice';
 import  cookies  from 'js-cookie';
+import { toast } from 'react-toastify';
 const GenerateOtp = () => {
   // const dispatch = useDispatch();
   const [otp, setOtp] = useState('');
@@ -55,35 +56,21 @@ const GenerateOtp = () => {
     setSuccess('');
     setIsLoading(true);
     try {
-      console.log('Sending OTP:', otp);
+      toast.info('Verifying your email...');
       const response = await axios.post('http://localhost:5000/api/user/verify-otp', {
         email,
-        otp: otp.trim() // Ensure no whitespace
+        otp: otp.trim()
       });
       
       setSuccess(response.data.message);
-      // console.log("verify otp response:", response.data);
       
-      // Dispatch both user and token to Redux
-      // dispatch(setUser(response.data.user));
-      // localStorage.setItem('useraccessToken',response.data.userToken);
-      // setToken(response.data.userToken);
-
-      // console.log("this token   generator token:",response.data.userToken);
-      // console.log("this token:",dispatch(setToken(response.data.userToken)));
-
       if(response.data.userToken){
-        console.log('otp generate going to protected route warp')
-        // console.log("this token   comen rthidfhbilhdsbfhlabhr:",response.data.userToken);
         cookies.set('useraccessToken', response.data.userToken);
-          navigate('/home');
-      
-      // navigate('/home');
-      // console.log("this token   hcbcbhjvbhjbhdbhdbhfbhbfhcomen rthidfhbilhdsbfhlabhr:",response.data.userToken);
+        toast.success('Email verified successfully! Welcome to HealthHive.');
+        navigate('/home');
       }
     } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setError(error.response?.data?.message || 'Error verifying OTP');
+      toast.error(error.response?.data?.message || 'Invalid verification code. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +78,7 @@ const GenerateOtp = () => {
 
   const handleResendOtp = async () => {
     if (remainingTime > 0) {
-      setError('Please wait before requesting a new OTP');
+      toast.warning(`Please wait ${remainingTime} seconds before requesting a new code.`);
       return;
     }
     
@@ -100,20 +87,16 @@ const GenerateOtp = () => {
     setIsLoading(true);
     
     try {
-      console.log('Resending OTP for email:', email);
-      const response = await axios.post('http://localhost:5000/api/user/resend-otp', {
+      toast.info('Sending new verification code...');
+      await axios.post('http://localhost:5000/api/user/resend-otp', {
         email
       });
       
-      setSuccess('New verification code sent to your email');
-      console.log('Resend OTP response:', response.data);
-      
-      // Fetch the new remaining time
+      toast.success('New verification code sent to your email.');
       const timeResponse = await axios.get(`http://localhost:5000/api/user/otp-remaining-time?email=${email}`);
       setRemainingTime(timeResponse.data.remainingTime);
     } catch (error) {
-      console.error('Error resending OTP:', error);
-      setError(error.response?.data?.message || 'Error sending verification code');
+      toast.error(error.response?.data?.message || 'Failed to send verification code. Please try again.');
     } finally {
       setIsLoading(false);
     }

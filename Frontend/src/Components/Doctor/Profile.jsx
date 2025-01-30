@@ -44,7 +44,7 @@ const Profile = () => {
     const id = location.state?.userId;
 
     const handleBack = () => {
-        navigate('/doctor-dashboard');
+        navigate('/doctor/dashboard');
     };
 
     useEffect(() => {

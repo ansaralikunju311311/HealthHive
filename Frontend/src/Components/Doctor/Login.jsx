@@ -29,7 +29,7 @@ const Login = () => {
                     icon: '👋',
                     backgroundColor: '#22c55e'
                 });
-                navigate('/doctor-dashboard');
+                navigate('/doctor/dashboard');
             }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');
@@ -97,7 +97,7 @@ const Login = () => {
                         <div className="text-sm">
                             <button
                                 type="button"
-                                onClick={() => navigate('/doctor-signup')}
+                                onClick={() => navigate('/doctor/signup')}
                                 className="font-medium text-purple-300 hover:text-purple-400 transition-colors"
                             >
                                 Don't have an account? Sign up

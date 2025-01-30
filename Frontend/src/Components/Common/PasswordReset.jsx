@@ -51,7 +51,7 @@ const ResetPassword = () => {
       // Navigate to the appropriate login page based on user type
       const loginRoutes = {
         'user': '/login',
-        'doctor': '/doctor-login',
+        'doctor': '/doctor/login',
       };
 
       navigate(loginRoutes[userType] || '/login');

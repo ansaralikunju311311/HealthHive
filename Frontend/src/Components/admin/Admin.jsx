@@ -21,7 +21,7 @@ const Admin = () => {
                     autoClose: 3000,
                     theme: "colored"
                 });
-                navigate('/admin-dashboard');
+                navigate('/admin/dashboard');
              }
              else {
                 navigate('/admin');
@@ -104,7 +104,6 @@ const Admin = () => {
                         >
                             Sign in
                         </button>
-                        <p onClick={() => navigate('/admin/forgotpassword')}>forgot password?</p>
                     </div>
                 </form>
             </div>

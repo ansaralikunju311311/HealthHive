@@ -12,7 +12,7 @@ const RevProtected = ({children}) => {
             // const token = localStorage.getItem('doctortoken');
             const token = cookies.get('doctortoken');
             if (!token) {
-                navigate('/doctor-login');
+                navigate('/doctor/login');
                 return;
             }
             const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
@@ -22,18 +22,18 @@ const RevProtected = ({children}) => {
                 withCredentials:true,
             });
             if (response.data.doctor) {
-                navigate('/doctor-dashboard');
+                navigate('/doctor/dashboard');
                 
             } else {
                 // localStorage.removeItem('doctortoken');
                 cookies.remove('doctortoken');
-                navigate('/doctor-login');
+                navigate('/doctor/login');
             }
         } catch (error) {
             console.error('Error verifying token:', error);
             // localStorage.removeItem('doctortoken');
             cookies.remove('doctortoken');
-            navigate('/doctor-login');
+            navigate('/doctor/login');
         }
     };
 

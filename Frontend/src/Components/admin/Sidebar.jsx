@@ -30,12 +30,12 @@ const Sidebar = ({ activePage }) => {
     {
       title: 'Dashboard',
       icon: FaTachometerAlt,
-      path: '/admin-dashboard',
+      path: '/admin/dashboard',
     },
     {
       title: 'Doctor Verification',
       icon: FaUserCheck,
-      path: '/admin/doctor-verification',
+      path: '/admin/doctorverification',
     },
     {
       title: 'Doctors',

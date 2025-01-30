@@ -12,7 +12,7 @@ const DoctorProtected = ({ children }) => {
           try {
             const token = cookies.get('doctortoken');
             if (!token) {
-              navigate('/doctor-login');
+              navigate('/doctor/login');
               return;
             }
             const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
@@ -26,13 +26,13 @@ const DoctorProtected = ({ children }) => {
             } else {
               // localStorage.removeItem('doctortoken');
               cookies.remove('doctortoken');
-              navigate('/doctor-login');
+              navigate('/doctor/login');
             }
           } catch (error) {
             console.error('Error verifying token:', error);
             // localStorage.removeItem('doctortoken');
             cookies.remove('doctortoken');
-            navigate('/doctor-login');
+            navigate('/doctor/login');
           }
           finally{
             setLoading(false);

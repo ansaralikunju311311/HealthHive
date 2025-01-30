@@ -49,7 +49,7 @@ const App = () => {
         <Route path="/signup" element={<ProtectedRoute wrapper={ReverseProtected}><SignUp /></ProtectedRoute>} />
         <Route path="/login" element={<ProtectedRoute wrapper={ReverseProtected}><Login /></ProtectedRoute>} />
         <Route path="/generate-otp" element={<ProtectedRoute wrapper={ReverseProtected}><GenerateOtp /></ProtectedRoute>} />
-        <Route path="/demoforgot-password" element={<ProtectedRoute wrapper={ReverseProtected}><ForgotPassword /></ProtectedRoute>} />
+        <Route path="/user/forgotpassword" element={<ProtectedRoute wrapper={ReverseProtected}><ForgotPassword /></ProtectedRoute>} />
         <Route path="/doctor/forgotpassword" element={<ProtectedRoute wrapper={ReverseProtected}><ForgotPassword /></ProtectedRoute>} />
         <Route path="/user/reset-password" element={<ProtectedRoute wrapper={ReverseProtected}><ResetPassword /></ProtectedRoute>} />
         <Route path="/doctor/reset-password" element={<ResetPassword />} />
@@ -58,18 +58,18 @@ const App = () => {
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
 
         {/* Doctor Routes */}
-        <Route path="/doctor-signup" element={<ProtectedRoute wrapper={DcotorReve}><DoctorSignUp /></ProtectedRoute>} />
-        <Route path="/doctor-login" element={<ProtectedRoute wrapper={DcotorReve}><DoctorLogin /></ProtectedRoute>} />
-        <Route path="/before-verification" element={<ProtectedRoute wrapper={DcotorReve}><BeforeVerification /></ProtectedRoute>} />
-        <Route path="/doctor-dashboard" element={<ProtectedRoute wrapper={DoctorProtected}><DoctorDash /></ProtectedRoute>} />
+        <Route path="/doctor/signup" element={<ProtectedRoute wrapper={DcotorReve}><DoctorSignUp /></ProtectedRoute>} />
+        <Route path="/doctor/login" element={<ProtectedRoute wrapper={DcotorReve}><DoctorLogin /></ProtectedRoute>} />
+        <Route path="/beforeverification" element={<ProtectedRoute wrapper={DcotorReve}><BeforeVerification /></ProtectedRoute>} />
+        <Route path="/doctor/dashboard" element={<ProtectedRoute wrapper={DoctorProtected}><DoctorDash /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute wrapper={DoctorProtected}><Profile /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />
-        <Route path="/admin-dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/doctors" element={<ProtectedRoute wrapper={AdminProtected}><Doctor /></ProtectedRoute>} />
         <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
-        <Route path="/admin/doctor-verification" element={<ProtectedRoute wrapper={AdminProtected}><DoctorVerification /></ProtectedRoute>} />
+        <Route path="/admin/doctorverification" element={<ProtectedRoute wrapper={AdminProtected}><DoctorVerification /></ProtectedRoute>} />
       </Routes>
     </>
   );

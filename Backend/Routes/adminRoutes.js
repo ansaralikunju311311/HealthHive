@@ -17,5 +17,4 @@ admin.put('/blockpatient/:patientid', handleBlock);
 admin.put('/unblockdoctor/:doctorid', unblockDoctor);
 admin.put('/unblockpatient/:patientid', patientUnblock);
 admin.get("/verify-token", protectAdmin, verifyAdminToken);
-
 export default admin;

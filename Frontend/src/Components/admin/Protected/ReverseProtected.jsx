@@ -28,7 +28,7 @@ const ReverseProtected = ({children}) => {
                 });
     
                 if (response.data.admin) {
-                    navigate('/admin-dashboard');
+                    navigate('/admin/dashboard');
                 } else {
                     // localStorage.removeItem('admintoken');
                     cookies.remove('admintoken');

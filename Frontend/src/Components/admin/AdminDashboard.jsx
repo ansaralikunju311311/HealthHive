@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar activePage="/admin-dashboard" />
+      <Sidebar activePage="/admin/dashboard" />
 
       {/* Main Content */}
       <div className="flex-1 ml-64"> 

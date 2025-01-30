@@ -39,7 +39,7 @@ const BeforeVerification = () => {
             clearInterval(intervalId);
           }
           setTimeout(() => {
-            navigate('/doctor-login');
+            navigate('/doctor/login');
           }, 2000);
         } else {
           setVerificationStatus('pending');
@@ -147,7 +147,7 @@ const BeforeVerification = () => {
 
               <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  onClick={() => navigate('/doctor-signup')}
+                  onClick={() => navigate('/doctor/signup')}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
