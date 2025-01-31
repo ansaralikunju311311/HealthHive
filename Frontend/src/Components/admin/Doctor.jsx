@@ -57,7 +57,7 @@ const Doctor = () => {
     );
     setFilteredDoctors(result);
   }, [searchTerm, doctors]);
-  const handleBlock = async (doctorid) => {
+  const handleBlockUnblock = async (doctorid) => {
     try {
       const token = cookies.get('admintoken');
       if(!token) {
@@ -70,50 +70,73 @@ const Doctor = () => {
         },
         withCredentials: true 
       });
-      toast.error('Doctor has been blocked', {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored"
+
+      // Find the doctor and toggle their blocked status
+      const updatedDoctors = doctors.map(doctor => {
+        if (doctor._id === doctorid) {
+          const newBlockedStatus = !doctor.isBlocked;
+          return { ...doctor, isBlocked: newBlockedStatus };
+        }
+        return doctor;
       });
-      setDoctors(doctors.map(doctor => 
-        doctor._id === doctorid ? {...doctor, isBlocked: true} : doctor
-      ));
+
+      // Update both doctors and filtered doctors
+      setDoctors(updatedDoctors);
+      setFilteredDoctors(updatedDoctors);
+
+      // Show appropriate toast message
+      const doctor = doctors.find(d => d._id === doctorid);
+      const newStatus = !doctor.isBlocked;
+      if (newStatus) {
+        toast.error('Doctor has been blocked', {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      } else {
+        toast.success('Doctor has been unblocked', {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored"
+        });
+      }
     } catch (error) {
-      toast.error('Failed to block doctor', {
+      console.error('Block/Unblock error:', error);
+      toast.error('Failed to update doctor status', {
         position: "top-right",
         autoClose: 3000
       });
     }
   }
 
-  const handleUnblock = async (doctorid) => {
-    try {
-      const token = cookies.get('admintoken');
-      if(!token) {
-        navigate('/admin');
-        return;
-      }
-      const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true 
-      });
-      toast.success('Doctor has been unblocked', {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored"
-      });
-      setDoctors(doctors.map(doctor => 
-        doctor._id === doctorid ? {...doctor, isBlocked: false} : doctor
-      ));
-    } catch (error) {
-      toast.error('Failed to unblock doctor', {
-        position: "top-right",
-        autoClose: 3000
-      });
-    }
-  }
+  // const handleUnblock = async (doctorid) => {
+  //   try {
+  //     const token = cookies.get('admintoken');
+  //     if(!token) {
+  //       navigate('/admin');
+  //       return;
+  //     }
+  //     const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`, {}, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`
+  //       },
+  //       withCredentials: true 
+  //     });
+  //     toast.success('Doctor has been unblocked', {
+  //       position: "top-right",
+  //       autoClose: 3000,
+  //       theme: "colored"
+  //     });
+  //     setDoctors(doctors.map(doctor => 
+  //       doctor._id === doctorid ? {...doctor, isBlocked: false} : doctor
+  //     ));
+  //   } catch (error) {
+  //     toast.error('Failed to unblock doctor', {
+  //       position: "top-right",
+  //       autoClose: 3000
+  //     });
+  //   }
+  // }
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />
@@ -211,9 +234,10 @@ const Doctor = () => {
                             ? 'bg-green-500 hover:bg-green-600' 
                             : 'bg-red-500 hover:bg-red-600'
                         }`} 
-                        onClick={doctor.isBlocked === true 
-                          ? () => handleUnblock(doctor._id) 
-                          : () => handleBlock(doctor._id)}
+                        // onClick={doctor.isBlocked === true 
+                        //   ? () => handleUnblock(doctor._id) 
+                        //   : () => handleBlock(doctor._id)}
+                        onClick={() => handleBlockUnblock(doctor._id)}
                       >
                         {doctor.isBlocked === true ? 'Unblock' : 'Block'}
                       </button></td>
