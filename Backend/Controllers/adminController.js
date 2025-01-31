@@ -327,4 +327,14 @@ export const patientblock = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const userCount = async (req, res) => {
+    try {
+        console.log("userCount=====");
+        const count = await User.countDocuments({ isActive: true });
+        const DrCount = await Doctor.countDocuments({ isActive: true });
+        res.status(200).json({ userCount: count, doctorCount: DrCount });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
 export { LoginAdmin, verifyAdminToken };

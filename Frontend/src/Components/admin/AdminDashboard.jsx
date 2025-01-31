@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import cookies from 'js-cookie'
@@ -37,19 +37,34 @@ const revenueData = [
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [userCount, setUserCount] = useState(0);
+  const [doctorCount, setDoctorCount] = useState(0);
 
   useEffect(() => {
-    const token = cookies.get('admintoken');
-    if(!token) {
-        toast.error('Please login to continue', {
-            position: "top-right",
-            autoClose: 3000,
-            theme: "colored"
+    const fetchData = async () => {
+      try {
+        const token = cookies.get('admintoken');
+        if (!token) {
+          navigate('/admin');
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/admin/usercount', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials: true
         });
-        navigate('/admin');
-        return;
-    }
+        console.log("usercount=====", response.data);
+        setUserCount(response.data.userCount + response.data.doctorCount);
+        setDoctorCount(response.data.doctorCount);
+      } catch (error) {
+        console.error("Error fetching user count:", error);
+        toast.error('Failed to fetch user count');
+      }
+    };
+    fetchData();
   }, [navigate]);
+
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -70,7 +85,7 @@ const AdminDashboard = () => {
               <FaUsers className="text-3xl text-blue-500" />
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Total Users</h3>
-                <p className="text-2xl font-bold">1,500</p>
+                <p className="text-2xl font-bold">{userCount}</p>
               </div>
             </div>
           </div>
@@ -79,7 +94,7 @@ const AdminDashboard = () => {
               <FaUserMd className="text-3xl text-green-500" />
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Total Doctors</h3>
-                <p className="text-2xl font-bold">50</p>
+                <p className="text-2xl font-bold">{doctorCount}</p>
               </div>
             </div>
           </div>
