@@ -200,22 +200,7 @@ export const doctors = async (req,res)=>
 //         res.status(500).json({ message: error.message });
 //     }
 // };
-export const patientUnblock = async (req, res) => {
-    try {
-        const { patientid } = req.params;
-        console.log("patientid=====",patientid);
-        const patient = await User.findById(patientid);
-        if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
-        }
-        patient.isBlocked = false;
-        await patient.save();
-        res.status(200).json({ message: 'Patient unblocked successfully' });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-};
+
 
 
 
@@ -318,4 +303,28 @@ export const handleBlock = async (req, res) => {
         }
     }
 }
+export const patientblock = async (req, res) => {
+    try {
+        const { patientid } = req.params;
+        console.log("patientid=====",patientid);
+        const patient = await User.findById(patientid);
+        if (!patient) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+        if(patient.isBlocked===true){
+            patient.isBlocked=false;
+        }else{
+            patient.isBlocked=true;
+        }
+
+
+        
+        
+        await patient.save();
+        res.status(200).json({ message: 'Patient unblocked successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
 export { LoginAdmin, verifyAdminToken };

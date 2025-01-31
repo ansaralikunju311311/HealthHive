@@ -109,34 +109,6 @@ const Doctor = () => {
     }
   }
 
-  // const handleUnblock = async (doctorid) => {
-  //   try {
-  //     const token = cookies.get('admintoken');
-  //     if(!token) {
-  //       navigate('/admin');
-  //       return;
-  //     }
-  //     const response = await axios.put(`http://localhost:5000/api/admin/unblockdoctor/${doctorid}`, {}, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`
-  //       },
-  //       withCredentials: true 
-  //     });
-  //     toast.success('Doctor has been unblocked', {
-  //       position: "top-right",
-  //       autoClose: 3000,
-  //       theme: "colored"
-  //     });
-  //     setDoctors(doctors.map(doctor => 
-  //       doctor._id === doctorid ? {...doctor, isBlocked: false} : doctor
-  //     ));
-  //   } catch (error) {
-  //     toast.error('Failed to unblock doctor', {
-  //       position: "top-right",
-  //       autoClose: 3000
-  //     });
-  //   }
-  // }
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />

@@ -50,42 +50,7 @@ const Patients = () => {
     setFilteredPatients(results);
   }, [searchTerm, patients]);
 
-  const handleBlock = async (patientid) => {
-    try {
-        const token = cookies.get('admintoken');
-        if (!token) {
-            toast.error('Please login to continue', {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "colored"
-            });
-            navigate('/admin');
-            return;
-        }
-        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            withCredentials: true
-        });
-        toast.error('Patient has been blocked', {
-            position: "top-right",
-            autoClose: 3000,
-            theme: "colored"
-        });
-        setPatients(patients.map(patient => 
-            patient._id === patientid ? {...patient, isBlocked: true} : patient
-        ));
-    } catch (error) {
-        console.error('Block error:', error.response?.data?.message);
-        toast.error(error.response?.data?.message || 'Failed to block patient', {
-            position: "top-right",
-            autoClose: 3000
-        });
-    }
-}
-
-const handleUnblock = async (patientid) => {
+  const handleBlockUnblock = async (patientid) => {
     try {
         const token = cookies.get('admintoken');
         if (!token) {
@@ -103,18 +68,40 @@ const handleUnblock = async (patientid) => {
             },
             withCredentials: true
         });
-        console.log(response);
-        toast.success('Patient has been unblocked', {
-            position: "top-right",
-            autoClose: 3000,
-            theme: "colored"
+        console.log("api response", response.data);
+
+        // Find the patient and toggle their blocked status
+        const updatedPatients = patients.map(patient => {
+            if (patient._id === patientid) {
+                const newBlockedStatus = !patient.isBlocked;
+                return { ...patient, isBlocked: newBlockedStatus };
+            }
+            return patient;
         });
-        setPatients(patients.map(patient => 
-            patient._id === patientid ? {...patient, isBlocked: false} : patient
-        ));
+
+        // Update both patients and filtered patients lists
+        setPatients(updatedPatients);
+        setFilteredPatients(updatedPatients);
+
+        // Show appropriate toast message based on new status
+        const patient = patients.find(p => p._id === patientid);
+        const newStatus = !patient.isBlocked;
+        if (newStatus) {
+            toast.error('Patient has been blocked', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored"
+            });
+        } else {
+            toast.success('Patient has been unblocked', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored"
+            });
+        }
     } catch (error) {
-        console.error('Unblock error:', error.response?.data?.message);
-        toast.error(error.response?.data?.message || 'Failed to unblock patient', {
+        console.error('Block/Unblock error:', error.response?.data?.message);
+        toast.error(error.response?.data?.message || 'Failed to update patient status', {
             position: "top-right",
             autoClose: 3000
         });
@@ -221,9 +208,7 @@ const handleUnblock = async (patientid) => {
                             ? 'bg-green-500 hover:bg-green-600' 
                             : 'bg-red-500 hover:bg-red-600'
                         }`} 
-                        onClick={patient.isBlocked === true 
-                          ? () => handleUnblock(patient._id) 
-                          : () => handleBlock(patient._id)}
+                        onClick={()=>handleBlockUnblock(patient._id)}
                       >
                         {patient.isBlocked === true ? 'Unblock' : 'Block'}
                       </button>
