@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import DetailsModel from '../Doctor/DetailsModel';
+import cookies from 'js-cookie';
 import Sidebar from './Sidebar';
 import {
   FaSearch,
@@ -24,7 +25,19 @@ const Doctor = () => {
     
     const fetchDoctors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/doctors');
+        const token = cookies.get('admintoken');
+        console.log("this is the token", token);
+        if(!token) {
+          navigate('/admin');
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/admin/doctors', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            withCredentials: true 
+        });
+        
         setDoctors(response.data);
         setFilteredDoctors(response.data);
         console.log("api response", response.data);

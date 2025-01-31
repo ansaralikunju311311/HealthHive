@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import Sidebar from './Sidebar';
+import cookies from 'js-cookie';
 import {
   FaUsers,
   FaUserMd,
@@ -27,7 +28,17 @@ const DoctorVerification = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/pending-doctors');
+      const token = cookies.get('admintoken');
+      if(!token) {
+        navigate('/admin');
+        return;
+      }
+      const response = await axios.get('http://localhost:5000/api/admin/pending-doctors',{
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      });
       setDoctors(response.data);
       setFilteredDoctors(response.data);
       console.log("api response", response.data);
@@ -51,7 +62,17 @@ const DoctorVerification = () => {
 
   const handleApprove = async (doctorid) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`);
+      const token = cookies.get('admintoken');
+      if(!token) {
+        navigate('/admin');
+        return;
+      }
+      const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      });
       if (response.data.doctor) {
         toast.success('Doctor approved successfully', {
           position: "top-right",
@@ -75,7 +96,17 @@ const DoctorVerification = () => {
 
   const handleReject = async (doctorid) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/reject-doctor/${doctorid}`);
+      const token = cookies.get('admintoken');
+      if(!token) {
+        navigate('/admin');
+        return;
+      }
+      const response = await axios.put(`http://localhost:5000/api/admin/reject-doctor/${doctorid}`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      });
       toast.error('Doctor application rejected', {
         position: "top-right",
         autoClose: 3000,
