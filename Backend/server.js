@@ -20,9 +20,7 @@ app.use(express.urlencoded({ extended: false}));
 
 const ConnectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO,{
-            useNewUrlParser: true,
-            useUnifiedTopology: true    
+        await mongoose.connect(process.env.MONGO,{  
         });
 
         console.log('Connected to MongoDB');

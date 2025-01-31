@@ -70,12 +70,18 @@ export const protectDoctor = async (req, res, next) => {
 
 export const protectAdmin = async (req, res, next) => {
     try {
-        // Get token from header
+        // Get token from cookie or Authorization header
+        let token = req.cookies.admintoken;
+        
+        // Check Authorization header if no cookie
+        if (!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
 
-       const token = req.cookies.admintoken;
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
+
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -85,6 +91,7 @@ export const protectAdmin = async (req, res, next) => {
         if (!admin) {
             return res.status(401).json({ message: 'Not authorized, admin not found' });
         }
+        
         // Add admin to request object
         req.admin = admin;
         next();

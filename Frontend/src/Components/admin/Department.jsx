@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -8,13 +8,46 @@ const Department = () => {
   const [departmentName, setDepartmentName] = useState('');
 
   // Sample department data
-  const departments = [
-    { name: 'Cardiology', status: 'Listed', action: 'Unlist' },
-    { name: 'Neurology', status: 'Listed', action: 'Unlist' },
-    { name: 'Orthopedics', status: 'Unlisted', action: 'List' },
-    { name: 'Pediatrics', status: 'Listed', action: 'Unlist' },
-    { name: 'Dermatology', status: 'Unlisted', action: 'List' },
-  ];
+  // const departments = [
+  //   { name: 'Cardiology', status: 'Listed', action: 'Unlist' },
+  //   { name: 'Neurology', status: 'Listed', action: 'Unlist' },
+  //   { name: 'Orthopedics', status: 'Unlisted', action: 'List' },
+  //   { name: 'Pediatrics', status: 'Listed', action: 'Unlist' },
+  //   { name: 'Dermatology', status: 'Unlisted', action: 'List' },
+  // ];
+
+
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/admin/department', {
+          withCredentials: true,
+        });
+        console.log(response.data);
+        setDepartments(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDepartments();
+  }, []);
+
+
+
+  const handleListing = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {
+      }, {
+        withCredentials: true,
+      });
+      toast.success('Department status updated successfully');
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to update department status');
+    }
+  };
 
   const handleAddDepartment = () => {
     setIsModalOpen(true);
@@ -91,7 +124,7 @@ const Department = () => {
               <tbody className="divide-y divide-gray-200">
                 {departments.map((dept, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-800">{dept.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-800">{dept.Departmentname}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         dept.status === 'Listed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -99,7 +132,7 @@ const Department = () => {
                         {dept.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    {/* <td className="px-6 py-4">
                       <button
                         className={`px-4 py-1 rounded-lg text-sm font-medium ${
                           dept.action === 'List' 
@@ -108,6 +141,15 @@ const Department = () => {
                         } transition-colors`}
                       >
                         {dept.action}
+                      </button>
+                    </td> */}
+                    <td>
+                      <button
+                        className={`px-4 py-1 rounded-lg text-sm font-medium ${
+                          dept.status === 'Listed' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600'
+                        } transition-colors`}
+                       onClick={()=>handleListing(dept._id)}  >
+                        {dept.status === 'Listed' ? 'Unlist' : 'List'}
                       </button>
                     </td>
                   </tr>

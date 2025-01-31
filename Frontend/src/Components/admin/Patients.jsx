@@ -49,9 +49,25 @@ const Patients = () => {
     );
     setFilteredPatients(results);
   }, [searchTerm, patients]);
-   const handleBlock = async (patientid) => {
+
+  const handleBlock = async (patientid) => {
     try {
-        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`);
+        const token = cookies.get('admintoken');
+        if (!token) {
+            toast.error('Please login to continue', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored"
+            });
+            navigate('/admin');
+            return;
+        }
+        const response = await axios.put(`http://localhost:5000/api/admin/blockpatient/${patientid}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            withCredentials: true
+        });
         toast.error('Patient has been blocked', {
             position: "top-right",
             autoClose: 3000,
@@ -61,7 +77,8 @@ const Patients = () => {
             patient._id === patientid ? {...patient, isBlocked: true} : patient
         ));
     } catch (error) {
-        toast.error('Failed to block patient', {
+        console.error('Block error:', error.response?.data?.message);
+        toast.error(error.response?.data?.message || 'Failed to block patient', {
             position: "top-right",
             autoClose: 3000
         });
@@ -70,7 +87,22 @@ const Patients = () => {
 
 const handleUnblock = async (patientid) => {
     try {
-        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`);
+        const token = cookies.get('admintoken');
+        if (!token) {
+            toast.error('Please login to continue', {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored"
+            });
+            navigate('/admin');
+            return;
+        }
+        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            withCredentials: true
+        });
         console.log(response);
         toast.success('Patient has been unblocked', {
             position: "top-right",
@@ -81,12 +113,14 @@ const handleUnblock = async (patientid) => {
             patient._id === patientid ? {...patient, isBlocked: false} : patient
         ));
     } catch (error) {
-        toast.error('Failed to unblock patient', {
+        console.error('Unblock error:', error.response?.data?.message);
+        toast.error(error.response?.data?.message || 'Failed to unblock patient', {
             position: "top-right",
             autoClose: 3000
         });
     }
 }
+
   const navigate = useNavigate();
 
   return (

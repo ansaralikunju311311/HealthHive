@@ -255,17 +255,55 @@ export const unblockDoctor = async (req, res) => {
 export const addDepartment = async (req, res) => {
     try {
         const { Departmentname } = req.body;
-        console.log("Received department name:", Departmentname);
         
-        const department = await Department.findOne({ Departmentname });
+        // Check if department exists (case-insensitive)
+        const department = await Department.findOne({
+            Departmentname: { $regex: new RegExp(`^${Departmentname}$`, 'i') }
+        });
+        
         if (department) {
             return res.status(400).json({ message: 'Department already exists' });
         }
         
-        const newDepartment = new Department({ Departmentname });
+        // Create new department with original capitalization
+        const newDepartment = new Department({ 
+            Departmentname,
+            status: 'Listed'
+        });
+        
         await newDepartment.save();
         res.status(201).json({ message: 'Department created successfully' });
         
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+export const getDepartments = async (req, res) => 
+{
+    try {
+        const departments = await Department.find();
+        res.status(200).json(departments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+export const updateDepartment = async (req, res) => {
+       const {id} = req.params;
+       console.log("id=====",id);
+    try {
+        
+        const department = await Department.findById(id);
+        if (!department) {
+            return res.status(404).json({ message: 'Department not found' });
+        }
+        if(department.status === 'Listed'){
+            department.status = 'Unlisted';
+        }else{
+            department.status = 'Listed';
+        }
+        await department.save();
+        res.status(200).json({ message: 'Department status updated successfully' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
