@@ -4,6 +4,7 @@ import { protectDoctor } from '../Middleware/authMiddleware.js';
 
 const doctor = express.Router();
 
+doctor.use(protectDoctor);
 doctor.post("/signup",RegisterDoctor);
 doctor.post("/login",LoginDoctor);
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);

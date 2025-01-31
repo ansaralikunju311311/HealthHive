@@ -4,6 +4,7 @@ import {protect} from '../Middleware/authMiddleware.js';
 import {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp,forgotPassword,resetPassword, verifyToken} from '../Controllers/userController.js';
 const router = express.Router();
 
+router.use(protect);    
 router.post('/signup',RegisterUser);
 router.post('/verify-otp', verifyOtp);
 router.post('/resend-otp', resendOtp);

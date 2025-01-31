@@ -144,8 +144,8 @@ export const protectDoctor = async (req, res, next) => {
 export const protectAdmin = async (req, res, next) => {
     try {
         // Get token from header
-        const token = req.headers.authorization?.split(' ')[1];
-        console.log('in admin protected===============', token)
+        // const token = req.headers.authorization?.split(' ')[1];
+       const token = req.cookies.admintoken;
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
