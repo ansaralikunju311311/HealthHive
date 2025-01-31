@@ -6,18 +6,9 @@ import { toast } from 'react-toastify';
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState('');
-
-  // Sample department data
-  // const departments = [
-  //   { name: 'Cardiology', status: 'Listed', action: 'Unlist' },
-  //   { name: 'Neurology', status: 'Listed', action: 'Unlist' },
-  //   { name: 'Orthopedics', status: 'Unlisted', action: 'List' },
-  //   { name: 'Pediatrics', status: 'Listed', action: 'Unlist' },
-  //   { name: 'Dermatology', status: 'Unlisted', action: 'List' },
-  // ];
-
-
   const [departments, setDepartments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -34,14 +25,30 @@ const Department = () => {
     fetchDepartments();
   }, []);
 
-
+  // Filter departments based on search term and status
+  const filteredDepartments = departments.filter(dept => {
+    const nameMatch = dept.Departmentname.toLowerCase().includes(searchTerm.toLowerCase());
+    const statusMatch = statusFilter === 'All' || dept.status === statusFilter;
+    return nameMatch && statusMatch;
+  });
 
   const handleListing = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {
-      }, {
+      const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {}, {
         withCredentials: true,
       });
+      
+      // Immediately update the UI
+      setDepartments(departments.map(dept => {
+        if (dept._id === id) {
+          return {
+            ...dept,
+            status: dept.status === 'Listed' ? 'Unlisted' : 'Listed'
+          };
+        }
+        return dept;
+      }));
+
       toast.success('Department status updated successfully');
     } catch (error) {
       console.log(error);
@@ -64,14 +71,17 @@ const Department = () => {
       console.log("Adding department:", departmentName);
       const response = await axios.post('http://localhost:5000/api/admin/department', {
         Departmentname: departmentName
-      },
-      {
+      }, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
         }
-      }
-      );
+      });
+      
+      // Immediately update the UI with the new department
+      const newDepartment = response.data;
+      setDepartments([...departments, newDepartment]);
+      
       console.log("Response from backend:", response.data);
       toast.success('Department added successfully');
       handleCloseModal();
@@ -88,17 +98,30 @@ const Department = () => {
         <div className="bg-white rounded-lg shadow-lg p-6">
           {/* Header with Search and Add Department */}
           <div className="flex justify-between items-center mb-6">
-            <div className="relative w-96">
-              <input
-                type="text"
-                placeholder="Search by Department"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="absolute right-3 top-2.5 text-gray-400">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </span>
+            <div className="flex gap-4 items-center">
+              <div className="relative w-96">
+                <input
+                  type="text"
+                  placeholder="Search by Department"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="absolute right-3 top-2.5 text-gray-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">All Status</option>
+                <option value="Listed">Listed</option>
+                <option value="Unlisted">Unlisted</option>
+              </select>
             </div>
             <button 
               onClick={handleAddDepartment}
@@ -122,7 +145,7 @@ const Department = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {departments.map((dept, index) => (
+                {filteredDepartments.map((dept, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-800">{dept.Departmentname}</td>
                     <td className="px-6 py-4">
@@ -132,17 +155,6 @@ const Department = () => {
                         {dept.status}
                       </span>
                     </td>
-                    {/* <td className="px-6 py-4">
-                      <button
-                        className={`px-4 py-1 rounded-lg text-sm font-medium ${
-                          dept.action === 'List' 
-                            ? 'bg-green-500 text-white hover:bg-green-600' 
-                            : 'bg-red-500 text-white hover:bg-red-600'
-                        } transition-colors`}
-                      >
-                        {dept.action}
-                      </button>
-                    </td> */}
                     <td>
                       <button
                         className={`px-4 py-1 rounded-lg text-sm font-medium ${

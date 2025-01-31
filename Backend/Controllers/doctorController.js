@@ -6,6 +6,7 @@ import {jwtToken} from '../utils/auth.js'
 import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
+import Department from '../Model/DepartmentModel.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
@@ -363,4 +364,12 @@ const doctorProfile = async (req, res) => {
     }
 };
 
+export const fetchDepartments = async (req, res) => {
+    try {
+        const departments = await Department.find({status:'Listed'});
+        res.status(200).json(departments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

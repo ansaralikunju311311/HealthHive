@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 
@@ -10,7 +9,7 @@ const SignUp = () => {
     const [medicalLicenseUrl, setMedicalLicenseUrl] = useState('');
     const [idProofUrl, setIdProofUrl] = useState('');
     const [isUploading, setIsUploading] = useState(false);
-
+    const [departments, setDepartments] = useState([]);
     
     // For local preview before upload
     const [profilePreview, setProfilePreview] = useState('');
@@ -18,6 +17,19 @@ const SignUp = () => {
     const [idProofPreview, setIdProofPreview] = useState('');
     const { register, handleSubmit, formState: { errors }, getValues } = useForm()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchDepartments = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/doctor/departments');
+                setDepartments(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching departments:', error);
+            }
+        };
+        fetchDepartments();
+    }, []);
 
     const handleImageUpload = async (file, type) => {
         if (!file) return;
@@ -276,12 +288,11 @@ const SignUp = () => {
                                         })}
                                     >
                                         <option value="" className="bg-gray-900">Select Specialization</option>
-                                        <option value="cardiology" className="bg-gray-900">Cardiology</option>
-                                        <option value="dermatology" className="bg-gray-900">Dermatology</option>
-                                        <option value="neurology" className="bg-gray-900">Neurology</option>
-                                        <option value="orthopedics" className="bg-gray-900">Orthopedics</option>
-                                        <option value="pediatrics" className="bg-gray-900">Pediatrics</option>
-                                        <option value="psychiatry" className="bg-gray-900">Psychiatry</option>
+                                        {departments.map((department) => (
+                                            <option key={department._id} value={department.name} className="bg-gray-900">
+                                                {department.Departmentname}
+                                            </option>
+                                        ))}
                                     </select>
                                     {errors.specialization && <p className="text-red-500">{errors.specialization.message}</p>}
                                 </div>
