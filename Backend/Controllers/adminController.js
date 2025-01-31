@@ -6,6 +6,7 @@ import RejectedDoctor from '../Model/RejectedDoctors.js';
 import jwt from 'jsonwebtoken';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
+import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 
 
 
@@ -76,8 +77,21 @@ export const approveDoctor = async (req,res)=>
         if(!doctorData){
             return res.status(404).json({message:"Doctor is not found"})
         }
+
+        // Send approval email before updating status
+        console.log("Attempting to send approval email to:", doctorData.email);
+        try {
+            await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'approved');
+            console.log("Approval email sent successfully");
+        } catch (emailError) {
+            console.error("Error sending approval email:", emailError);
+            // Continue with the approval process even if email fails
+        }
+
+        // Update doctor status
         doctorData.isActive = true;
         await doctorData.save();
+
         res.status(200).json({
             message: "Doctor approved successfully",
             doctor:{
@@ -99,17 +113,27 @@ export const rejectDoctor = async(req,res)=>
         const {doctorid} = req.params;
         const doctorData = await Doctor.findById(doctorid);
         if(!doctorData){
-            return res.status(404).json({message:"Doctor is not found"})
+            return res.status(404).json({message:"Doctor not found"});
         }
+
+        // Send rejection email before making any changes
+        console.log("Attempting to send rejection email to:", doctorData.email);
+        try {
+            await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'rejected');
+            console.log("Rejection email sent successfully");
+        } catch (emailError) {
+            console.error("Error sending rejection email:", emailError);
+            // Continue with the rejection process even if email fails
+        }
+
+        // Create rejected doctor record
         const rejectedDoctor = new RejectedDoctor({
             name: doctorData.name,
             email: doctorData.email,
             phone: doctorData.phone,
-            // dateOfBirth: doctorData.dateOfBirth,
             yearsOfExperience: doctorData.yearsOfExperience,
             specialization: doctorData.specialization,
             password: doctorData.password,
-            // isActive: doctorData.isActive,
             profileImage: doctorData.profileImage,
             medicalLicense: doctorData.medicalLicense,
             idProof: doctorData.idProof,
@@ -118,12 +142,14 @@ export const rejectDoctor = async(req,res)=>
             consultFee: doctorData.consultFee
         });
         await rejectedDoctor.save();
-        await Doctor.findByIdAndDelete(doctorid);
-        res.status(200).json({message:"Doctor rejected and removed successfully"});
 
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message });
+        // Delete from doctors collection
+        await Doctor.findByIdAndDelete(doctorid);
+
+        res.status(200).json({message:"Doctor rejected successfully"});
+    } catch(error){
+        console.error("Error in rejectDoctor:", error);
+        res.status(500).json({message:error.message});
     }
 }
 
