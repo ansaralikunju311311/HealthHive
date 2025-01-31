@@ -99,7 +99,7 @@ const DoctorVerification = () => {
   
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar activePage="/doctor-verification" />
+      <Sidebar activePage="/doctor/verification" />
       <div className="flex-1 ml-64 p-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">

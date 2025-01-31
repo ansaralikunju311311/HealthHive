@@ -1,6 +1,6 @@
 import express from "express";
 import { LoginAdmin, verifyAdminToken } from "../Controllers/adminController.js";
-import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, blockDoctor, handleBlock, unblockDoctor, patientUnblock } from "../Controllers/adminController.js";
+import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, blockDoctor, handleBlock, unblockDoctor, patientUnblock  ,addDepartment} from "../Controllers/adminController.js";
 import { protectAdmin } from "../Middleware/authMiddleware.js";
 
 const admin = express.Router();
@@ -21,5 +21,6 @@ admin.put("/blockdoctor/:doctorid", blockDoctor);
 admin.put('/blockpatient/:patientid', handleBlock);
 admin.put('/unblockdoctor/:doctorid', unblockDoctor);
 admin.put('/unblockpatient/:patientid', patientUnblock);
+admin.post("/department", addDepartment)
 
 export default admin;

@@ -6,6 +6,7 @@ import RejectedDoctor from '../Model/RejectedDoctors.js';
 import jwt from 'jsonwebtoken';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
+import Department from '../Model/DepartmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 
 
@@ -251,4 +252,23 @@ export const unblockDoctor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const addDepartment = async (req, res) => {
+    try {
+        const { Departmentname } = req.body;
+        console.log("Received department name:", Departmentname);
+        
+        const department = await Department.findOne({ Departmentname });
+        if (department) {
+            return res.status(400).json({ message: 'Department already exists' });
+        }
+        
+        const newDepartment = new Department({ Departmentname });
+        await newDepartment.save();
+        res.status(201).json({ message: 'Department created successfully' });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { LoginAdmin, verifyAdminToken };

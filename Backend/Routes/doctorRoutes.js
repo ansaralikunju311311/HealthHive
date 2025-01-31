@@ -4,14 +4,15 @@ import { protectDoctor } from '../Middleware/authMiddleware.js';
 
 const doctor = express.Router();
 
-doctor.use(protectDoctor);
-doctor.post("/signup",RegisterDoctor);
-doctor.post("/login",LoginDoctor);
-doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
+// Public routes (no authentication needed)
+doctor.post("/signup", RegisterDoctor);
+doctor.post("/login", LoginDoctor);
 doctor.post('/forgot-password', forgotPassword);
 doctor.post('/reset-password', resetPassword);
 doctor.get("/get-doctor",fetchDoctors);
 doctor.get("/profile/:id",doctorProfile)
 
+// Protected routes (require authentication)
+doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 
 export default doctor;
