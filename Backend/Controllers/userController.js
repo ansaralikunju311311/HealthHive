@@ -5,6 +5,7 @@ import { sendOtp } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 import {jwtToken} from '../utils/auth.js';
 import {setToken} from '../utils/auth.js';
+import Doctor from '../Model/doctorModel.js';
 // Helper function to generate OTP and update user
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -311,5 +312,17 @@ const verifyToken = async (req, res) => {
     }
 };
 
+
+export const getDoctorsData = async (req, res) => {
+    try {
+        const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
+
+        console.log("Fetched doctors:", doctors);
+        res.status(200).json({ doctors: doctors }); 
+    } catch (error) {
+        console.error("Error fetching doctors:", error);
+        res.status(500).json({ message: error.message });
+    }
+}
 
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
