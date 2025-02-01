@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import Footer from '../Common/Footer'
+import StayConnected from '../Common/StayConnected'
 // import { setUser, logout } from '../redux/Features/userSlice';
 import { FaUserCircle, FaHome, FaCalendarAlt, FaInfoCircle, FaEnvelope, FaChevronDown, FaUser, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -439,73 +441,10 @@ const HomePageUser = () => {
       </div>
 
       {/* Stay Connected Form */}
-      <div class="py-16 bg-blue-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="max-w-md mx-auto text-center">
-            <h2 class="text-3xl font-bold mb-8">Stay connected with us</h2>
-            <form class="space-y-4">
-              <input
-                type="email"
-                placeholder="Email Address"
-                class="w-full px-4 py-2 rounded-md text-gray-900"
-              />
-              <input
-                type="text"
-                placeholder="Subject"
-                class="w-full px-4 py-2 rounded-md text-gray-900"
-              />
-              <textarea
-                placeholder="Your Message"
-                rows="4"
-                class="w-full px-4 py-2 rounded-md text-gray-900"
-              ></textarea>
-              <button type="submit" class="w-full bg-white text-blue-600 px-6 py-3 rounded-md hover:bg-gray-100">
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <StayConnected />
 
       {/* Footer */}
-      <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 class="text-lg font-semibold mb-4">HealthHive</h3>
-              <p class="text-gray-400">Your trusted healthcare partner</p>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold mb-4">Services</h3>
-              <ul class="space-y-2 text-gray-400">
-                <li>Emergency Care</li>
-                <li>Dental Care</li>
-                <li>Primary Care</li>
-                <li>Specialized Treatment</li>
-              </ul>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold mb-4">Contact</h3>
-              <ul class="space-y-2 text-gray-400">
-                <li>Email: info@healthhive.com</li>
-                <li>Phone: (123) 456-7890</li>
-                <li>Address: 123 Medical Center Dr</li>
-              </ul>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
-              <div class="flex space-x-4">
-                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
-              </div>
-            </div>
-          </div>
-          <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} HealthHive. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

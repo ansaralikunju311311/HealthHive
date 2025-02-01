@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { setUser, setToken } from './redux/Features/userSlice';
+import StayConnected from '../Components/Common/StayConnected'
 import Bannerdoctor from '../assets/Bannerdoctor.png';
 import DoctorsList from '../assets/doctorslist.png';
 import Treatment from '../assets/treatment 1.png';
@@ -11,6 +12,7 @@ import DoctorThree from '../assets/doctorthree.png';
 import DoctorFour from '../assets/doctorfour.png';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Footer from '../Components/Common/Footer'
 const LandingPage = () => {
   const [doctors, setDoctors] = useState([]);
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ const LandingPage = () => {
 
   return (
        <>
-       {!user ? (<>
+      
         <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="bg-white shadow-sm sticky top-0 z-50">
@@ -309,77 +311,15 @@ const LandingPage = () => {
       </div>
 
       {/* Stay Connected Form */}
-      <div className="py-16 bg-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-8">Stay connected with us</h2>
-            <form className="space-y-4">
-              <input
-                type="email"
-                placeholder="Email Address"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
-              />
-              <input
-                type="text"
-                placeholder="Subject"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
-              />
-              <textarea
-                placeholder="Your Message"
-                rows="4"
-                className="w-full px-4 py-2 rounded-md text-gray-900"
-              ></textarea>
-              <button type="submit" className="w-full bg-white text-blue-600 px-6 py-3 rounded-md hover:bg-gray-100">
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <StayConnected />
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">HealthHive</h3>
-              <p className="text-gray-400">Your trusted healthcare partner</p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>Emergency Care</li>
-                <li>Dental Care</li>
-                <li>Primary Care</li>
-                <li>Specialized Treatment</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Contact</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>Email: info@healthhive.com</li>
-                <li>Phone: (123) 456-7890</li>
-                <li>Address: 123 Medical Center Dr</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white">Facebook</a>
-                <a href="#" className="text-gray-400 hover:text-white">Twitter</a>
-                <a href="#" className="text-gray-400 hover:text-white">LinkedIn</a>
-              </div>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} HealthHive. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      
+   <Footer/> 
+
+
     </div>
-       </>):(<>user is exist</>)}
-    
-    </>
+       </>
   );
   
 };
