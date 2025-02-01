@@ -27,6 +27,7 @@ const Department = () => {
 
   // Filter departments based on search term and status
   const filteredDepartments = departments.filter(dept => {
+    if (!dept || !dept.Departmentname) return false;
     const nameMatch = dept.Departmentname.toLowerCase().includes(searchTerm.toLowerCase());
     const statusMatch = statusFilter === 'All' || dept.status === statusFilter;
     return nameMatch && statusMatch;
@@ -67,10 +68,33 @@ const Department = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Trim the department name and check if it's empty
+    const trimmedDepartmentName = departmentName.trim();
+    if (!trimmedDepartmentName) {
+      toast.error('Department name cannot be empty');
+      return;
+    }
+
+    // Check if department name contains only spaces
+    if (trimmedDepartmentName.length < 3) {
+      toast.error('Department name must be at least 3 characters long');
+      return;
+    }
+
+    // Check if department already exists
+    const departmentExists = departments.some(
+      dept => dept.Departmentname.toLowerCase() === trimmedDepartmentName.toLowerCase()
+    );
+    if (departmentExists) {
+      toast.error('Department already exists');
+      return;
+    }
+
     try {
-      console.log("Adding department:", departmentName);
+      console.log("Adding department:", trimmedDepartmentName);
       const response = await axios.post('http://localhost:5000/api/admin/department', {
-        Departmentname: departmentName
+        Departmentname: trimmedDepartmentName
       }, {
         withCredentials: true,
         headers: {
@@ -78,9 +102,11 @@ const Department = () => {
         }
       });
       
-      // Immediately update the UI with the new department
-      const newDepartment = response.data;
-      setDepartments([...departments, newDepartment]);
+      // Fetch updated departments list after adding new department
+      const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
+        withCredentials: true,
+      });
+      setDepartments(updatedResponse.data);
       
       console.log("Response from backend:", response.data);
       toast.success('Department added successfully');
