@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { setUser, setToken } from './redux/Features/userSlice';
@@ -9,14 +9,32 @@ import DoctorOne from '../assets/Doctorone.png';
 import DoctorTwo from '../assets/doctortwo.png';
 import DoctorThree from '../assets/doctorthree.png';
 import DoctorFour from '../assets/doctorfour.png';
-
+import axios from 'axios';
+import { toast } from 'react-toastify';
 const LandingPage = () => {
+  const [doctors, setDoctors] = useState([]);
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   console.log("user from redux:", user);
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [user]);
+  // }, [user]);
+
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/landing/landingdoctors');
+        console.log("response=====", response.data);
+        setDoctors(response.data);
+
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+      }
+    }
+
+    fetchDoctors();
+  }, [])
 
   const SignUp = () => {
     navigate('/Signup');
@@ -169,40 +187,12 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                name: "Dr. Sarah Johnson",
-                specialty: "Cardiologist",
-                experience: "15+ Years Experience",
-                image: DoctorOne,
-                availability: "Mon - Fri"
-              },
-              {
-                name: "Dr. Michael Chen",
-                specialty: "Neurologist",
-                experience: "12+ Years Experience",
-                image: DoctorTwo,
-                availability: "Tue - Sat"
-              },
-              {
-                name: "Dr. Emily Parker",
-                specialty: "Pediatrician",
-                experience: "10+ Years Experience",
-                image: DoctorThree,
-                availability: "Mon - Sat"
-              },
-              {
-                name: "Dr. James Wilson",
-                specialty: "Orthopedic Surgeon",
-                experience: "18+ Years Experience",
-                image: DoctorFour,
-                availability: "Wed - Sun"
-              }
-            ].map((doctor, index) => (
+            {doctors.map((doctor, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
                 <div className="relative">
                   <img 
-                    src={doctor.image} 
+                    src={doctor.profileImage
+                    } 
                     alt={doctor.name}
                     className="w-full h-80 object-cover object-center"
                   />
@@ -216,8 +206,10 @@ const LandingPage = () => {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
-                  <p className="text-blue-600 font-medium mb-2">{doctor.specialty}</p>
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
+                    <p className="text-blue-600 font-medium">{doctor.specialization}</p>
+                  </div>
                   <div className="flex items-center text-gray-600 text-sm mb-4">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -228,7 +220,8 @@ const LandingPage = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    {doctor.experience}
+                    {doctor.yearsOfExperience
+                    }+ years of experience
                   </div>
 
                   <button 

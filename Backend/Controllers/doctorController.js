@@ -30,8 +30,8 @@ import Department from '../Model/DepartmentModel.js';
 };
  const RegisterDoctor = async(req,res)=>{
     try {
-        const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender} = req.body;
-        
+        const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
+        console.log(req.body);
         // Check if user already exists and is active
         const existingUser = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email})
@@ -70,6 +70,7 @@ import Department from '../Model/DepartmentModel.js';
             existingUser.gender = gender;
             existingUser.consultFee = consultFee;
             existingUser.isActive = true;
+            existingUser.availability = availability;
             user = existingUser;
             console.log("Updated user:", user);
             console.log("Existing user:", existingUser);
@@ -85,10 +86,11 @@ import Department from '../Model/DepartmentModel.js';
                 profileImage,
                 medicalLicense,
                 idProof,
-                about,  
+                about,
                 consultFee,
                 gender,
                 isActive: false,
+                availability
             });
             console.log("New user:", user);
         }
@@ -146,8 +148,9 @@ import Department from '../Model/DepartmentModel.js';
                 phone: existingDoctor.phone,
                 profileImage: existingDoctor.profileImage,
                 medicalLicense: existingDoctor.medicalLicense,
-                idProof: existingDoctor.idProof,
-                isActive: existingDoctor.isActive
+                idProof: existingDoctor.idProof,    
+                isActive: existingDoctor.isActive,
+                availability: existingDoctor.availability
             },
             token: doctorToken
         });
@@ -358,7 +361,7 @@ const doctorProfile = async (req, res) => {
         }
         res.status(200).json({ doctorData });
     } catch (error) {
-        console.log("Error in doctofjnjnfjnjfnfjnjrProfile:", error);
+        console.log("Error in doctofjnjnjfnfjnjrProfile:", error);
         console.error('Error in doctorProfile:', error);
         res.status(500).json({ message: error.message });
     }

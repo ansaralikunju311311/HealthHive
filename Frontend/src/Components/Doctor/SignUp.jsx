@@ -122,7 +122,7 @@ const SignUp = () => {
                 consultFee: data.consultationFee,
                 gender: data.gender,
                 idProof: idProofUrl,
-
+                availability: data.availability
             });
             console.log("responnse come backend",response.data);
             console.log("debuggin isActivate======",response.data.user.isActive)
@@ -225,21 +225,40 @@ const SignUp = () => {
 
                         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
                             <h2 className="text-2xl font-bold text-white mb-6">Personal Information</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-purple-300 mb-2">Gender</label>
-                                    <select 
-                                        className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white focus:outline-none focus:border-purple-400 transition-colors"
-                                        {...register("gender", {
-                                            required: "Gender is required"
-                                        })}
-                                    >
-                                        <option value="" className="bg-gray-900">Select Gender</option>
-                                        <option value="female" className="bg-gray-900">Female</option>
-                                        <option value="male" className="bg-gray-900">Male</option>
-                                        <option value="other" className="bg-gray-900">Other</option>
-                                    </select>
-                                    {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-purple-300 mb-2">Gender</label>
+                                        <select 
+                                            className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white focus:outline-none focus:border-purple-400 transition-colors"
+                                            {...register("gender", {
+                                                required: "Gender is required"
+                                            })}
+                                        >
+                                            <option value="" className="bg-gray-900">Select Gender</option>
+                                            <option value="female" className="bg-gray-900">Female</option>
+                                            <option value="male" className="bg-gray-900">Male</option>
+                                            <option value="other" className="bg-gray-900">Other</option>
+                                        </select>
+                                        {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-purple-300 mb-2">Phone Number</label>
+                                        <input
+                                            type="number"
+                                            className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 transition-colors"
+                                            placeholder="Enter phone number"
+                                            {...register("phone", {
+                                                required: "Phone number is required",
+                                                pattern: {
+                                                    value: /^\d{10}$/,
+                                                    message: "Please enter a valid 10-digit phone number"
+                                                }
+                                            })}
+                                        />
+                                        {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -249,20 +268,16 @@ const SignUp = () => {
                             <h2 className="text-2xl font-bold text-white mb-6">Professional Information</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-purple-300 mb-2">Phone Number</label>
+                                    <label className="block text-sm font-medium text-purple-300 mb-2">Availability</label>
                                     <input
-                                        type="number"
+                                        type="text"
                                         className="w-full px-4 py-3 bg-white/5 border border-purple-400/30 rounded-xl text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 transition-colors"
-                                        placeholder="Enter phone number"
-                                        {...register("phone", {
-                                            required: "Phone number is required",
-                                            pattern: {
-                                                value: /^\d{10}$/,
-                                                message: "Please enter a valid 10-digit phone number"
-                                            }
+                                        placeholder="Enter availability (e.g., Mon-Fri 9AM-5PM)"
+                                        {...register("availability", {
+                                            required: "Availability is required"
                                         })}
                                     />
-                                    {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+                                    {errors.availability && <p className="text-red-500">{errors.availability.message}</p>}
                                 </div>
 
                                 <div>

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import user from './Routes/userRoutes.js';
 import doctor from './Routes/doctorRoutes.js';
 import admin from './Routes/adminRoutes.js';
+import landing from './Routes/landingRoutes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -32,6 +33,7 @@ const ConnectDB = async () => {
 app.use('/api/user', user);
 app.use('/api/doctor', doctor);
 app.use('/api/admin', admin);
+app.use('/api/landing', landing);
 
 ConnectDB();
 app.listen(5000, () => {

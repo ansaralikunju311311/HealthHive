@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 const doctorSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -66,8 +67,15 @@ const doctorSchema = new mongoose.Schema({
     },
     otpExpiresAt: {
         type: Date,
+    },
+    availability: {  
+        type: String,
+        required: true,
     }
-
+    
+}, { 
+    timestamps: true 
 });
-const doctor = mongoose.model('doctor',doctorSchema)
+
+const doctor = mongoose.model('doctor', doctorSchema);
 export default doctor;
