@@ -1,31 +1,41 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { useForm } from 'react-hook-form'
-import cookies from 'js-cookie'
-import { toast } from 'react-toastify'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
+import cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 const Admin = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [error, setError] = useState('');
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/admin/login', data)
-            console.log(response.data)
-            console.log("checkingadmin====",response.data.Admin)
-            cookies.set('admintoken',response.data.adminToken);
-             if (response.data.adminToken) {
+            const response = await axios.post('http://localhost:5000/api/admin/login', data, {
+                withCredentials: true
+            });
+
+            if (response.data.adminToken) {
+                cookies.set('admintoken', response.data.adminToken);
                 toast.success('Login successful!', {
                     position: "top-right",
                     autoClose: 3000,
                     theme: "colored"
                 });
-                navigate('/admin/dashboard');
-             }
-             else {
-                navigate('/admin');
-             }
+                
+                // Add a small delay before navigation
+                setTimeout(() => {
+                    navigate('/admin/dashboard', { replace: true });
+                }, 100);
+            } else {
+                setError('Login failed - No token received');
+                toast.error('Login failed', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    theme: "colored"
+                });
+            }
         } catch (error) {
             console.error('Login error:', error.response?.data?.message);
             toast.error(error.response?.data?.message || 'Login failed', {
@@ -35,7 +45,8 @@ const Admin = () => {
             });
             setError(error.response?.data?.message || 'An error occurred');
         }
-    }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
             <div className="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
@@ -108,6 +119,7 @@ const Admin = () => {
                 </form>
             </div>
         </div>
-    )
-}
-export default Admin
+    );
+};
+
+export default Admin;

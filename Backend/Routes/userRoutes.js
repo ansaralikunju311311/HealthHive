@@ -12,6 +12,7 @@ router.post('/resend-otp', resendOtp);
 router.get('/otp-remaining-time', getOtpRemainingTime);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+router.get('/publicdoctors', getDoctorsData);
 
 
 // Protected routes (require authentication)

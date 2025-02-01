@@ -1,76 +1,111 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import cookies from 'js-cookie';
+import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
-import LandingPage from './Components/LandingPage';
-import SignUp from './Components/User/SignUp';
-import Login from './Components/User/Login';
-import GenerateOtp from './Components/User/GenerateOtp';
-import Admin from './Components/admin/Admin';
-import AdminDashboard from './Components/admin/AdminDashboard';
-import DoctorVerification from './Components/admin/DoctorVerification';
-import DoctorSignUp from './Components/Doctor/SignUp';
-import DoctorLogin from './Components/Doctor/Login';
-import Patients from './Components/admin/Patients';
-import Doctor from './Components/admin/Doctor';
-import BeforeVerification from './Components/Doctor/BeforeVerifcation';
-import HomePageUser from './Components/User/HomePageUser';
-import DoctorDash from './Components/Doctor/DoctorDash';
-import AdminProtected from './Components/admin/Protected/AdminProtected';
-import DoctorProtected from './Components/Doctor/Protected/DoctorProtected';
-import ReverseProtected from './Components/User/UserProtcted/Protctedun';
-import ResetPassword from './Components/Common/PasswordReset';
-import ForgotPassword from './Components/Common/Forgot';
-import DcotorReve from './Components/Doctor/Protected/RevProtected';
-import AdminReve from './Components/admin/Protected/ReverseProtected';
-import Protected from './Components/User/UserProtcted/Protected';
-import Profile from './Components/Doctor/Profile';
-import Department from './Components/admin/Department';
+import SignUp from './Pages/User/SignUp';
+import Login from './Pages/User/Login';
+import GenerateOtp from './Pages/User/GenerateOtp';
+import HomePageUser from './Pages/User/HomePageUser';
+import DoctorSignUp from './Pages/Doctor/SignUp';
+import DoctorLogin from './Pages/Doctor/Login';
+import DoctorDash from './Pages/Doctor/DoctorDash';
+import BeforeVerifcation from './Pages/Doctor/BeforeVerifcation';
+import Profile from './Pages/Doctor/Profile';
+import Protected from './Pages/User/UserProtected/Protected';
+import Admin from './Pages/admin/Admin';
+import AdminDashboard from './Pages/admin/AdminDashboard';
+import ReverseProtected from './Pages/User/UserProtected/ReverseProtected';
+import DoctorReve from './Pages/Doctor/Protected/DoctorReve';
+import DoctorProtected from './Pages/Doctor/Protected/DoctorProtected';
+import AdminProtected from './Pages/admin/Protected/AdminProtected';
+import AdminReve from './Pages/admin/Protected/ReverseProtected';
+import DoctorVerification from './Pages/admin/DoctorVerification';
+import Doctor from './Pages/admin/Doctor';
+import Departments from './Pages/admin/Department';
+import Patients from './Pages/admin/Patients';
+
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
 
 const App = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = cookies.get('useraccessToken');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/user/verify-token', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials: true,
+        });
+        setUserData(response.data.user);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={5000}
         hideProgressBar={false}
-        closeOnClick={true}
-        pauseOnHover={true}
-        draggable={true}
-        progress={undefined}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
 
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<ProtectedRoute wrapper={ReverseProtected}><LandingPage /></ProtectedRoute>} />
+        {/* Home Route - Uses HomePageUser for both states */}
+        <Route path="/" element={<HomePageUser />} />
+        <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
+
+        {/* Auth Routes */}
         <Route path="/signup" element={<ProtectedRoute wrapper={ReverseProtected}><SignUp /></ProtectedRoute>} />
         <Route path="/login" element={<ProtectedRoute wrapper={ReverseProtected}><Login /></ProtectedRoute>} />
         <Route path="/generate-otp" element={<ProtectedRoute wrapper={ReverseProtected}><GenerateOtp /></ProtectedRoute>} />
-        <Route path="/user/forgotpassword" element={<ProtectedRoute wrapper={ReverseProtected}><ForgotPassword /></ProtectedRoute>} />
-        <Route path="/doctor/forgotpassword" element={<ProtectedRoute wrapper={ReverseProtected}><ForgotPassword /></ProtectedRoute>} />
-        <Route path="/user/reset-password" element={<ProtectedRoute wrapper={ReverseProtected}><ResetPassword /></ProtectedRoute>} />
-        <Route path="/doctor/reset-password" element={<ResetPassword />} />
-
-        {/* User Protected Routes */}
-        <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
 
         {/* Doctor Routes */}
-        <Route path="/doctor/signup" element={<ProtectedRoute wrapper={DcotorReve}><DoctorSignUp /></ProtectedRoute>} />
-        <Route path="/doctor/login" element={<ProtectedRoute wrapper={DcotorReve}><DoctorLogin /></ProtectedRoute>} />
-        <Route path="/beforeverification" element={<ProtectedRoute wrapper={DcotorReve}><BeforeVerification /></ProtectedRoute>} />
+        <Route path="/doctor/signup" element={<ProtectedRoute wrapper={DoctorReve}><DoctorSignUp /></ProtectedRoute>} />
+        <Route path="/doctor/login" element={<ProtectedRoute wrapper={DoctorReve}><DoctorLogin /></ProtectedRoute>} />
+        <Route path="/beforeverification" element={<ProtectedRoute wrapper={DoctorReve}><BeforeVerifcation /></ProtectedRoute>} />
         <Route path="/doctor/dashboard" element={<ProtectedRoute wrapper={DoctorProtected}><DoctorDash /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute wrapper={DoctorProtected}><Profile /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/doctors" element={<ProtectedRoute wrapper={AdminProtected}><Doctor /></ProtectedRoute>} />
-        <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
         <Route path="/admin/doctorverification" element={<ProtectedRoute wrapper={AdminProtected}><DoctorVerification /></ProtectedRoute>} />
-        <Route path="/admin/departments" element={<ProtectedRoute wrapper={AdminProtected}><Department /></ProtectedRoute>} />
+        <Route path="/admin/doctors" element={<ProtectedRoute wrapper={AdminProtected}><Doctor /></ProtectedRoute>} />
+        <Route path="/admin/departments" element={<ProtectedRoute wrapper={AdminProtected}><Departments /></ProtectedRoute>} />
+        <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
       </Routes>
     </>
   );
