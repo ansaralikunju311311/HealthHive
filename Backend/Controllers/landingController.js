@@ -9,7 +9,6 @@ export const fetchDoctors = async (req, res) => {
         
         })
         .sort({ _id: -1 }) // Sort by _id descending (most recent first)
-        .limit(4);
 
         console.log("Fetched doctors:", doctors);
         res.status(200).json(doctors);

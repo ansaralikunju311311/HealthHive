@@ -4,17 +4,13 @@ import { useSelector } from 'react-redux';
 import { setUser, setToken } from './redux/Features/userSlice';
 import StayConnected from '../Components/Common/StayConnected'
 import Bannerdoctor from '../assets/Bannerdoctor.png';
-import DoctorsList from '../assets/doctorslist.png';
 import Treatment from '../assets/treatment 1.png';
-import DoctorOne from '../assets/Doctorone.png';
-import DoctorTwo from '../assets/doctortwo.png';
-import DoctorThree from '../assets/doctorthree.png';
-import DoctorFour from '../assets/doctorfour.png';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Footer from '../Components/Common/Footer'
 const LandingPage = () => {
   const [doctors, setDoctors] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   console.log("user from redux:", user);
@@ -38,12 +34,16 @@ const LandingPage = () => {
     fetchDoctors();
   }, [])
 
-  const SignUp = () => {
-    navigate('/Signup');
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? Math.max(0, Math.ceil(doctors.length / 4) - 1) : prevIndex - 1
+    );
   };
 
-  const Login = () => {
-    navigate('/Login');
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex + 1 >= Math.ceil(doctors.length / 4) ? 0 : prevIndex + 1
+    );
   };
 
   return (
@@ -128,7 +128,7 @@ const LandingPage = () => {
             <p className="text-lg text-gray-600 mb-8">
               Your trusted partner in healthcare. We provide comprehensive medical services with a focus on patient care and well-being.
             </p>
-            <button onClick={SignUp} className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 text-lg">
+            <button onClick={() => navigate('/signup')} className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 text-lg">
               Get Started
             </button>
           </div>
@@ -188,65 +188,100 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {doctors.map((doctor, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
-                <div className="relative">
-                  <img 
-                    src={doctor.profileImage
-                    } 
-                    alt={doctor.name}
-                    className="w-full h-80 object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
-                        Available Today
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="text-center mb-4">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
-                    <p className="text-blue-600 font-medium">{doctor.specialization}</p>
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm mb-4">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {doctor.availability}
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm mb-6">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    {doctor.yearsOfExperience
-                    }+ years of experience
-                  </div>
-
-                  <button 
-                    onClick={() => navigate('/appointment')}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center group"
-                  >
-                    Book Appointment
-                    <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <button className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium group">
-              View All Doctors
-              <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          <div className="relative overflow-hidden">
+            {/* Previous Button */}
+            <button 
+              onClick={handlePrevious}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-3 rounded-r-lg shadow-lg z-10 hover:bg-white"
+              disabled={currentIndex === 0}
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
+
+            {/* Doctors Container */}
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {Array.from({ length: Math.ceil(doctors.length / 4) }).map((_, pageIndex) => (
+                  <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-8">
+                    {doctors.slice(pageIndex * 4, pageIndex * 4 + 4).map((doctor, index) => (
+                      <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
+                        <div className="relative">
+                          <img 
+                            src={doctor.profileImage} 
+                            alt={doctor.name}
+                            className="w-full h-80 object-cover object-center"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute bottom-4 left-4">
+                              <span className="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
+                                Available Today
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-6">
+                          <div className="text-center mb-4">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
+                            <p className="text-blue-600 font-medium">{doctor.specialization}</p>
+                          </div>
+                          <div className="flex items-center text-gray-600 text-sm mb-4">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {doctor.availability}
+                          </div>
+                          <div className="flex items-center text-gray-600 text-sm mb-6">
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            {doctor.yearsOfExperience}+ years of experience
+                          </div>
+                          <button 
+                            onClick={() => navigate('/appointment')}
+                            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center group"
+                          >
+                            Book Appointment
+                            <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <button 
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-3 rounded-l-lg shadow-lg z-10 hover:bg-white"
+              disabled={currentIndex >= Math.ceil(doctors.length / 4) - 1}
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Pagination Indicators */}
+          <div className="flex justify-center mt-8 space-x-2">
+            {Array.from({ length: Math.ceil(doctors.length / 4) }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  currentIndex === index ? 'bg-blue-600 w-4' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </div>
