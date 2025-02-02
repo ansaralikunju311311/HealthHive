@@ -28,6 +28,7 @@ import Patients from './Pages/admin/Patients';
 import PasswordReset from './Common/PasswordReset'
 import Forgot from './Common/Forgot';
 import About from './Pages/User/About/About';
+import ContactUs from './Pages/User/ContactUs/ContactUs..jsx'
 
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
@@ -122,8 +123,8 @@ const App = () => {
 
 
          
-
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<ContactUs />} />
  
       </Routes>
     </>
