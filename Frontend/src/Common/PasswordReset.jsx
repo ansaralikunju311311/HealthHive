@@ -1,5 +1,6 @@
 import React from 'react';
-import Bannerdoctor from '../../assets/Bannerdoctor.png';
+// import Bannerdoctor from '../../assets/Bannerdoctor.png';
+import Bannerdoctor from '../assets/Bannerdoctor.png'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';

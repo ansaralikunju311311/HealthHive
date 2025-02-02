@@ -13,8 +13,7 @@ router.get('/otp-remaining-time', getOtpRemainingTime);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/publicdoctors', getDoctorsData);
-
-
+router.get('/Aboutdoctors', getDoctorsData);
 // Protected routes (require authentication)
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);

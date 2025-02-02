@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Footer from '../../Common/Footer';
-import StayConnected from '../../Common/StayConnected';
-import NavBar from '../../Common/NavBar';
-import Hero from '../../Common/Hero';
-import DoctorOne from '../../assets/Doctorone.png';
+import Footer from '../../../Common/Footer';
+import StayConnected from '../../../Components/User/StayConnected';
+import NavBar from '../../../Common/NavBar';
+import Hero from '../../../Components/User/Hero';
 import cookies from 'js-cookie';
-import Service from '../../Common/Service';
-import DentalSignUp from '../../Common/DentalSignUp';
-import Specialties from '../../Common/Specialties';
-import QuickAction from '../../Common/QuickAction';
-import HealthTips from '../../Common/HealthTips';
+import Service from '../../../Components/User/Service';
+import DentalSignUp from '../../../Components/User/DentalSignUp';
+import Specialties from '../../../Components/User/Specialties';
+import QuickAction from '../../../Components/User/QuickAction';
+import HealthTips from '../../../Components/User/HealthTips';
 
 const HomePageUser = () => {
   const navigate = useNavigate();

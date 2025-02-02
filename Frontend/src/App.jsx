@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SignUp from './Pages/User/SignUp';
 import Login from './Pages/User/Login';
 import GenerateOtp from './Pages/User/GenerateOtp';
-import HomePageUser from './Pages/User/HomePageUser';
+import HomePageUser from './Pages/User/Home/HomePageUser';
 import DoctorSignUp from './Pages/Doctor/SignUp';
 import DoctorLogin from './Pages/Doctor/Login';
 import DoctorDash from './Pages/Doctor/DoctorDash';
@@ -25,6 +25,9 @@ import DoctorVerification from './Pages/admin/DoctorVerification';
 import Doctor from './Pages/admin/Doctor';
 import Departments from './Pages/admin/Department';
 import Patients from './Pages/admin/Patients';
+import PasswordReset from './Common/PasswordReset'
+import Forgot from './Common/Forgot';
+import About from './Pages/User/About/About';
 
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
@@ -88,6 +91,11 @@ const App = () => {
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
 
         {/* Auth Routes */}
+        <Route path="/user/forgotpassword" element={<Forgot />} />
+        <Route path="/doctor/forgotpassword" element={<Forgot />} />
+        <Route path="/user/reset-password" element={<PasswordReset />} />
+        <Route path="/doctor/reset-password" element={<PasswordReset />} />
+
         <Route path="/signup" element={<ProtectedRoute wrapper={ReverseProtected}><SignUp /></ProtectedRoute>} />
         <Route path="/login" element={<ProtectedRoute wrapper={ReverseProtected}><Login /></ProtectedRoute>} />
         <Route path="/generate-otp" element={<ProtectedRoute wrapper={ReverseProtected}><GenerateOtp /></ProtectedRoute>} />
@@ -106,6 +114,17 @@ const App = () => {
         <Route path="/admin/doctors" element={<ProtectedRoute wrapper={AdminProtected}><Doctor /></ProtectedRoute>} />
         <Route path="/admin/departments" element={<ProtectedRoute wrapper={AdminProtected}><Departments /></ProtectedRoute>} />
         <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
+
+
+
+
+
+
+
+         
+
+          <Route path="/about" element={<About />} />
+ 
       </Routes>
     </>
   );
