@@ -11,11 +11,12 @@ import DentalSignUp from '../../../Components/User/DentalSignUp';
 import Specialties from '../../../Components/User/Specialties';
 import QuickAction from '../../../Components/User/QuickAction';
 import HealthTips from '../../../Components/User/HealthTips';
-
+import Department from '../../../Components/User/Department.jsx';
 const HomePageUser = () => {
   const navigate = useNavigate();
   const [doctorsDataW, setDoctorsDataW] = useState([]);
   const [doctorsData, setDoctorsData] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,6 +45,15 @@ const HomePageUser = () => {
               withCredentials: true,
             });
             setDoctorsData(doctorsResponse.data.doctors);
+
+            // const departmentsResponse = await axios.get('http://localhost:5000/api/admin/department', {
+            //   headers: {
+            //     Authorization: `Bearer ${token}`
+            //   },
+            //   withCredentials: true,
+            // });
+            // setDepartments(departmentsResponse.data);
+            // console.log("departments=====", departmentsResponse.data);
           } catch (error) {
             if (error.response?.status === 401) {
               cookies.remove('useraccessToken');
@@ -179,7 +189,7 @@ const HomePageUser = () => {
       <NavBar />
       <Hero />
       <QuickAction />
-      
+     <Department/>
       {/* Available Doctors */}
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -246,7 +256,6 @@ const HomePageUser = () => {
 
       <HealthTips />
       <DentalSignUp />
-
       <StayConnected />
       <Footer />
     </div>

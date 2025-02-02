@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [departmentName, setDepartmentName] = useState('');
+  const [description, setDescription] = useState('');
   const [departments, setDepartments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -64,6 +65,7 @@ const Department = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setDepartmentName('');
+    setDescription('');
   };
 
   const handleSubmit = async (e) => {
@@ -94,7 +96,8 @@ const Department = () => {
     try {
       console.log("Adding department:", trimmedDepartmentName);
       const response = await axios.post('http://localhost:5000/api/admin/department', {
-        Departmentname: trimmedDepartmentName
+        Departmentname: trimmedDepartmentName,
+        Description: description
       }, {
         withCredentials: true,
         headers: {
@@ -246,7 +249,19 @@ const Department = () => {
                   placeholder="Enter department name"
                   required
                 />
+
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter description"
+                />
               </div>
+
               <div className="flex justify-end gap-4">
                 <button
                   type="button"

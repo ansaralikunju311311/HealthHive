@@ -12,6 +12,10 @@ const departmentSchema = new mongoose.Schema({
     status: {
         type: String,
         default: 'Listed'
+    },
+    Description: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true

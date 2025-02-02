@@ -184,46 +184,16 @@ export const doctors = async (req,res)=>
 
 
 
-// export const handleBlock = async (req, res) => {
-//     try {
-//         const { patientid } = req.params;
-//         console.log("patientid=====",patientid);
-//         const patient = await User.findById(patientid);
-//         if (!patient) {
-//             return res.status(404).json({ message: 'Patient not found' });
-//         }
-//         patient.isBlocked = true;
-//         await patient.save();
-//         res.status(200).json({ message: 'Patient blocked successfully' });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
-//     }
-// };
 
 
 
 
 
-// export const unblockDoctor = async (req, res) => {
-//     try {
-//         const { doctorid } = req.params;
-//         console.log("doctorid=====",doctorid);
-//         const doctor = await Doctor.findById(doctorid);
-//         if (!doctor) {
-//             return res.status(404).json({ message: 'Doctor not found' });
-//         }
-//         doctor.isBlocked = false;
-//         await doctor.save();
-//         res.status(200).json({ message: 'Doctor unblocked successfully' });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+
+
 export const addDepartment = async (req, res) => {
     try {
-        const { Departmentname } = req.body;
+        const { Departmentname,Description } = req.body;
         
         // Check if department exists (case-insensitive)
         const department = await Department.findOne({
@@ -237,7 +207,8 @@ export const addDepartment = async (req, res) => {
         // Create new department with original capitalization
         const newDepartment = new Department({ 
             Departmentname,
-            status: 'Listed'
+            status: 'Listed',
+            Description
         });
         
         await newDepartment.save();
