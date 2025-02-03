@@ -1,10 +1,22 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import {protect} from '../Middleware/authMiddleware.js';
-import {RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken,getDoctorsData} from '../Controllers/userController.js';
+import {
+    RegisterUser,
+     LoginUser, 
+     verifyOtp, 
+     getOtpRemainingTime,
+      resendOtp, 
+      forgotPassword,
+       resetPassword, 
+       verifyToken,
+       getDoctorsData
+    } from '../Controllers/userController.js';
 const router = express.Router();
 
+
 // Public routes (no authentication needed)
+
 router.post('/signup', RegisterUser);
 router.post('/login', LoginUser);
 router.post('/verify-otp', verifyOtp);
@@ -14,7 +26,12 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/publicdoctors', getDoctorsData);
 router.get('/Aboutdoctors', getDoctorsData);
+
+
+
+
 // Protected routes (require authentication)
+
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);
 export default router;
