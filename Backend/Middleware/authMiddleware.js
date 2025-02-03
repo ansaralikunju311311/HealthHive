@@ -7,7 +7,7 @@ import RejectedDoctor from '../Model/RejectedDoctors.js';
 export const protect = async (req, res, next) => {
     try {
        
-        const token = req.cookies.useraccessToken;
+        const token = req.cookies.usertoken;
         console.log('in protected',token)  
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });

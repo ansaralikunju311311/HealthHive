@@ -39,37 +39,37 @@ const App = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = cookies.get('useraccessToken');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-        const response = await axios.get('http://localhost:5000/api/user/verify-token', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true,
-        });
-        setUserData(response.data.user);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const token = cookies.get('usertoken');
+  //       if (!token) {
+  //         setLoading(false);
+  //         return;
+  //       }
+  //       const response = await axios.get('http://localhost:5000/api/user/verify-token', {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`
+  //         },
+  //         withCredentials: true,
+  //       });
+  //       setUserData(response.data.user);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error);
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchUserData();
+  // }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

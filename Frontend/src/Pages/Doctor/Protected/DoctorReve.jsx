@@ -6,7 +6,7 @@ const DoctorReve = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = cookies.get('doctoraccessToken');
+    const token = cookies.get('doctortoken');
     if (token) {
       navigate('/doctor/dashboard');
     }

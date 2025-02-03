@@ -23,9 +23,10 @@ const HomePageUser = () => {
 
   useEffect(() => {
     const checkAuthAndFetchData = async () => {
+      console.log('Checking authentication and fetching data...');
       try {
-        const token = cookies.get('useraccessToken');
-        
+        const token = cookies.get('usertoken');
+        console.log("this is the token", token);
         if (token) {
           try {
             // Verify token and get user data
@@ -39,7 +40,7 @@ const HomePageUser = () => {
 
             // Fetch doctors data only if user is authenticated
             const doctorsResponse = await axios.get('http://localhost:5000/api/user/doctorsdetails', {
-              headers: {
+              headers: {  
                 Authorization: `Bearer ${token}`
               },
               withCredentials: true,
@@ -55,14 +56,16 @@ const HomePageUser = () => {
             // setDepartments(departmentsResponse.data);
             // console.log("departments=====", departmentsResponse.data);
           } catch (error) {
+            console.log('djfhjdhfjfghjh');
             if (error.response?.status === 401) {
-              cookies.remove('useraccessToken');
+              cookies.remove('usertoken');
             }
             console.error("Error fetching user data:", error);
           }
         }
         setLoading(false);
       } catch (error) {
+        console.log('djfhjdhfjfghjh');
         console.error("Error:", error);
         setError('Failed to load data');
         setLoading(false);
@@ -108,6 +111,7 @@ const HomePageUser = () => {
 
   // Non-authenticated user view
   if (!userData) {
+    console.log('djfhjdhfjfghjh');
     return (
       <div className="min-h-screen bg-gray-50">
         <NavBar />

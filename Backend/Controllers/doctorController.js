@@ -2,7 +2,7 @@ import doctor from "../Model/doctorModel.js";
 
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import bcrypt from 'bcrypt';
-import {jwtToken} from '../utils/auth.js'
+// import {jwtToken} from '../utils/auth.js'
 import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
@@ -10,6 +10,15 @@ import Department from '../Model/DepartmentModel.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
+
+ const cookieOptions = {
+    
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 10 * 60 * 1000, // 1 minute
+};
+
 
 
 
@@ -31,7 +40,7 @@ import Department from '../Model/DepartmentModel.js';
  const RegisterDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
-        console.log(req.body);
+        // console.log(req.body);
         // Check if user already exists and is active
         const existingUser = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email})
@@ -72,8 +81,8 @@ import Department from '../Model/DepartmentModel.js';
             existingUser.isActive = true;
             existingUser.availability = availability;
             user = existingUser;
-            console.log("Updated user:", user);
-            console.log("Existing user:", existingUser);
+            // console.log("Updated user:", user);
+            // console.log("Existing user:", existingUser);
         } else {
             // Create new user
             user = new doctor({
@@ -92,7 +101,7 @@ import Department from '../Model/DepartmentModel.js';
                 isActive: false,
                 availability
             });
-            console.log("New user:", user);
+            // console.log("New user:", user);
         }
         await user.save();
         res.status(200).json({message:"User registered successfully",user});
@@ -114,7 +123,7 @@ import Department from '../Model/DepartmentModel.js';
         if(existingDoctor.isBlocked===true && existingDoctor.isActive===true &&existingDoctor){
             return res.status(200).json({message:"Your account is blocked. Please contact the admin."});
         }
-        console.log(existingDoctor.isActive);
+        // console.log(existingDoctor.isActive);
         // Check if user is active
         if(!existingDoctor.isActive){
             return res.status(200).json({message:"Please verify your account first",
@@ -135,7 +144,8 @@ import Department from '../Model/DepartmentModel.js';
         if(!isMatch){
             return res.status(400).json({message:"Invalid credentials"});
         }
-        const doctorToken = setToken(existingDoctor,res);
+        const doctorToken = setToken(existingDoctor);
+        res.cookie('doctortoken', doctorToken, cookieOptions);
         // Generate tokens
         res.status(200).json({
             message:"Login successful",
@@ -264,17 +274,17 @@ const fetchDoctors = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         // Detailed logging of entire request
-        console.log("Full Request Body:", JSON.stringify(req.body, null, 2));
-        console.log("Request Body Type:", typeof req.body);
+        // console.log("Full Request Body:", JSON.stringify(req.body, null, 2));
+        // console.log("Request Body Type:", typeof req.body);
 
         // Destructure with additional logging, handling both camelCase and snake_case
         const email = req.body.email;
         const otp = req.body.otp;
         const newPassword = req.body.newPassword || req.body.new_password;
 
-        console.log("Email:", email, "Type:", typeof email);
-        console.log("OTP:", otp, "Type:", typeof otp);
-        console.log("New Password:", newPassword, "Type:", typeof newPassword);
+        // console.log("Email:", email, "Type:", typeof email);
+        // console.log("OTP:", otp, "Type:", typeof otp);
+        // console.log("New Password:", newPassword, "Type:", typeof newPassword);
 
         // Validate input with detailed checks
         if (!email) {
@@ -346,7 +356,7 @@ const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;
 
-        console.log("Doctor ID:", doctorId);
+        // console.log("Doctor ID:", doctorId);
 
 
         // const doctorData = await doctor.findOne({ email });
@@ -355,7 +365,7 @@ const doctorProfile = async (req, res) => {
 
 
 
-        console.log("Doctor Data:", doctorData);
+        // console.log("Doctor Data:", doctorData);
         if (!doctorData) {
             return res.status(404).json({ message: 'Doctor not found' });
         }

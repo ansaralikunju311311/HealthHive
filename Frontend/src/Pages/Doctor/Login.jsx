@@ -24,7 +24,7 @@ const Login = () => {
                 });
                 return;
             } else {
-                cookies.set('doctortoken', response.data.token);
+                // cookies.set('doctortoken', response.data.token);
                 toast.success('Welcome back, Dr. ' + response.data.doctor.name, {
                     icon: '👋',
                     backgroundColor: '#22c55e'

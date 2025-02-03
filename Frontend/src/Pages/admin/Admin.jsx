@@ -17,7 +17,7 @@ const Admin = () => {
             });
 
             if (response.data.adminToken) {
-                cookies.set('admintoken', response.data.adminToken);
+                // cookies.set('admintoken', response.data.adminToken);
                 toast.success('Login successful!', {
                     position: "top-right",
                     autoClose: 3000,

@@ -33,7 +33,7 @@ const Login = () => {
       }
 
       // Make sure to set the cookie before navigation
-      cookies.set('useraccessToken', response.data.userToken);
+      // cookies.set('useraccessToken', response.data.userToken);
       
       toast.success('Welcome back!', {
         backgroundColor: '#22c55e',

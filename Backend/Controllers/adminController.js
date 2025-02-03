@@ -27,7 +27,8 @@ import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
             return res.status(400).json({ message: "Invalid credentials" });
         }
     
-           const adminToken = setToken(existingAdmin,res);
+           const adminToken = setToken(existingAdmin);
+           res.cookie('admintoken', adminToken, cookieOptions);
         // Send response
         res.status(200).json({
             message: "Login successful",

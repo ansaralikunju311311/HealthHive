@@ -64,8 +64,8 @@ const GenerateOtp = () => {
       
       setSuccess(response.data.message);
       
-      if(response.data.userToken){
-        cookies.set('useraccessToken', response.data.userToken);
+      if(response.data){
+        // cookies.set('useraccessToken', response.data.userToken);
         toast.success('Email verified successfully! Welcome to HealthHive.');
         navigate('/home');
       }

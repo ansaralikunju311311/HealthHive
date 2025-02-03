@@ -13,11 +13,13 @@ dotenv.config();
 
 app.use(cors({
     origin: 'http://localhost:5173',
-    credentials: true
+    credentials: true,
+    allowedHeaders:["Content-Type","Authorization","cookie"],
+    exposedHeaders: ["set-cookie"],
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false}));
+app.use(express.urlencoded({ extended: true}));
 
 const ConnectDB = async () => {
     try {
@@ -29,7 +31,6 @@ const ConnectDB = async () => {
         console.log('Error connecting to MongoDB:', error.message);
     }
 };
-
 app.use('/api/user', user);
 app.use('/api/doctor', doctor);
 app.use('/api/admin', admin);

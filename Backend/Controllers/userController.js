@@ -2,11 +2,19 @@ import User from '../Model/userModel.js'
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
-import jwt from 'jsonwebtoken';
-import {jwtToken} from '../utils/auth.js';
 import {setToken} from '../utils/auth.js';
 import Doctor from '../Model/doctorModel.js';
 // Helper function to generate OTP and update user
+
+
+
+const cookieOptions = {
+    
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 10 * 60 * 1000, // 1 minute
+};
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
@@ -112,11 +120,11 @@ const verifyOtp = async(req,res)=>{
         user.otpExpiresAt = undefined;
         
         // Generate tokens
-        const token = setToken(user,res);
+        const token = setToken(user);
+    console.log("token   coolesdsjdnfjdfjdfr=====",token);
+        res.cookie('usertoken', token, cookieOptions);
 
-
-
-        console.log("token   coolesdsjdnfjdfjdfr=====",token);
+        // console.log("token   coolesdsjdnfjdfjdfr=====",token);
     
         await user.save();
        
@@ -162,7 +170,9 @@ const LoginUser = async(req,res)=>{
         }
         
         // Generate tokens
-        const userToken = setToken(user,res);
+        const userToken = setToken(user);
+        console.log("userToken   coolesdsjdnfjdfjdfr=====",userToken);
+       console.log(res.cookie('usertoken', userToken, cookieOptions)); 
         res.status(200).json({
             message:"Login successful",
             user:{
@@ -317,7 +327,7 @@ export const getDoctorsData = async (req, res) => {
     try {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
 
-        console.log("Fetched doctors:", doctors);
+        // console.log("Fetched doctors:", doctors);
         res.status(200).json({ doctors: doctors }); 
     } catch (error) {
         console.error("Error fetching doctors:", error);

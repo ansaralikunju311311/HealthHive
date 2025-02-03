@@ -11,7 +11,8 @@ const NavBar = () => {
   const profileRef = useRef(null);
 
   useEffect(() => {
-    const token = cookies.get('useraccessToken');
+    console.log('navajhdhfhd')
+    const token = cookies.get('usertoken');
     if (token) {
       const fetchUserData = async () => {
         try {
@@ -31,7 +32,7 @@ const NavBar = () => {
   }, []);
 
   const handleLogout = () => {
-    cookies.remove('useraccessToken');
+    cookies.remove('usertoken');
     setUserData(null);
     navigate('/');
   };
