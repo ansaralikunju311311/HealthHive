@@ -11,7 +11,8 @@ import {
        resetPassword, 
        verifyToken,
        getDoctorsData,
-       logout
+       logout,
+       getDepartments
     } from '../Controllers/userController.js';
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.post('/reset-password', resetPassword);
 router.get('/publicdoctors', getDoctorsData);
 router.get('/Aboutdoctors', getDoctorsData);
 router.post('/logout', logout);
+router.get('/departments', getDepartments);
 // Protected routes (require authentication)
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);

@@ -255,7 +255,7 @@ const HomePageUser = () => {
       </div>
 
       <HealthTips />
-      <DentalSignUp />
+      {/* <DentalSignUp /> */}
       <StayConnected />
       <Footer />
     </div>

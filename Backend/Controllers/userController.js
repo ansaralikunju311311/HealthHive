@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';
 import Doctor from '../Model/doctorModel.js';
+import Department from '../Model/DepartmentModel.js';
 // Helper function to generate OTP and update user
 
 
@@ -145,7 +146,6 @@ const verifyOtp = async(req,res)=>{
         res.status(500).json({error:error.message});
     }
 }
-
 const LoginUser = async(req,res)=>{
     try {
         const {email,password} = req.body;
@@ -337,6 +337,15 @@ export const getDoctorsData = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+export const getDepartments = async (req, res) => {
+    try {
+        const departments = await Department.find({status:'Listed'}).limit(4);
+        res.status(200).json(departments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 export const logout = async (req, res) => {
     try {

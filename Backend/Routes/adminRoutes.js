@@ -17,9 +17,6 @@ admin.get("/pending-doctors", pendingDoctors);
 admin.get("/doctors", doctors);
 admin.put("/approve-doctor/:doctorid", approveDoctor);
 admin.put("/reject-doctor/:doctorid", rejectDoctor);
-// admin.put("/blockdoctor/:doctorid", blockDoctor);
-// admin.put('/blockpatient/:patientid', handleBlock);
-// admin.put('/unblockdoctor/:doctorid', unblockDoctor);
 admin.put('/unblockpatient/:patientid', patientblock);
 admin.put("/blockdoctor/:doctorid", handleBlock);
 admin.post("/department", addDepartment)

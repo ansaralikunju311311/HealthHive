@@ -9,7 +9,7 @@ const Hero = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const token = cookies.get('useraccessToken');
+    const token = cookies.get('usertoken');
     if (token) {
       const fetchUserData = async () => {
         try {
