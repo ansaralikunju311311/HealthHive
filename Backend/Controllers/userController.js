@@ -363,4 +363,17 @@ export const logout = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+export const dptdoctor = async (req, res) => {
+    try {
+        const { departmentname } = req.params;
+        console.log("===========================",departmentname)
+        
+        const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
+        console.log("doctors====================",doctors)
+        res.status(200).json({ doctors });
+    } catch (error) {
+        console.error('Error fetching doctors by department:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

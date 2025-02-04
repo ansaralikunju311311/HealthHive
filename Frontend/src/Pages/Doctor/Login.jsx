@@ -16,7 +16,7 @@ const Login = () => {
             console.log(response.data)
             if (response.data.doctor.isActive === false) {
                 toast.error('Your account is pending verification');
-                navigate('/before-verification');
+                navigate('/beforeverification');
             } else if (response.data.doctor.isBlocked) {
                 toast.error('Your account has been blocked. Please contact support.', {
                     icon: '⛔',

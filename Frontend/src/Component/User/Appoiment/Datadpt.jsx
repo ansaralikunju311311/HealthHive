@@ -51,6 +51,7 @@ const Datadpt = ({ limit =null}) => {
           // console.log("token", token);
           // console.log("user data", userData);
 
+
            const response1 = await axios.get('http://localhost:5000/api/user/departments', {
             headers: {
               Authorization: `Bearer ${token}`
@@ -58,6 +59,7 @@ const Datadpt = ({ limit =null}) => {
             withCredentials: true,
           });
           setDepartments(response1.data);
+          console.log(response1.data);
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
@@ -65,6 +67,13 @@ const Datadpt = ({ limit =null}) => {
       fetchUserData();
     }
   }, []);
+  const handleDepartmentClick = async (department) => {   
+
+    console.log("department", department);
+     const dr =    await axios.get(`http://localhost:5000/api/user/appointments/${department.Departmentname}`);
+     console.log("dr", dr.data);
+     navigate('/bookings',{state: { data: dr.data }})
+  };
   
   return (
     <>
@@ -91,7 +100,7 @@ const Datadpt = ({ limit =null}) => {
                   <div 
                     key={department._id} 
                     className="group cursor-pointer"
-                  >
+                    onClick={()=>handleDepartmentClick(department)} >
                     <div className={`h-full bg-gradient-to-br ${departmentColors[department._id]} 
                                   rounded-xl shadow-md overflow-hidden transform transition-all duration-300 
                                   group-hover:shadow-2xl group-hover:-translate-y-1`}>
@@ -104,6 +113,7 @@ const Datadpt = ({ limit =null}) => {
                         </p>
                       </div>
                     </div>
+                  
                   </div>
                 ))}
               </div>
