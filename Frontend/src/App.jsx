@@ -29,6 +29,7 @@ import PasswordReset from './Common/PasswordReset'
 import Forgot from './Common/Forgot';
 import About from './Pages/User/About/About';
 import ContactUs from './Pages/User/ContactUs/ContactUs..jsx'
+import Appoiments from './Pages/User/Appoiments/Appoiments.jsx';
 
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
@@ -90,6 +91,7 @@ const App = () => {
         {/* Home Route - Uses HomePageUser for both states */}
         <Route path="/" element={<HomePageUser />} />
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
+        <Route path="/appointment" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} />
 
         {/* Auth Routes */}
         <Route path="/user/forgotpassword" element={<Forgot />} />

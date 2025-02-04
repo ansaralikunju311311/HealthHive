@@ -339,8 +339,9 @@ export const getDoctorsData = async (req, res) => {
 }
 export const getDepartments = async (req, res) => {
     try {
-        const departments = await Department.find({status:'Listed'}).limit(4);
+        const departments = await Department.find({status:'Listed'});
         res.status(200).json(departments);
+        console.log("departments",departments);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
