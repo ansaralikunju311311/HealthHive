@@ -1,11 +1,13 @@
 import React from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import cookies from 'js-cookie'
 import { useState } from 'react'
 import Bannerdoctor from '../../../assets/Bannerdoctor.png'
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const Hero = () => {
                  Book appointments, view your medical records, and manage your healthcare journey all in one place.
                </p>
                <button 
-                onClick={() => navigate('/user/book-appointment')}
+                onClick={() => navigate('/appointment')}
                 className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 text-lg"
               >
                 Book Appointment

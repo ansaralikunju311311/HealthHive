@@ -235,7 +235,7 @@ const HomePageUser = () => {
                   </div>
 
                   <button 
-                    onClick={() => navigate('/user/book-appointment')}
+                    onClick={ ()=>navigate('/appointment')}
                     className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center group"
                   >
                     Book Appointment

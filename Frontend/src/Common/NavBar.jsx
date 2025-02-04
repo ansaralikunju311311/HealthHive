@@ -76,7 +76,7 @@ const NavBar = () => {
             
             {userData ? (
               <button 
-                onClick={() => navigate('/user/appointments')} 
+                onClick={() => navigate('/appointment')} 
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 hover:bg-blue-50 rounded-lg group"
               >
                 <FaCalendarAlt className="h-5 w-5 group-hover:scale-110 transition-transform" />

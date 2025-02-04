@@ -1,6 +1,7 @@
 import React from 'react'
-
+import { useNavigate } from 'react-router-dom'
 const Schedulebtn = () => {
+  const navigate = useNavigate();
   return (
     <div>
 
