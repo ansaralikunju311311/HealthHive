@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import Treatment from '../../assets/treatment 1.png'
+import Treatment from '../../../assets/treatment 1.png';
 const DentalSignUp = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
     return (
         <div>
               <div className="py-16">

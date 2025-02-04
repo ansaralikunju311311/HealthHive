@@ -1,9 +1,9 @@
 import React from 'react';
 import Navbar from "../../../Common/NavBar";
 import Footer from "../../../Common/Footer";
-import Banner from "../../../Components/User/ContactUs/Banner";
-import Services from "../../../Components/User/ContactUs/Services";
-import ContactInfo from "../../../Components/User/ContactUs/ContactInfo";
+import Banner from "../../../Component/User/Contactus/Banner";
+import Services from "../../../Component/User/Contactus/Services";
+import ContactInfo from "../../../Component/User/Contactus/ContactInfo";
 
 const ContactUs = () => {
     return (

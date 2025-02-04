@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import cookies from 'js-cookie'
 import { useState } from 'react'
-import Bannerdoctor from '../../assets/Bannerdoctor.png'
+import Bannerdoctor from '../../../assets/Bannerdoctor.png'
 
 const Hero = () => {
   const [userData, setUserData] = useState(null);

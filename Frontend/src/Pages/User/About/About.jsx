@@ -1,9 +1,9 @@
 import NavBar from "../../../Common/NavBar";
 import Footer from "../../../Common/Footer";
-import Section from '../../../Components/User/About/Section.jsx'
-import LatestTech from '../../../Components/User/About/LatestTech.jsx'
-import Upcoming from '../../../Components/User/About/Upcoming.jsx'
-import Specialities from '../../../Components/User/About/Specialities.jsx'
+import Section from '../../../Component/User/About/Section.jsx'
+import LatestTech from '../../../Component/User/About/LatestTech.jsx'
+import Upcoming from '../../../Component/User/About/Upcoming.jsx'
+import Specialities from '../../../Component/User/About/Specialities.jsx'
 
 const About = () => {
     return (
