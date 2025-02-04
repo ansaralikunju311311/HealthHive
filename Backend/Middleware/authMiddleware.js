@@ -4,100 +4,211 @@ import doctor from '../Model/doctorModel.js';
 import Admin from '../Model/AdminModel/adminModel.js';
 import cookies from 'js-cookie'; 
 import RejectedDoctor from '../Model/RejectedDoctors.js';
+
 export const protect = async (req, res, next) => {
     try {
-       
         const token = req.cookies.usertoken;
-        console.log('in protected',token)  
-        if (!token) {
-            return res.status(401).json({ message: 'Not authorized, no token' });
+        console.log('usertoken====', token);
+        
+        // Check if token exists and is not empty or undefined
+        if (!token || token.trim() === '') {
+            return res.status(401).json({ message: 'Not authorized, no valid token' });
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId).select('-password');
 
-        if (!user) {
-            return res.status(401).json({ message: 'Not authorized, user not found' });
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            console.log('decoded====', decoded);
+
+            const user = await User.findById(decoded.userId).select('-password');
+            
+            if (!user) {
+                // Clear the invalid token
+                res.cookie('usertoken', '', {
+                    expires: new Date(0),
+                    httpOnly: false,
+                    secure: true,
+                    sameSite: 'None',
+                    path: '/'
+                });
+                return res.status(401).json({ message: 'Not authorized, user not found' });
+            }
+
+            req.user = user;
+            next();
+        } catch (verifyError) {
+            console.error('Token verification error:', verifyError);
+            
+            // Clear the invalid token for all error types
+            res.cookie('usertoken', '', {
+                expires: new Date(0),
+                httpOnly: false,
+                secure: true,
+                sameSite: 'None',
+                path: '/'
+            });
+            
+            // More specific error handling
+            if (verifyError.name === 'JsonWebTokenError') {
+                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+            }
+            if (verifyError.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+            }
+            
+            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
         }
-        req.user = user;
-        next();
     } catch (error) {
-        console.error('Auth middleware error:', error);
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        res.status(401).json({ message: 'Not authorized' });
+        console.error('Unexpected auth middleware error:', error);
+        
+        // Clear any potentially invalid token
+        res.cookie('usertoken', '', {
+            expires: new Date(0),
+            httpOnly: false,
+            secure: true,
+            sameSite: 'None',
+            path: '/'
+        });
+        
+        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };
+
 export const protectDoctor = async (req, res, next) => {
     try {
-       const token = req.cookies.doctortoken;
-        if (!token) {
-            return res.status(401).json({ message: 'Not authorized, no token' });
-        }
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Get doctor from token
-        const doctorUser = await doctor.findById(decoded.userId).select('-password');
-        if (!doctorUser) {
-            return res.status(401).json({ message: 'Not authorized, doctor not found' });
-        }
-        // Verify if doctor is active
-        if (!doctorUser.isActive) {
-            return res.status(401).json({ message: 'Account is not yet verified' });
-        }
-        if(doctorUser.isBlocked===true){
-            return res.status(401).json({ message: 'Account is blocked' });
+        const token = req.cookies.doctortoken;
+        
+        // Check if token exists and is not empty or undefined
+        if (!token || token.trim() === '') {
+            return res.status(401).json({ message: 'Not authorized, no valid token' });
         }
 
-        // Add doctor to request object
-        req.doctor = doctorUser;
-        next();
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const doctorUser = await doctor.findById(decoded.userId).select('-password');
+            
+            if (!doctorUser) {
+                // Clear the invalid token
+                res.cookie('doctortoken', '', {
+                    expires: new Date(0),
+                    httpOnly: false,
+                    secure: true,
+                    sameSite: 'None',
+                    path: '/'
+                });
+                return res.status(401).json({ message: 'Not authorized, doctor not found' });
+            }
+
+            // Verify if doctor is active
+            if (!doctorUser.isActive) {
+                return res.status(401).json({ message: 'Account is not yet verified' });
+            }
+            if(doctorUser.isBlocked===true){
+                return res.status(401).json({ message: 'Account is blocked' });
+            }
+
+            req.doctor = doctorUser;
+            next();
+        } catch (verifyError) {
+            console.error('Token verification error:', verifyError);
+            
+            // Clear the invalid token for all error types
+            res.cookie('doctortoken', '', {
+                expires: new Date(0),
+                httpOnly: false,
+                secure: true,
+                sameSite: 'None',
+                path: '/'
+            });
+            
+            // More specific error handling
+            if (verifyError.name === 'JsonWebTokenError') {
+                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+            }
+            if (verifyError.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+            }
+            
+            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
+        }
     } catch (error) {
-        console.error('Doctor auth middleware error:', error);
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        res.status(401).json({ message: 'Not authorized' });
+        console.error('Unexpected auth middleware error:', error);
+        
+        // Clear any potentially invalid token
+        res.cookie('doctortoken', '', {
+            expires: new Date(0),
+            httpOnly: false,
+            secure: true,
+            sameSite: 'None',
+            path: '/'
+        });
+        
+        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };
 
 export const protectAdmin = async (req, res, next) => {
     try {
-        // Get token from header
-
-       const token = req.cookies.admintoken;
-        if (!token) {
-            return res.status(401).json({ message: 'Not authorized, no token' });
+        const token = req.cookies.admintoken;
+        
+        // Check if token exists and is not empty or undefined
+        if (!token || token.trim() === '') {
+            return res.status(401).json({ message: 'Not authorized, no valid token' });
         }
 
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Get admin from token
-        const admin = await Admin.findById(decoded.userId).select('-password');
-        
-        if (!admin) {
-            return res.status(401).json({ message: 'Not authorized, admin not found' });
+            const admin = await Admin.findById(decoded.userId).select('-password');
+            
+            if (!admin) {
+                // Clear the invalid token
+                res.cookie('admintoken', '', {
+                    expires: new Date(0),
+                    httpOnly: false,
+                    secure: true,
+                    sameSite: 'None',
+                    path: '/'
+                });
+                return res.status(401).json({ message: 'Not authorized, admin not found' });
+            }
+
+            req.admin = admin;
+            next();
+        } catch (verifyError) {
+            console.error('Token verification error:', verifyError);
+            
+            // Clear the invalid token for all error types
+            res.cookie('admintoken', '', {
+                expires: new Date(0),
+                httpOnly: false,
+                secure: true,
+                sameSite: 'None',
+                path: '/'
+            });
+            
+            // More specific error handling
+            if (verifyError.name === 'JsonWebTokenError') {
+                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+            }
+            if (verifyError.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+            }
+            
+            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
         }
-        
-        // Add admin to request object
-        req.admin = admin;
-        next();
     } catch (error) {
-        console.error('Admin auth middleware error:', error);
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        res.status(401).json({ message: 'Not authorized' });
+        console.error('Unexpected auth middleware error:', error);
+        
+        // Clear any potentially invalid token
+        res.cookie('admintoken', '', {
+            expires: new Date(0),
+            httpOnly: false,
+            secure: true,
+            sameSite: 'None',
+            path: '/'
+        });
+        
+        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };

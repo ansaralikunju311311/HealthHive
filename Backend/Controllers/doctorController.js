@@ -13,7 +13,7 @@ import Department from '../Model/DepartmentModel.js';
 
  const cookieOptions = {
     
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: 'none',
     maxAge: 10 * 60 * 1000, // 1 minute
@@ -382,6 +382,21 @@ export const fetchDepartments = async (req, res) => {
         const departments = await Department.find({status:'Listed'});
         res.status(200).json(departments);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+export const logout = async (req, res) => {
+    try {
+        req.user = null;
+        res.cookie('doctortoken', null, {
+            expires: new Date(Date.now()),
+            httpOnly: false,
+            secure: true,
+            sameSite: 'None'
+        });
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Error logging out:', error);
         res.status(500).json({ message: error.message });
     }
 }

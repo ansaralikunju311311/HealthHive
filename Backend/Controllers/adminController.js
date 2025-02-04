@@ -3,12 +3,19 @@ import User from '../Model/userModel.js';
 import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 
+const cookieOptions = {
+    
+    httpOnly: false,
+    secure: true,
+    sameSite: 'None',
+    maxAge: 9 * 60 * 60 * 1000, // 1 hour
+};
 
 
  const LoginAdmin = async (req, res) => {

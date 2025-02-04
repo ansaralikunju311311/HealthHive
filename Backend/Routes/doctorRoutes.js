@@ -1,5 +1,5 @@
 import express from 'express';
-import { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile,fetchDepartments} from '../Controllers/doctorController.js';
+import { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile,fetchDepartments,logout} from '../Controllers/doctorController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
 
 const doctor = express.Router();
@@ -12,6 +12,7 @@ doctor.post('/reset-password', resetPassword);
 doctor.get("/get-doctor",fetchDoctors);
 doctor.get("/profile/:id",doctorProfile)
 doctor.get("/departments",fetchDepartments)
+doctor.post('/logout', logout);
 // Protected routes (require authentication)
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 

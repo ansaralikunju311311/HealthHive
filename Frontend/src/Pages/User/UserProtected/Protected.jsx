@@ -8,7 +8,7 @@ const Protected = ({ children }) => {
   useEffect(() => {
     const token = cookies.get('usertoken');
     if (!token) {
-      navigate('/login');
+      navigate('/');
     }
   }, [navigate]);
 

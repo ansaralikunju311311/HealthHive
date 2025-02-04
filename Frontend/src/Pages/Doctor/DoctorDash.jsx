@@ -25,7 +25,7 @@ const DoctorDash = () => {
       try {
         const token = cookies.get('doctortoken');
         if (!token) {
-          navigate('/doctor-login');
+          navigate('/doctor/login');
           return;
         }
 
@@ -46,26 +46,53 @@ const DoctorDash = () => {
             icon: '⛔',
             backgroundColor: '#ef4444'
           });
-          navigate('/doctor-login');
+          navigate('/doctor/login');
         }
       } catch (error) {
         console.log(error);
         cookies.remove('doctortoken');
         toast.error('Session expired. Please login again');
-        navigate('/doctor-login');
+        navigate('/doctor/login');
       }
     };
 
     verifyToken();
   }, [navigate]);
 
-  const handleLogout = () => {
-    cookies.remove('doctortoken');
-    toast.info('You have been logged out', {
-      icon: '👋'
+  // const handleLogout = async() => {
+
+  //   cookies.remove('doctortoken');
+  //   toast.info('You have been logged out', {
+  //     icon: '👋'
+  //   });
+  //   navigate('/doctor/login');
+  // };
+
+
+  const handleLogout =  async() => {
+    try {
+      
+     await axios.post('http://localhost:5000/api/doctor/logout', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      withCredentials: true,
     });
-    navigate('/doctor/login');
+    const token = cookies.remove('doctortoken', { path: '/' });
+    // console.log('logged out====', token)
+      setDoctor(null);
+      navigate('/doctor/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Handle error
+      cookies.remove('doctortoken', { path: '/' });
+      navigate('/doctor/login');
+    }
   };
+
+
+
+
   const profileClick = (id) => {
     console.log(id);
     navigate(`/profile`,{state:{userId:id}});

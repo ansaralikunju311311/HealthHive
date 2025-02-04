@@ -57,10 +57,7 @@ const GenerateOtp = () => {
     setIsLoading(true);
     try {
       toast.info('Verifying your email...');
-      const response = await axios.post('http://localhost:5000/api/user/verify-otp', {
-        email,
-        otp: otp.trim()
-      });
+      const response = await axios.post('http://localhost:5000/api/user/verify-otp', { email, otp: otp.trim() }, { withCredentials: true });
       
       setSuccess(response.data.message);
       

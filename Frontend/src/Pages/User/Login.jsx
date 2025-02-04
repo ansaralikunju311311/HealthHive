@@ -17,8 +17,9 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/user/login', data);
-
+      const response = await axios.post('http://localhost:5000/api/user/login', data, {withCredentials: true});
+      
+      console.log("token after login", cookies.get('usertoken'))
       if (response.data.user.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.', {
           backgroundColor: '#ef4444',

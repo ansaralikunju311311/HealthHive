@@ -10,10 +10,10 @@ import Doctor from '../Model/doctorModel.js';
 
 const cookieOptions = {
     
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
-    sameSite: 'none',
-    maxAge: 10 * 60 * 1000, // 1 minute
+    sameSite: 'None',
+    maxAge: 9 * 60 * 60 * 1000, // 1 hour
 };
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -172,7 +172,10 @@ const LoginUser = async(req,res)=>{
         // Generate tokens
         const userToken = setToken(user);
         console.log("userToken   coolesdsjdnfjdfjdfr=====",userToken);
-       console.log(res.cookie('usertoken', userToken, cookieOptions)); 
+        // console.log("Time", new Date().toLocaleTimeString());
+    //    console.log(res.cookie('usertoken', userToken, cookieOptions)); 
+    console.log(cookieOptions)
+       res.cookie('usertoken', userToken, cookieOptions)
         res.status(200).json({
             message:"Login successful",
             user:{
@@ -335,4 +338,19 @@ export const getDoctorsData = async (req, res) => {
     }
 }
 
+export const logout = async (req, res) => {
+    try {
+        req.user = null;
+        res.cookie('usertoken', null, {
+            expires: new Date(Date.now()),
+            httpOnly: false,
+            secure: true,
+            sameSite: 'None'
+        });
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

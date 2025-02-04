@@ -12,7 +12,7 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/doctor/login', data)
+            const response = await axios.post('http://localhost:5000/api/doctor/login', data, {withCredentials: true})
             console.log(response.data)
             if (response.data.doctor.isActive === false) {
                 toast.error('Your account is pending verification');

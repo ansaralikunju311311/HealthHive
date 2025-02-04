@@ -13,6 +13,7 @@ const NavBar = () => {
   useEffect(() => {
     console.log('navajhdhfhd')
     const token = cookies.get('usertoken');
+    console.log("token", token)
     if (token) {
       const fetchUserData = async () => {
         try {
@@ -31,10 +32,25 @@ const NavBar = () => {
     }
   }, []);
 
-  const handleLogout = () => {
-    cookies.remove('usertoken');
-    setUserData(null);
-    navigate('/');
+  const handleLogout =  async() => {
+    try {
+      
+     await axios.post('http://localhost:5000/api/user/logout', {
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // },
+      withCredentials: true,
+    });
+    const token = cookies.remove('usertoken', { path: '/' });
+    // console.log('logged out====', token)
+      setUserData(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Handle error
+      cookies.remove('usertoken', { path: '/' });
+      navigate('/');
+    }
   };
 
   return (
