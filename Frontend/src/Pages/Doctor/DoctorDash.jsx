@@ -12,6 +12,7 @@ import {
   MdExitToApp 
 } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import Sidebar from '../../Component/Doctor/Sidebar';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -69,26 +70,29 @@ const DoctorDash = () => {
   // };
 
 
-  const handleLogout =  async() => {
-    try {
+
+
+  
+  // const handleLogout =  async() => {
+  //   try {
       
-     await axios.post('http://localhost:5000/api/doctor/logout', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      withCredentials: true,
-    });
-    const token = cookies.remove('doctortoken', { path: '/' });
-    // console.log('logged out====', token)
-      setDoctor(null);
-      navigate('/doctor/login');
-    } catch (error) {
-      console.error('Error logging out:', error);
-      // Handle error
-      cookies.remove('doctortoken', { path: '/' });
-      navigate('/doctor/login');
-    }
-  };
+  //    await axios.post('http://localhost:5000/api/doctor/logout', {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     },
+  //     withCredentials: true,
+  //   });
+  //   const token = cookies.remove('doctortoken', { path: '/' });
+  //   // console.log('logged out====', token)
+  //     setDoctor(null);
+  //     navigate('/doctor/login');
+  //   } catch (error) {
+  //     console.error('Error logging out:', error);
+  //     // Handle error
+  //     cookies.remove('doctortoken', { path: '/' });
+  //     navigate('/doctor/login');
+  //   }
+  // };
 
 
 
@@ -110,18 +114,26 @@ const DoctorDash = () => {
     { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
   ];
 
-  const sidebarItems = [
-    { icon: <MdDashboard className="w-6 h-6" />, text: 'Dashboard', active: true },
-    { icon: <MdEventAvailable className="w-6 h-6" />, text: 'Appointments' },
-    { icon: <MdSchedule className="w-6 h-6" />, text: 'Current Schedules' },
-    { icon: <MdChat className="w-6 h-6" />, text: 'Chats' },
-    { icon: <MdAccountBalanceWallet className="w-6 h-6" />, text: 'Wallet' },
-  ];
+  // const sidebarItems = [
+  //   { icon: <MdDashboard className="w-6 h-6" />, text: 'Dashboard', active: true },
+  //   { icon: <MdEventAvailable className="w-6 h-6" />, text: 'Appointments' },
+  //   { icon: <MdSchedule className="w-6 h-6" />, text: 'Current Schedules' },
+  //   { icon: <MdChat className="w-6 h-6" />, text: 'Chats' },
+  //   { icon: <MdAccountBalanceWallet className="w-6 h-6" />, text: 'Wallet' },
+  // ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
+
+
+
+      <Sidebar />
+
+
+
+
+      {/* <div className="w-64 bg-white shadow-lg">
         <div className="p-6 space-y-4">
           {sidebarItems.map((item, index) => (
             <div
@@ -147,7 +159,7 @@ const DoctorDash = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 p-8">
