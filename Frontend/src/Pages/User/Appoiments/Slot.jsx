@@ -8,58 +8,127 @@ const Slot = () => {
   const location = useLocation();
   const doctorData = location.state?.doctor;
   
+  const userItem = localStorage.getItem('userId');
+  const userId = userItem ? JSON.parse(userItem)._id : null;
+  console.log('userid=====',userId);
+  
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedSlots, setSelectedSlots] = useState([]);
+
+  const fetchDoctorSchedules = async () => {
+    // Validate doctor data
+    if (!doctorData || !doctorData._id) {
+      console.error('No doctor selected or invalid doctor data');
+      setError('No doctor selected');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log(`Fetching slots for doctor ID: ${doctorData._id}`);
+      
+      const response = await axios.get(`http://localhost:5000/api/doctor/slots/${doctorData._id}`);
+      
+      console.log('Full Slots Response:', JSON.stringify(response.data, null, 2));
+
+      if (response.data && response.data.schedules) {
+        setSchedules(response.data.schedules);
+        if (response.data.schedules.length === 0) {
+          setError('No available slots for this doctor');
+        }
+      } else {
+        setError('No schedules found');
+      }
+    } catch (err) {
+      console.error('Error fetching slots:', err);
+      
+      // More detailed error handling
+      if (err.response) {
+        setError(err.response.data.message || 'Failed to fetch slots');
+      } else if (err.request) {
+        setError('No response received from server');
+      } else {
+        setError('Error setting up the request');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSlots = async () => {
-      // Validate doctor data
-      if (!doctorData || !doctorData._id) {
-        console.error('No doctor selected or invalid doctor data');
-        setError('No doctor selected');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        console.log(`Fetching slots for doctor ID: ${doctorData._id}`);
-        
-        const response = await axios.get(`http://localhost:5000/api/doctor/slots/${doctorData._id}`);
-        
-        console.log('Full Slots Response:', JSON.stringify(response.data, null, 2));
-
-        if (response.data && response.data.schedules) {
-          setSchedules(response.data.schedules);
-          if (response.data.schedules.length === 0) {
-            setError('No available slots for this doctor');
-          }
-        } else {
-          setError('No schedules found');
-        }
-      } catch (err) {
-        console.error('Error fetching slots:', err);
-        
-        // More detailed error handling
-        if (err.response) {
-          setError(err.response.data.message || 'Failed to fetch slots');
-        } else if (err.request) {
-          setError('No response received from server');
-        } else {
-          setError('Error setting up the request');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSlots();
+    fetchDoctorSchedules();
   }, [doctorData?._id]);
 
   const handleSlotSelection = (schedule, slot) => {
-    setSelectedSlot({ schedule, slot });
+    // Check if slot is already booked
+    if (slot.isBooked) {
+      alert('This slot is already booked');
+      return;
+    }
+
+    // Check if slot is already selected
+    const isAlreadySelected = selectedSlots.some(
+      selectedSlot => 
+        selectedSlot.schedule.date === schedule.date && 
+        selectedSlot.slot.label === slot.label
+    );
+
+    if (isAlreadySelected) {
+      // If already selected, remove from selected slots
+      setSelectedSlots(prevSlots => 
+        prevSlots.filter(
+          selectedSlot => 
+            !(selectedSlot.schedule.date === schedule.date && 
+              selectedSlot.slot.label === slot.label)
+        )
+      );
+    } else {
+      // Add to selected slots
+      setSelectedSlots(prevSlots => [
+        ...prevSlots, 
+        { schedule, slot }
+      ]);
+    }
+  };
+
+  const handleBookAppointment = async () => {
+    if (selectedSlots.length === 0) {
+      alert('Please select at least one slot');
+      return;
+    }
+
+    try {
+      // Send all selected slots to the backend
+      const response = await axios.post(
+        `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId}`, 
+        { 
+          slots: selectedSlots.map(selectedSlot => ({
+            date: selectedSlot.schedule.date,
+            slot: selectedSlot.slot.label,
+            time: selectedSlot.slot.time // Add time if needed
+          }))
+        }
+      );
+      
+      console.log('Appointments booked successfully', response.data);
+      
+      // Refresh slots to update booked status
+      fetchDoctorSchedules();
+      
+      // Reset selected slots
+      setSelectedSlots([]);
+      
+      // Show success message
+      alert('Appointments booked successfully');
+    } catch (error) {
+      console.error('Error booking appointments:', error);
+      
+      // Show specific error message from backend
+      alert(error.response?.data?.message || 'Error booking appointments');
+    }
   };
 
   const renderContent = () => {
@@ -117,7 +186,11 @@ const Slot = () => {
                     ${slot.isBooked 
                       ? 'bg-red-200 text-red-800 cursor-not-allowed' 
                       : 'bg-green-200 text-green-800 hover:bg-green-300 hover:scale-105'}
-                    ${selectedSlot?.slot === slot 
+                    ${selectedSlots.some(
+                      selectedSlot => 
+                        selectedSlot.schedule.date === schedule.date && 
+                        selectedSlot.slot.label === slot.label
+                    ) 
                       ? 'ring-4 ring-blue-500' 
                       : ''}
                   `}
@@ -143,11 +216,19 @@ const Slot = () => {
           </div>
         ))}
 
-        {selectedSlot && (
-          <div className="fixed bottom-0 left-0 right-0 bg-blue-100 p-4 shadow-lg">
-            <p className="text-center">
-              Selected Slot: {selectedSlot.schedule.date} at {selectedSlot.slot.label}
+        {selectedSlots.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-blue-100 p-4 shadow-lg flex justify-between items-center">
+            <p className="text-center flex-grow">
+              Selected Slots: {selectedSlots.map(slot => 
+                `${new Date(slot.schedule.date).toLocaleDateString()} at ${slot.slot.label}`
+              ).join(', ')}
             </p>
+            <button 
+              onClick={handleBookAppointment}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Book Appointments
+            </button>
           </div>
         )}
       </div>

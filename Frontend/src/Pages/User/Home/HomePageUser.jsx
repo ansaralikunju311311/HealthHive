@@ -45,7 +45,8 @@ const HomePageUser = () => {
               withCredentials: true,
             });
             setDoctorsData(doctorsResponse.data.doctors);
-
+            localStorage.setItem('userId', JSON.stringify(userResponse.data.user));
+                 console.log('userid=====',userResponse.data.user)
             // const departmentsResponse = await axios.get('http://localhost:5000/api/admin/department', {
             //   headers: {
             //     Authorization: `Bearer ${token}`

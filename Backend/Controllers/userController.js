@@ -5,6 +5,7 @@ import { sendOtp } from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';
 import Doctor from '../Model/doctorModel.js';
 import Department from '../Model/DepartmentModel.js';
+import Appointment from '../Model/appoiment.js';
 // Helper function to generate OTP and update user
 
 
@@ -346,8 +347,6 @@ export const getDepartments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
-
 export const logout = async (req, res) => {
     try {
         req.user = null;
@@ -366,14 +365,72 @@ export const logout = async (req, res) => {
 export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
-        console.log("===========================",departmentname)
+        // console.log("===========================",departmentname)
         
         const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
-        console.log("doctors====================",doctors)
+        // console.log("doctors====================",doctors)
         res.status(200).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
         res.status(500).json({ message: error.message });
     }
 }
+export const bookAppointment = async (req, res) => {
+    try {
+        const { doctorid } = req.params;
+        const { userid } = req.params;
+        const { slots } = req.body;
+
+        // Basic validation
+        if (!doctorid || !userid || !slots || !Array.isArray(slots)) {
+            return res.status(400).json({ 
+                message: 'Invalid booking request'
+            });
+        }
+
+        // Process each slot and create appointments
+        const bookingResults = await Promise.all(slots.map(async (slotData) => {
+            // Check if slot is already booked
+            const existingAppointment = await Appointment.findOne({
+                doctor: doctorid,
+                date: new Date(slotData.date),
+                time: slotData.time,
+                slot: slotData.slot
+            });
+
+            if (existingAppointment) {
+                throw new Error(`Slot ${slotData.slot} on ${slotData.date} is already booked`);
+            }
+
+            // Create new appointment
+            const newAppointment = new Appointment({
+                user: userid,
+                doctor: doctorid,
+                date: new Date(slotData.date),
+                time: slotData.time,
+                slot: slotData.slot
+            });
+
+            // Save the appointment
+            await newAppointment.save();
+
+            return {
+                date: slotData.date,
+                slot: slotData.slot,
+                time: slotData.time
+            };
+        }));
+        
+        res.status(201).json({
+            message: 'Appointments booked successfully',
+            bookings: bookingResults
+        });
+
+    } catch (error) {
+        console.error('Booking error:', error);
+        res.status(400).json({ 
+            message: error.message || 'Error booking appointments'
+        });
+    }
+};
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
