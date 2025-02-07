@@ -171,10 +171,10 @@ const LoginUser = async(req,res)=>{
         
         // Generate tokens
         const userToken = setToken(user);
-        console.log("userToken   coolesdsjdnfjdfjdfr=====",userToken);
+        // console.log("userToken   coolesdsjdnfjdfjdfr=====",userToken);
         // console.log("Time", new Date().toLocaleTimeString());
     //    console.log(res.cookie('usertoken', userToken, cookieOptions)); 
-    console.log(cookieOptions)
+    // console.log(cookieOptions)
        res.cookie('usertoken', userToken, cookieOptions)
         res.status(200).json({
             message:"Login successful",
@@ -283,7 +283,7 @@ const resetPassword = async(req, res) => {
         
         const { email, otp, new_password } = req.body;
 
-        console.log("req.body=====",req.body)
+        // console.log("req.body=====",req.body)
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
@@ -311,10 +311,10 @@ const resetPassword = async(req, res) => {
 
 
 const verifyToken = async (req, res) => {
-    console.log(" happen after middlware verify token=====",req.user);
+    // console.log(" happen after middlware verify token=====",req.user);
     try {
         const user = await User.findById(req.user._id).select('-password');
-        console.log("user after select=====",user);
+        // console.log("user after select=====",user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

@@ -33,6 +33,7 @@ import Appoiments from './Pages/User/Appoiments/Appoiments.jsx';
 import Bookings from './Pages/User/Appoiments/Bookings.jsx';
 import DrAppoiments from './Pages/Doctor/DoctorAppoiments/DrAppoiments.jsx';
 import Schedules from './Pages/Doctor/CurrentSchedules/Schedules.jsx';
+import Slot from './Pages/User/Appoiments/Slot';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -95,6 +96,7 @@ const App = () => {
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
         <Route path="/appointment" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} />
         <Route path="/bookings" element={<ProtectedRoute wrapper={Protected}><Bookings /></ProtectedRoute>} />
+        <Route path="/bookappointment" element={<ProtectedRoute wrapper={Protected}><Slot /></ProtectedRoute>} />
 
         {/* Auth Routes */}
         <Route path="/user/forgotpassword" element={<Forgot />} />

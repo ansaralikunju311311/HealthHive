@@ -8,7 +8,7 @@ import RejectedDoctor from '../Model/RejectedDoctors.js';
 export const protect = async (req, res, next) => {
     try {
         const token = req.cookies.usertoken;
-        console.log('usertoken====', token);
+        // console.log('usertoken====', token);
         
         // Check if token exists and is not empty or undefined
         if (!token || token.trim() === '') {
@@ -17,7 +17,7 @@ export const protect = async (req, res, next) => {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log('decoded====', decoded);
+            // console.log('decoded====', decoded);
 
             const user = await User.findById(decoded.userId).select('-password');
             

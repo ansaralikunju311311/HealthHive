@@ -405,8 +405,8 @@ export const logout = async (req, res) => {
 export const schedule = async (req,res)=>{
     const { id: doctorId } = req.params;
     const { schedules } = req.body;
-    console.log("doctorId=====",doctorId);
-    console.log("schedules=====",schedules);
+    // ("doctorId=====",doctorId);
+    // console.log("scheduleconsole.logs=====",schedules);
     try {
         const existingSchedule = await appoimentSchedule.findOne({ doctorId });
         
@@ -509,5 +509,38 @@ export const getSchedules = async (req, res) => {
         });
     }
 };
+
+
+export const slots = async (req, res) => {
+     console.log(" happen after middlware verify token=====");
+    const { id: doctorId } = req.params;
+    try {
+        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
+        console.log("=======dffnv",existingSchedule);
+        if (!existingSchedule) {
+            return res.status(404).json({ 
+                message: 'No schedules found for this doctor',
+                schedules: []
+            });
+        }
+        res.status(200).json({ 
+            message: 'Schedules retrieved successfully',
+            schedules: existingSchedule.schedules
+        });
+    } catch (error) {
+        console.error('Error retrieving schedules:', error);
+        res.status(500).json({ 
+            message: 'Internal server error while fetching schedules',
+            errorDetails: error.message 
+        });
+    }
+}
+// catch (error) {
+//     console.error('Error updating schedule:', error);
+//     res.status(500).json({ 
+//         message: 'Internal server error while updating schedule',
+//         errorDetails: error.message 
+//     });
+// }
 // export const schedule = async (req,res)
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};
