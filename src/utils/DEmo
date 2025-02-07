@@ -1,0 +1,178 @@
+import React, { useState } from 'react';
+import Sidebar from '../../../Component/Doctor/Sidebar';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+const Schedules = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
+    const [bookedSlots, setBookedSlots] = useState({});
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // console.log("today", today.setHours(0, 0, 0, 0));
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 2);
+
+    const format12Hour = (hour) => {
+        const suffix = hour >= 12 ? "PM" : "AM";
+        const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+        return `${formattedHour} ${suffix}`;
+    };
+
+    const generateTimeSlots = () => {
+        const slots = [];
+        let startHour = 9; // 9 AM
+        let endHour = 18; // 6 PM
+
+        for (let hour = startHour; hour < endHour; hour++) {
+            let startTime = new Date();
+            startTime.setHours(hour, 0, 0, 0); // Set hours & reset minutes
+
+            const label = `${format12Hour(hour)} - ${format12Hour(hour + 1)}`;
+            slots.push({ label, time: startTime });
+        }
+        console.log("slots", slots);
+        return slots;
+    };
+    const timeSlots = generateTimeSlots();
+    console.log("timeSlots", timeSlots);
+
+    const handleTimeSlotClick = (slot) => {
+        console.log("in side these slot", slot);
+        if (!selectedDate) return;
+        const dateKey = selectedDate.toDateString();
+        setSelectedTimeSlots((prev) => {
+            const currentDateSlots = prev[dateKey] || [];
+            console.log("currentDateSlots", currentDateSlots);
+            return {
+                ...prev,
+                [dateKey]: currentDateSlots.includes(slot)
+                    ? currentDateSlots.filter((time) => time !== slot) // Remove slot if already selected
+                    : [...currentDateSlots, slot], // Add slot if not selected
+            };
+        });
+    };
+    const handleSchedule = () => {
+        if (!selectedDate) return;
+
+        const dateKey = selectedDate.toDateString();
+        const bookedSlotsForDate = selectedTimeSlots[dateKey] || [];
+        console.log("bookedSlotsForDate", bookedSlotsForDate);
+        // Update the booked slots
+        setBookedSlots((prev) => ({
+            ...prev,
+            [dateKey]: [...(prev[dateKey] || []), ...bookedSlotsForDate],
+        }));
+
+        // Optionally, log the booked slots or save them in your backend
+        console.log("Booked Slots for", selectedDate, ":", bookedSlotsForDate);
+        
+        // Close the schedule modal after booking
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="flex">
+            <Sidebar activePage="Schedules" />
+
+            <div className="relative w-full p-5 box-border">
+                <h1 className="text-center text-2xl font-bold mb-5">
+                    Current Schedules
+                </h1>
+
+                <button
+                    className="absolute top-5 right-5 z-10 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setIsOpen(true)}
+                >
+                    Schedule Appointment
+                </button>
+
+                {isOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                            <h2 className="text-lg font-semibold mb-4">Select Date & Time</h2>
+
+                            {/* Date Picker */}
+                            <DatePicker
+                                selected={selectedDate}
+                                onChange={(date) => setSelectedDate(date)}
+                                inline
+                                minDate={today}
+                                maxDate={maxDate}
+                            />
+
+                            {/* Time Slots (Only Show After Date Selection) */}
+                            {selectedDate && (
+                                <div className="mt-4">
+                                    <h3 className="font-medium mb-2">Select a Time Slot:</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {timeSlots.map((slot, index) => {
+                                            console.log(" in side these slotjdjdjdjdjjd", slot);
+                                            const isPastSlot =
+                                                selectedDate.toDateString() === today.toDateString() &&
+                                                slot.time < new Date(); // Compare with current time
+
+                                            const dateKey = selectedDate.toDateString();
+                                            console.log("dateKeydmddm", dateKey);
+
+                                            const isSelected =
+                                                selectedTimeSlots[dateKey] && 
+                                                selectedTimeSlots[dateKey].includes(slot.label);
+
+
+                                                console.log("isSelected", isSelected);
+                                            const isBooked = bookedSlots[dateKey] && bookedSlots[dateKey].includes(slot.label); // Check if the slot is booked
+                                            console.log("isBooked", isBooked);
+
+                                            return (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => !isPastSlot && !isBooked && handleTimeSlotClick(slot.label)} // Prevent selecting past and booked slots
+                                                    className={`p-2 rounded-lg text-sm ${
+                                                        isPastSlot
+                                                            ? "bg-gray-400 text-gray-700 cursor-not-allowed" // Past slot (Disabled)
+                                                            : isBooked
+                                                            ? "bg-red-500 text-white cursor-not-allowed" // Booked slot (Disabled)
+                                                            : isSelected
+                                                            ? "bg-green-500 text-white" // Selected slots
+                                                            : "bg-gray-200 hover:bg-gray-300" // Available slots
+                                                    }`}
+                                                    disabled={isPastSlot || isBooked} // Disable past and booked slots
+                                                >
+                                                    {slot.label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Close Button */}
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                >
+                                    Close
+                                </button>
+                            </div>
+
+                            <div className="mt-4 flex justify-start">
+                                <button
+                                    onClick={handleSchedule} // Schedule the appointment
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                >
+                                    Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Schedules;

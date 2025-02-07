@@ -7,9 +7,11 @@ import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
 import Department from '../Model/DepartmentModel.js';
+import appoimentSchedule from '../Model/appoimentSchedule.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
+// import appoimentSchedule from '../Model/appoimentSchedule.js';
 
  const cookieOptions = {
     
@@ -400,4 +402,82 @@ export const logout = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+export const schedule = async (req,res)=>{
+    const { id: doctorId } = req.params;
+    const { schedules } = req.body;
+    console.log("doctorId=====",doctorId);
+    console.log("schedules=====",schedules);
+    try {
+        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
+        
+        if (!existingSchedule) {
+            // If no existing schedule, create new
+            const newSchedule = new appoimentSchedule({
+                doctorId,
+                schedules
+            });
+            await newSchedule.save();
+            return res.status(201).json({ 
+                message: 'Schedules created successfully',
+                schedule: newSchedule
+            });
+        } else {
+            // Merge schedules intelligently
+            const mergedSchedules = existingSchedule.schedules.map(existingEntry => {
+                // Find matching date in new schedules
+                const newEntry = schedules.find(
+                    newSchedule => newSchedule.date === existingEntry.date
+                );
+
+                if (!newEntry) {
+                    // If no new schedule for this date, keep existing
+                    return existingEntry;
+                }
+
+                // Combine time slots, removing duplicates
+                const combinedTimeSlots = [
+                    ...existingEntry.timeSlots,
+                    ...newEntry.timeSlots
+                ].filter((slot, index, self) => 
+                    index === self.findIndex(t => 
+                        t.label === slot.label && 
+                        new Date(t.time).getTime() === new Date(slot.time).getTime()
+                    )
+                );
+
+                return {
+                    date: existingEntry.date,
+                    timeSlots: combinedTimeSlots
+                };
+            });
+
+            // Add completely new dates
+            const newDates = schedules.filter(
+                newSchedule => !existingSchedule.schedules.some(
+                    existingSchedule => existingSchedule.date === newSchedule.date
+                )
+            );
+
+            // Update schedules
+            existingSchedule.schedules = [
+                ...mergedSchedules,
+                ...newDates
+            ];
+
+            await existingSchedule.save();
+            return res.status(200).json({ 
+                message: 'Schedules updated successfully',
+                schedule: existingSchedule
+            });
+        }
+    } catch (error) {
+        console.error('Error in Scheduling:', error);
+        res.status(500).json({ 
+            message: 'Internal server error during scheduling',
+            errorDetails: error.message 
+        });
+    }
+}
+
+// export const schedule = async (req,res)
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

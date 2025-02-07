@@ -12,7 +12,7 @@ import {
   MdExitToApp 
 } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import Sidebar from '../../Component/Doctor/Sidebar';
+import Sidebar from '../../../Component/Doctor/Sidebar';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -36,12 +36,14 @@ const DoctorDash = () => {
           },
           withCredentials:true,
         });
-    
-        setDoctor(response.data.doctor);
+      setDoctor(response.data.doctor);
+
+        console.log("response.data.doctor",response.data.doctor);
+        localStorage.setItem('doctorId', JSON.stringify(response.data.doctor));
         console.log(response.data.doctor);
         setLoading(false);
         if(response.data.doctor.isBlocked===true && response.data.doctor.isActive===true){
-          dispatch(isBlocked(true));
+         
           cookies.remove('doctortoken');
           toast.error('Your account has been blocked', {
             icon: '⛔',
@@ -52,6 +54,7 @@ const DoctorDash = () => {
       } catch (error) {
         console.log(error);
         cookies.remove('doctortoken');
+       console.log("error working",error);
         toast.error('Session expired. Please login again');
         navigate('/doctor/login');
       }
@@ -60,41 +63,7 @@ const DoctorDash = () => {
     verifyToken();
   }, [navigate]);
 
-  // const handleLogout = async() => {
-
-  //   cookies.remove('doctortoken');
-  //   toast.info('You have been logged out', {
-  //     icon: '👋'
-  //   });
-  //   navigate('/doctor/login');
-  // };
-
-
-
-
-  
-  // const handleLogout =  async() => {
-  //   try {
-      
-  //    await axios.post('http://localhost:5000/api/doctor/logout', {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`
-  //     },
-  //     withCredentials: true,
-  //   });
-  //   const token = cookies.remove('doctortoken', { path: '/' });
-  //   // console.log('logged out====', token)
-  //     setDoctor(null);
-  //     navigate('/doctor/login');
-  //   } catch (error) {
-  //     console.error('Error logging out:', error);
-  //     // Handle error
-  //     cookies.remove('doctortoken', { path: '/' });
-  //     navigate('/doctor/login');
-  //   }
-  // };
-
-
+ 
 
 
   const profileClick = (id) => {
@@ -128,7 +97,7 @@ const DoctorDash = () => {
 
 
 
-      <Sidebar />
+      <Sidebar doctorid ={doctor._id} />
 
 
 

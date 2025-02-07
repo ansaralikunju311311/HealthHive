@@ -4,9 +4,12 @@ import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import cookies from 'js-cookie'
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setDoctor, setToken } from '../../redux/Features/DoctorSlice';
 
 const Login = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [error, setError] = useState('');
     const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -24,7 +27,11 @@ const Login = () => {
                 });
                 return;
             } else {
-                // cookies.set('doctortoken', response.data.token);
+                dispatch(setDoctor(response.data.doctor));
+                dispatch(setToken(response.data.token));
+
+                localStorage.setItem('doctorId', response.data.doctor);
+
                 toast.success('Welcome back, Dr. ' + response.data.doctor.name, {
                     icon: '👋',
                     backgroundColor: '#22c55e'

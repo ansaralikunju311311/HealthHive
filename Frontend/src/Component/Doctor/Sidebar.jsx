@@ -12,7 +12,10 @@ import {
   MdExitToApp 
 } from 'react-icons/md';
 
-const Sidebar = () => {
+const Sidebar = ({activePage ,doctorid}) => {
+
+  const id = doctorid;
+  console.log(id)
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -29,6 +32,7 @@ const Sidebar = () => {
 
       // Remove doctor token
       cookies.remove('doctortoken', { path: '/' });
+      localStorage.removeItem('doctorId');
       
       // Show logout toast
       toast.info('You have been logged out', {
@@ -42,6 +46,7 @@ const Sidebar = () => {
       
       // Fallback logout even if backend call fails
       cookies.remove('doctortoken', { path: '/' });
+      localStorage.removeItem('doctorId');
       navigate('/doctor/login');
     }
   };
@@ -56,12 +61,13 @@ const Sidebar = () => {
     { 
       icon: <MdEventAvailable className="w-6 h-6" />, 
       text: 'Appointments',
-      path: '/doctor/appointments' 
+      path: '/doctor/appointment' 
     },
     { 
       icon: <MdSchedule className="w-6 h-6" />, 
       text: 'Current Schedules',
-      path: '/doctor/schedules' 
+      path: `/schedules`, 
+      state: {doctorid: id}
     },
     { 
       icon: <MdChat className="w-6 h-6" />, 
