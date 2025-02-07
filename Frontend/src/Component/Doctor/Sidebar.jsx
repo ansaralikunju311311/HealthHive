@@ -11,13 +11,10 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
-
 const Sidebar = ({activePage ,doctorid}) => {
-
   const id = doctorid;
   console.log(id)
   const navigate = useNavigate();
-
   const handleLogout = async () => {
     try {
       const token = cookies.get('doctortoken');
@@ -33,17 +30,15 @@ const Sidebar = ({activePage ,doctorid}) => {
       // Remove doctor token
       cookies.remove('doctortoken', { path: '/' });
       localStorage.removeItem('doctorId');
-      
       // Show logout toast
       toast.info('You have been logged out', {
         icon: '👋'
       });
-
       // Navigate to login
       navigate('/doctor/login');
     } catch (error) {
       console.error('Error logging out:', error);
-      
+
       // Fallback logout even if backend call fails
       cookies.remove('doctortoken', { path: '/' });
       localStorage.removeItem('doctorId');
@@ -80,11 +75,9 @@ const Sidebar = ({activePage ,doctorid}) => {
       path: '/doctor/wallet' 
     }
   ];
-
   const handleNavigation = (path) => {
     navigate(path);
   };
-
   return (
     <div className="w-64 bg-white shadow-lg">
       <div className="p-6 space-y-4">

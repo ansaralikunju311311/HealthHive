@@ -25,6 +25,7 @@ const Schedules = () => {
     // const [confirm, setConfirm] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTimeSlots, setSelectedTimeSlots] = useState({}); // Keep track of selected slots for each date
+    const [existingSchedules, setExistingSchedules] = useState([]);
    console.log("Selected Time Slots:", selectedTimeSlots);
     const handleSchedule = async () => {
         if (!selectedDate) {
@@ -55,6 +56,9 @@ const Schedules = () => {
             });
 
             console.log("Response in schedule", response);
+
+            // Update existing schedules after successful submission
+            setExistingSchedules(response.data.schedule.schedules);
 
             // Reset state after successful submission
           
@@ -137,12 +141,51 @@ const Schedules = () => {
         return false;
     };
 
+    useEffect(() => {
+        const fetchExistingSchedules = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
+                setExistingSchedules(response.data.schedules || []);
+            } catch (error) {
+                console.error('Error fetching schedules:', error);
+            }
+        };
+
+        fetchExistingSchedules();
+    }, [doctorId]);
+
     return (
         <div className="flex">
             <Sidebar activePage="Schedules" />
 
             <div className="relative w-full p-5 box-border">
                 <h1 className="text-center text-2xl font-bold mb-5">Current Schedules</h1>
+
+                {/* Existing Schedules Display */}
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>
+                    {existingSchedules.length === 0 ? (
+                        <p className="text-gray-500">No schedules found</p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {existingSchedules.map((schedule, index) => (
+                                <div key={index} className="border rounded-lg p-4 shadow-sm">
+                                    <h3 className="font-bold mb-2">{schedule.date}</h3>
+                                    <div className="space-y-2">
+                                        {schedule.timeSlots.map((slot, slotIndex) => (
+                                            <div 
+                                                key={slotIndex} 
+                                                className="bg-blue-100 rounded px-3 py-1"
+                                            >
+                                                {slot.label}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 <button
                     className="absolute top-5 right-5 z-10 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"

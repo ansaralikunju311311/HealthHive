@@ -479,5 +479,35 @@ export const schedule = async (req,res)=>{
     }
 }
 
+
+
+
+
+
+export const getSchedules = async (req, res) => {
+    const { id: doctorId } = req.params;
+    
+    try {
+        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
+        
+        if (!existingSchedule) {
+            return res.status(404).json({ 
+                message: 'No schedules found for this doctor',
+                schedules: []
+            });
+        }
+
+        return res.status(200).json({ 
+            message: 'Schedules retrieved successfully',
+            schedules: existingSchedule.schedules
+        });
+    } catch (error) {
+        console.error('Error retrieving schedules:', error);
+        res.status(500).json({ 
+            message: 'Internal server error while fetching schedules',
+            errorDetails: error.message 
+        });
+    }
+};
 // export const schedule = async (req,res)
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};
