@@ -8,6 +8,7 @@ import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
 import Department from '../Model/DepartmentModel.js';
 import appoimentSchedule from '../Model/appoimentSchedule.js';
+import Appointment from '../Model/appoiment.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
@@ -543,4 +544,26 @@ export const slots = async (req, res) => {
 //     });
 // }
 // export const schedule = async (req,res)
+
+
+//  export const fetchAppointments = async (req, res) => {
+//     const {doctor_Id} = req.params;
+//     console.log("=============",doctor_Id)
+//     const appoiments = await Appointment.find({doctor:doctor_Id});
+
+//     res.status(200).json(appoiments)
+//  }
+// 
+
+export const fetchAppointments = async (req, res) => {
+    const {doctor_Id} = req.params;
+    console.log("=============",doctor_Id)
+    const appoiments = await Appointment.find({doctor:doctor_Id})
+        .populate({
+            path: 'user',
+            select: 'name email phone age gender image' // Select specific user fields you want to retrieve
+        });
+    
+    res.status(200).json(appoiments)
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

@@ -116,6 +116,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute wrapper={DoctorProtected}><Profile /></ProtectedRoute>} />
         <Route path="/doctor/appointment" element={<ProtectedRoute wrapper={DoctorProtected}><DrAppoiments /></ProtectedRoute>} />
         <Route path="/schedules" element={<ProtectedRoute wrapper={DoctorProtected}><Schedules /></ProtectedRoute>} />
+        {/* <Route path="/appoiments" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} /> */}
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />
