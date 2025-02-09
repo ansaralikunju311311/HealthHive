@@ -18,6 +18,10 @@ const Doctor = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
   // const dispatch = useDispatch();
   // const {isBlocked} = useSelector((state) => state.doctor);
@@ -42,16 +46,16 @@ const Doctor = () => {
             withCredentials: true 
         });
         
-        setDoctors(response.data);
-        setFilteredDoctors(response.data);
+        setDoctors(response.data.doctorsWithIndex);
+        setTotalPages(response.data.totalpage);
+        setFilteredDoctors(response.data.doctorsWithIndex);
         console.log("api response", response.data);
       } catch (error) {
         console.error('Error fetching doctors:', error);
       }
     };
     fetchDoctors();
-  }, []);
-
+  }, [currentPage]);
 
 
   useEffect(() => {
@@ -224,17 +228,28 @@ const Doctor = () => {
           </div>
 
           {/* Pagination */}
+
+
+
           <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={()=>setCurrentPage(currentPage-1)}
+            disabled={currentPage===1}>
               Previous
             </button>
             <div className="text-sm text-gray-700">
-              Page <span className="font-medium">1</span> of <span className="font-medium">3</span>
+              Page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
             </div>
-            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            onClick={()=>setCurrentPage(currentPage+1)}
+            disabled={currentPage===totalPages}>
               Next
             </button>
+        
           </div>
+
+
+
         </div>
       </div>
 
