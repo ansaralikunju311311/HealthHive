@@ -10,21 +10,28 @@ const Department = () => {
   const [departments, setDepartments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/admin/department', {
+          params:{
+            page:currentPage,
+            limit:10
+          },
           withCredentials: true,
         });
         console.log(response.data);
-        setDepartments(response.data);
+        setDepartments(response.data.departments);
+        setTotalPages(response.data.totalpage);
       } catch (error) {
         console.log(error);
       }
     };
     fetchDepartments();
-  }, []);
+  }, [currentPage]);
 
   // Filter departments based on search term and status
   const filteredDepartments = departments.filter(dept => {
@@ -40,16 +47,17 @@ const Department = () => {
         withCredentials: true,
       });
       
-      // Immediately update the UI
-      setDepartments(departments.map(dept => {
-        if (dept._id === id) {
-          return {
-            ...dept,
-            status: dept.status === 'Listed' ? 'Unlisted' : 'Listed'
-          };
-        }
-        return dept;
-      }));
+      // Fetch updated departments for the current page
+      const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
+        params: {
+          page: currentPage,
+          limit: 10
+        },
+        withCredentials: true,
+      });
+
+      setDepartments(updatedResponse.data.departments);
+      setTotalPages(updatedResponse.data.totalpage);
 
       toast.success('Department status updated successfully');
     } catch (error) {
@@ -105,11 +113,17 @@ const Department = () => {
         }
       });
       
-      // Fetch updated departments list after adding new department
+      // Fetch updated departments for the current page
       const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
+        params: {
+          page: currentPage,
+          limit: 10
+        },
         withCredentials: true,
       });
-      setDepartments(updatedResponse.data);
+      
+      setDepartments(updatedResponse.data.departments);
+      setTotalPages(updatedResponse.data.totalpage);
       
       console.log("Response from backend:", response.data);
       toast.success('Department added successfully');
@@ -201,16 +215,24 @@ const Department = () => {
 
           {/* Pagination */}
           <div className="flex justify-between items-center mt-6">
-            <button className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+            <button 
+              onClick={() => setCurrentPage(currentPage - 1)} 
+              disabled={currentPage === 1} 
+              className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
               Previous
             </button>
             <div className="text-sm text-gray-600">
-              Page 1 of 3
+              Page {currentPage} of {totalPages}
             </div>
-            <button className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <button 
+              onClick={() => setCurrentPage(currentPage + 1)} 
+              disabled={currentPage === totalPages} 
+              className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
               Next
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

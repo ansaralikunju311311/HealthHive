@@ -146,6 +146,8 @@ const Schedules = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
                 setExistingSchedules(response.data.schedules || []);
+
+                console.log("Existing Schedules:", existingSchedules);
             } catch (error) {
                 console.error('Error fetching schedules:', error);
             }

@@ -228,10 +228,24 @@ export const addDepartment = async (req, res) => {
     }
 }
 export const getDepartments = async (req, res) => 
+
 {
+    const {page,limit} = req.query;
+    console.log(req.query)
+
+    console.log("page=====",page);
+    console.log("limit=====",limit);
     try {
-        const departments = await Department.find();
-        res.status(200).json(departments);
+         
+        // const limit = 10;
+        // const page = parseInt(req.query.page) || 1;
+        // const skip = (page - 1) * limit;
+        const page = +(req.query.page || 1);
+        const limit = +(req.query.limit || 10);
+        const skip = (page - 1) * limit;
+         const departments = await Department.find().skip(skip).limit(limit);
+         const totalpage = Math.ceil(await Department.countDocuments() / limit);
+        res.status(200).json({departments,totalpage});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -239,6 +253,9 @@ export const getDepartments = async (req, res) =>
 export const updateDepartment = async (req, res) => {
        const {id} = req.params;
        console.log("id=====",id);
+
+
+
     try {
         
         const department = await Department.findById(id);

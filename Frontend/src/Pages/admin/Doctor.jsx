@@ -32,6 +32,10 @@ const Doctor = () => {
           return;
         }
         const response = await axios.get('http://localhost:5000/api/admin/doctors', {
+          params:{
+            page:currentPage,
+            limit:10
+          },
             headers: {
                 Authorization: `Bearer ${token}`
             },
