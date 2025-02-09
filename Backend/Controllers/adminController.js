@@ -73,10 +73,18 @@ export const patients = async (req,res)=>
 }
 export const pendingDoctors = async (req,res)=>
 {
+    const {page,limit} = req.params;
     try {
-        const doctors = await Doctor.find({isActive:false});
-        res.status(200).json(doctors);
-        console.log("doctors=====",doctors);
+        const page =  +(req.query.page || 1);
+        const limit =  +(req.query.limit || 10);
+        const skip = (page - 1) * limit;
+        const doctors = await Doctor.find({isActive:false}).skip(skip).limit(limit);
+        const totalpage = Math.ceil(await Doctor.countDocuments({isActive:false}) / limit);
+        const doctorsWithIndex = doctors.map((doctor, index) => ({
+            ...doctor.toObject(),
+            serialNumber: index + 1
+          }));
+        res.status(200).json({doctorsWithIndex,totalpage});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
