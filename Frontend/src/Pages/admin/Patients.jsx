@@ -14,6 +14,12 @@ const Patients = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  // const navigate = useNavigate();
+
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -25,20 +31,25 @@ const Patients = () => {
           return;
         }
         const response = await axios.get('http://localhost:5000/api/admin/patients', {
+          params:{
+            page:currentPage,
+            limit:10
+          },
           headers: {
             Authorization: `Bearer ${token}`
           },
           withCredentials:true,
         });
-        setPatients(response.data);
-        setFilteredPatients(response.data);
+        setPatients(response.data.patientsWithIndex);
+        setTotalPages(response.data.totalpage);
+        setFilteredPatients(response.data.patientsWithIndex);
         console.log(response.data);
       } catch (error) {
         console.log(error);
       }
     }
     fetchPatients();
-  }, [])
+  }, [currentPage])
 
   // Search functionality
   useEffect(() => {
@@ -218,6 +229,27 @@ const Patients = () => {
               </tbody>
             </table>
           </div>
+
+
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={()=>setCurrentPage(currentPage-1)}
+            disabled={currentPage===1}>
+              Previous
+            </button>
+            <div className="text-sm text-gray-700">
+              Page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
+            </div>
+            <button className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            onClick={()=>setCurrentPage(currentPage+1)}
+            disabled={currentPage===totalPages}>
+              Next
+            </button>
+        
+          </div>
+
+
+
         </div>
       </div>
 

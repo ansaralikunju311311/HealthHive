@@ -53,13 +53,19 @@ const cookieOptions = {
 
 export const patients = async (req,res)=>
 {
+    const {page,limit} = req.params;
     try {
-        const patients = await User.find({isActive:true});
+        const page =  +(req.query.page || 1);
+        const limit =  +(req.query.limit || 10);
+        const skip = (page - 1) * limit;
+        const patients = await User.find({isActive:true}).skip(skip).limit(limit);
+
+        const totalpage = Math.ceil(await User.countDocuments({isActive:true}) / limit);
         const patientsWithIndex = patients.map((patient, index) => ({
             ...patient.toObject(),
             serialNumber: index + 1
         }));
-        res.send(patientsWithIndex);
+        res.send({patientsWithIndex,totalpage});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -252,8 +258,16 @@ export const getDepartments = async (req, res) =>
         const limit = +(req.query.limit || 10);
         const skip = (page - 1) * limit;
          const departments = await Department.find().skip(skip).limit(limit);
+
+
          const totalpage = Math.ceil(await Department.countDocuments() / limit);
-        res.status(200).json({departments,totalpage});
+
+         const departmentWithIndex = departments.map((department, index) => ({
+            ...department.toObject(),
+            serialNumber: index + 1
+          }));
+
+        res.status(200).json({departments:departmentWithIndex,totalpage});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

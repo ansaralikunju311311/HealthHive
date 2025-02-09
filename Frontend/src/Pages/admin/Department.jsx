@@ -182,6 +182,8 @@ const Department = () => {
             <table className="min-w-full">
               <thead className="bg-gray-100">
                 <tr>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Sl NO</th>
+
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">DEPARTMENT</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">STATUS</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">ACTION</th>
@@ -189,7 +191,12 @@ const Department = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredDepartments.map((dept, index) => (
+
                   <tr key={index} className="hover:bg-gray-50">
+
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {dept.serialNumber}
+                    </td>
                     <td className="px-6 py-4 text-sm text-gray-800">{dept.Departmentname}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
