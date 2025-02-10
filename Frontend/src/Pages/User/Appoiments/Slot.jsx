@@ -718,7 +718,10 @@ const Slot = () => {
             console.log(`Fetching slots for doctor ID: ${doctorData._id}`);
 
             const response = await axios.get(`http://localhost:5000/api/doctor/slots/${doctorData._id}`);
-            console.log('Full API Response:', JSON.stringify(response.data, null, 2));
+            // console.log('Full API Response:', JSON.stringify(response.data, null, 2));
+
+
+            console.log("=====================dara",response.data)
 
             // Access the appointments array from the schedules object
             if (response.data && response.data.schedules && Array.isArray(response.data.schedules.appointments)) {
@@ -839,15 +842,14 @@ const Slot = () => {
                                 day: 'numeric'
                             })}
                         </h3>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-4"  >
                             <button
                                 onClick={() => handleSlotSelection(schedule, {
                                     appointmentDate: schedule.appointmentDate,
                                     slotTime: schedule.slotTime,
-                                    isBooked: false // Adjust based on your logic
+                                    // isBooked: false // Adjust based on your logic
                                 })}
-                                className="p-3 rounded-lg bg-green-200 hover:bg-green-300"
-                            >
+                                className={`p-3 rounded-lg bg-blue-100 ${schedule.isBooked && 'bg-green-500 cursor-not-allowed'}`}>
                                 {schedule.slotTime}
                             </button>
                         </div>
