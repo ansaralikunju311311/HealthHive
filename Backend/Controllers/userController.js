@@ -375,52 +375,131 @@ export const dptdoctor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+// export const bookAppointment = async (req, res) => {
+//     try {
+//         const { doctorid } = req.params;
+//         const { userid } = req.params;
+//         const { slots} = req.body;
+
+//         console.log("doctorid",doctorid);
+//         console.log("userid",userid);
+//         // console.log("slots",slots);
+//         console.log("slots",slots.date);
+//         // Basic validation
+//         if (!doctorid || !userid || !slots) {
+//             return res.status(400).json({ 
+//                 message: 'Invalid booking request'
+//             });
+//         }
+
+//         // Process each slot and create appointments
+//         const bookingResults = await Promise.all(slots.map(async (slotData) => {
+
+//             // Check if slot is already booked
+//             const existingAppointment = await Appointment.findOne({
+//                 doctor: doctorid,
+//                 // date: new Date(slotData.date),
+//                 date: new Date(new Date(slotData.date).getFullYear(), new Date(slotData.date).getMonth(), new Date(slotData.date).getDate()), // Store only year, month, and day
+//                 time: slotData.time,
+//                 // slot: slotData.slot
+//             });
+
+//             // console.log("existingAppointment",existingAppointment);
+//             if (existingAppointment) {
+//                 throw new Error(`Slot ${slotData.slot} on ${slotData.date} is already booked`);
+//             }
+
+//             // Create new appointment
+//             // const newAppointment = new Appointment({
+//             //     user: userid,
+//             //     doctor: doctorid,
+//             //     date: new Date(slotData.date),
+//             //     time: slotData.time,
+//             //     // slot: slotData.slot
+//             // });
+
+//             // // Save the appointment
+//             // await newAppointment.save();
+
+//             // return {
+//             //     date: slotData.date,
+//             //     // slot: slotData.slot,
+//             //     time: slotData.time
+//             // };
+//             const newAppointment = new Appointment({
+//                 user: userid,
+//                 doctor: doctorid,
+//                 date: new Date(new Date(slotData.date).getFullYear(), new Date(slotData.date).getMonth(),new Date(slotData.date).getDate()),
+//                 time: slotData.time,
+//                 // slot: slotData.slot
+//             });
+//             await newAppointment.save();
+            
+//             return {
+//                 date: new Date(slotData.date), // Format as YYYY-MM-DD
+//                 time: slotData.time
+//             };
+            
+//         }));
+        
+//         res.status(201).json({
+//             message: 'Appointments booked successfully',
+//             bookings: bookingResults
+//         });
+
+//     } catch (error) {
+//         console.error('Booking error:', error);
+//         res.status(400).json({ 
+//             message: error.message || 'Error booking appointments'
+//         });
+//     }
+// };
 export const bookAppointment = async (req, res) => {
     try {
-        const { doctorid } = req.params;
-        const { userid } = req.params;
+        const { doctorid, userid } = req.params;
         const { slots } = req.body;
 
-        // Basic validation
-        if (!doctorid || !userid || !slots || !Array.isArray(slots)) {
-            return res.status(400).json({ 
-                message: 'Invalid booking request'
-            });
+        console.log("doctorid:", doctorid);
+        console.log("userid:", userid);
+        console.log("slots:", slots);
+
+        if (!doctorid || !userid || !slots) {
+            return res.status(400).json({ message: 'Invalid booking request' });
         }
 
-        // Process each slot and create appointments
         const bookingResults = await Promise.all(slots.map(async (slotData) => {
+
+            // Extract YYYY-MM-DD only
+            const appointmentDate = new Date(slotData.date).toISOString().split('T')[0];
+
             // Check if slot is already booked
             const existingAppointment = await Appointment.findOne({
                 doctor: doctorid,
-                date: new Date(slotData.date),
-                time: slotData.time,
-                slot: slotData.slot
+                date: appointmentDate, // YYYY-MM-DD only
+                time: slotData.time
             });
 
             if (existingAppointment) {
-                throw new Error(`Slot ${slotData.slot} on ${slotData.date} is already booked`);
+                throw new Error(`Slot ${slotData.time} on ${appointmentDate} is already booked`);
             }
 
-            // Create new appointment
+            // Store only YYYY-MM-DD
             const newAppointment = new Appointment({
                 user: userid,
                 doctor: doctorid,
-                date: new Date(slotData.date),
-                time: slotData.time,
-                slot: slotData.slot
+                date: appointmentDate, // Store YYYY-MM-DD only
+                time: slotData.time
             });
 
-            // Save the appointment
             await newAppointment.save();
 
             return {
-                date: slotData.date,
-                slot: slotData.slot,
+                date: appointmentDate, // Ensure only YYYY-MM-DD is sent
                 time: slotData.time
             };
+
         }));
-        
+
         res.status(201).json({
             message: 'Appointments booked successfully',
             bookings: bookingResults
@@ -428,9 +507,8 @@ export const bookAppointment = async (req, res) => {
 
     } catch (error) {
         console.error('Booking error:', error);
-        res.status(400).json({ 
-            message: error.message || 'Error booking appointments'
-        });
+        res.status(400).json({ message: error.message || 'Error booking appointments' });
     }
 };
+
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

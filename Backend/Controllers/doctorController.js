@@ -405,67 +405,82 @@ export const logout = async (req, res) => {
 }
 export const schedule = async (req,res)=>{
     const { id: doctorId } = req.params;
-    const { schedules } = req.body;
-    // ("doctorId=====",doctorId);
-    // console.log("scheduleconsole.logs=====",schedules);
+    const { appointments } = req.body;
+    
+    console.log("Received Scheduling Request:");
+    console.log("Doctor ID:", doctorId);
+    console.log("Appointments:", JSON.stringify(appointments, null, 2));
+    
     try {
-        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
+        const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
+        
+        // Validate and normalize appointments
+        const validAppointments = appointments.map(appt => {
+            // Ensure appointmentDate is a valid Date object
+            const appointmentDate = new Date(appt.appointmentDate);
+            
+            // Log any parsing issues
+            if (isNaN(appointmentDate.getTime())) {
+                console.warn(`Invalid date detected: ${appt.appointmentDate}`);
+            }
+            
+            return {
+                appointmentDate: appointmentDate,
+                slotTime: appt.slotTime,
+                bookingTime: new Date(appt.bookingTime)
+            };
+        });
         
         if (!existingSchedule) {
             // If no existing schedule, create new
-            const newSchedule = new appoimentSchedule({
+            const newSchedule = new AppointmentSchedule({
                 doctorId,
-                schedules
+                appointments: validAppointments
             });
+            
             await newSchedule.save();
+            
+            console.log("New Schedule Created:", newSchedule);
+            
             return res.status(201).json({ 
                 message: 'Schedules created successfully',
                 schedule: newSchedule
             });
         } else {
-            // Merge schedules intelligently
-            const mergedSchedules = existingSchedule.schedules.map(existingEntry => {
-                // Find matching date in new schedules
-                const newEntry = schedules.find(
-                    newSchedule => newSchedule.date === existingEntry.date
-                );
-
-                if (!newEntry) {
-                    // If no new schedule for this date, keep existing
-                    return existingEntry;
-                }
-
-                // Combine time slots, removing duplicates
-                const combinedTimeSlots = [
-                    ...existingEntry.timeSlots,
-                    ...newEntry.timeSlots
-                ].filter((slot, index, self) => 
-                    index === self.findIndex(t => 
-                        t.label === slot.label && 
-                        new Date(t.time).getTime() === new Date(slot.time).getTime()
-                    )
-                );
-
-                return {
-                    date: existingEntry.date,
-                    timeSlots: combinedTimeSlots
-                };
-            });
-
-            // Add completely new dates
-            const newDates = schedules.filter(
-                newSchedule => !existingSchedule.schedules.some(
-                    existingSchedule => existingSchedule.date === newSchedule.date
+            // Check for duplicate appointments
+            const duplicateAppointments = validAppointments.filter(newAppt => 
+                existingSchedule.appointments.some(existingAppt => 
+                    new Date(existingAppt.appointmentDate).toDateString() === newAppt.appointmentDate.toDateString() &&
+                    existingAppt.slotTime === newAppt.slotTime
                 )
             );
 
-            // Update schedules
-            existingSchedule.schedules = [
-                ...mergedSchedules,
-                ...newDates
-            ];
+            if (duplicateAppointments.length > 0) {
+                return res.status(400).json({
+                    message: 'Some appointments are already scheduled',
+                    duplicates: duplicateAppointments.map(appt => ({
+                        date: appt.appointmentDate.toDateString(),
+                        slot: appt.slotTime
+                    }))
+                });
+            }
 
+            // Merge appointments intelligently
+            const mergedAppointments = [
+                ...existingSchedule.appointments,
+                ...validAppointments
+            ].filter((appointment, index, self) => 
+                index === self.findIndex(a => 
+                    new Date(a.appointmentDate).toDateString() === new Date(appointment.appointmentDate).toDateString() &&
+                    a.slotTime === appointment.slotTime
+                )
+            );
+
+            existingSchedule.appointments = mergedAppointments;
             await existingSchedule.save();
+            
+            console.log("Updated Schedule:", existingSchedule);
+            
             return res.status(200).json({ 
                 message: 'Schedules updated successfully',
                 schedule: existingSchedule
@@ -478,35 +493,64 @@ export const schedule = async (req,res)=>{
             errorDetails: error.message 
         });
     }
-}
+};
+
+// export const getSchedules = async (req, res) => {
+//     const { id: doctorId } = req.params;
+    
+//     try {
+//         const existingSchedule = await appoimentSchedule.findOne({ doctorId });
+        
+//         if (!existingSchedule) {
+//             return res.status(404).json({ 
+//                 message: 'No schedules found for this doctor',
+//                 schedules: []
+//             });
+//         }
+
+//         return res.status(200).json({ 
+//             message: 'Schedules retrieved successfully',
+//             schedules: existingSchedule.schedules
+//         });
+//     } catch (error) {
+//         console.error('Error retrieving schedules:', error);
+//         res.status(500).json({ 
+//             message: 'Internal server error while fetching schedules',
+//             errorDetails: error.message 
+//         });
+//     }
+// };
 
 
 
 
 
+import AppointmentSchedule from '../Model/appoimentSchedule.js'; // Ensure correct path
 
 export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
-    
+
     try {
-        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
-        
+        // Find the doctor's schedule by doctorId
+        const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
+
         if (!existingSchedule) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 message: 'No schedules found for this doctor',
                 schedules: []
             });
         }
 
-        return res.status(200).json({ 
+        // Returning the schedules directly from the found record
+        return res.status(200).json({
             message: 'Schedules retrieved successfully',
-            schedules: existingSchedule.schedules
+            schedules: existingSchedule.appointments // Use the simplified field name
         });
     } catch (error) {
         console.error('Error retrieving schedules:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             message: 'Internal server error while fetching schedules',
-            errorDetails: error.message 
+            errorDetails: error.message
         });
     }
 };
@@ -515,9 +559,12 @@ export const getSchedules = async (req, res) => {
 export const slots = async (req, res) => {
      console.log(" happen after middlware verify token=====");
     const { id: doctorId } = req.params;
+    // console.log("=======dffnv",doctorId);
     try {
-        const existingSchedule = await appoimentSchedule.findOne({ doctorId });
-        console.log("=======dffnv",existingSchedule);
+        const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
+     //  console.log("=======dffnv",existingSchedule);
+        // console.log("=======dffnv",existingSchedule);
+
         if (!existingSchedule) {
             return res.status(404).json({ 
                 message: 'No schedules found for this doctor',
@@ -526,7 +573,7 @@ export const slots = async (req, res) => {
         }
         res.status(200).json({ 
             message: 'Schedules retrieved successfully',
-            schedules: existingSchedule.schedules
+            schedules: existingSchedule  // Return only the schedules array
         });
     } catch (error) {
         console.error('Error retrieving schedules:', error);
