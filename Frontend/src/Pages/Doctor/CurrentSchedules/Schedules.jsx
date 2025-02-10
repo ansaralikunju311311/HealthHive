@@ -64,7 +64,7 @@ const Schedules = () => {
                     // Format appointmentDate to YYYY-MM-DD
                     const formattedAppointmentDate = appointmentDate.toISOString().split('T')[0];
 
-                    console.log("Formatted Appointment Date:", formattedAppointmentDate);
+                    // console.log("Formatted Appointment Date:", formattedAppointmentDate);
 
                     return {
                         appointmentDate: formattedAppointmentDate, // Use the formatted date here
@@ -169,6 +169,7 @@ const Schedules = () => {
         try {
             const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
             setExistingSchedules(response.data.schedules || []);
+
             console.log("Existing Schedules:", response.data.schedules);
         } catch (error) {
             console.error('Error fetching schedules:', error);
@@ -189,51 +190,65 @@ const Schedules = () => {
 
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>
-                    {existingSchedules.length === 0 ? (
+                    {/* {existingSchedules.length === 0 ? (
                         <p className="text-gray-500">No schedules found</p>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {(() => {
-                                const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
-                                    const appointmentDate = new Date(schedule.appointmentDate);
-                                    const dateKey = appointmentDate.toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    });
+                           
 
-                                    if (!acc[dateKey]) {
-                                        acc[dateKey] = {
-                                            originalDate: appointmentDate,
-                                            date: dateKey,
-                                            slots: []
-                                        };
-                                    }
 
-                                    acc[dateKey].slots.push(schedule.slotTime);
-                                    return acc;
-                                }, {});
 
-                                return Object.values(schedulesByDate)
-                                    .sort((a, b) => a.originalDate - b.originalDate)
-                                    .map((dateGroup, index) => (
-                                        <div key={index} className="border rounded-lg p-4 shadow-sm">
-                                            <h3 className="font-bold mb-2">{dateGroup.date}</h3>
-                                            <div className="space-y-2">
-                                                {dateGroup.slots.map((slot, slotIndex) => (
-                                                    <div 
-                                                        key={slotIndex}
-                                                        className="bg-blue-100 rounded px-3 py-1 text-blue-800"
-                                                    >
-                                                        {slot}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ));
-                            })()}
+
+
+
+
+
+                            
+                            
                         </div>
-                    )}
+                    )} */}
+
+
+
+
+{existingSchedules.length === 0 ? (
+    <p className="text-gray-500">No schedules found</p>
+) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {(() => {
+            const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
+                const dateKey = schedule.appointmentDate; // Use the date directly from the schedule
+
+                if (!acc[dateKey]) {
+                    acc[dateKey] = {
+                        date: dateKey,
+                        slots: []
+                    };
+                }
+
+                acc[dateKey].slots.push(schedule); // Store the entire schedule object
+                return acc;
+            }, {});
+
+            return Object.values(schedulesByDate)
+                .map((dateGroup, index) => (
+                    <div key={index} className="border rounded-lg p-4 shadow-sm">
+                        <h3 className="font-bold mb-2">{dateGroup.date}</h3> {/* Directly use the date */}
+                        <div className="space-y-2">
+                            {dateGroup.slots.map((slot, slotIndex) => (
+                                <div 
+                                    key={slotIndex}
+                                    className={`rounded px-3 py-1 text-blue-800 ${slot.isBooked ? 'bg-green-500' : 'bg-blue-100'}`} // Conditional background color
+                                >
+                                    {slot.slotTime}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ));
+        })()}
+    </div>
+)}
                 </div>
 
                 <button
@@ -242,6 +257,13 @@ const Schedules = () => {
                 >
                     Schedule Appointment
                 </button>
+
+                <div className="status-container" style={{marginTop:'10px'}}>
+                    <div className="w-3 h-3 bg-red-500"></div>
+                    <p>Time Expired</p>
+                    <div className='w-3 h-3 bg-green-500'></div>
+                    <p>Booked Slots</p>
+                </div>
 
                 {isOpen && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
