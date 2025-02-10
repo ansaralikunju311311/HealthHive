@@ -6,6 +6,7 @@ import {setToken} from '../utils/auth.js';
 import Doctor from '../Model/doctorModel.js';
 import Department from '../Model/DepartmentModel.js';
 import Appointment from '../Model/appoiment.js';
+import appointmentSchedule from '../Model/appoimentSchedule.js';
 // Helper function to generate OTP and update user
 
 
@@ -358,7 +359,7 @@ export const logout = async (req, res) => {
         });
         res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
-        console.error('Error logging out:', error);
+        console.error('Error logging out:', error); 
         res.status(500).json({ message: error.message });
     }
 }
@@ -456,6 +457,7 @@ export const dptdoctor = async (req, res) => {
 // };
 export const bookAppointment = async (req, res) => {
     try {
+        let isUpdated = false;
         const { doctorid, userid } = req.params;
         const { slots } = req.body;
 
@@ -467,38 +469,125 @@ export const bookAppointment = async (req, res) => {
             return res.status(400).json({ message: 'Invalid booking request' });
         }
 
+        // const bookingResults = await Promise.all(slots.map(async (slotData) => {
+
+        //     // Extract YYYY-MM-DD only
+        //     const appointmentDate = new Date(slotData.date).toISOString().split('T')[0];
+
+        //     // Check if slot is already booked
+        //     const existingAppointment = await Appointment.findOne({
+        //         doctor: doctorid,
+        //         date: appointmentDate, // YYYY-MM-DD only
+        //         time: slotData.time
+        //     });
+
+              
+
+        //     if (existingAppointment) {
+        //         throw new Error(`Slot ${slotData.time} on ${appointmentDate} is already booked`);
+        //     }
+
+        //     // Store only YYYY-MM-DD
+        //     const newAppointment = new Appointment({
+        //         user: userid,
+        //         doctor: doctorid,
+        //         date: appointmentDate, // Store YYYY-MM-DD only
+        //         time: slotData.time
+        //     });
+
+
+        //     await newAppointment.save();
+
+        //     return {
+        //         date: appointmentDate, // Ensure only YYYY-MM-DD is sent
+        //         time: slotData.time
+        //     };
+
+        // }));
+
+
+
+        // // const doctorSchedule = await appointmentSchedule.findOne({ doctor: doctorId });
+
+        // // console.log("doctorSchedule",doctorSchedule)
+        // try {
+        //     const doctorSchedule = await appointmentSchedule.findOne({ doctorId: doctorid });
+        //     console.log("doctorSchedule", doctorSchedule.doctorId);
+        //     console.log("doctorSchedule", doctorSchedule.appointments);
+
+        //     {doctorSchedule.appointments.map((item) => {    
+        //             if(item.appointmentDate === newAppointment.date)
+        //             {
+        //                 console.log("item", item.appointmentDate);
+        //             }
+        //     })}
+        // } catch (error) {
+        //     console.error("Error fetching doctor schedule:", error);
+        // }
+
+
+
+
+
+
+
+
         const bookingResults = await Promise.all(slots.map(async (slotData) => {
-
-            // Extract YYYY-MM-DD only
             const appointmentDate = new Date(slotData.date).toISOString().split('T')[0];
-
-            // Check if slot is already booked
+        
             const existingAppointment = await Appointment.findOne({
                 doctor: doctorid,
-                date: appointmentDate, // YYYY-MM-DD only
+                date: appointmentDate,
                 time: slotData.time
             });
-
+        
             if (existingAppointment) {
                 throw new Error(`Slot ${slotData.time} on ${appointmentDate} is already booked`);
             }
-
-            // Store only YYYY-MM-DD
+        
             const newAppointment = new Appointment({
                 user: userid,
                 doctor: doctorid,
-                date: appointmentDate, // Store YYYY-MM-DD only
+                date: appointmentDate,
                 time: slotData.time
             });
-
+        
             await newAppointment.save();
-
+        
             return {
-                date: appointmentDate, // Ensure only YYYY-MM-DD is sent
+                date: appointmentDate,
                 time: slotData.time
             };
-
         }));
+        
+        // Now bookingResults contains all the booked slots
+        
+        try {
+            const doctorSchedule = await appointmentSchedule.findOne({ doctorId: doctorid });
+        
+            if (doctorSchedule) {
+                console.log("doctorSchedule", doctorSchedule.doctorId);
+                console.log("doctorSchedule", doctorSchedule.appointments);
+               bookingResults.forEach((booked) => {  // Use bookingResults instead of newAppointment
+                    doctorSchedule.appointments.forEach((item) => {
+                        if (item.appointmentDate === booked.date && item.slotTime === booked.time) {
+                            console.log("Matching appointment found:", item.appointmentDate);
+                            item.isBooked = true;
+                            isUpdated = true;
+                        }
+                    });
+                });
+            }
+            if(isUpdated)
+            {
+                await doctorSchedule.save();
+            }
+        } catch (error) {
+            console.error("Error fetching doctor schedule:", error);
+        }
+        
+
+    
 
         res.status(201).json({
             message: 'Appointments booked successfully',

@@ -27,9 +27,16 @@ const appointmentScheduleSchema = new mongoose.Schema({
             bookingTime: {
                 type: Date, 
                 required: true
-            }
+            },
+            // Is the slot booked?
+            isBooked: {
+                type: Boolean,
+                default: false
+            },
         }
-    ]
+
+    ],
+    
 }, { timestamps: true });
 
 // Index to ensure only one schedule per doctor
