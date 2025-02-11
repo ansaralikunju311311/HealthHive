@@ -545,10 +545,8 @@ export const getSchedules = async (req, res) => {
             return appointmentDate.isSameOrAfter(todayInIndia, 'day');
         });
         
-        console.log("Upcoming Appointments:", upcomingAppointments);
+        console.log("Upcoming Appointments:", upcomingAppointments); // Add this line for debugging
         
-
-
         return res.status(200).json({
             message: 'Schedules retrieved successfully',
             schedules: upcomingAppointments // Use the simplified field name

@@ -230,6 +230,8 @@ const Schedules = () => {
                 return acc;
             }, {});
 
+            
+
             return Object.values(schedulesByDate)
                 .map((dateGroup, index) => (
                     <div key={index} className="border rounded-lg p-4 shadow-sm">
@@ -238,7 +240,49 @@ const Schedules = () => {
                             {dateGroup.slots.map((slot, slotIndex) => (
                                 <div 
                                     key={slotIndex}
-                                    className={`rounded px-3 py-1 text-blue-800 ${slot.isBooked ? 'bg-green-500' : 'bg-blue-100'}`} // Conditional background color
+                                    className={`rounded px-3 py-1 text-blue-800 ${
+                                        (() => {
+                                            // Parse the slot time
+                                            const [startTime, endTime] = slot.slotTime.split(' - ');
+                                            const parseTime = (timeStr) => {
+                                                // Add PM if not present and no colon
+                                                if (!timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
+                                                    timeStr += ' PM';
+                                                }
+
+                                                const [time, period] = timeStr.split(' ');
+                                                let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
+                                                hours = parseInt(hours);
+                                                
+                                                // Adjust hours for PM
+                                                if (period === 'PM' && hours !== 12) {
+                                                    hours += 12;
+                                                }
+                                                // Handle 12 PM (noon)
+                                                if (period === 'PM' && hours === 12) {
+                                                    hours = 12;
+                                                }
+                                                // Handle 12 AM (midnight)
+                                                if (period === 'AM' && hours === 12) {
+                                                    hours = 0;
+                                                }
+                                                
+                                                return new Date(selectedDate).setHours(hours, parseInt(minutes), 0, 0);
+                                            };
+                                            
+                                            const slotStartTime = parseTime(startTime);
+
+                                            const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
+                                            console.log(isSameDay)
+
+                                            
+                                            return !slot.isBooked && isSameDay && slotStartTime < new Date() 
+                                                ? 'bg-red-500' 
+                                                : slot.isBooked 
+                                                    ? 'bg-green-500' 
+                                                    : 'bg-blue-100'
+                                        })()
+                                    }`}
                                 >
                                     {slot.slotTime}
                                 </div>

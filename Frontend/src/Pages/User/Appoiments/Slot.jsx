@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
 import { useLocation } from 'react-router-dom';
@@ -101,6 +100,38 @@ const Slot = () => {
         }
     };
 
+    const parseTime = (timeStr, date) => {
+        // Add PM if not present and no colon
+        if (!timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
+            timeStr += ' PM';
+        }
+
+        const [time, period] = timeStr.split(' ');
+        let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
+        hours = parseInt(hours);
+        
+        // Adjust hours for PM
+        if (period === 'PM' && hours !== 12) {
+            hours += 12;
+        }
+        // Handle 12 PM (noon)
+        if (period === 'PM' && hours === 12) {
+            hours = 12;
+        }
+        // Handle 12 AM (midnight)
+        if (period === 'AM' && hours === 12) {
+            hours = 0;
+        }
+        
+        return new Date(date).setHours(hours, parseInt(minutes), 0, 0);
+    };
+
+    const isSlotExpired = (slotData, appointmentDate) => {
+        const isSameDay = appointmentDate === new Date().toISOString().split('T')[0];
+        const slotStartTime = parseTime(slotData.slotTime, appointmentDate);
+        return isSameDay && !slotData.isBooked && slotStartTime < new Date();
+    };
+
     const renderContent = () => {
         if (loading) {
             return <div>Loading...</div>;
@@ -145,7 +176,7 @@ const Slot = () => {
                                         appointmentDate: slot.appointmentDate,
                                         slotTime: slot.slotTime,
                                     })}
-                                    className={`p-3 rounded-lg bg-blue-100 ${slot.isBooked && 'bg-green-500 cursor-not-allowed'}`}>
+                                    className={`p-3 rounded-lg ${slot.isBooked ? 'bg-green-500 cursor-not-allowed' : isSlotExpired(slot, slot.appointmentDate) ? 'bg-red-500 cursor-not-allowed' : 'bg-blue-100'}`}>
                                     {slot.slotTime}
                                 </button>
                             ))}
