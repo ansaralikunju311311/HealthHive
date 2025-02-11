@@ -18,6 +18,7 @@ doctor.get('/existing-schedules/:id', getSchedules);
 doctor.get('/slots/:id',slots);
 doctor.get('/appointments/:doctor_Id',fetchAppointments);
 // Protected routes (require authentication)
+
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 
 export default doctor;

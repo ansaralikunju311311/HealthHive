@@ -32,7 +32,7 @@ const Sidebar = ({activePage}) => {
       localStorage.removeItem('userId');
       // Show logout toast
       toast.info('You have been logged out', {
-        icon: '👋'
+        icon: '👋.'
       });
       // Navigate to login
       navigate('/login');
