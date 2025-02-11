@@ -42,6 +42,7 @@ const NavBar = () => {
       withCredentials: true,
     });
     const token = cookies.remove('usertoken', { path: '/' });
+    localStorage.removeItem('userId');
     // console.log('logged out====', token)
       setUserData(null);
       navigate('/');
@@ -154,7 +155,7 @@ const NavBar = () => {
                   >
                     <div className="flex items-center space-x-2">
                       <FaUser className="h-4 w-4" />
-                      <span>Profile Settings</span>
+                      <span>Profile</span>
                     </div>
                     <FaChevronDown 
                       className="h-3 w-3 text-gray-400 transform rotate-180"

@@ -10,7 +10,7 @@ import GenerateOtp from './Pages/User/GenerateOtp';
 import HomePageUser from './Pages/User/Home/HomePageUser';
 import DoctorSignUp from './Pages/Doctor/SignUp';
 import DoctorLogin from './Pages/Doctor/Login';
-import DoctorDash from './Pages/Doctor/DoctorDash';
+import DoctorDash from './Pages/Doctor/DoctorDash/DoctorDash.jsx';
 import BeforeVerifcation from './Pages/Doctor/BeforeVerifcation';
 import Profile from './Pages/Doctor/Profile';
 import Protected from './Pages/User/UserProtected/Protected';
@@ -31,6 +31,11 @@ import About from './Pages/User/About/About';
 import ContactUs from './Pages/User/ContactUs/ContactUs..jsx'
 import Appoiments from './Pages/User/Appoiments/Appoiments.jsx';
 import Bookings from './Pages/User/Appoiments/Bookings.jsx';
+import DrAppoiments from './Pages/Doctor/DoctorAppoiments/DrAppoiments.jsx';
+import Schedules from './Pages/Doctor/CurrentSchedules/Schedules.jsx';
+import Slot from './Pages/User/Appoiments/Slot';
+import ProfileUser from './Pages/User/UserDash/Profile.jsx'
+import UserAppoiments from './Pages/User/UserDash/Appoiments.jsx'
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -93,6 +98,14 @@ const App = () => {
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
         <Route path="/appointment" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} />
         <Route path="/bookings" element={<ProtectedRoute wrapper={Protected}><Bookings /></ProtectedRoute>} />
+        <Route path="/bookappointment" element={<ProtectedRoute wrapper={Protected}><Slot /></ProtectedRoute>} />
+
+     
+
+             {/*User Dash Pages  */}
+        <Route path="/user/profile" element={<ProtectedRoute wrapper={Protected}><ProfileUser /></ProtectedRoute>} />
+        <Route path="/user/appointments" element={<ProtectedRoute wrapper={Protected}><UserAppoiments /></ProtectedRoute>} />
+
 
         {/* Auth Routes */}
         <Route path="/user/forgotpassword" element={<Forgot />} />
@@ -110,7 +123,9 @@ const App = () => {
         <Route path="/beforeverification" element={<ProtectedRoute wrapper={DoctorReve}><BeforeVerifcation /></ProtectedRoute>} />
         <Route path="/doctor/dashboard" element={<ProtectedRoute wrapper={DoctorProtected}><DoctorDash /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute wrapper={DoctorProtected}><Profile /></ProtectedRoute>} />
-
+        <Route path="/doctor/appointment" element={<ProtectedRoute wrapper={DoctorProtected}><DrAppoiments /></ProtectedRoute>} />
+        <Route path="/schedules" element={<ProtectedRoute wrapper={DoctorProtected}><Schedules /></ProtectedRoute>} />
+        {/* <Route path="/appoiments" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} /> */}
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />

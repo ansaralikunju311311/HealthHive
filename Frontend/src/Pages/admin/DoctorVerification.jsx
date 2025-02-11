@@ -25,6 +25,8 @@ const DoctorVerification = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const fetchDoctors = async () => {
     try {
@@ -34,13 +36,18 @@ const DoctorVerification = () => {
         return;
       }
       const response = await axios.get('http://localhost:5000/api/admin/pending-doctors',{
+        params:{
+          page:currentPage,
+          limit:10
+        },
         headers: {
           Authorization: `Bearer ${token}`
         },
         withCredentials: true
       });
-      setDoctors(response.data);
-      setFilteredDoctors(response.data);
+      setDoctors(response.data.doctorsWithIndex);
+      setFilteredDoctors(response.data.doctorsWithIndex);
+      setTotalPages(response.data.totalpage);
       console.log("api response", response.data);
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -49,7 +56,7 @@ const DoctorVerification = () => {
 
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     const result = doctors.filter(
@@ -148,7 +155,8 @@ const DoctorVerification = () => {
           </div>
 
           <div className="w-full">
-            <div className="grid grid-cols-6 bg-gray-100 p-4 rounded-t-lg font-medium text-gray-600">
+            <div className="grid grid-cols-7 bg-gray-100 p-4 rounded-t-lg font-medium text-gray-600">
+              <div>SL. NO</div>
               <div>NAME</div>
               <div>PROFILE IMAGE</div>
               <div>SPECIALIZATION</div>
@@ -159,7 +167,8 @@ const DoctorVerification = () => {
 
             <div className="divide-y divide-gray-200">
               {filteredDoctors.map((doctor, index) => (
-                <div key={doctor._id} className="grid grid-cols-6 p-4 hover:bg-gray-50">
+                <div key={doctor._id} className="grid grid-cols-7 p-4 hover:bg-gray-50">
+                 <div className='text-gray-900'>{doctor.serialNumber}</div>
                   <div className="text-gray-900">{doctor.name}</div>
                   <div className="flex items-center justify-center">
                     <img
@@ -185,19 +194,21 @@ const DoctorVerification = () => {
                       View Details
                     </button>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                      onClick={() => handleApprove(doctor._id)}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                      onClick={() => handleReject(doctor._id)}
-                    >
-                      Reject
-                    </button>
+                  <div className="px-6 py-4 text-sm font-medium text-right">
+                    <div className="flex justify-end space-x-2">
+                      <button 
+                        onClick={() => handleApprove(doctor._id)}
+                        className="text-green-600 hover:text-green-900 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-colors"
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        onClick={() => handleReject(doctor._id)}
+                        className="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full transition-colors"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -205,12 +216,18 @@ const DoctorVerification = () => {
           </div>
 
           <div className="flex justify-between items-center mt-4 px-4">
-            <button className="flex items-center text-gray-600 hover:text-blue-600">
+            <button className="flex items-center text-gray-600 hover:text-blue-600"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            >
               <FaChevronLeft className="mr-2" />
               Previous
             </button>
-            <div className="text-gray-600">Page 1 of 3</div>
-            <button className="flex items-center text-gray-600 hover:text-blue-600">
+            <div className="text-gray-600">Page {currentPage} of {totalPages}</div>
+            <button className="flex items-center text-gray-600 hover:text-blue-600"
+            onClick={()=>setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            >
               Next
               <FaChevronRight className="ml-2" />
             </button>

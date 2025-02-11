@@ -18,7 +18,7 @@ const Bookings = () => {
 
     const handleBookAppointment = (doctor) => {
         // Navigate to appointment booking page with doctor details
-        navigate('/book-appointment', { state: { doctor } })
+        navigate('/bookappointment', { state: { doctor } })
     }
 
     return (
