@@ -1,6 +1,7 @@
 import doctor from "../Model/doctorModel.js";
 
 import RejectedDoctor from "../Model/RejectedDoctors.js";
+import moment from 'moment-timezone';
 import bcrypt from 'bcrypt';
 // import {jwtToken} from '../utils/auth.js'
 import crypto from 'crypto';
@@ -15,7 +16,7 @@ import Appointment from '../Model/appoiment.js';
 // import appoimentSchedule from '../Model/appoimentSchedule.js';
 
  const cookieOptions = {
-    
+     
     httpOnly: false,
     secure: true,
     sameSite: 'none',
@@ -403,301 +404,17 @@ export const logout = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-// export const schedule = async (req,res)=>{
-//     const { id: doctorId } = req.params;
-//     const { appointments } = req.body;
-    
-//     console.log("Received Scheduling Request:");
-//     console.log("Doctor ID:", doctorId);
-//     console.log("Appointments:", JSON.stringify(appointments, null, 2));
-    
-//     try {
-//         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
-        
-//         // Validate and normalize appointments
-//         const validAppointments = appointments.map(appt => {
-//             // Ensure appointmentDate is a valid Date object
-//             const appointmentDate = new Date(appt.appointmentDate);
-            
-//             // Log any parsing issues
-//             if (isNaN(appointmentDate.getTime())) {
-//                 console.warn(`Invalid date detected: ${appt.appointmentDate}`);
-//             }
-            
-//             return {
-//                 appointmentDate: appointmentDate,
-//                 slotTime: appt.slotTime,
-//                 bookingTime: new Date(appt.bookingTime)
-//             };
-//         });
-        
-//         if (!existingSchedule) {
-//             // If no existing schedule, create new
-//             const newSchedule = new AppointmentSchedule({
-//                 doctorId,
-//                 appointments: validAppointments
-//             });
-            
-//             await newSchedule.save();
-            
-//             console.log("New Schedule Created:", newSchedule);
-            
-//             return res.status(201).json({ 
-//                 message: 'Schedules created successfully',
-//                 schedule: newSchedule
-//             });
-//         } else {
-//             // Check for duplicate appointments
-//             const duplicateAppointments = validAppointments.filter(newAppt => 
-//                 existingSchedule.appointments.some(existingAppt => 
-//                     new Date(existingAppt.appointmentDate).toDateString() === newAppt.appointmentDate.toDateString() &&
-//                     existingAppt.slotTime === newAppt.slotTime
-//                 )
-//             );
-
-//             if (duplicateAppointments.length > 0) {
-//                 return res.status(400).json({
-//                     message: 'Some appointments are already scheduled',
-//                     duplicates: duplicateAppointments.map(appt => ({
-//                         date: appt.appointmentDate.toDateString(),
-//                         slot: appt.slotTime
-//                     }))
-//                 });
-//             }
-
-//             // Merge appointments intelligently
-//             const mergedAppointments = [
-//                 ...existingSchedule.appointments,
-//                 ...validAppointments
-//             ].filter((appointment, index, self) => 
-//                 index === self.findIndex(a => 
-//                     new Date(a.appointmentDate).toDateString() === new Date(appointment.appointmentDate).toDateString() &&
-//                     a.slotTime === appointment.slotTime
-//                 )
-//             );
-
-//             existingSchedule.appointments = mergedAppointments;
-//             await existingSchedule.save();
-            
-//             console.log("Updated Schedule:", existingSchedule);
-            
-//             return res.status(200).json({ 
-//                 message: 'Schedules updated successfully',
-//                 schedule: existingSchedule
-//             });
-//         }
-//     } catch (error) {
-//         console.error('Error in Scheduling:', error);
-//         res.status(500).json({ 
-//             message: 'Internal server error during scheduling',
-//             errorDetails: error.message 
-//         });
-//     }
-// };
-//  required data
-
-
-
-
-// export const schedule = async (req, res) => {
-//     const { id: doctorId } = req.params;
-//     const { appointments } = req.body;
-
-//     console.log("Received Scheduling Request:");
-//     console.log("Doctor ID:", doctorId);
-//     console.log("Appointments:", JSON.stringify(appointments, null, 2));
-
-//     try {
-//         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
-
-//         // Validate and normalize appointments
-//         const validAppointments = appointments.map(appt => {
-//             // Ensure appointmentDate is a valid Date object
-//             const appointmentDate = new Date(appt.appointmentDate);
-
-//             // Log any parsing issues
-//             if (isNaN(appointmentDate.getTime())) {
-//                 console.warn(`Invalid date detected: ${appt.appointmentDate}`);
-//             }
-
-//             // Store the appointment date as a string in YYYY-MM-DD format
-//             return {
-//                 appointmentDate: appointmentDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
-//                 slotTime: appt.slotTime,
-//                 bookingTime: new Date(appt.bookingTime) // Assuming you want to keep bookingTime as a Date object
-//             };
-//         });
-
-//         if (!existingSchedule) {
-//             // If no existing schedule, create new
-//             const newSchedule = new AppointmentSchedule({
-//                 doctorId,
-//                 appointments: validAppointments
-//             });
-
-//             await newSchedule.save();
-
-//             console.log("New Schedule Created:", newSchedule);
-
-//             return res.status(201).json({ 
-//                 message: 'Schedules created successfully',
-//                 schedule: newSchedule
-//             });
-//         } else {
-//             // Check for duplicate appointments
-//             const duplicateAppointments = validAppointments.filter(newAppt => 
-//                 existingSchedule.appointments.some(existingAppt => 
-//                     new Date(existingAppt.appointmentDate).toDateString() === newAppt.appointmentDate.toDateString() &&
-//                     existingAppt.slotTime === newAppt.slotTime
-//                 )
-//             );
-
-//             if (duplicateAppointments.length > 0) {
-//                 return res.status(400).json({
-//                     message: 'Some appointments are already scheduled',
-//                     duplicates: duplicateAppointments.map(appt => ({
-//                         date: appt.appointmentDate,
-//                         slot: appt.slotTime
-//                     }))
-//                 });
-//             }
-
-//             // Merge appointments intelligently
-//             const mergedAppointments = [
-//                 ...existingSchedule.appointments,
-//                 ...validAppointments
-//             ].filter((appointment, index, self) => 
-//                 index === self.findIndex(a => 
-//                     new Date(a.appointmentDate).toDateString() === new Date(appointment.appointmentDate).toDateString() &&
-//                     a.slotTime === appointment.slotTime
-//                 )
-//             );
-
-//             existingSchedule.appointments = mergedAppointments;
-//             await existingSchedule.save();
-
-//             console.log("Updated Schedule:", existingSchedule);
-
-//             return res.status(200).json({ 
-//                 message: 'Schedules updated successfully',
-//                 schedule: existingSchedule
-//             });
-//         }
-//     } catch (error) {
-//         console.error('Error in Scheduling:', error);
-//         res.status(500).json({ 
-//             message: 'Internal server error during scheduling',
-//             errorDetails: error.message 
-//         });
-//     }
-// };
-
-
-
-
-// export const schedule = async (req, res) => {
-//     const { id: doctorId } = req.params;
-//     const { appointments } = req.body;
-
-//     console.log("Received Scheduling Request:");
-//     console.log("Doctor ID:", doctorId);
-//     console.log("Appointments:", JSON.stringify(appointments, null, 2));
-
-//     try {
-//         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
-
-//         // Validate and normalize appointments
-//         const validAppointments = appointments.map(appt => {
-//             const appointmentDate = new Date(appt.appointmentDate);
-
-//             // Log any parsing issues
-//             if (isNaN(appointmentDate.getTime())) {
-//                 console.warn(`Invalid date detected: ${appt.appointmentDate}`);
-//             }
-
-//             // Store the appointment date as a string in YYYY-MM-DD format
-//             return {
-//                 appointmentDate: appointmentDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
-//                 slotTime: appt.slotTime,
-//                 bookingTime: new Date(appt.bookingTime) // Assuming you want to keep bookingTime as a Date object
-//             };
-//         });
-
-//         if (!existingSchedule) {
-//             // If no existing schedule, create new
-//             const newSchedule = new AppointmentSchedule({
-//                 doctorId,
-//                 appointments: validAppointments
-//             });
-
-//             await newSchedule.save();
-
-//             console.log("New Schedule Created:", newSchedule);
-
-//             return res.status(201).json({ 
-//                 message: 'Schedules created successfully',
-//                 schedule: newSchedule.appointments.map(appt => ({
-//                     appointmentDate: appt.appointmentDate,
-//                     slotTime: appt.slotTime
-//                 }))
-//             });
-//         } else {
-//             // Check for duplicate appointments
-//             const duplicateAppointments = validAppointments.filter(newAppt => 
-//                 existingSchedule.appointments.some(existingAppt => 
-//                     new Date(existingAppt.appointmentDate).toDateString() === newAppt.appointmentDate.toDateString() &&
-//                     existingAppt.slotTime === newAppt.slotTime
-//                 )
-//             );
-
-//             if (duplicateAppointments.length > 0) {
-//                 return res.status(400).json({
-//                     message: 'Some appointments are already scheduled',
-//                     duplicates: duplicateAppointments.map(appt => ({
-//                         date: appt.appointmentDate,
-//                         slot: appt.slotTime
-//                     }))
-//                 });
-//             }
-
-//             // Merge appointments intelligently
-//             const mergedAppointments = [
-//                 ...existingSchedule.appointments,
-//                 ...validAppointments
-//             ].filter((appointment, index, self) => 
-//                 index === self.findIndex(a => 
-//                     new Date(a.appointmentDate).toDateString() === new Date(appointment.appointmentDate).toDateString() &&
-//                     a.slotTime === appointment.slotTime
-//                 )
-//             );
-
-//             existingSchedule.appointments = mergedAppointments;
-//             await existingSchedule.save();
-
-//             console.log("Updated Schedule:", existingSchedule);
-
-//             return res.status(200).json({ 
-//                 message: 'Schedules updated successfully',
-//                 schedule: existingSchedule.appointments.map(appt => ({
-//                     appointmentDate: appt.appointmentDate,
-//                     slotTime: appt.slotTime
-//                 }))
-//             });
-//         }
-//     } catch (error) {
-//         console.error('Error in Scheduling:', error);
-//         res.status(500).json({ 
-//             message: 'Internal server error during scheduling',
-//             errorDetails: error.message 
-//         });
-//     }
-// };
 
 
 
 
 
 
+
+
+
+
+ 
 
 // import AppointmentSchedule from '../Model/appoimentSchedule.js'; // Adjust the import based on your file structure
 
@@ -738,7 +455,7 @@ export const schedule = async (req, res) => {
 
             await newSchedule.save();
 
-            console.log("New Schedule Created:", newSchedule);
+            // console.log("New Schedule Created:", newSchedule);
 
             return res.status(201).json({ 
                 message: 'Schedules created successfully',
@@ -780,7 +497,7 @@ export const schedule = async (req, res) => {
             existingSchedule.appointments = mergedAppointments;
             await existingSchedule.save();
 
-            console.log("Updated Schedule:", existingSchedule);
+            // console.log("Updated Schedule:", existingSchedule);
 
             return res.status(200).json({ 
                 message: 'Schedules updated successfully',
@@ -855,10 +572,27 @@ export const getSchedules = async (req, res) => {
             });
         }
 
-        // Returning the schedules directly from the found record
+       
+
+        // Get the current date in 'Asia/Kolkata' timezone, with time set to 00:00:00
+        const todayInIndia = moment().tz("Asia/Kolkata").startOf('day');
+        
+        // Filter appointments to include those scheduled for today or in the future
+        const upcomingAppointments = existingSchedule.appointments.filter(appointment => {
+            // Parse the appointment date in 'Asia/Kolkata' timezone and set time to 00:00:00
+            const appointmentDate = moment.tz(appointment.appointmentDate, "Asia/Kolkata").startOf('day');
+        
+            // Include appointment if it's today or in the future
+            return appointmentDate.isSameOrAfter(todayInIndia, 'day');
+        });
+        
+        console.log("Upcoming Appointments:", upcomingAppointments);
+        
+
+
         return res.status(200).json({
             message: 'Schedules retrieved successfully',
-            schedules: existingSchedule.appointments // Use the simplified field name
+            schedules: upcomingAppointments // Use the simplified field name
         });
     } catch (error) {
         console.error('Error retrieving schedules:', error);
@@ -897,25 +631,6 @@ export const slots = async (req, res) => {
         });
     }
 }
-// catch (error) {
-//     console.error('Error updating schedule:', error);
-//     res.status(500).json({ 
-//         message: 'Internal server error while updating schedule',
-//         errorDetails: error.message 
-//     });
-// }
-// export const schedule = async (req,res)
-
-
-//  export const fetchAppointments = async (req, res) => {
-//     const {doctor_Id} = req.params;
-//     console.log("=============",doctor_Id)
-//     const appoiments = await Appointment.find({doctor:doctor_Id});
-
-//     res.status(200).json(appoiments)
-//  }
-// 
-
 export const fetchAppointments = async (req, res) => {
     const {doctor_Id} = req.params;
     console.log("=============",doctor_Id)
