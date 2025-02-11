@@ -77,5 +77,5 @@ const doctorSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-const doctor = mongoose.model('doctor', doctorSchema);
+const doctor = mongoose.model('Doctor', doctorSchema);
 export default doctor;

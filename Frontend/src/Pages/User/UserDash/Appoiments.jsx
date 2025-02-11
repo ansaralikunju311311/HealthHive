@@ -11,6 +11,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
@@ -19,21 +22,46 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Appoiments = () => {
+    const user = JSON.parse(localStorage.getItem('userId'));
+    console.log("==========================",user._id);
+    const navigate = useNavigate();
+    const [appointments, setAppointments] = useState([])
   // Sample data - replace with your actual data
-  const appointments = [
-    {
-      id: 1,
-      doctorName: 'Dr. John Smith',
-      date: '2025-02-12',
-      time: '10:00 AM',
-      status: 'Scheduled'
-    },
-    // Add more appointments as needed
-  ];
+//   const appointments = [
+//     {
+//       id: 1,
+//       doctorName: 'Dr. John Smith',
+//       department: 'Cardiology',
+//       date: '2025-02-12',
+//       time: '10:00 AM',
+//       status: 'Scheduled'
+//     },
+//     // Add more appointments as needed
+//   ];
 
-  const handleCancel = (id) => {
-    // Add your cancel logic here
-    console.log('Cancelling appointment:', id);
+useEffect(() => {
+    const FetchAppoiments = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/user/getappointments/${user._id}`);
+            setAppointments(response.data);
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+        }
+    }
+    FetchAppoiments();
+}, []); // Empty dependency array to run only once
+
+  const handleCancel = async (appointmentId) => {
+    // try {
+    //     await axios.delete(`http://localhost:5000/api/user/cancelappointment/${appointmentId}`);
+    //     // Remove the cancelled appointment from the state
+    //     setAppointments(prevAppointments => 
+    //         prevAppointments.filter(appointment => appointment._id !== appointmentId)
+    //     );
+    // } catch (error) {
+    //     console.error('Error cancelling appointment:', error);
+    // }
+    console.log("====",appointmentId)
   };
 
   return (
@@ -49,6 +77,7 @@ const Appoiments = () => {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Doctor Name</StyledTableCell>
+                <StyledTableCell>Department</StyledTableCell>
                 <StyledTableCell>Date</StyledTableCell>
                 <StyledTableCell>Time</StyledTableCell>
                 <StyledTableCell>Status</StyledTableCell>
@@ -57,11 +86,13 @@ const Appoiments = () => {
             </TableHead>
             <TableBody>
               {appointments.map((appointment) => (
+                console.log("====appp",appointment),
                 <TableRow
-                  key={appointment.id}
+                  key={appointment._id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell>{appointment.doctorName}</TableCell>
+                  <TableCell>{appointment.doctor.name}</TableCell>
+                  <TableCell>{appointment.doctor.specialization}</TableCell>
                   <TableCell>{appointment.date}</TableCell>
                   <TableCell>{appointment.time}</TableCell>
                   <TableCell>{appointment.status}</TableCell>
@@ -70,7 +101,7 @@ const Appoiments = () => {
                       variant="contained"
                       color="error"
                       size="small"
-                      onClick={() => handleCancel(appointment.id)}
+                      onClick={() => handleCancel(appointment._id)}
                       sx={{ mr: 1 }}
                     >
                       Cancel

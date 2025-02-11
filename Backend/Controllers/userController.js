@@ -7,6 +7,7 @@ import Doctor from '../Model/doctorModel.js';
 import Department from '../Model/DepartmentModel.js';
 import Appointment from '../Model/appoiment.js';
 import appointmentSchedule from '../Model/appoimentSchedule.js';
+// import doctor from '../Model/doctorModel.js';
 // Helper function to generate OTP and update user
 
 
@@ -599,5 +600,21 @@ export const bookAppointment = async (req, res) => {
         res.status(400).json({ message: error.message || 'Error booking appointments' });
     }
 };
+export const FetchAppoiments = async(req, res) => {
+    try {
+        const { userid } = req.params;
+        console.log("userid",userid)
+        
+        const appointments = await Appointment.find({ user: userid }).populate({
+            path:'doctor',
+            select:'name specialization',
+            // options:{strictPopulate:false}
+        });
+        res.status(200).json(appointments);
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
 
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
