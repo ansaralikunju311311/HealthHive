@@ -49,21 +49,22 @@ const Sidebar = ({activePage}) => {
   const sidebarItems = [
     { 
       icon: <MdDashboard className="w-6 h-6" />, 
-      text: 'Dashboard', 
-      path: '/user/dashboard',
+      text: 'Profile', 
+      path: '/user/Profile',
       active: true 
     },
     { 
       icon: <MdEventAvailable className="w-6 h-6" />, 
       text: 'Appointments',
-      path: '/user/appointment' 
+      path: '/user/appointments' 
     },
-    { 
-      icon: <MdSchedule className="w-6 h-6" />, 
-      text: 'Current Schedules',
-      path: `/schedules`, 
-    //   state: {userid: id}
-    },
+    // { 
+    //   icon: <MdSchedule className="w-6 h-6" />, 
+    //   text: 'Current Schedules',
+    //   path: `/schedules`, 
+    // //   state: {userid: id}
+    // },
+    
     { 
       icon: <MdChat className="w-6 h-6" />, 
       text: 'Chats',
