@@ -118,8 +118,8 @@ const Schedules = () => {
 
     const generateTimeSlots = () => {
         const slots = [];
-        let startHour = 17; // 5 PM
-        let endHour = 24; // 12 AM
+        let startHour = 5; // 5 PM
+        let endHour = 12; // 12 AM
 
         for (let hour = startHour; hour < endHour; hour++) {
             let startTime = new Date();
@@ -271,12 +271,15 @@ const Schedules = () => {
                                             };
                                             
                                             const slotStartTime = parseTime(startTime);
+                                            // console.log("start time: ",startTime)
 
                                             const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
-                                            console.log(isSameDay)
+                                            // console.log("=============",isSameDay);
+                                            console.log("=============",slotStartTime);
+                                            console.log(slotStartTime < new Date());
 
                                             
-                                            return !slot.isBooked && isSameDay && slotStartTime < new Date() 
+                                            return !slot.isBooked && isSameDay && slotStartTime > new Date() 
                                                 ? 'bg-red-500' 
                                                 : slot.isBooked 
                                                     ? 'bg-green-500' 

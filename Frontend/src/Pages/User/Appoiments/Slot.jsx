@@ -154,6 +154,7 @@ const Slot = () => {
             acc[date].push(schedule);
             return acc;
         }, {});
+        console.log("grpschedules: ", groupedSchedules)
 
         return (
             <div>
