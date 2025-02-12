@@ -177,6 +177,7 @@ const Slot = () => {
                                         appointmentDate: slot.appointmentDate,
                                         slotTime: slot.slotTime,
                                     })}
+                                    disabled={slot.isBooked || isSlotExpired(slot, slot.appointmentDate)}
                                     className={`p-3 rounded-lg ${slot.isBooked ? 'bg-green-500 cursor-not-allowed' : isSlotExpired(slot, slot.appointmentDate) ? 'bg-red-500 cursor-not-allowed' : 'bg-blue-100'}`}>
                                     {slot.slotTime}
                                 </button>

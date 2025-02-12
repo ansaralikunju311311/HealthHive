@@ -271,7 +271,7 @@ const Schedules = () => {
                                             };
                                             
                                             const slotStartTime = parseTime(startTime);
-                                            // console.log("start time: ",startTime)
+                                            console.log("start time: ",startTime)
 
                                             const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
                                             // console.log("=============",isSameDay);
@@ -279,7 +279,7 @@ const Schedules = () => {
                                             console.log(slotStartTime < new Date());
 
                                             
-                                            return !slot.isBooked && isSameDay && slotStartTime > new Date() 
+                                            return !slot.isBooked && isSameDay && slotStartTime < new Date() 
                                                 ? 'bg-red-500' 
                                                 : slot.isBooked 
                                                     ? 'bg-green-500' 
