@@ -212,6 +212,28 @@ const SignUp = () => {
               </div>
 
               <div>
+                <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+                <select
+                  id="bloodGroup"
+                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  {...register("bloodGroup", {
+                    required: "Blood group is required"
+                  })}
+                >
+                  <option value="">Select Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+                {errors.bloodGroup && <p className="text-red-500">{errors.bloodGroup.message}</p>}
+              </div>
+
+              <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                 <input
                   type="tel"
@@ -238,6 +260,24 @@ const SignUp = () => {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-md shadow-sm"
                 />
                 {errors.age && <p className="text-red-500">{errors.age.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <textarea
+                  id="address"
+                  placeholder="Enter your full address"
+                  rows="3"
+                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  {...register("address", {
+                    required: "Address is required",
+                    minLength: {
+                      value: 10,
+                      message: "Address should be at least 10 characters"
+                    }
+                  })}
+                />
+                {errors.address && <p className="text-red-500">{errors.address.message}</p>}
               </div>
 
               <div>
@@ -332,4 +372,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-

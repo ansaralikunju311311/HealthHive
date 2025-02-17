@@ -38,7 +38,7 @@ const generateAndSendOTP = async (user, email) => {
 // Register user
 const RegisterUser = async (req, res) => {
     try {
-        const { name, email, password, dateOfBirth, phone, age, gender, image } = req.body;
+        const { name, email, password, dateOfBirth, phone, age, gender, image,bloodGroup,address } = req.body;
     
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -67,6 +67,8 @@ const RegisterUser = async (req, res) => {
             existingUser.age = age;
             existingUser.gender = gender;
             existingUser.image = image;
+            existingUser.bloodGroup = bloodGroup;
+            existingUser.address = address;
             user = existingUser;
         } else {
             // Create new user
@@ -80,7 +82,9 @@ const RegisterUser = async (req, res) => {
                 image,
                 gender,
                 isActive: false,
-                isBlocked: false
+                isBlocked: false,
+                bloodGroup,
+                address
             });
         }
 

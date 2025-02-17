@@ -42,6 +42,14 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    bloodGroup:{
+        type:String,
+        required:true
+    },
+    address:{
+        type:String,
+        required:true
+    },
     
     otp: {
         type: String,
