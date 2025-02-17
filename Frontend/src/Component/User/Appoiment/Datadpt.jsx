@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import axios from "axios" 
 import { useNavigate } from "react-router-dom";
 import cookies from 'js-cookie';
-// import Heading from "../Appoiment/Heading";
-// import Schedulebtn from "../Appoiment/Schedulebtn";
+import Heading from "../Appoiment/Heading";
+import Schedulebtn from "../Appoiment/Schedulebtn";
 const Datadpt = ({ limit =null}) => {
   const [departments, setDepartments] = useState([]);
   const [departmentColors, setDepartmentColors] = useState({});
@@ -126,7 +126,6 @@ const Datadpt = ({ limit =null}) => {
     </>
   );
 };
-
 export default Datadpt;
 
 

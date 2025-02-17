@@ -16,5 +16,4 @@ const Heading = () => {
     </div>
   )
 }
-
-export default Heading
+export default Heading;
