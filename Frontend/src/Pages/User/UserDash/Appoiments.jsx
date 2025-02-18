@@ -14,6 +14,8 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import Homebutton from '../../../Component/User/HomeButton/Homebutton';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
@@ -68,9 +70,12 @@ useEffect(() => {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <Box sx={{ flexGrow: 1, p: 3 }}>
-        <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', mb: 4 }}>
-          My Appointments
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', mb: 0 }}>
+            My Appointments
+          </Typography>
+          <Homebutton />
+        </Box>
         
         <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
           <Table sx={{ minWidth: 650 }} aria-label="appointments table">
