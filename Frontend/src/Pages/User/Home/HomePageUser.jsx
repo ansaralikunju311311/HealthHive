@@ -47,14 +47,6 @@ const HomePageUser = () => {
             setDoctorsData(doctorsResponse.data.doctors);
             localStorage.setItem('userId', JSON.stringify(userResponse.data.user));
                  console.log('userid=====',userResponse.data.user)
-            // const departmentsResponse = await axios.get('http://localhost:5000/api/admin/department', {
-            //   headers: {
-            //     Authorization: `Bearer ${token}`
-            //   },
-            //   withCredentials: true,
-            // });
-            // setDepartments(departmentsResponse.data);
-            // console.log("departments=====", departmentsResponse.data);
           } catch (error) {
             if (error.response?.status === 401) {
               cookies.remove('useraccessToken');

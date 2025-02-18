@@ -53,9 +53,14 @@ const Sidebar = ({ activePage }) => {
       path: '/admin/patients',
     },
     {
+      title: 'Wallet',
+      icon: FaWallet,
+      path: '/admin/wallet',
+    },
+    {
       title: 'Doctor Payment',
       icon: FaWallet,
-      path: '/admin/doctor-payment',
+      path: '/admin/doctorpayement',
     },
   ];
 

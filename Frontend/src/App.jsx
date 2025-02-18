@@ -36,8 +36,9 @@ import Schedules from './Pages/Doctor/CurrentSchedules/Schedules.jsx';
 import Slot from './Pages/User/Appoiments/Slot';
 import ProfileUser from './Pages/User/UserDash/Profile.jsx'
 import UserAppoiments from './Pages/User/UserDash/Appoiments.jsx'
-
+import Doctorpayement from './Pages/admin/Doctorpayement'
 import PayementPanel from './Pages/User/Appoiments/PayementPanel'
+import Wallet from './Pages/admin/Wallet'
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -136,7 +137,8 @@ const App = () => {
         <Route path="/admin/doctors" element={<ProtectedRoute wrapper={AdminProtected}><Doctor /></ProtectedRoute>} />
         <Route path="/admin/departments" element={<ProtectedRoute wrapper={AdminProtected}><Departments /></ProtectedRoute>} />
         <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
-
+        <Route path="/admin/wallet" element={<ProtectedRoute wrapper={AdminProtected}><Wallet /></ProtectedRoute>} />
+        <Route path="/admin/doctorpayement" element={<ProtectedRoute wrapper={AdminProtected}><Doctorpayement /></ProtectedRoute>} />
 
 
 
