@@ -2,7 +2,10 @@ import React from 'react';
 import NavBar from '../../../Common/NavBar';
 import Footer from '../../../Common/Footer';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Box,
   Paper,
@@ -124,6 +127,7 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const PayementPanel = () => {
+    const navigate = useNavigate();
   const handlePayment = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/pay', {
@@ -131,15 +135,41 @@ const PayementPanel = () => {
       });
 
       const options = {
-        key: "rzp_test_R1PIEzD9jZhBnz", 
+        key: "rzp_test_R1PIEzD9jZhBnz",
         amount: response.data.amount,
         currency: response.data.currency,
         name: "HealthHive",
         description: `Consultation with Dr. ${doctorData?.name}`,
         order_id: response.data.id,
-        handler: function (response) {
-          console.log("Payment successful:", response);
-          // Handle successful payment here
+        handler: async function (response) {
+          try {
+            // Verify payment
+            const verificationResponse = await axios.post('http://localhost:5000/api/user/verify-payment', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+
+            if (verificationResponse.status === 200) {
+              // Payment successful and verified
+              console.log("Payment successful and verified:", verificationResponse.data);
+              
+              navigate('/home')
+            
+
+
+              // Here you can:
+              // 1. Show success message
+              // 2. Create appointment
+              // 3. Redirect to appointments page
+              
+              toast.success('Payment successful! Appointment confirmed.');
+              // Add navigation to appointment confirmation or listing page
+            }
+          } catch (error) {
+            console.error("Payment verification failed:", error);
+            toast.error('Payment verification failed. Please contact support.');
+          }
         },
         prefill: {
           name: "Patient",
@@ -148,6 +178,12 @@ const PayementPanel = () => {
         },
         theme: {
           color: "#3b82f6"
+        },
+        modal: {
+          ondismiss: function() {
+            console.log('Payment cancelled');
+            toast.info('Payment cancelled');
+          }
         }
       };
 
@@ -156,11 +192,12 @@ const PayementPanel = () => {
 
       razorpayInstance.on('payment.failed', function (response) {
         console.error("Payment failed:", response.error);
-        // Handle payment failure here
+        toast.error('Payment failed. Please try again.');
       });
 
     } catch (error) {
       console.error("Error initiating payment:", error);
+      toast.error('Could not initiate payment. Please try again.');
     }
   };
 
@@ -522,6 +559,7 @@ const PayementPanel = () => {
         </StyledPaper>
       </Box>
       <Footer />
+      <ToastContainer />
     </>
   );
 };

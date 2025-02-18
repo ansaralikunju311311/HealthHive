@@ -610,4 +610,48 @@ export  const handlePayment = async(req, res) => {
     }
 }
 
+export const verifyPayment = async (req, res) => {
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature
+        } = req.body;
+
+        // Create a signature using the order ID and payment ID
+        const sign = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSign = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+            .update(sign)
+            .digest("hex");
+
+        // Verify the signature
+        if (razorpay_signature === expectedSign) {
+            // Payment is verified
+            // Here you can update your database with payment status
+            // and create the appointment
+
+
+            
+
+
+            return res.status(200).json({
+                message: "Payment verified successfully",
+                orderId: razorpay_order_id,
+                paymentId: razorpay_payment_id
+            });
+        } else {
+            return res.status(400).json({
+                message: "Invalid signature sent!"
+            });
+        }
+    } catch (error) {
+        console.error('Payment verification error:', error);
+        res.status(500).json({
+            message: "Internal Server Error!",
+            error: error.message
+        });
+    }
+};
+
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
