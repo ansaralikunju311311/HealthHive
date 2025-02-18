@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../../Common/Footer';
 import axios from 'axios';
 
 const Slot = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const doctorData = location.state?.doctor;
-
+    
     const userItem = localStorage.getItem('userId');
     const userId = userItem ? JSON.parse(userItem)._id : null;
 
@@ -47,58 +48,62 @@ const Slot = () => {
         fetchDoctorSchedules();
     }, [doctorData?._id]);
 
-    const handleSlotSelection = (schedule, slot) => {
-        if (slot.isBooked) {
-            alert('This slot is already booked');
-            return;
-        }
 
-        const isAlreadySelected = selectedSlots.some(
-            selectedSlot => 
-                selectedSlot.schedule.date === schedule.appointmentDate && 
-                selectedSlot.slot.label === slot.slotTime
-        );
 
-        if (isAlreadySelected) {
-            setSelectedSlots(prevSlots => 
-                prevSlots.filter(
-                    selectedSlot => 
-                        !(selectedSlot.schedule.date === schedule.appointmentDate && 
-                          selectedSlot.slot.label === slot.slotTime)
-                )
-            );
-        } else {
-            setSelectedSlots(prevSlots => [
-                ...prevSlots, 
-                { schedule, slot }
-            ]);
-        }
-    };
 
-    const handleBookAppointment = async () => {
-        if (selectedSlots.length === 0) {
-            alert('Please select at least one slot');
-            return;
-        }
 
-        try {
-            const response = await axios.post(
-                `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId}`, 
-                { 
-                    slots: selectedSlots.map(selectedSlot => ({
-                        date: selectedSlot.schedule.appointmentDate,
-                        time: selectedSlot.schedule.slotTime
-                    }))
-                }
-            );
+    // const handleSlotSelection = (schedule, slot) => {
+    //     if (slot.isBooked) {
+    //         alert('This slot is already booked');
+    //         return;
+    //     }
 
-            alert('Appointments booked successfully');
-            fetchDoctorSchedules();
-            setSelectedSlots([]);
-        } catch (error) {
-            alert(error.response?.data?.message || 'Error booking appointments');
-        }
-    };
+    //     const isAlreadySelected = selectedSlots.some(
+    //         selectedSlot => 
+    //             selectedSlot.schedule.date === schedule.appointmentDate && 
+    //             selectedSlot.slot.label === slot.slotTime
+    //     );
+
+    //     if (isAlreadySelected) {
+    //         setSelectedSlots(prevSlots => 
+    //             prevSlots.filter(
+    //                 selectedSlot => 
+    //                     !(selectedSlot.schedule.date === schedule.appointmentDate && 
+    //                       selectedSlot.slot.label === slot.slotTime)
+    //             )
+    //         );
+    //     } else {
+    //         setSelectedSlots(prevSlots => [
+    //             ...prevSlots, 
+    //             { schedule, slot }
+    //         ]);
+    //     }
+    // };
+
+    // const handleBookAppointment = async () => {
+    //     if (selectedSlots.length === 0) {
+    //         alert('Please select at least one slot');
+    //         return;
+    //     }
+
+    //     try {
+    //         const response = await axios.post(
+    //             `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId}`, 
+    //             { 
+    //                 slots: selectedSlots.map(selectedSlot => ({
+    //                     date: selectedSlot.schedule.appointmentDate,
+    //                     time: selectedSlot.schedule.slotTime
+    //                 }))
+    //             }
+    //         );
+
+    //         alert('Appointments booked successfully');
+    //         fetchDoctorSchedules();
+    //         setSelectedSlots([]);
+    //     } catch (error) {
+    //         alert(error.response?.data?.message || 'Error booking appointments');
+    //     }
+    // };
 
     const parseTime = (timeStr, date) => {
         // Add PM if not present and no colon
@@ -171,12 +176,17 @@ const Slot = () => {
                         </h3>
                         <div className="grid grid-cols-3 gap-4">
                             {groupedSchedules[date].map((slot, slotIndex) => (
-                                <button
+                                <button   
                                     key={slotIndex}
-                                    onClick={() => handleSlotSelection(slot, {
-                                        appointmentDate: slot.appointmentDate,
-                                        slotTime: slot.slotTime,
-                                    })}
+                                    // onClick={() => handleSlotSelection(slot, {
+                                    //     appointmentDate: slot.appointmentDate,
+                                    //     slotTime: slot.slotTime,
+                                    // })}
+
+                                    onClick={() => {
+                                        console.log("===== clcked", slot);
+                                        navigate('/booking', { state: { slot, doctorData } })
+                                    }}
                                     disabled={slot.isBooked || isSlotExpired(slot, slot.appointmentDate)}
                                     className={`p-3 rounded-lg ${slot.isBooked ? 'bg-green-500 cursor-not-allowed' : isSlotExpired(slot, slot.appointmentDate) ? 'bg-red-500 cursor-not-allowed' : 'bg-blue-100'}`}>
                                     {slot.slotTime}
@@ -185,7 +195,9 @@ const Slot = () => {
                         </div>
                     </div>
                 ))}
-                {selectedSlots.length > 0 && (
+
+
+                {/* {selectedSlots.length > 0 && (
                     <div className="fixed bottom-0 left-0 right-0 bg-blue-100 p-4 shadow-lg flex justify-between items-center">
                         <p className="text-center flex-grow">
                             Selected Slots: {selectedSlots.map(slot => 
@@ -199,7 +211,10 @@ const Slot = () => {
                             Book Appointments
                         </button>
                     </div>
-                )}
+                )} */}
+
+
+
             </div>
         );
     };
