@@ -127,6 +127,16 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const PayementPanel = () => {
+    const location = useLocation();
+  const doctorData = location.state?.doctorData;
+  const slot = location.state?.slot;
+
+
+
+
+  console.log("slot",slot)
+    const userId = JSON.parse(localStorage.getItem('userId'));
+    console.log("=========here user",userId._id)
     const navigate = useNavigate();
   const handlePayment = async () => {
     try {
@@ -135,7 +145,7 @@ const PayementPanel = () => {
       });
 
       const options = {
-        key: "rzp_test_R1PIEzD9jZhBnz",
+        key: "rzp_test_R1PIEzD9jZhBnz", 
         amount: response.data.amount,
         currency: response.data.currency,
         name: "HealthHive",
@@ -153,8 +163,37 @@ const PayementPanel = () => {
             if (verificationResponse.status === 200) {
               // Payment successful and verified
               console.log("Payment successful and verified:", verificationResponse.data);
-              
-              navigate('/home')
+             
+
+
+              try {
+                const appointmentData = {
+                    slots: {
+                        date: slot.appointmentDate,
+                        time: slot.slotTime
+                    }
+                };
+                
+                const appointment = await axios.post(
+                    `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId._id}`,
+                    appointmentData
+                );
+
+                if (appointment.status === 200) {
+                    toast.success('Appointment booked successfully!');
+                    setTimeout(() => {
+                        navigate('/home');
+                    }, 2000);
+                }
+              } catch (error) {
+                console.error("Error booking appointment:", error);
+                toast.error('Failed to book appointment');
+              }
+
+
+
+
+            //   navigate('/home')
             
 
 
@@ -201,10 +240,7 @@ const PayementPanel = () => {
     }
   };
 
-  const location = useLocation();
-  const doctorData = location.state?.doctorData;
-  const slot = location.state?.slot;
-
+  
   React.useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';

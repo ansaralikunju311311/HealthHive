@@ -15,7 +15,7 @@ import {
        getDepartments,
        dptdoctor,
        handlePayment,
-    //    bookAppointment,
+       bookAppointment,
        FetchAppoiments,
        verifyPayment
     } from '../Controllers/userController.js';
@@ -36,7 +36,7 @@ router.get('/Aboutdoctors', getDoctorsData);
 router.post('/logout', logout);
 router.get('/departments', getDepartments);
 router.get('/appointments/:departmentname',dptdoctor)
-// router.post('/book-appointments/:doctorid/:userid', bookAppointment);
+router.post('/book-appointments/:doctorid/:userid', bookAppointment);
 // Payment routes
 router.post('/pay',handlePayment)
 router.post('/verify-payment', verifyPayment)

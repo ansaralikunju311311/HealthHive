@@ -350,7 +350,7 @@ export const getDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
         res.status(200).json(departments);
-        console.log("departments",departments);
+        // console.log("departments",departments);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -395,168 +395,75 @@ export const dptdoctor = async (req, res) => {
 
 
 
+export const bookAppointment = async (req, res) => {
+    try {
+        const { doctorid, userid } = req.params;
+        const { slots } = req.body;
+        
+        console.log("Doctor ID:", doctorid);
+        console.log("User ID:", userid);
+        console.log("Slot details:", slots);
 
+        // Basic validation
+        if (!doctorid || !userid || !slots) {
+            return res.status(400).json({ 
+                message: 'Invalid booking request. Missing required fields.'
+            });
+        }
 
-// export const bookAppointment = async (req, res) => {
-//     try {
-//         const { doctorid } = req.params;
-//         const { userid } = req.params;
-//         const { slots} = req.body;
+        // Create new appointment
+        const newAppointment = new Appointment({
+            user: userid,
+            doctor: doctorid,
+            date: slots.date,
+            time: slots.time,
+            status: 'confirmed',
+            paymentStatus: 'completed'
+        });
 
-//         console.log("doctorid",doctorid);
-//         console.log("userid",userid);
-//         console.log("slots",slots);
-//         // console.log("slots",slots.date);
-//         // Basic validation
-//         if (!doctorid || !userid || !slots) {
-//             return res.status(400).json({ 
-//                 message: 'Invalid booking request'
-//             });
-//         }
+        // Save the appointment
+        await newAppointment.save();
 
-//         // Process each slot and create appointments
-//         const bookingResults = await Promise.all(slots.map(async (slotData) => {
-
-//             // Check if slot is already booked
-//             const existingAppointment = await Appointment.findOne({
-//                 doctor: doctorid,
-//                 // date: new Date(slotData.date),
-//                 date: new Date(new Date(slotData.date).getFullYear(), new Date(slotData.date).getMonth(), new Date(slotData.date).getDate()), // Store only year, month, and day
-//                 time: slotData.time,
-//                 // slot: slotData.slot
-//             });
-
-//             // console.log("existingAppointment",existingAppointment);
-//             if (existingAppointment) {
-//                 throw new Error(`Slot ${slotData.slot} on ${slotData.date} is already booked`);
-//             }
-
-//             // Create new appointment
-//             // const newAppointment = new Appointment({
-//             //     user: userid,
-//             //     doctor: doctorid,
-//             //     date: new Date(slotData.date),
-//             //     time: slotData.time,
-//             //     // slot: slotData.slot
-//             // });
-
-//             // // Save the appointment
-//             // await newAppointment.save();
-
-//             // return {
-//             //     date: slotData.date,
-//             //     // slot: slotData.slot,
-//             //     time: slotData.time
-//             // };
-//             const newAppointment = new Appointment({
-//                 user: userid,
-//                 doctor: doctorid,
-//                 date: new Date(new Date(slotData.date).getFullYear(), new Date(slotData.date).getMonth(),new Date(slotData.date).getDate()),
-//                 time: slotData.time,
-//                 // slot: slotData.slot
-//             });
-//             await newAppointment.save();
+        // Update appointment schedule
+        try {
+            const doctorSchedule = await appointmentSchedule.findOne({ doctorId: doctorid });
             
-//             return {
-//                 date: new Date(slotData.date), // Format as YYYY-MM-DD
-//                 time: slotData.time
-//             };
-            
-//         }));
-        
-//         res.status(201).json({
-//             message: 'Appointments booked successfully',
-//             bookings: bookingResults
-//         });
+            if (doctorSchedule) {
+                // Find and update the specific slot
+                const updatedAppointments = doctorSchedule.appointments.map(appointment => {
+                    if (appointment.appointmentDate === slots.date && 
+                        appointment.slotTime === slots.time) {
+                        return {
+                            ...appointment.toObject(),
+                            isBooked: true,
+                            bookingTime: new Date()
+                        };
+                    }
+                    return appointment;
+                });
 
-//     } catch (error) {
-//         console.error('Booking error:', error);
-//         res.status(400).json({ 
-//             message: error.message || 'Error booking appointments'
-//         });
-//     }
-// };
-// export const bookAppointment = async (req, res) => {
-//     try {
-//         let isUpdated = false;
-//         const { doctorid, userid } = req.params;
-//         const { slots } = req.body;
+                doctorSchedule.appointments = updatedAppointments;
+                await doctorSchedule.save();
+            }
+        } catch (error) {
+            console.error('Error updating appointment schedule:', error);
+            // Don't throw error here as the appointment is already created
+        }
 
-//         console.log("doctorid:", doctorid);
-//         console.log("userid:", userid);
-//         console.log("slots:", slots);
+        // Send success response
+        res.status(200).json({
+            message: 'Appointment booked successfully',
+            appointment: newAppointment
+        });
 
-//         if (!doctorid || !userid || !slots) {
-//             return res.status(400).json({ message: 'Invalid booking request' });
-//         }
-//         const bookingResults = await Promise.all(slots.map(async (slotData) => {
-//             const appointmentDate = new Date(slotData.date).toISOString().split('T')[0];
-        
-//             const existingAppointment = await Appointment.findOne({
-//                 doctor: doctorid,
-//                 date: appointmentDate,
-//                 time: slotData.time
-//             });
-        
-//             if (existingAppointment) {
-//                 throw new Error(`Slot ${slotData.time} on ${appointmentDate} is already booked`);
-//             }
-        
-//             const newAppointment = new Appointment({
-//                 user: userid,
-//                 doctor: doctorid,
-//                 date: appointmentDate,
-//                 time: slotData.time
-//             });
-        
-//             await newAppointment.save();
-        
-//             return {
-//                 date: appointmentDate,
-//                 time: slotData.time
-//             };
-//         }));
-        
-//         // Now bookingResults contains all the booked slots
-        
-//         try {
-//             const doctorSchedule = await appointmentSchedule.findOne({ doctorId: doctorid });
-        
-//             if (doctorSchedule) {
-//                 console.log("doctorSchedule", doctorSchedule.doctorId);
-//                 console.log("doctorSchedule", doctorSchedule.appointments);
-//                bookingResults.forEach((booked) => {  // Use bookingResults instead of newAppointment
-//                     doctorSchedule.appointments.forEach((item) => {
-//                         if (item.appointmentDate === booked.date && item.slotTime === booked.time) {
-//                             console.log("Matching appointment found:", item.appointmentDate);
-//                             item.isBooked = true;
-//                             isUpdated = true;
-//                         }
-//                     });
-//                 });
-//             }
-//             if(isUpdated)
-//             {
-//                 await doctorSchedule.save();
-//             }
-//         } catch (error) {
-//             console.error("Error fetching doctor schedule:", error);
-//         }
-        
-
-    
-
-//         res.status(201).json({
-//             message: 'Appointments booked successfully',
-//             bookings: bookingResults
-//         });
-
-//     } catch (error) {
-//         console.error('Booking error:', error);
-//         res.status(400).json({ message: error.message || 'Error booking appointments' });
-//     }
-// };
-
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        res.status(500).json({ 
+            message: 'Failed to book appointment',
+            error: error.message 
+        });
+    }
+};
 
 /////////////////
 export const FetchAppoiments = async(req, res) => {
