@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import user from './Routes/userRoutes.js';
 import doctor from './Routes/doctorRoutes.js';
 import admin from './Routes/adminRoutes.js';
+import Razorpay from 'razorpay';
 
 import cookieParser from 'cookie-parser';
 
@@ -17,6 +18,10 @@ app.use(cors({
     allowedHeaders:["Content-Type","Authorization","cookie"],
     exposedHeaders: ["set-cookie"],
 }));
+export const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID, 
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true}));

@@ -7,12 +7,14 @@ import Doctor from '../Model/doctorModel.js';
 import Department from '../Model/DepartmentModel.js';
 import Appointment from '../Model/appoiment.js';
 import appointmentSchedule from '../Model/appoimentSchedule.js';
+import { razorpay } from '../server.js';
 // import doctor from '../Model/doctorModel.js';
 // Helper function to generate OTP and update user
 
 
 
 const cookieOptions = {
+    
     
     httpOnly: false,
     secure: true,
@@ -403,8 +405,8 @@ export const dptdoctor = async (req, res) => {
 
 //         console.log("doctorid",doctorid);
 //         console.log("userid",userid);
-//         // console.log("slots",slots);
-//         console.log("slots",slots.date);
+//         console.log("slots",slots);
+//         // console.log("slots",slots.date);
 //         // Basic validation
 //         if (!doctorid || !userid || !slots) {
 //             return res.status(400).json({ 
@@ -571,6 +573,40 @@ export const FetchAppoiments = async(req, res) => {
     } catch (error) {
         console.error('Error fetching appointments:', error);
         res.status(500).json({ message: error.message });
+    }
+}
+
+
+
+
+
+export  const handlePayment = async(req, res) => {
+    const { amount } = req.body;
+    try {
+        const options = {
+            amount: Number(amount * 100),  // Convert to number and to paise
+            currency: "INR",
+            receipt: `rcpt_${Date.now()}`,
+            payment_capture: 1,
+            notes: {
+                description: "Consultation Payment"
+            }
+        };
+        
+        const order = await razorpay.orders.create(options);
+        
+        res.status(200).json({
+            id: order.id,
+            amount: order.amount,
+            currency: order.currency,
+            receipt: order.receipt
+        });
+    } catch (error) {
+        console.error('Payment error:', error);
+        res.status(400).json({ 
+            message: 'Error processing payment',
+            error: error.message 
+        });
     }
 }
 

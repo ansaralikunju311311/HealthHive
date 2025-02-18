@@ -2,6 +2,7 @@ import React from 'react';
 import NavBar from '../../../Common/NavBar';
 import Footer from '../../../Common/Footer';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import {
   Box,
   Paper,
@@ -123,9 +124,60 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const PayementPanel = () => {
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/user/pay', {
+        amount: doctorData?.consultFee
+      });
+
+      const options = {
+        key: "rzp_test_R1PIEzD9jZhBnz", 
+        amount: response.data.amount,
+        currency: response.data.currency,
+        name: "HealthHive",
+        description: `Consultation with Dr. ${doctorData?.name}`,
+        order_id: response.data.id,
+        handler: function (response) {
+          console.log("Payment successful:", response);
+          // Handle successful payment here
+        },
+        prefill: {
+          name: "Patient",
+          email: "patient@example.com",
+          contact: ""
+        },
+        theme: {
+          color: "#3b82f6"
+        }
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
+
+      razorpayInstance.on('payment.failed', function (response) {
+        console.error("Payment failed:", response.error);
+        // Handle payment failure here
+      });
+
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+    }
+  };
+
   const location = useLocation();
   const doctorData = location.state?.doctorData;
   const slot = location.state?.slot;
+
+  React.useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <>
@@ -407,6 +459,7 @@ const PayementPanel = () => {
               },
               transition: 'all 0.3s ease'
             }}
+            onClick={handlePayment}
           >
             Proceed to Pay
           </AnimatedButton>

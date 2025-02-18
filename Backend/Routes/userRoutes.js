@@ -14,6 +14,7 @@ import {
        logout,
        getDepartments,
        dptdoctor,
+       handlePayment,
     //    bookAppointment,
        FetchAppoiments
     } from '../Controllers/userController.js';
@@ -36,6 +37,7 @@ router.get('/departments', getDepartments);
 router.get('/appointments/:departmentname',dptdoctor)
 // router.post('/book-appointments/:doctorid/:userid', bookAppointment);
 // Protected routes (require authentication)
+router.post('/pay',handlePayment)
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);
 router.get('/getappointments/:userid',FetchAppoiments);
