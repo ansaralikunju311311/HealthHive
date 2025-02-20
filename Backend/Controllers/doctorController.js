@@ -583,7 +583,7 @@ export const slots = async (req, res) => {
             return appointmentDate.isSameOrAfter(todayInIndia, 'day');
         });
 
-        console.log("schedules=====",schedules)
+        // console.log("schedules=====",schedules)
 
         res.status(200).json({ 
             message: 'Schedules retrieved successfully',

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
+import axios from 'axios'
 import {
   Box,
   Card,
@@ -17,7 +18,41 @@ import {
   Container,
 } from '@mui/material';
 
+import { useNavigate } from 'react-router-dom';
+import cookies from 'js-cookie'
+
 const Wallet = () => {
+  const navigate = useNavigate();
+  const [adminEarning, setAdminEarnings] = useState([]);
+  const [count, setCount] = useState(0);
+
+   useEffect(()=>
+  {
+    const token = cookies.get('admintoken');
+    if(!token)
+    {
+      navigate('/admin');
+      return;
+    }
+    const fetchDetails =async()=>
+    {
+           const commition = await axios.get('http://localhost:5000/api/admin/admin-earnings',{
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+            withCredentials: true
+           })
+           setAdminEarnings(commition.data.transaction);
+           setCount(commition.data.transaction.length);
+    }
+    fetchDetails();
+  },[])
+  {adminEarning.map((er)=>
+  {
+    console.log("=============hhhh",er.user);
+  })}
+  // console.log("=============hhhh",adminEarning.user);
+  console.log("=============",count);
   // Sample data - replace with actual data from your backend
   const [adminEarnings] = useState([
     {
@@ -40,15 +75,25 @@ const Wallet = () => {
     },
   ]);
 
+
+
+
+  
   // Calculate total statistics
-  const totalCommission = adminEarnings.reduce((sum, earning) => sum + earning.adminCommission, 0);
-  const totalTransactions = adminEarnings.length;
-  const averageCommission = totalCommission / totalTransactions;
+  // const totalCommission = adminEarnings.reduce((sum, earning) => sum + earning.adminCommission, 0);
+  const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
+  const totalTransactions = adminEarning.length;
+
+  const averageCommission = totalamount / totalTransactions;
+
+  console.log("=============",totalamount);
+  console.log("=============fff",totalTransactions);
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <div style={{ width: '240px', flexShrink: 0 }}>
         <Sidebar />
+       
       </div>
       <Box sx={{ 
         flexGrow: 1, 
@@ -76,7 +121,7 @@ const Wallet = () => {
                 Total Commission Balance
               </Typography>
               <Typography variant="h3" sx={{ mb: 1, fontWeight: 500 }}>
-                ₹{totalCommission.toLocaleString()}
+                ₹{totalamount.toLocaleString()}
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9 }}>
                 Based on 10% commission rate
@@ -153,18 +198,18 @@ const Wallet = () => {
                       }
                     }}>
                       <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Service</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Doctor</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>PaymentDate &Time</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>User Payment</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>Admin Commission (10%)</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {adminEarnings.map((earning) => (
+                    {adminEarning.map((earning) => (
                       <TableRow key={earning.id} sx={{ '&:hover': { bgcolor: '#f8f9fa' }, borderBottom: '1px solid #e0e0e0' }}>
                         <TableCell>
                           <Typography variant="body2" color="textSecondary">
-                            {earning.userId}
+                            {earning.userName}
                           </Typography>
                           <Typography variant="body1">
                             {earning.userName}
@@ -172,7 +217,7 @@ const Wallet = () => {
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={earning.service}
+                            label={earning.doctorName}
                             size="small"
                             sx={{ 
                               bgcolor: '#E3F2FD',
@@ -182,29 +227,38 @@ const Wallet = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          {new Date(earning.date).toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
+                          {
+                          // new Date
+                          (earning.date).slice(4,24)
+                          // .toLocaleDateString('en-IN', {
+                          //   year: 'numeric',
+                          //   month: 'short',
+                          //   day: 'numeric'
+                          // })
+                          }
                         </TableCell>
                         <TableCell align="right">
-                          ₹{earning.userPayment.toLocaleString()}
+                          ₹{earning.amount
+                          // .
+                          // toLocaleString()
+                          }
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
-                            ₹{earning.adminCommission.toLocaleString()}
+                            ₹{earning.amount * 0.1 }
                           </Typography>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
+                  
                 </Table>
               </TableContainer>
             </CardContent>
           </Card>
         </Container>
       </Box>
+      
     </div>
   );
 };

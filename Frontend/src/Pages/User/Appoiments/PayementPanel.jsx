@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
 import Footer from '../../../Common/Footer';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -127,17 +128,22 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const PayementPanel = () => {
-    const location = useLocation();
+  const [TransactionData, setTransactionData] = useState(null)
+  const location = useLocation();
   const doctorData = location.state?.doctorData;
   const slot = location.state?.slot;
 
-
-
-
   console.log("slot",slot)
-    const userId = JSON.parse(localStorage.getItem('userId'));
-    console.log("=========here user",userId._id)
-    const navigate = useNavigate();
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  console.log("=========here user",userId._id)
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (TransactionData) {
+      console.log("TransactionData updated:", TransactionData);
+    }
+  }, [TransactionData]);
+
   const handlePayment = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/pay', {
@@ -157,51 +163,51 @@ const PayementPanel = () => {
             const verificationResponse = await axios.post('http://localhost:5000/api/user/verify-payment', {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
+              razorpay_signature: response.razorpay_signature,
             });
+            
+            // Set the transaction data
+            setTransactionData(verificationResponse.data);
+            console.log("verificationResponse=======", verificationResponse.data);
 
             if (verificationResponse.status === 200) {
-              // Payment successful and verified
-              console.log("Payment successful and verified:", verificationResponse.data);
-             
-
+              // Create appointment data with transaction details
+              const appointmentData = {
+                slots: {
+                  date: slot.appointmentDate,
+                  time: slot.slotTime
+                },
+                transactionData: {
+                  order_id: response.razorpay_order_id,
+                  payment_id: response.razorpay_payment_id,
+                  amount: doctorData.consultFee,
+                  status: 'completed'
+                }
+              };
 
               try {
-                const appointmentData = {
-                    slots: {
-                        date: slot.appointmentDate,
-                        time: slot.slotTime
-                    }
-                };
-                
+                console.log("Sending appointment data:", appointmentData);
                 const appointment = await axios.post(
-                    `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId._id}`,
-                    appointmentData
+                  `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId._id}`,
+                  appointmentData
                 );
+                console.log("appointment=======",appointment)
 
                 if (appointment.status === 200) {
                     toast.success('Appointment booked successfully!');
+
+
                     setTimeout(() => {
                         navigate('/home');
-                    }, 2000);
+                    }, 100);
                 }
               } catch (error) {
                 console.error("Error booking appointment:", error);
                 toast.error('Failed to book appointment');
               }
 
-
-
-
-            //   navigate('/home')
-            
-
-
-              // Here you can:
-              // 1. Show success message
-              // 2. Create appointment
-              // 3. Redirect to appointments page
-              
+              // Payment successful and verified
+              console.log("Payment successful and verified:", verificationResponse.data);
               toast.success('Payment successful! Appointment confirmed.');
               // Add navigation to appointment confirmation or listing page
             }
@@ -240,7 +246,6 @@ const PayementPanel = () => {
     }
   };
 
-  
   React.useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';

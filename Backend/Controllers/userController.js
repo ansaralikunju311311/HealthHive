@@ -8,6 +8,7 @@ import Department from '../Model/DepartmentModel.js';
 import Appointment from '../Model/appoiment.js';
 import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
+import Transaction from '../Model/Transaction.js';
 // import doctor from '../Model/doctorModel.js';
 // Helper function to generate OTP and update user
 
@@ -398,11 +399,15 @@ export const dptdoctor = async (req, res) => {
 export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
-        const { slots } = req.body;
+        const { slots,transactionData} = req.body;
+
+
+//   console.log("appoimentdata====================",appointmentData)
         
         console.log("Doctor ID:", doctorid);
         console.log("User ID:", userid);
         console.log("Slot details:", slots);
+        console.log("Transaction datanvnfjdjjjfdjccccf:", transactionData.order_id);
 
         // Basic validation
         if (!doctorid || !userid || !slots) {
@@ -417,8 +422,8 @@ export const bookAppointment = async (req, res) => {
             doctor: doctorid,
             date: slots.date,
             time: slots.time,
-            status: 'confirmed',
-            paymentStatus: 'completed'
+            // status: 'confirmed',
+            // paymentStatus: 'completed'
         });
 
         // Save the appointment
@@ -445,6 +450,28 @@ export const bookAppointment = async (req, res) => {
                 doctorSchedule.appointments = updatedAppointments;
                 await doctorSchedule.save();
             }
+
+
+
+            // console.log("for debug",doctorSchedule);
+            // Create new transaction
+
+   
+            const doctor = await Doctor.findById(doctorid);
+            const user = await User.findById(userid);
+            const newTransaction = new Transaction({
+                user: userid,
+                doctor: doctorid,
+                doctorName: doctor.name,
+                userName: user.name,
+                amount: doctor.consultFee,
+                date: new Date(),
+                appoimentdate: slots.date,
+                slot: slots.time,
+                orderId : transactionData.order_id,
+                paymentId : transactionData.payment_id
+            });
+            await newTransaction.save();
         } catch (error) {
             console.error('Error updating appointment schedule:', error);
             // Don't throw error here as the appointment is already created
@@ -488,6 +515,7 @@ export const FetchAppoiments = async(req, res) => {
 
 
 export  const handlePayment = async(req, res) => {
+    console.log("req.body",req.body)
     const { amount } = req.body;
     try {
         const options = {

@@ -4,6 +4,7 @@ import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
 // import jwt from 'jsonwebtoken';
+import Transaction from '../Model/Transaction.js';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
@@ -205,7 +206,7 @@ export const doctors = async (req,res)=>
     try {
         // req.admin is set by the protectAdmin middleware
         res.status(200).json({ admin: req.admin });
-        console.log("req.admin=====",req.admin);
+        // console.log("req.admin=====",req.admin);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
@@ -360,6 +361,17 @@ export const userCount = async (req, res) => {
         const DrCount = await Doctor.countDocuments({ isActive: true });
         res.status(200).json({ userCount: count, doctorCount: DrCount });
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+export const Earnings = async (req, res) => {
+    try {
+        const transaction =  await Transaction.find();
+        // const countTransarion = await Transaction.countDocuments();
+        console.log(transaction);
+       res.status(200).json({transaction});
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 }

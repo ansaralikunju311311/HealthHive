@@ -20,6 +20,9 @@ import {
 import { FaUserMd, FaMoneyBillWave, FaCalendarCheck } from 'react-icons/fa';
 
 const DoctorPayment = () => {
+
+
+  
   // Sample data - replace with actual data from your backend
   const [doctorPayments] = useState([
     {
@@ -51,7 +54,6 @@ const DoctorPayment = () => {
       ]
     },
   ]);
-
   // Calculate total statistics
   const totalDoctorEarnings = doctorPayments.reduce((sum, doc) => sum + doc.totalEarnings, 0);
   const totalPendingAmount = doctorPayments.reduce((sum, doc) => sum + doc.pendingAmount, 0);
