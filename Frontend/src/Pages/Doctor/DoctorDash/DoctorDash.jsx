@@ -20,6 +20,7 @@ const DoctorDash = () => {
   const { isBlocked } = useSelector((state) => state.doctor);
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [appoiment, setAppoiment] = useState(null);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -36,13 +37,26 @@ const DoctorDash = () => {
           },
           withCredentials:true,
         });
-      setDoctor(response.data.doctor);
 
-        console.log("response.data.doctor",response.data.doctor);
-        localStorage.setItem('doctorId', JSON.stringify(response.data.doctor));
-        console.log(response.data.doctor);
+        const doctorData = response.data.doctor;
+        setDoctor(doctorData);
+
+        const datas = await axios.get(`http://localhost:5000/api/doctor/appoimentdetails/${doctorData._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials:true,
+        });
+
+
+
+        console.log('=====socfjgfoijv',datas.data)
+        setAppoiment(datas.data);
+        console.log("response.data.doctor", doctorData);
+        localStorage.setItem('doctorId', JSON.stringify(doctorData));
+         
         setLoading(false);
-        if(response.data.doctor.isBlocked===true && response.data.doctor.isActive===true){
+        if(doctorData.isBlocked === true && doctorData.isActive === true){
          
           cookies.remove('doctortoken');
           toast.error('Your account has been blocked', {
@@ -83,13 +97,7 @@ const DoctorDash = () => {
     { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
   ];
 
-  // const sidebarItems = [
-  //   { icon: <MdDashboard className="w-6 h-6" />, text: 'Dashboard', active: true },
-  //   { icon: <MdEventAvailable className="w-6 h-6" />, text: 'Appointments' },
-  //   { icon: <MdSchedule className="w-6 h-6" />, text: 'Current Schedules' },
-  //   { icon: <MdChat className="w-6 h-6" />, text: 'Chats' },
-  //   { icon: <MdAccountBalanceWallet className="w-6 h-6" />, text: 'Wallet' },
-  // ];
+ 
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -101,34 +109,6 @@ const DoctorDash = () => {
 
 
 
-
-      {/* <div className="w-64 bg-white shadow-lg">
-        <div className="p-6 space-y-4">
-          {sidebarItems.map((item, index) => (
-            <div
-              key={index}
-              className={`flex items-center space-x-3 ${
-                item.active
-                  ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-100 text-gray-700'
-              } rounded-lg py-3 px-4 cursor-pointer transition-colors`}
-            >
-              {item.icon}
-              <span>{item.text}</span>
-            </div>
-          ))}
-          
-          <div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-colors"
-            >
-              <MdExitToApp className="w-6 h-6" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 p-8">
@@ -158,7 +138,7 @@ const DoctorDash = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Total Appointments</p>
-              <p className="text-2xl font-bold text-gray-800">120</p>
+              <p className="text-2xl font-bold text-gray-800">{appoiment.totalAppointments}</p>
             </div>
           </div>
 
@@ -171,7 +151,7 @@ const DoctorDash = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Total Patients</p>
-              <p className="text-2xl font-bold text-gray-800">85</p>
+              <p className="text-2xl font-bold text-gray-800">{appoiment.uniquePatients}</p>
             </div>
           </div>
 
@@ -184,7 +164,7 @@ const DoctorDash = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Payment Due</p>
-              <p className="text-2xl font-bold text-gray-800">$1,500</p>
+              <p className="text-2xl font-bold text-gray-800">${appoiment.totalAppointments * appoiment.fee.consultFee - (appoiment.totalAppointments * appoiment.fee.consultFee)*0.1}</p>
             </div>
           </div>
         </div>

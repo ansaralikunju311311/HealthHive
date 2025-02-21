@@ -1,5 +1,5 @@
 import doctor from "../Model/doctorModel.js";
-
+import mongoose from 'mongoose';
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import moment from 'moment-timezone';
 import bcrypt from 'bcrypt';
@@ -607,5 +607,27 @@ export const fetchAppointments = async (req, res) => {
         });
     
     res.status(200).json(appoiments)
+}
+export const fullAppoiments = async (req, res) => {
+    try {
+        const {id} = req.params;
+        
+       
+        const totalAppointments = await Appointment.countDocuments({doctor: id});
+        
+       
+        const uniquePatients = await Appointment.distinct('user', { doctor: id }).then(users => users.length);
+        
+        const fee = await doctor.findById(id).select('consultFee -_id');
+        
+        res.status(200).json({
+            totalAppointments,
+            uniquePatients,
+            fee
+        });
+    } catch (error) {
+        console.error('Error in fullAppoiments:', error);
+        res.status(500).json({ message: error.message });
+    }
 }
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};
