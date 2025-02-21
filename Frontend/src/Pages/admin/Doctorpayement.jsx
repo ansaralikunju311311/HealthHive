@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import {
   Box,
@@ -18,11 +18,44 @@ import {
   Chip,
 } from '@mui/material';
 import { FaUserMd, FaMoneyBillWave, FaCalendarCheck } from 'react-icons/fa';
+import axios from 'axios';
+import cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const DoctorPayment = () => {
+  const [payments, setPayments] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchDoctorPayments = async () => {
+      try {
+        const token = cookies.get('admintoken');
+        if (!token) {
+          navigate('/admin');
+          return;
+        }
+        console.log("this is the token", token);
+        const response = await axios.get('http://localhost:5000/api/admin/getdoctorpayments', {
 
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials: true,
+        });
+        setPayments(response.data.doctorWiseTotals);
+        setTotalAmount(response.data.totalAmount);
+        console.log("jfnjvfnj",response.data.doctorWiseTotals);
+
+      } catch (error) {
+        console.error('Error fetching doctor payments:', error);
+      }
+    }
+    fetchDoctorPayments();
+  },[]);
   
+  console.log("payments",payments);
+  console.log("totalAmount",totalAmount);
   // Sample data - replace with actual data from your backend
   const [doctorPayments] = useState([
     {
@@ -90,7 +123,7 @@ const DoctorPayment = () => {
                     <FaMoneyBillWave size={24} />
                     <Typography variant="h6" sx={{ ml: 1 }}>Total Earnings</Typography>
                   </Box>
-                  <Typography variant="h4">₹{totalDoctorEarnings.toLocaleString()}</Typography>
+                  <Typography variant="h4">₹{totalAmount}</Typography>
                   <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
                     Total earnings across all doctors
                   </Typography>
@@ -108,7 +141,7 @@ const DoctorPayment = () => {
                     <FaMoneyBillWave size={24} />
                     <Typography variant="h6" sx={{ ml: 1 }}>Paid Amount</Typography>
                   </Box>
-                  <Typography variant="h4">₹{totalPaidAmount.toLocaleString()}</Typography>
+                  <Typography variant="h4">₹{}</Typography>
                   <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
                     Total amount paid to doctors
                   </Typography>
@@ -156,49 +189,57 @@ const DoctorPayment = () => {
                       <TableCell align="right">Paid Amount</TableCell>
                       <TableCell align="right">Pending Amount</TableCell>
                       <TableCell align="center">Appointments</TableCell>
+                      {/* <TableCell align="center">AppoimentDetails</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {doctorPayments.map((doctor) => (
-                      <TableRow key={doctor.id} sx={{ '&:hover': { bgcolor: '#f8f9fa' } }}>
+                    {payments.map((doctor) => (
+                      <TableRow key={doctor._id} sx={{ '&:hover': { bgcolor: '#f8f9fa' } }}>
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Avatar sx={{ mr: 2 }}>
                               <FaUserMd />
                             </Avatar>
-                            <Typography>{doctor.doctorName}</Typography>
+                            <Typography>{doctor.doctorName
+                            }</Typography>
                           </Box>
                         </TableCell>
                         <TableCell>
                           <Chip 
-                            label={doctor.specialization}
+                            label={doctor.specialization
+                            }
                             size="small"
                             sx={{ bgcolor: '#E3F2FD', color: '#1976D2' }}
                           />
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ color: '#1976D2', fontWeight: 'bold' }}>
-                            ₹{doctor.totalEarnings.toLocaleString()}
+                            ₹{doctor.totalAmount
+                            }
                           </Typography>
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
-                            ₹{doctor.paidAmount.toLocaleString()}
+                            ₹{doctor.appointmentCount
+                            }
                           </Typography>
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                            ₹{doctor.pendingAmount.toLocaleString()}
+                            ₹{doctor.appointmentCount
+                            }
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
                           <Chip
                             icon={<FaCalendarCheck />}
-                            label={doctor.appointments}
+                            label={doctor.appointmentCount
+                            }
                             size="small"
                             sx={{ bgcolor: '#F3E5F5', color: '#9C27B0' }}
                           />
                         </TableCell>
+                        
                       </TableRow>
                     ))}
                   </TableBody>

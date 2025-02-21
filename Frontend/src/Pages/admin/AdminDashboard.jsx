@@ -39,6 +39,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [userCount, setUserCount] = useState(0);
   const [doctorCount, setDoctorCount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +58,7 @@ const AdminDashboard = () => {
         console.log("usercount=====", response.data);
         setUserCount(response.data.userCount + response.data.doctorCount);
         setDoctorCount(response.data.doctorCount);
+        setTotalAmount(response.data.totalAmount);
       } catch (error) {
         console.error("Error fetching user count:", error);
         toast.error('Failed to fetch user count');
@@ -103,7 +105,7 @@ const AdminDashboard = () => {
               <FaMoneyBillWave className="text-3xl text-yellow-500" />
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Total Revenue</h3>
-                <p className="text-2xl font-bold">₹57,500</p>
+                <p className="text-2xl font-bold">₹{totalAmount*0.1}</p>
               </div>
             </div>
           </div>

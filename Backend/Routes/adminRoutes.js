@@ -1,6 +1,6 @@
 import express from "express";
 import { LoginAdmin, verifyAdminToken } from "../Controllers/adminController.js";
-import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, handleBlock,patientblock  ,addDepartment,getDepartments,updateDepartment,userCount,Earnings} from "../Controllers/adminController.js";
+import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, handleBlock,patientblock  ,addDepartment,getDepartments,updateDepartment,userCount,Earnings,fetchDoctorPayments} from "../Controllers/adminController.js";
 import { protectAdmin } from "../Middleware/authMiddleware.js";
 
 const admin = express.Router();
@@ -24,5 +24,5 @@ admin.get("/department", getDepartments)
 admin.put("/department/:id", updateDepartment)
 admin.get("/usercount", userCount);
 admin.get("/admin-earnings",Earnings)
-
+admin.get("/getdoctorpayments",fetchDoctorPayments)
 export default admin;

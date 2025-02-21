@@ -9,6 +9,7 @@ import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
+import appointment from '../Model/appoiment.js';
 
 const cookieOptions = {
     
@@ -176,10 +177,6 @@ export const rejectDoctor = async(req,res)=>
         res.status(500).json({message:error.message});
     }
 }
-
-
-
-
 export const doctors = async (req,res)=>
 {
     const {page,limit} = req.query;
@@ -212,16 +209,6 @@ export const doctors = async (req,res)=>
         res.status(500).json({ message: error.message });
     }
 };
-
-
-
-
-
-
-
-
-
-
 export const addDepartment = async (req, res) => {
     try {
         const { Departmentname,Description } = req.body;
@@ -359,7 +346,18 @@ export const userCount = async (req, res) => {
         console.log("userCount=====");
         const count = await User.countDocuments({ isActive: true });
         const DrCount = await Doctor.countDocuments({ isActive: true });
-        res.status(200).json({ userCount: count, doctorCount: DrCount });
+
+        const transactions = await Transaction.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$amount" }
+                }
+            }
+        ]);
+        const totalAmount = transactions[0]?.totalAmount || 0;
+        
+        res.status(200).json({ userCount: count, doctorCount: DrCount, totalAmount });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -368,8 +366,62 @@ export const Earnings = async (req, res) => {
     try {
         const transaction =  await Transaction.find();
         // const countTransarion = await Transaction.countDocuments();
-        console.log(transaction);
+        // console.log(transaction);
        res.status(200).json({transaction});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+export const fetchDoctorPayments = async (req, res) => {
+    console.log("fetchDoctorPayments=====");
+    try {
+        // Get all transactions with populated doctor details
+        const Drtransaction = await Transaction.find().populate('doctor', 'name email specialization profileImage');
+        
+        // Get appointment counts for each doctor
+        const appointmentCounts = await appointment.aggregate([
+            {
+                $group: {
+                    _id: '$doctor',
+                    appointmentCount: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Create a map of doctor appointment counts
+        const appointmentCountMap = appointmentCounts.reduce((acc, curr) => {
+            acc[curr._id.toString()] = curr.appointmentCount;
+            return acc;
+        }, {});
+
+        // Group transactions by doctor and calculate totals
+        const doctorWiseTotals = Drtransaction.reduce((acc, transaction) => {
+            const doctorId = transaction.doctor._id.toString();
+            if (!acc[doctorId]) {
+                acc[doctorId] = {
+                    doctorId: doctorId,
+                    doctorName: transaction.doctor.name,
+                    email: transaction.doctor.email,
+                    specialization: transaction.doctor.specialization,
+                    profileImage: transaction.doctor.profileImage,
+                    appointmentCount: appointmentCountMap[doctorId] || 0,
+                    transactions: [],
+                    totalAmount: 0
+                };
+            }
+            acc[doctorId].transactions.push(transaction);
+            acc[doctorId].totalAmount += transaction.amount;
+            return acc;
+        }, {});
+
+        // Calculate overall total
+        const totalAmount = Object.values(doctorWiseTotals).reduce((sum, doctor) => sum + doctor.totalAmount, 0);
+
+        res.status(200).json({
+            doctorWiseTotals: Object.values(doctorWiseTotals),
+            totalAmount
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });

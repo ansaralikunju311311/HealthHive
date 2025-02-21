@@ -17,15 +17,13 @@ import {
   Chip,
   Container,
 } from '@mui/material';
-
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie'
-
 const Wallet = () => {
   const navigate = useNavigate();
   const [adminEarning, setAdminEarnings] = useState([]);
   const [count, setCount] = useState(0);
-
+  
    useEffect(()=>
   {
     const token = cookies.get('admintoken');
@@ -206,7 +204,7 @@ const Wallet = () => {
                   </TableHead>
                   <TableBody>
                     {adminEarning.map((earning) => (
-                      <TableRow key={earning.id} sx={{ '&:hover': { bgcolor: '#f8f9fa' }, borderBottom: '1px solid #e0e0e0' }}>
+                      <TableRow key={earning._id} sx={{ '&:hover': { bgcolor: '#f8f9fa' }, borderBottom: '1px solid #e0e0e0' }}>
                         <TableCell>
                           <Typography variant="body2" color="textSecondary">
                             {earning.userName}
