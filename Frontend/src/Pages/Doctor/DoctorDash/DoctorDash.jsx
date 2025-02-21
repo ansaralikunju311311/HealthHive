@@ -3,16 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  MdDashboard, 
-  MdEventAvailable,
-  MdSchedule,
-  MdChat,
-  MdAccountBalanceWallet,
-  MdExitToApp 
-} from 'react-icons/md';
+// import { 
+//   MdDashboard, 
+//   MdEventAvailable,
+//   MdSchedule,
+//   MdChat,
+//   MdAccountBalanceWallet,
+//   MdExitToApp 
+// } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Sidebar from '../../../Component/Doctor/Sidebar';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer, 
+  BarChart, 
+  Bar 
+} from 'recharts';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -91,23 +103,34 @@ const DoctorDash = () => {
     </div>;
   }
 
-  const dummyAppointments = [
-    { id: 1, patientName: 'John Doe', date: '2023-10-10', time: '10:00 AM', status: 'Pending' },
-    { id: 2, patientName: 'Jane Smith', date: '2023-10-11', time: '11:00 AM', status: 'Confirmed' },
-    { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
+  // const dummyAppointments = [
+  //   { id: 1, patientName: 'John Doe', date: '2023-10-10', time: '10:00 AM', status: 'Pending' },
+  //   { id: 2, patientName: 'Jane Smith', date: '2023-10-11', time: '11:00 AM', status: 'Confirmed' },
+  //   { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
+  // ];
+
+  const appointmentData = [
+    { month: 'Jan', appointments: 15 },
+    { month: 'Feb', appointments: 20 },
+    { month: 'Mar', appointments: 25 },
+    { month: 'Apr', appointments: 18 },
+    { month: 'May', appointments: 22 },
+    { month: 'Jun', appointments: 30 },
   ];
 
- 
+  const earningsData = [
+    { month: 'Jan', earnings: 3000 },
+    { month: 'Feb', earnings: 4000 },
+    { month: 'Mar', earnings: 5000 },
+    { month: 'Apr', earnings: 3600 },
+    { month: 'May', earnings: 4400 },
+    { month: 'Jun', earnings: 6000 },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-
-
-
       <Sidebar doctorid ={doctor._id} />
-
-
 
 
       {/* Main Content */}
@@ -164,13 +187,60 @@ const DoctorDash = () => {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Payment Due</p>
-              <p className="text-2xl font-bold text-gray-800">${appoiment.totalAppointments * appoiment.fee.consultFee - (appoiment.totalAppointments * appoiment.fee.consultFee)*0.1}</p>
+              <p className="text-2xl font-bold text-gray-800">₹{appoiment.totalAppointments * appoiment.fee.consultFee - (appoiment.totalAppointments * appoiment.fee.consultFee)*0.1}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          {/* Appointments Chart */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h3 className="text-lg font-semibold mb-4">Appointment Trends</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={appointmentData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="appointments" 
+                    stroke="#4f46e5" 
+                    strokeWidth={2}
+                    dot={{ fill: '#4f46e5' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Earnings Chart */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h3 className="text-lg font-semibold mb-4">Earnings Overview</h3>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={earningsData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar 
+                    dataKey="earnings" 
+                    fill="#059669"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
 
         {/* Appointments Table */}
-        <div className="bg-white rounded-xl shadow-md p-6">
+        {/* <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Upcoming Appointments</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full">
@@ -215,7 +285,7 @@ const DoctorDash = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
