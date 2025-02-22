@@ -4,16 +4,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { Box, Card, Typography, Button, Container, Grid, Paper, Chip, IconButton, Divider } from '@mui/material';
-import { 
-    Add as AddIcon, 
-    Event as EventIcon, 
-    AccessTime as AccessTimeIcon, 
-    Close as CloseIcon,
-    CheckCircle as CheckCircleIcon,
-    Cancel as CancelIcon,
-    Schedule as ScheduleIcon
-} from '@mui/icons-material';
 
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
@@ -169,16 +159,6 @@ const Schedules = () => {
         return false;
     };
 
-    const isSlotExpired = (dateStr, timeStr) => {
-        const [startTime] = timeStr.split(' - ');
-        const [hour, period] = startTime.split(' ');
-        const slotDate = new Date(dateStr);
-        const hourNum = parseInt(hour);
-        const adjustedHour = period === 'PM' && hourNum !== 12 ? hourNum + 12 : (period === 'AM' && hourNum === 12 ? 0 : hourNum);
-        slotDate.setHours(adjustedHour, 0, 0, 0);
-        return slotDate < new Date();
-    };
-
     const fetchExistingSchedules = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
@@ -196,302 +176,168 @@ const Schedules = () => {
     }, [doctorId]);
 
     return (
-        <Box sx={{ display: 'flex', bgcolor: '#f8fafc' }}>
+        <div className="flex">
             <Sidebar activePage="Schedules" />
 
-            <Box component="main" sx={{ flexGrow: 1, p: 3, minHeight: '100vh' }}>
-                <Container maxWidth="xl" sx={{ mt: 2 }}>
-                    {/* Header */}
-                    <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'center',
-                        mb: 4 
-                    }}>
-                        <Typography variant="h4" sx={{ 
-                            fontWeight: 'bold', 
-                            color: '#1e293b',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2
-                        }}>
-                            <ScheduleIcon sx={{ fontSize: 35, color: '#3b82f6' }} />
-                            Schedule Management
-                        </Typography>
+            <div className="relative w-full p-5 box-border">
+                <h1 className="text-center text-2xl font-bold mb-5">Current Schedules</h1>
 
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={() => setIsOpen(true)}
-                            sx={{ 
-                                bgcolor: '#3b82f6',
-                                '&:hover': { bgcolor: '#2563eb' },
-                                borderRadius: 2,
-                                px: 3,
-                                py: 1
-                            }}
-                        >
-                            Add Schedule
-                        </Button>
-                    </Box>
-
-                    {/* Legend */}
-                    <Paper sx={{ p: 2, mb: 4, borderRadius: 2, bgcolor: 'white' }}>
-                        <Typography variant="subtitle1" sx={{ mb: 2, color: '#475569', fontWeight: 'medium' }}>
-                            Status Guide:
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 3 }}>
-                            <Chip
-                                icon={<AccessTimeIcon />}
-                                label="Available"
-                                sx={{ bgcolor: '#e2e8f0', color: '#475569' }}
-                            />
-                            <Chip
-                                icon={<CheckCircleIcon />}
-                                label="Booked"
-                                sx={{ bgcolor: '#bbf7d0', color: '#166534' }}
-                            />
-                            <Chip
-                                icon={<CancelIcon />}
-                                label="Expired"
-                                sx={{ bgcolor: '#fecaca', color: '#991b1b' }}
-                            />
-                        </Box>
-                    </Paper>
-
-                    {/* Schedule Modal */}
-                    {isOpen && (
-                        <Box sx={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            bgcolor: 'rgba(0,0,0,0.7)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 1000,
-                            backdropFilter: 'blur(5px)'
-                        }}>
-                            <Card sx={{ 
-                                p: 4, 
-                                maxWidth: 600,
-                                width: '90%',
-                                maxHeight: '85vh',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'relative',
-                                borderRadius: 3
-                            }}>
-                                <IconButton
-                                    onClick={handleClose}
-                                    sx={{
-                                        position: 'absolute',
-                                        right: 8,
-                                        top: 8,
-                                        color: '#64748b'
-                                    }}
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-
-                                <Typography variant="h5" sx={{ mb: 3, color: '#1e293b', fontWeight: 'bold' }}>
-                                    Create New Schedule
-                                </Typography>
-
-                                <Box sx={{ 
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 3,
-                                    overflow: 'auto',
-                                    flex: 1,
-                                    pr: 1 // Add padding for scrollbar
-                                }}>
-                                    <Box>
-                                        <Typography variant="subtitle1" sx={{ mb: 1, color: '#475569' }}>
-                                            Select Date:
-                                        </Typography>
-                                        <DatePicker
-                                            selected={selectedDate}
-                                            onChange={date => setSelectedDate(date)}
-                                            minDate={today}
-                                            maxDate={maxDate}
-                                            dateFormat="MMMM d, yyyy"
-                                            popperPlacement="bottom"
-                                            popperModifiers={[
-                                                {
-                                                    name: "offset",
-                                                    options: {
-                                                        offset: [0, 10]
-                                                    }
-                                                },
-                                                {
-                                                    name: "preventOverflow",
-                                                    options: {
-                                                        boundary: 'viewport',
-                                                        padding: 20
-                                                    }
-                                                }
-                                            ]}
-                                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            calendarClassName="shadow-lg rounded-lg border-0"
-                                        />
-                                    </Box>
-
-                                    {selectedDate && (
-                                        <Box>
-                                            <Typography variant="subtitle1" sx={{ mb: 2, color: '#475569' }}>
-                                                Select Time Slots:
-                                            </Typography>
-                                            <Grid container spacing={1} sx={{ mb: 2 }}>
-                                                {timeSlots.map((slot, index) => {
-                                                    const isSelected = selectedTimeSlots[selectedDate.toDateString()]?.some(
-                                                        selectedSlot => selectedSlot.label === slot.label
-                                                    );
-                                                    const isPast = isPastSlot(slot);
-
-                                                    return (
-                                                        <Grid item xs={6} sm={4} key={index}>
-                                                            <Chip
-                                                                icon={<AccessTimeIcon />}
-                                                                label={slot.label}
-                                                                onClick={() => !isPast && handleTimeSlotClick(slot)}
-                                                                sx={{
-                                                                    width: '100%',
-                                                                    justifyContent: 'flex-start',
-                                                                    bgcolor: isPast ? '#fecaca' :
-                                                                             isSelected ? '#bbf7d0' : '#e2e8f0',
-                                                                    color: isPast ? '#991b1b' :
-                                                                            isSelected ? '#166534' : '#475569',
-                                                                    '&:hover': !isPast && {
-                                                                        bgcolor: isSelected ? '#86efac' : '#cbd5e1'
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </Grid>
-                                                    );
-                                                })}
-                                            </Grid>
-                                        </Box>
-                                    )}
-                                </Box>
-
-                                <Button
-                                    variant="contained"
-                                    onClick={handleSchedule}
-                                    fullWidth
-                                    sx={{ 
-                                        mt: 3,
-                                        bgcolor: '#3b82f6',
-                                        '&:hover': { bgcolor: '#2563eb' },
-                                        borderRadius: 2,
-                                        py: 1.5
-                                    }}
-                                >
-                                    Save Schedule
-                                </Button>
-                            </Card>
-                        </Box>
-                    )}
-
-                    {/* Existing Schedules */}
-                    <Typography variant="h5" sx={{ mb: 3, color: '#1e293b', fontWeight: 'medium' }}>
-                        Current Schedules
-                    </Typography>
-
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>
                     {existingSchedules.length === 0 ? (
-                        <Paper sx={{ 
-                            p: 4, 
-                            textAlign: 'center', 
-                            bgcolor: 'white',
-                            borderRadius: 2
-                        }}>
-                            <ScheduleIcon sx={{ fontSize: 60, color: '#94a3b8', mb: 2 }} />
-                            <Typography color="textSecondary">No schedules available</Typography>
-                        </Paper>
+                        <p className="text-gray-500">No schedules found</p>
                     ) : (
-                        <Grid container spacing={3}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {(() => {
                                 const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
-                                    const dateKey = schedule.appointmentDate;
+                                    const dateKey = schedule.appointmentDate; // Use the date directly from the schedule
+
                                     if (!acc[dateKey]) {
                                         acc[dateKey] = {
                                             date: dateKey,
                                             slots: []
                                         };
                                     }
-                                    acc[dateKey].slots.push(schedule);
+                                    acc[dateKey].slots.push(schedule); // Store the entire schedule object
                                     return acc;
                                 }, {});
-
-                                return Object.values(schedulesByDate).map((dateSchedule, index) => (
-                                    <Grid item xs={12} md={6} lg={4} key={index}>
-                                        <Card sx={{ 
-                                            height: '100%',
-                                            bgcolor: 'white',
-                                            borderRadius: 2,
-                                            overflow: 'hidden',
-                                            transition: 'transform 0.2s, box-shadow 0.2s',
-                                            '&:hover': {
-                                                transform: 'translateY(-4px)',
-                                                boxShadow: 4
-                                            }
-                                        }}>
-                                            <Box sx={{ 
-                                                bgcolor: '#3b82f6',
-                                                color: 'white',
-                                                p: 2,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 1
-                                            }}>
-                                                <EventIcon />
-                                                <Typography variant="h6">
-                                                    {new Date(dateSchedule.date).toLocaleDateString('en-US', {
-                                                        weekday: 'long',
-                                                        month: 'long',
-                                                        day: 'numeric'
-                                                    })}
-                                                </Typography>
-                                            </Box>
-                                            <Box sx={{ p: 2 }}>
-                                                <Grid container spacing={1}>
-                                                    {dateSchedule.slots.map((slot, slotIndex) => {
-                                                        const isExpired = isSlotExpired(dateSchedule.date, slot.slotTime);
-                                                        return (
-                                                            <Grid item xs={12} key={slotIndex}>
-                                                                <Chip
-                                                                    icon={
-                                                                        isExpired ? <CancelIcon /> :
-                                                                        slot.isBooked ? <CheckCircleIcon /> :
-                                                                        <AccessTimeIcon />
+                                return Object.values(schedulesByDate)
+                                    .map((dateGroup, index) => (
+                                        <div key={index} className="border rounded-lg p-4 shadow-sm">
+                                            <h3 className="font-bold mb-2">{dateGroup.date}</h3> {/* Directly use the date */}
+                                            <div className="space-y-2">
+                                                {dateGroup.slots.map((slot, slotIndex) => (
+                                                    <div 
+                                                        key={slotIndex}
+                                                        className={`rounded px-3 py-1 text-blue-800 ${
+                                                            (() => {
+                                                                const [startTime, endTime] = slot.slotTime.split(' - ');
+                                                                const parseTime = (timeStr) => {
+                                                                    if (!timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
+                                                                        timeStr += ' PM';
                                                                     }
-                                                                    label={slot.slotTime}
-                                                                    sx={{
-                                                                        width: '100%',
-                                                                        justifyContent: 'flex-start',
-                                                                        mb: 0.5,
-                                                                        bgcolor: isExpired ? '#fecaca' :
-                                                                                 slot.isBooked ? '#bbf7d0' : '#e2e8f0',
-                                                                        color: isExpired ? '#991b1b' :
-                                                                                slot.isBooked ? '#166534' : '#475569'
-                                                                    }}
-                                                                />
-                                                            </Grid>
-                                                        );
-                                                    })}
-                                                </Grid>
-                                            </Box>
-                                        </Card>
-                                    </Grid>
-                                ));
+                                                                    const [time, period] = timeStr.split(' ');
+                                                                    let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
+                                                                    hours = parseInt(hours);
+                                                                    
+                                                                    if (period === 'PM' && hours !== 12) {
+                                                                        hours += 12;
+                                                                    }
+                                                                    if (period === 'PM' && hours === 12) {
+                                                                        hours = 12;
+                                                                    }
+                                                                    // Handle 12 AM (midnight)
+                                                                    if (period === 'AM' && hours === 12) {
+                                                                        hours = 0;
+                                                                    }
+                                                                    const slotDate = new Date(dateGroup.date);
+                                                                    slotDate.setHours(hours, parseInt(minutes), 0, 0);
+                                                                    return slotDate.getTime();
+                                                                };
+                                                                const slotStartTime = parseTime(startTime);
+                                                                const currentTime = new Date().getTime();
+                                                                const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
+
+                                                                return !slot.isBooked && isSameDay && slotStartTime < currentTime
+                                                                    ? 'bg-red-500' 
+                                                                    : slot.isBooked 
+                                                                        ? 'bg-green-500' 
+                                                                        : 'bg-blue-100'
+                                                            })()
+                                                        }`} >
+                                                        {slot.slotTime}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ));
                             })()}
-                        </Grid>
+                        </div>
                     )}
-                </Container>
-            </Box>
-        </Box>
+                </div>
+
+                <button
+                    className="absolute top-5 right-5 z-10 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setIsOpen(true)}
+                >
+                    Schedule Appointment
+                </button>
+
+                <div className="status-container" style={{marginTop:'10px'}}>
+                    <div className="w-3 h-3 bg-red-500"></div>
+                    <p>Time Expired</p>
+                    <div className='w-3 h-3 bg-green-500'></div>
+                    <p>Booked Slots</p>
+                </div>
+
+                {isOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                            <h2 className="text-lg font-semibold mb-4">Select Date & Time</h2>
+
+                            <DatePicker
+                                selected={selectedDate}
+                                onChange={(date) => setSelectedDate(date)}
+                                inline
+                                minDate={today}
+                                maxDate={maxDate}
+                            />
+
+                            {selectedDate && (
+                                <div className="mt-4 grid grid-cols-2 gap-2">
+                                    {timeSlots.map((slot, index) => {
+                                        const isDisabled = isPastSlot(slot);
+                                        const isSelected = selectedTimeSlots[selectedDate.toDateString()]?.some(
+                                            (selectedSlot) => selectedSlot.label === slot.label
+                                        );
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`mb-2 p-2 border rounded 
+                                                    ${isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "hover:bg-gray-100 cursor-pointer"} 
+                                                    ${isSelected ? "bg-green-500 text-white" : "bg-blue-100"}`}
+                                                onClick={() => !isDisabled && handleTimeSlotClick(slot)}
+                                            >
+                                                <div>
+                                                    <span
+                                                        className={`font-semibold 
+                                                            ${isDisabled ? "text-gray-500" : "text-blue-700"}
+                                                            ${isSelected ? "text-white" : ""}`}
+                                                    >
+                                                        {slot.label}
+                                                    </span>
+                                                    {isSelected && (
+                                                        <span className="ml-2 text-white text-sm">✓</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={handleClose}
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                            <div className="mt-4 flex justify-start">
+                                <button
+                                    onClick={handleSchedule}
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                >
+                                    Confirm Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 
