@@ -40,6 +40,7 @@ import Doctorpayement from './Pages/admin/Doctorpayement'
 import PayementPanel from './Pages/User/Appoiments/PayementPanel'
 import Wallet from './Pages/admin/Wallet'
 import DrWallet from './Pages/Doctor/Wallet/DrWallet'
+import Chat from './Pages/User/UserDash/Chat'
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -110,6 +111,7 @@ const App = () => {
         <Route path="/user/profile" element={<ProtectedRoute wrapper={Protected}><ProfileUser /></ProtectedRoute>} />
         <Route path="/user/appointments" element={<ProtectedRoute wrapper={Protected}><UserAppoiments /></ProtectedRoute>} />
         <Route path="/booking" element={<ProtectedRoute wrapper={Protected}><PayementPanel /></ProtectedRoute>} />
+        <Route path="/user/chats" element={<ProtectedRoute wrapper={Protected}><Chat /></ProtectedRoute>} />
 
 
         {/* Auth Routes */}
