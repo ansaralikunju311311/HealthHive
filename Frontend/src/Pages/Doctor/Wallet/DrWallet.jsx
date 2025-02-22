@@ -1,8 +1,52 @@
-import React from 'react';
+import React, { useEffect ,useState} from 'react';
 import Sidebar from '../../../Component/Doctor/Sidebar';
 import { Box, Card, Typography, Button, Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import axios from 'axios';
+import cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const DrWallet = () => {
+
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [doctor, setDoctor] = useState();
+  const navigate = useNavigate();
+
+useEffect(() => {
+  const token = cookies.get('doctortoken');
+  if(!token){
+    navigate('/doctor/login');
+    return;
+  }
+
+  const verifyTokenAndFetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/doctor/verify-token`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      });
+      const doctorData = response.data.doctor;
+      console.log("Doctor data from response:", doctorData);
+      setDoctor(doctorData);
+
+
+      const id = doctorData._id;
+      const balance = await axios.get(`http://localhost:5000/api/doctor/doctor-wallet-balance/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      });
+      setWalletBalance(balance.data);
+    } catch (error) {
+      console.log(error);
+      navigate('/doctor/login');
+    }
+  };
+
+  verifyTokenAndFetchData();
+},[])
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
@@ -13,7 +57,7 @@ const DrWallet = () => {
             <Grid item xs={12} md={4}>
               <Card sx={{ p: 3, textAlign: 'center', boxShadow: 3 }}>
                 <Typography variant="h6" gutterBottom>Wallet Balance</Typography>
-                <Typography variant="h3" color="primary">₹10,000</Typography>
+                <Typography variant="h3" color="primary">₹{walletBalance?.totalAmount || 0}</Typography>
                 <Button variant="contained" sx={{ mt: 2 }}>Withdraw</Button>
               </Card>
             </Grid>
@@ -25,11 +69,11 @@ const DrWallet = () => {
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Typography variant="subtitle1">Total Earnings</Typography>
-                    <Typography variant="h5">₹50,000</Typography>
+                    <Typography variant="h5">₹{walletBalance?.totalAmount || 0}</Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="subtitle1">This Month</Typography>
-                    <Typography variant="h5">₹15,000</Typography>
+                    <Typography variant="h5">₹{walletBalance?.totalAmount || 0}</Typography>
                   </Grid>
                 </Grid>
               </Card>

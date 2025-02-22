@@ -255,7 +255,6 @@ const DoctorVerification = () => {
           </div>
         </div>
       </div>
-
       <DetailsModel
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -308,5 +307,4 @@ const DoctorVerification = () => {
     </div>
   );
 };
-
 export default DoctorVerification;

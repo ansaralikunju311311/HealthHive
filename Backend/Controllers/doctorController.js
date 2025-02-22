@@ -10,6 +10,7 @@ import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
 import appoimentSchedule from '../Model/appoimentSchedule.js';
 import Appointment from '../Model/appoiment.js';
+import DoctorWallet from '../Model/Drwallet.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
@@ -627,6 +628,35 @@ export const fullAppoiments = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in fullAppoiments:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
+export const fetchWalletBalance = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const countAppoiments = await Appointment.countDocuments({ doctor: id });
+        const fees =  await doctor.findById(id).select('consultFee -_id');
+
+        let totalearnings = countAppoiments * fees.consultFee    - (countAppoiments * fees.consultFee * 0.1) ;
+
+        console.log("totaleearnings", totalearnings);
+
+        let walletBalance = await DoctorWallet.findOne({ doctor: id });
+
+        if (!walletBalance) {
+            // Create new wallet if it doesn't exist
+            walletBalance = new DoctorWallet({
+                doctor: id,
+                totalAmount: totalearnings
+            });
+        } else {
+            // Update existing wallet
+            walletBalance.totalAmount = totalearnings;
+        }
+        await walletBalance.save();
+        res.status(200).json(walletBalance);
+    } catch (error) {
+        console.error('Error in fetchWalletBalance:', error);
         res.status(500).json({ message: error.message });
     }
 }

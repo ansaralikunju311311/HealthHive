@@ -123,7 +123,7 @@ const DoctorPayment = () => {
                     <FaMoneyBillWave size={24} />
                     <Typography variant="h6" sx={{ ml: 1 }}>Total Earnings</Typography>
                   </Box>
-                  <Typography variant="h4">₹{totalAmount}</Typography>
+                  <Typography variant="h4">₹{totalAmount   - (totalAmount*0.1)}</Typography>
                   <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
                     Total earnings across all doctors
                   </Typography>
@@ -214,7 +214,7 @@ const DoctorPayment = () => {
                         </TableCell>
                         <TableCell align="right">
                           <Typography sx={{ color: '#1976D2', fontWeight: 'bold' }}>
-                            ₹{doctor.totalAmount
+                            ₹{doctor.totalAmount - (doctor.totalAmount*0.1)
                             }
                           </Typography>
                         </TableCell>
