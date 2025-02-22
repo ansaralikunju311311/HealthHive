@@ -18,7 +18,8 @@ const Doctor = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedBlockDoctor, setSelectedBlockDoctor] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -91,6 +92,8 @@ const Doctor = () => {
       // Update both doctors and filtered doctors
       setDoctors(updatedDoctors);
       setFilteredDoctors(updatedDoctors);
+      setIsConfirmModalOpen(false);
+      setSelectedBlockDoctor(null);
 
       // Show appropriate toast message
       const doctor = doctors.find(d => d._id === doctorid);
@@ -115,7 +118,17 @@ const Doctor = () => {
         autoClose: 3000
       });
     }
-  }
+  };
+
+  const handleBlockConfirmation = (doctor) => {
+    setSelectedBlockDoctor(doctor);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedBlockDoctor(null);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -214,10 +227,7 @@ const Doctor = () => {
                             ? 'bg-green-500 hover:bg-green-600' 
                             : 'bg-red-500 hover:bg-red-600'
                         }`} 
-                        // onClick={doctor.isBlocked === true 
-                        //   ? () => handleUnblock(doctor._id) 
-                        //   : () => handleBlock(doctor._id)}
-                        onClick={() => handleBlockUnblock(doctor._id)}
+                        onClick={() => handleBlockConfirmation(doctor)}
                       >
                         {doctor.isBlocked === true ? 'Unblock' : 'Block'}
                       </button></td>
@@ -259,6 +269,43 @@ const Doctor = () => {
         onClose={() => setShowModal(false)}
         doctor={selectedDoctor}
       />
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && selectedBlockDoctor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 w-96">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Confirm Action</h2>
+              <p className="text-gray-600">
+                Are you sure you want to {selectedBlockDoctor.isBlocked ? 'unblock' : 'block'} Dr. {selectedBlockDoctor.name}?
+              </p>
+              {!selectedBlockDoctor.isBlocked && (
+                <p className="text-red-600 mt-2 text-sm">
+                  Note: Blocking a doctor will prevent them from accessing the system and accepting new appointments.
+                </p>
+              )}
+            </div>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={handleCloseConfirmModal}
+                className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleBlockUnblock(selectedBlockDoctor._id)}
+                className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${
+                  selectedBlockDoctor.isBlocked 
+                    ? 'bg-green-600 hover:bg-green-700' 
+                    : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {selectedBlockDoctor.isBlocked ? 'Unblock' : 'Block'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

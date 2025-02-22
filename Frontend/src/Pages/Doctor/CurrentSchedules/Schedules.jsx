@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../Component/Doctor/Sidebar';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { toast } from 'react-toastify';
 import axios from 'axios';
+
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
     let doctorId;
@@ -13,23 +15,25 @@ const Schedules = () => {
         doctorId = storedDoctorId;
     }
     console.log("Doctor ID in Schedules:", doctorId);
+
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
     const [existingSchedules, setExistingSchedules] = useState([]);
     console.log("Selected Time Slots:", selectedTimeSlots);
+
     const handleSchedule = async () => {
         console.log("Initial Selected Date:", selectedDate);
         console.log("Initial Selected Time Slots:", selectedTimeSlots);
         if (!selectedDate) {
-            alert("Please select a date");
+            toast.error("Please select a date");
             return;
         }
         const selectedDateKey = selectedDate.toDateString();
         console.log("Selected Date Key:", selectedDateKey);
 
         if (!selectedTimeSlots[selectedDateKey] || selectedTimeSlots[selectedDateKey].length === 0) {
-            alert("Please select a time slot");
+            toast.error("Please select a time slot");
             return;
         }
         setIsOpen(false);  
@@ -54,15 +58,12 @@ const Schedules = () => {
                     
                     appointmentDate.setHours(adjustedHour, 0, 0, 0);
 
-                    // Format appointmentDate to YYYY-MM-DD
                     const formattedAppointmentDate = appointmentDate.toISOString().split('T')[0];
 
-                    // console.log("Formatted Appointment Date:", formattedAppointmentDate);
-
                     return {
-                        appointmentDate: formattedAppointmentDate, // Use the formatted date here
+                        appointmentDate: formattedAppointmentDate,
                         slotTime: slot.label,
-                        bookingTime: new Date() // Current timestamp for booking
+                        bookingTime: new Date()
                     };
                 })
             );
@@ -71,33 +72,44 @@ const Schedules = () => {
                 appointments: appointmentsData
             });
             console.log("Schedule Response:", response.data);
-            // Update existing schedules after successful submission
-            setExistingSchedules(response.data.schedule.appointments);
+            
+            // Immediately update the existingSchedules state with the new appointments
+            const newSchedules = appointmentsData.map(appointment => ({
+                appointmentDate: appointment.appointmentDate,
+                slotTime: appointment.slotTime,
+                isBooked: false
+            }));
+            
+            setExistingSchedules(prevSchedules => [...prevSchedules, ...newSchedules]);
+            
             // Reset selected date and time slots
             setSelectedDate(null);
             setSelectedTimeSlots({});
-            alert('Schedule submitted successfully!');
-            fetchExistingSchedules(); // Fetch schedules again to refresh the UI
+            toast.success('Schedule submitted successfully!');
         } catch (error) {
             console.error('Schedule submission error:', error);
             console.error('Error Details:', error.response ? error.response.data : error.message);
-            alert('Failed to submit schedule. Please try again.');
+            toast.error('Failed to submit schedule. Please try again.');
         }
     };
+
     const handleClose = () => {
         setIsOpen(false);
         setSelectedDate(null);
         setSelectedTimeSlots({});
     };
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 2);
+
     const format12Hour = (hour) => {
         const suffix = hour >= 12 ? "PM" : "AM";
         const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
         return `${formattedHour} ${suffix}`;
     };
+
     const generateTimeSlots = () => {
         const slots = [];
         let startHour = 12; // 5 PM
@@ -112,6 +124,7 @@ const Schedules = () => {
         }
         return slots;
     };
+
     const timeSlots = generateTimeSlots();
 
     const handleTimeSlotClick = (slot) => {
@@ -136,6 +149,7 @@ const Schedules = () => {
             }
         });
     };
+
     const isPastSlot = (slot) => {
         if (selectedDate && selectedDate.toDateString() === today.toDateString()) {
             const now = new Date();
@@ -144,6 +158,7 @@ const Schedules = () => {
         }
         return false;
     };
+
     const fetchExistingSchedules = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
@@ -155,6 +170,7 @@ const Schedules = () => {
             setExistingSchedules([]);
         }
     };
+
     useEffect(() => {
         fetchExistingSchedules();
     }, [doctorId]);
@@ -168,76 +184,76 @@ const Schedules = () => {
 
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>
-{existingSchedules.length === 0 ? (
-    <p className="text-gray-500">No schedules found</p>
-) : (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(() => {
-            const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
-                const dateKey = schedule.appointmentDate; // Use the date directly from the schedule
+                    {existingSchedules.length === 0 ? (
+                        <p className="text-gray-500">No schedules found</p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {(() => {
+                                const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
+                                    const dateKey = schedule.appointmentDate; // Use the date directly from the schedule
 
-                if (!acc[dateKey]) {
-                    acc[dateKey] = {
-                        date: dateKey,
-                        slots: []
-                    };
-                }
-                acc[dateKey].slots.push(schedule); // Store the entire schedule object
-                return acc;
-            }, {});
-            return Object.values(schedulesByDate)
-                .map((dateGroup, index) => (
-                    <div key={index} className="border rounded-lg p-4 shadow-sm">
-                        <h3 className="font-bold mb-2">{dateGroup.date}</h3> {/* Directly use the date */}
-                        <div className="space-y-2">
-                            {dateGroup.slots.map((slot, slotIndex) => (
-                                <div 
-                                    key={slotIndex}
-                                    className={`rounded px-3 py-1 text-blue-800 ${
-                                        (() => {
-                                            const [startTime, endTime] = slot.slotTime.split(' - ');
-                                            const parseTime = (timeStr) => {
-                                                if (!timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
-                                                    timeStr += ' PM';
-                                                }
-                                                const [time, period] = timeStr.split(' ');
-                                                let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
-                                                hours = parseInt(hours);
-                                                
-                                                if (period === 'PM' && hours !== 12) {
-                                                    hours += 12;
-                                                }
-                                                if (period === 'PM' && hours === 12) {
-                                                    hours = 12;
-                                                }
-                                                // Handle 12 AM (midnight)
-                                                if (period === 'AM' && hours === 12) {
-                                                    hours = 0;
-                                                }
-                                                const slotDate = new Date(dateGroup.date);
-                                                slotDate.setHours(hours, parseInt(minutes), 0, 0);
-                                                return slotDate.getTime();
-                                            };
-                                            const slotStartTime = parseTime(startTime);
-                                            const currentTime = new Date().getTime();
-                                            const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
+                                    if (!acc[dateKey]) {
+                                        acc[dateKey] = {
+                                            date: dateKey,
+                                            slots: []
+                                        };
+                                    }
+                                    acc[dateKey].slots.push(schedule); // Store the entire schedule object
+                                    return acc;
+                                }, {});
+                                return Object.values(schedulesByDate)
+                                    .map((dateGroup, index) => (
+                                        <div key={index} className="border rounded-lg p-4 shadow-sm">
+                                            <h3 className="font-bold mb-2">{dateGroup.date}</h3> {/* Directly use the date */}
+                                            <div className="space-y-2">
+                                                {dateGroup.slots.map((slot, slotIndex) => (
+                                                    <div 
+                                                        key={slotIndex}
+                                                        className={`rounded px-3 py-1 text-blue-800 ${
+                                                            (() => {
+                                                                const [startTime, endTime] = slot.slotTime.split(' - ');
+                                                                const parseTime = (timeStr) => {
+                                                                    if (!timeStr.includes(':') && !timeStr.includes('AM') && !timeStr.includes('PM')) {
+                                                                        timeStr += ' PM';
+                                                                    }
+                                                                    const [time, period] = timeStr.split(' ');
+                                                                    let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
+                                                                    hours = parseInt(hours);
+                                                                    
+                                                                    if (period === 'PM' && hours !== 12) {
+                                                                        hours += 12;
+                                                                    }
+                                                                    if (period === 'PM' && hours === 12) {
+                                                                        hours = 12;
+                                                                    }
+                                                                    // Handle 12 AM (midnight)
+                                                                    if (period === 'AM' && hours === 12) {
+                                                                        hours = 0;
+                                                                    }
+                                                                    const slotDate = new Date(dateGroup.date);
+                                                                    slotDate.setHours(hours, parseInt(minutes), 0, 0);
+                                                                    return slotDate.getTime();
+                                                                };
+                                                                const slotStartTime = parseTime(startTime);
+                                                                const currentTime = new Date().getTime();
+                                                                const isSameDay = dateGroup.date === new Date().toISOString().split('T')[0];
 
-                                            return !slot.isBooked && isSameDay && slotStartTime < currentTime
-                                                ? 'bg-red-500' 
-                                                : slot.isBooked 
-                                                    ? 'bg-green-500' 
-                                                    : 'bg-blue-100'
-                                        })()
-                                    }`} >
-                                    {slot.slotTime}
-                                </div>
-                            ))}
+                                                                return !slot.isBooked && isSameDay && slotStartTime < currentTime
+                                                                    ? 'bg-red-500' 
+                                                                    : slot.isBooked 
+                                                                        ? 'bg-green-500' 
+                                                                        : 'bg-blue-100'
+                                                            })()
+                                                        }`} >
+                                                        {slot.slotTime}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ));
+                            })()}
                         </div>
-                    </div>
-                ));
-        })()}
-    </div>
-)}
+                    )}
                 </div>
 
                 <button

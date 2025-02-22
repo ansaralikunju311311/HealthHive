@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [departmentName, setDepartmentName] = useState('');
   const [description, setDescription] = useState('');
   const [departments, setDepartments] = useState([]);
@@ -58,12 +60,24 @@ const Department = () => {
 
       setDepartments(updatedResponse.data.departments);
       setTotalPages(updatedResponse.data.totalpage);
+      setIsConfirmModalOpen(false);
+      setSelectedDepartment(null);
 
       toast.success('Department status updated successfully');
     } catch (error) {
       console.log(error);
       toast.error('Failed to update department status');
     }
+  };
+
+  const handleListingConfirmation = (dept) => {
+    setSelectedDepartment(dept);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedDepartment(null);
   };
 
   const handleAddDepartment = () => {
@@ -210,7 +224,8 @@ const Department = () => {
                         className={`px-4 py-1 rounded-lg text-sm font-medium ${
                           dept.status === 'Listed' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600'
                         } transition-colors`}
-                       onClick={()=>handleListing(dept._id)}  >
+                        onClick={() => handleListingConfirmation(dept)}
+                      >
                         {dept.status === 'Listed' ? 'Unlist' : 'List'}
                       </button>
                     </td>
@@ -307,6 +322,36 @@ const Department = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && selectedDepartment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 w-96">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Confirm Action</h2>
+              <p className="text-gray-600">
+                Are you sure you want to {selectedDepartment.status === 'Listed' ? 'unlist' : 'list'} the department "{selectedDepartment.Departmentname}"?
+              </p>
+            </div>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={handleCloseConfirmModal}
+                className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleListing(selectedDepartment._id)}
+                className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${
+                  selectedDepartment.status === 'Listed' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {selectedDepartment.status === 'Listed' ? 'Unlist' : 'List'}
+              </button>
+            </div>
           </div>
         </div>
       )}

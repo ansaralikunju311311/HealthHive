@@ -25,6 +25,9 @@ const DoctorVerification = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedActionDoctor, setSelectedActionDoctor] = useState(null);
+  const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -91,6 +94,9 @@ const DoctorVerification = () => {
         setDoctors(updatedDoctors);
         setFilteredDoctors(prevFiltered => prevFiltered.filter(doctor => doctor._id !== doctorid));
       }
+      setIsConfirmModalOpen(false);
+      setSelectedActionDoctor(null);
+      setActionType(null);
     } catch (error) {
       console.error("Error approving doctor:", error);
       toast.error('Failed to approve doctor', {
@@ -123,6 +129,9 @@ const DoctorVerification = () => {
       const updatedDoctors = doctors.filter(doctor => doctor._id !== doctorid);
       setDoctors(updatedDoctors);
       setFilteredDoctors(prevFiltered => prevFiltered.filter(doctor => doctor._id !== doctorid));
+      setIsConfirmModalOpen(false);
+      setSelectedActionDoctor(null);
+      setActionType(null);
     } catch (error) {
       console.error("Error rejecting doctor:", error);
       toast.error('Failed to reject doctor', {
@@ -131,6 +140,18 @@ const DoctorVerification = () => {
         theme: "colored"
       });
     }
+  };
+
+  const handleActionConfirmation = (doctor, action) => {
+    setSelectedActionDoctor(doctor);
+    setActionType(action);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setSelectedActionDoctor(null);
+    setActionType(null);
   };
 
   const navigate = useNavigate();
@@ -197,13 +218,13 @@ const DoctorVerification = () => {
                   <div className="px-6 py-4 text-sm font-medium text-right">
                     <div className="flex justify-end space-x-2">
                       <button 
-                        onClick={() => handleApprove(doctor._id)}
+                        onClick={() => handleActionConfirmation(doctor, 'approve')}
                         className="text-green-600 hover:text-green-900 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-colors"
                       >
                         Approve
                       </button>
                       <button 
-                        onClick={() => handleReject(doctor._id)}
+                        onClick={() => handleActionConfirmation(doctor, 'reject')}
                         className="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full transition-colors"
                       >
                         Reject
@@ -240,6 +261,50 @@ const DoctorVerification = () => {
         onClose={() => setShowModal(false)}
         doctor={selectedDoctor}
       />
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && selectedActionDoctor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 w-96">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Confirm Action</h2>
+              <p className="text-gray-600">
+                Are you sure you want to {actionType} Dr. {selectedActionDoctor.name}'s application?
+              </p>
+              {actionType === 'approve' ? (
+                <p className="text-green-600 mt-2 text-sm">
+                  This will grant the doctor access to the platform and allow them to start accepting appointments.
+                </p>
+              ) : (
+                <p className="text-red-600 mt-2 text-sm">
+                  This will reject the doctor's application and remove them from the pending list.
+                </p>
+              )}
+            </div>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={handleCloseConfirmModal}
+                className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => actionType === 'approve' 
+                  ? handleApprove(selectedActionDoctor._id)
+                  : handleReject(selectedActionDoctor._id)
+                }
+                className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${
+                  actionType === 'approve'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {actionType === 'approve' ? 'Approve' : 'Reject'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
