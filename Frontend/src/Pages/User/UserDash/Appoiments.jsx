@@ -29,9 +29,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
+  const [chatData, setChatData] = useState(null);
   const navigate = useNavigate();
   const userId = JSON.parse(localStorage.getItem('userId'))._id;
 
+
+
+  // console.log("==========for debug",userId)
   useEffect(() => {
     fetchAppointments();
   }, []);
@@ -42,14 +46,41 @@ const Appointments = () => {
         `http://localhost:5000/api/user/getappointments/${userId}`
       );
       setAppointments(response.data);
+
+
+      // console.log("===========xchuduvdvdhvfuf",response.data)
+      // console.log("=========cjdnndofuoh cheling id",response.data[0].doctor._id)
+      // const doctorId = response.data[0].doctor._id
+      // console.log("=========cjdnndofuoh chefddbndmscnvfdkmvbccfjdvnmfjkmvnjfvnmbjkgfling id",doctorId)
     } catch (error) {
       console.error('Error fetching appointments:', error);
     }
   };
 
-  const handleChat = (doctorId) => {
-    navigate('/user/chats', { state: { doctorId } });
-  };
+  // const handleChat = async (doctorId,userId) => {
+  //   console.log("doctorId,userId====",doctorId,userId)
+  //   try {
+  //     const chat = await axios.post(`http://localhost:5000/api/user/chat/${doctorId}/${userId}`);
+      
+
+  //     setChatData(chat.data);
+  //     console.log("========chat.data",chat.data);
+  //     // alert(chat.data)
+  //     navigate('/user/chats', { state: chat.data });
+
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+
+  // };
+    
+
+
+
+  const handleChat = (doctorId,userId) => {
+    // console.log("doctorId,userId       wilfknxknkknkdnklnvfnv  ====",doctorId,userId);
+    navigate('/user/chats', { state: { doctorId, userId } }); 
+  }
 
   return (
     <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
@@ -108,14 +139,14 @@ const Appointments = () => {
                           {appointment.doctor.name}
                         </Typography>
                         <Typography variant="caption" sx={{ color: '#64748b' }}>
-                          {appointment.doctor.email}
+                          {appointment.doctor.email}  
                         </Typography>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell>
                     <Chip 
-                      label={appointment.doctor.specialization}
+                      label={appointment.doctor.specialization} 
                       sx={{ 
                         bgcolor: '#e2e8f0',
                         color: '#475569',
@@ -147,7 +178,7 @@ const Appointments = () => {
                   <TableCell align="center">
                     <Button
                       variant="contained"
-                      onClick={() => handleChat(appointment.doctor._id)}
+                      onClick={() => handleChat(appointment.doctor._id, appointment.user)}
                       startIcon={<ChatIcon />}
                       sx={{ 
                         bgcolor: '#3b82f6',

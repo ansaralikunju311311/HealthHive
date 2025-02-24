@@ -11,6 +11,7 @@ import Department from '../Model/DepartmentModel.js';
 import appoimentSchedule from '../Model/appoimentSchedule.js';
 import Appointment from '../Model/appoiment.js';
 import DoctorWallet from '../Model/Drwallet.js';
+import User from '../Model/userModel.js';
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
  import cookies from 'js-cookie';
@@ -657,6 +658,21 @@ export const fetchWalletBalance = async (req, res) => {
         res.status(200).json(walletBalance);
     } catch (error) {
         console.error('Error in fetchWalletBalance:', error);
+        res.status(500).json({ message: error.message });
+    }
+}
+export const chatDetails = async (req, res) => {
+    try {
+        const {doctorId,userId} = req.params;
+
+       console.log("doctorId,userId==================  req.params",doctorId,userId);  
+       
+       const doctorData = await doctor.findById(doctorId);
+
+       const user = await User.findById(userId);
+       res.status(200).json({doctor: doctorData, user});
+    } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 }

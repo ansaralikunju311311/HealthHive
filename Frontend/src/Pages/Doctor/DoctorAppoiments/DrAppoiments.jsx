@@ -3,12 +3,14 @@ import Sidebar from '../../../Component/Doctor/Sidebar';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from 'react-router-dom';
 import { 
   FaUserCircle, 
   FaCalendarAlt, 
   FaClock, 
   FaUserMd, 
-  FaVenusMars, 
+  FaVenusMars,
+  FaComments
 } from 'react-icons/fa';
 
 const groupAppointmentsByCategory = (appointments) => {
@@ -38,6 +40,15 @@ const groupAppointmentsByCategory = (appointments) => {
 };
 
 const AppointmentSection = ({ title, appointments, icon: Icon }) => {
+  const navigate = useNavigate();
+  const doctorId = localStorage.getItem('doctorId');
+  const DrdoctorId = JSON.parse(doctorId);
+  const doctor_Id = DrdoctorId._id;
+  const handleChat = (patientId, doctor_Id) => {
+    console.log("patientId,doctor_Id==================  ",patientId,doctor_Id);
+    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id } });
+  };
+
   if (appointments.length === 0) return null;
 
   return (
@@ -94,6 +105,12 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
                   {new Date(appointment.date).toLocaleDateString()}
                 </div>
               </div>
+              <div className="mt-4">
+                <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow flex items-center gap-2"
+                onClick={() => handleChat(appointment.user._id, doctor_Id)}>
+                  <FaComments /> Chat with Patient
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -103,15 +120,21 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
 };
 
 const DrAppoiments = () => {
+  const navigate = useNavigate();
+
+  
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
-
+  
   useEffect(() => {
     const doctorId = localStorage.getItem('doctorId');
     const DrdoctorId = JSON.parse(doctorId);
     const doctor_Id = DrdoctorId._id;
+  
+
+    
 
     const fetchAppoiments = async () => {
       try {

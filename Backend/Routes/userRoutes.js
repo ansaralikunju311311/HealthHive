@@ -17,7 +17,10 @@ import {
        handlePayment,
        bookAppointment,
        FetchAppoiments,
-       verifyPayment
+       verifyPayment,
+       chatDetails
+    //    handleChat,
+      //  getDoctorChat
     } from '../Controllers/userController.js';
 const router = express.Router();
 
@@ -44,5 +47,8 @@ router.post('/verify-payment', verifyPayment)
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);
 router.get('/getappointments/:userid',FetchAppoiments);
+// router.post('/chat/:doctorId/:userId',handleChat);
+// router.get('/doctorChat',getDoctorChat);
+router.get('/ChatDetails/:doctorId/:userId',chatDetails);
 
 export default router;

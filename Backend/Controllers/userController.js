@@ -9,14 +9,8 @@ import Appointment from '../Model/appoiment.js';
 import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/Transaction.js';
-// import doctor from '../Model/doctorModel.js';
-// Helper function to generate OTP and update user
-
-
-
+import Chat from '../Model/chat.js';
 const cookieOptions = {
-    
-    
     httpOnly: false,
     secure: true,
     sameSite: 'None',
@@ -42,7 +36,6 @@ const generateAndSendOTP = async (user, email) => {
 const RegisterUser = async (req, res) => {
     try {
         const { name, email, password, dateOfBirth, phone, age, gender, image,bloodGroup,address } = req.body;
-    
         // Check if user already exists
         const existingUser = await User.findOne({ email });
 
@@ -55,7 +48,6 @@ const RegisterUser = async (req, res) => {
                 return res.status(400).json({ message: "User already exists" });
             }
         }
-
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -172,7 +164,6 @@ const LoginUser = async(req,res)=>{
         if(!user.isActive){
             return res.status(400).json({message:"Please verify your account first"});
         }
-        
         // Check password
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
@@ -181,10 +172,6 @@ const LoginUser = async(req,res)=>{
         
         // Generate tokens
         const userToken = setToken(user);
-        // console.log("userToken   coolesdsjdnfjdfjdfr=====",userToken);
-        // console.log("Time", new Date().toLocaleTimeString());
-    //    console.log(res.cookie('usertoken', userToken, cookieOptions)); 
-    // console.log(cookieOptions)
        res.cookie('usertoken', userToken, cookieOptions)
         res.status(200).json({
             message:"Login successful",
@@ -317,9 +304,6 @@ const resetPassword = async(req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
-
-
 const verifyToken = async (req, res) => {
     // console.log(" happen after middlware verify token=====",req.user);
     try {
@@ -334,8 +318,6 @@ const verifyToken = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-
 export const getDoctorsData = async (req, res) => {
     try {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
@@ -384,26 +366,12 @@ export const dptdoctor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
-
-
-
-
 //importent for checking i comment this code 
-
-
-
-
-
-
 export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
         const { slots,transactionData} = req.body;
-
-
-//   console.log("appoimentdata====================",appointmentData)
-        
+//   console.log("appoimentdata====================",appointmentData)      
         console.log("Doctor ID:", doctorid);
         console.log("User ID:", userid);
         console.log("Slot details:", slots);
@@ -450,13 +418,6 @@ export const bookAppointment = async (req, res) => {
                 doctorSchedule.appointments = updatedAppointments;
                 await doctorSchedule.save();
             }
-
-
-
-            // console.log("for debug",doctorSchedule);
-            // Create new transaction
-
-   
             const doctor = await Doctor.findById(doctorid);
             const user = await User.findById(userid);
             const newTransaction = new Transaction({
@@ -474,10 +435,7 @@ export const bookAppointment = async (req, res) => {
             await newTransaction.save();
         } catch (error) {
             console.error('Error updating appointment schedule:', error);
-            // Don't throw error here as the appointment is already created
         }
-
-        // Send success response
         res.status(200).json({
             message: 'Appointment booked successfully',
             appointment: newAppointment
@@ -491,8 +449,6 @@ export const bookAppointment = async (req, res) => {
         });
     }
 };
-
-/////////////////
 export const FetchAppoiments = async(req, res) => {
     try {
         const { userid } = req.params;
@@ -501,7 +457,6 @@ export const FetchAppoiments = async(req, res) => {
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization',
-            // options:{strictPopulate:false}
         });
         res.status(200).json(appointments);
     } catch (error) {
@@ -509,17 +464,12 @@ export const FetchAppoiments = async(req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
-
-
-
-
 export  const handlePayment = async(req, res) => {
     console.log("req.body",req.body)
     const { amount } = req.body;
     try {
         const options = {
-            amount: Number(amount * 100),  // Convert to number and to paise
+            amount: Number(amount * 100), 
             currency: "INR",
             receipt: `rcpt_${Date.now()}`,
             payment_capture: 1,
@@ -544,7 +494,6 @@ export  const handlePayment = async(req, res) => {
         });
     }
 }
-
 export const verifyPayment = async (req, res) => {
     try {
         const {
@@ -552,24 +501,12 @@ export const verifyPayment = async (req, res) => {
             razorpay_payment_id,
             razorpay_signature
         } = req.body;
-
-        // Create a signature using the order ID and payment ID
         const sign = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSign = crypto
             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
             .update(sign)
             .digest("hex");
-
-        // Verify the signature
         if (razorpay_signature === expectedSign) {
-            // Payment is verified
-            // Here you can update your database with payment status
-            // and create the appointment
-
-
-            
-
-
             return res.status(200).json({
                 message: "Payment verified successfully",
                 orderId: razorpay_order_id,
@@ -589,4 +526,80 @@ export const verifyPayment = async (req, res) => {
     }
 };
 
+// export const handleChat = async (req,res) => {
+//     try {
+
+//         const {doctorId,userId} = req.params;
+//         console.log("doctorId,userId====",doctorId,userId);
+//         const user = await User.findById(userId).select('name')
+//         const doctor = await Doctor.findById(doctorId).select('name profileImage')
+//         console.log("======user",user.name);
+//         console.log("======doctor",doctor.name);
+//         const username = user.name;
+//         const doctorDetails = doctor
+//         const existingChat = new Chat({
+//                 roomId: doctorId+userId,
+//                 senderId: userId,
+//                 recieverId: doctorId
+//             });
+//             await existingChat.save();
+//         res.status(200).json({existingChat,username,doctorDetails});
+//     } 
+
+
+//     catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }
+
+
+
+
+// export const getDoctorChat = async (req,res) => {
+//     try {
+//         const distinctRoomIds = await Chat.aggregate([
+//             {
+//                 $group: {
+//                     _id: "$roomId",
+//                     senderId: {
+//                         $first: "$senderId"
+//                     },
+//                     recieverId: {
+//                         $first: "$recieverId"
+//                     }
+//                 }
+//                 // ,
+//                 // $project: {
+//                 //     _id: 0,
+//                 //     roomId: "$_id",
+//                 //     senderId: 1,
+//                 //     recieverId: 1
+//                 // }
+//             }
+//         ]);
+//         res.status(200).json(distinctRoomIds);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }s
+
+
+
+export const chatDetails = async (req,res) => {
+
+    try{
+        const {doctorId,userId} = req.params;
+
+       console.log("doctorId,userId==================  req.params",doctorId,userId);
+       const doctor = await Doctor.findById(doctorId);
+       const user = await User.findById(userId);
+       res.status(200).json({doctor,user});
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
