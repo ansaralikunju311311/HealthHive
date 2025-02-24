@@ -10,6 +10,7 @@ import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/Transaction.js';
 import Chat from '../Model/chat.js';
+import e from 'cors';
 const cookieOptions = {
     httpOnly: false,
     secure: true,
@@ -602,4 +603,42 @@ export const chatDetails = async (req,res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const sendMessage = async (req, res) => {
+    try {
+        const { roomId, message, doctorId, userId } = req.body;
+        
+
+        console.log("roomId, message, doctorId, userId====",message);
+        // Create a new message
+        const newMessage = new Chat({
+            roomId,
+            message:message,
+            senderId:doctorId,
+            recieverId:userId,
+            sender: 'user',
+            reciever:'doctor',  
+            date: new Date(),
+            timestamp: new Date()
+        });
+
+        // Save the message
+        const savedMessage = await newMessage.save();
+        
+        res.status(200).json({
+            success: true,
+            message: 'Message sent successfully',
+            data: savedMessage
+        });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Failed to send message',
+            error: error.message 
+        });
+    }
+}
+
+
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

@@ -18,7 +18,8 @@ import {
        bookAppointment,
        FetchAppoiments,
        verifyPayment,
-       chatDetails
+       chatDetails,
+       sendMessage
     //    handleChat,
       //  getDoctorChat
     } from '../Controllers/userController.js';
@@ -50,5 +51,6 @@ router.get('/getappointments/:userid',FetchAppoiments);
 // router.post('/chat/:doctorId/:userId',handleChat);
 // router.get('/doctorChat',getDoctorChat);
 router.get('/ChatDetails/:doctorId/:userId',chatDetails);
+router.post('/sendmessage',sendMessage)
 
 export default router;
