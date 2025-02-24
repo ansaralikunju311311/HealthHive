@@ -27,12 +27,10 @@ import axios from 'axios';
 const Chat = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const DoctorDetails = location.state;
-    const {doctorId} = DoctorDetails;
-    const {userId} = DoctorDetails;
-     
-    
+    const { doctorId, userId } = location.state || {};
 
+
+    console.log("DoctorDetails==================  inside the  function", location.state)
 
 
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -99,8 +97,10 @@ const Chat = () => {
 
     useEffect(()=>{
         const chatDetails = async () => {
+
+            
             try {
-                const response = await axios.get(`http://localhost:5000/api/user/ChatDetails/${DoctorDetails.doctorId}/${DoctorDetails.userId}`);
+                const response = await axios.get(`http://localhost:5000/api/user/ChatDetails/${doctorId}/${userId}`);
                 setDoctor(response.data);
             } catch (error) {
                 console.log(error)
