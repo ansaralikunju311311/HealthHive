@@ -4,7 +4,7 @@ const chatSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    messages : {
+    message : {
         type:String,
     },
     senderId : {
@@ -14,6 +14,18 @@ const chatSchema = new mongoose.Schema({
     recieverId : {
         type:String,
         require:true
+    },
+    sender : {
+        type:String,
+        // required:true
+    },
+    date : {
+        type:String,
+        // required:true
+    },
+    reciever : {
+        type:String,
+        // required:true
     }
 },{
     timestamps:true
