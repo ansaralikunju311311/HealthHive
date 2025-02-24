@@ -78,7 +78,7 @@ const Chat = () => {
             }
         };
         showChat();
-        const interval = setInterval(showChat, 3000);
+        const interval = setInterval(showChat, 1000);
         return () => clearInterval(interval);
     }, [doctorId, userId]);
 

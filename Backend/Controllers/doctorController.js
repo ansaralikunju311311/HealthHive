@@ -712,4 +712,16 @@ export const sendMessage = async (req, res) => {
         });
     }
 }
+
+
+export const getChat = async(req, res) => {
+    try {
+        const { roomId } = req.params;
+       const chats = await Chat.find({ roomId }).sort({ date: 1 });
+       res.status(200).json(chats);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

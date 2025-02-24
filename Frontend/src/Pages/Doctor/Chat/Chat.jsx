@@ -30,36 +30,37 @@ const Chat = () => {
     const location = useLocation();
     const { userId, doctorId } = location.state || {};
     const navigate = useNavigate();
-    // const [selectedPatient, setSelectedPatient] = useState(null);
     const [message, setMessage] = useState('');
-    // const [searchQuery, setSearchQuery] = useState('');
     const [user, setUser] = useState(null);
-    const [messages, setMessages] = useState([]);
+    const [chat, setChat] = useState([]);
+    const messagesEndRef = React.useRef(null);
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            const messageContainer = messagesEndRef.current.parentElement;
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [chat]);
 
     const handleSendMessage = async() => {
         if (!message.trim()) return;
 
-
-       
-        const newMessage = {
-            id: Date.now(),
-            sender: 'doctor',
-            text: message,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-        setMessage('');
-
-        // Send the message to the server
         try {
-            const response = await axios.post('http://localhost:5000/api/doctor/sendmessage', {
+            await axios.post('http://localhost:5000/api/doctor/sendmessage', {
                 roomId : doctorId+userId,
                 doctorId,
                 userId,
                 message
             });
-            console.log('Message sent:', response.data);
+            
+            // Fetch updated chat messages after sending
+            const chatResponse = await axios.get(`http://localhost:5000/api/doctor/Chats/${doctorId+userId}`);
+            setChat(chatResponse.data);
+            setMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -70,6 +71,20 @@ const Chat = () => {
 
 
 
+
+    useEffect(() => {
+        const showChat = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/doctor/Chats/${doctorId+userId}`);
+                setChat(response.data);
+            } catch (error) {
+                console.error('Error fetching chat:', error);
+            }
+        };
+        showChat();
+        const interval = setInterval(showChat, 1000);
+        return () => clearInterval(interval);
+    }, [doctorId, userId]);
 
 
     console.log("kfkkfkfkfk",message)
@@ -86,12 +101,7 @@ const Chat = () => {
                 console.log(error)
             }
         }
-        chatDetails();
-
-
-
-
-        
+        chatDetails();        
     },[])
     // useEffect(()=>{
     //     setMessages(messages)
@@ -169,6 +179,7 @@ const Chat = () => {
                                 flexDirection: 'column',
                                 gap: 2.5,
                                 bgcolor: '#f8fafc',
+                                maxHeight: 'calc(100vh - 280px)', // Fixed height for message container
                                 '&::-webkit-scrollbar': {
                                     width: '8px',
                                     background: 'transparent'
@@ -181,29 +192,30 @@ const Chat = () => {
                                     }
                                 }
                             }}>
+                                <div ref={messagesEndRef} />
                                 {/* Display Messages */}
-                                {messages.map((msg) => (
+                                {chat.map((msg) => (
                                     <Box 
-                                        key={msg.id}
+                                        key={msg._id}
                                         sx={{ 
-                                            alignSelf: msg.sender === 'doctor' ? 'flex-end' : 'flex-start',
+                                            alignSelf: msg.senderId === doctorId ? 'flex-end' : 'flex-start',
                                             maxWidth: '70%'
                                         }}
                                     >
                                         <Paper sx={{ 
                                             p: { xs: 1.5, md: 2 },
-                                            background: msg.sender === 'doctor' 
+                                            background: msg.senderId === doctorId 
                                                 ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
                                                 : 'white',
-                                            color: msg.sender === 'doctor' ? 'white' : '#1e293b',
-                                            borderRadius: msg.sender === 'doctor'
+                                            color: msg.senderId === doctorId ? 'white' : '#1e293b',
+                                            borderRadius: msg.senderId === doctorId
                                                 ? '20px 20px 5px 20px'
                                                 : '20px 20px 20px 5px',
-                                            boxShadow: msg.sender === 'doctor'
+                                            boxShadow: msg.senderId === doctorId
                                                 ? '0 2px 8px rgba(59,130,246,0.3)'
                                                 : '0 2px 8px rgba(0,0,0,0.05)',
                                             position: 'relative',
-                                            '&::before': msg.sender === 'doctor' ? {
+                                            '&::before': msg.senderId === doctorId ? {
                                                 content: '""',
                                                 position: 'absolute',
                                                 right: '-8px',
@@ -223,19 +235,19 @@ const Chat = () => {
                                                 clipPath: 'polygon(0 0, 100% 100%, 100% 0)'
                                             }
                                         }}>
-                                            <Typography variant="body1">{msg.text}</Typography>
+                                            <Typography variant="body1">{msg.message}</Typography>
                                             <Typography 
                                                 variant="caption" 
                                                 sx={{ 
                                                     display: 'block', 
                                                     textAlign: 'right', 
                                                     mt: 1, 
-                                                    color: msg.sender === 'doctor' 
+                                                    color: msg.senderId === doctorId 
                                                         ? 'rgba(255,255,255,0.8)' 
                                                         : '#64748b'
                                                 }}
                                             >
-                                                {msg.time}
+                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </Typography>
                                         </Paper>
                                     </Box>
