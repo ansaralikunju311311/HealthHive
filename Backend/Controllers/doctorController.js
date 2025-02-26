@@ -724,4 +724,17 @@ export const fetchWalletBalance = async (req, res) => {
 //         res.status(500).json({ message: error.message });
 //     }
 // }
+
+export const userDetails = async(req,res)=>
+{
+
+    try {
+        const {userId} = req.params;
+        const user = await User.findById(userId).select('-password');
+        res.status(200).json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};
