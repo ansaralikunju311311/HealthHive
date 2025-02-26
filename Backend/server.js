@@ -23,19 +23,58 @@ const io = new Server(server, {
     }
 });
 
+const onlineUsers = new Map();
+
 io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} connected`);
 
-
-    socket.on('joinRoom', ({ doctorId, userId }) => {
-        console.log("DoctorId and userId==================  inside the  function", doctorId, userId)
-        const roomId = `${doctorId}_${userId}`;
-        socket.join(roomId);
-        console.log(`User ${userId} joined room ${roomId}`);
+    // Handle user/doctor connection
+    socket.on('userConnected', ({ userId, type }) => {
+        onlineUsers.set(userId, { socketId: socket.id, type });
+        
+        // Broadcast online status to all connected clients
+        io.emit('userStatus', { userId, online: true, type });
+        
+        // Send current online users status to newly connected user
+        onlineUsers.forEach((value, key) => {
+            socket.emit('userStatus', {
+                userId: key,
+                online: true,
+                type: value.type
+            });
+        });
     });
 
+    socket.on('joinRoom', ({ doctorId, userId, type }) => {
+        const roomId = `${doctorId}_${userId}`;
+        socket.join(roomId);
 
-    
+        // Send status updates for both user and doctor
+        if (type === 'user') {
+            io.to(roomId).emit('userStatus', { 
+                userId: userId, 
+                online: onlineUsers.has(userId), 
+                type: 'user' 
+            });
+            io.to(roomId).emit('userStatus', { 
+                userId: doctorId, 
+                online: onlineUsers.has(doctorId), 
+                type: 'doctor' 
+            });
+        } else {
+            io.to(roomId).emit('userStatus', { 
+                userId: doctorId, 
+                online: onlineUsers.has(doctorId), 
+                type: 'doctor' 
+            });
+            io.to(roomId).emit('userStatus', { 
+                userId: userId, 
+                online: onlineUsers.has(userId), 
+                type: 'user' 
+            });
+        }
+    });
+
     socket.on('drmessage',  async ({doctorId,userId,message}) => {
         console.log("DoctorId and userId==================  inside the  function   messGIN FROM THE DOCTOR", doctorId, userId)
         console.log('Message received from doctor:', message);
@@ -100,6 +139,28 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        let disconnectedUserId = null;
+        let disconnectedUserType = null;
+
+        // Find the disconnected user
+        for (const [userId, data] of onlineUsers.entries()) {
+            if (data.socketId === socket.id) {
+                disconnectedUserId = userId;
+                disconnectedUserType = data.type;
+                onlineUsers.delete(userId);
+                break;
+            }
+        }
+
+        if (disconnectedUserId) {
+            // Broadcast offline status
+            io.emit('userStatus', { 
+                userId: disconnectedUserId, 
+                online: false, 
+                type: disconnectedUserType 
+            });
+        }
+
         console.log(`Socket ${socket.id} disconnected`);
     });
 });

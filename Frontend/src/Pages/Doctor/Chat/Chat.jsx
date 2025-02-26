@@ -18,6 +18,7 @@ const Chat = () => {
   const socketRef = useRef(null);
   const [indication,setIndication] = useState(false);
   const [userIsTyping, setUserIsTyping] = useState(false);
+  const [isUserOnline, setIsUserOnline] = useState(false);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -74,7 +75,12 @@ const Chat = () => {
         transports: ['websocket', 'polling'],
       });
 
-      socketRef.current.emit('joinRoom', { doctorId, userId });
+      socketRef.current.emit('joinRoom', { doctorId, userId, type: 'doctor' });
+      
+      setTimeout(() => {
+        socketRef.current.emit('userConnected', { userId: doctorId, type: 'doctor' });
+      }, 100);
+
       socketRef.current.on('connect', () => {
         console.log('Connected to socket', socketRef.current.id);
       });
@@ -91,6 +97,13 @@ const Chat = () => {
       });
       socketRef.current.on('usertyping', ({ isTyping }) => {
         setUserIsTyping(isTyping);
+      });
+
+      socketRef.current.on('userStatus', ({ userId: statusUserId, online, type }) => {
+        if (statusUserId === userId && type === 'user') {
+          setIsUserOnline(online);
+          console.log(`User ${userId} is ${online ? 'online' : 'offline'}`);
+        }
       });
 
       socketRef.current.on('disconnect', () => {
@@ -130,19 +143,18 @@ const Chat = () => {
       <Sidebar />
       <div className="flex-1 ml-72 p-6">
         <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          {/* <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
-            <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full" />
-            <p>patient</p>
-
-          </div> */}
           <div className="px-6 py-4 border-b border-gray-200 flex items-center space-x-4">
-    <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full" />
-    <div>
-        <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
-        <p className="text-gray-500 text-sm">Patient</p>
-    </div>
-</div>
+            <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full" />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
+              <p className="text-sm">
+                <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                  isUserOnline ? 'bg-green-500' : 'bg-gray-400'
+                }`}></span>
+                {isUserOnline ? 'Online' : 'Offline'}
+              </p>
+            </div>
+          </div>
 
           <div ref={chatContainerRef} className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="space-y-4">

@@ -19,6 +19,7 @@ const Chat = () => {
   const socketRef = useRef(null);
   const [indication,setIndication] = useState(false); 
   const [doctorIsTyping, setDoctorIsTyping] = useState(false);
+  const [isDoctorOnline, setIsDoctorOnline] = useState(false);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -73,8 +74,12 @@ const Chat = () => {
         transports: ['websocket', 'polling'],
       });
 
-      socketRef.current.emit('joinRoom', { doctorId, userId });
-     
+      socketRef.current.emit('joinRoom', { doctorId, userId, type: 'user' });
+      
+      setTimeout(() => {
+        socketRef.current.emit('userConnected', { userId, type: 'user' });
+      }, 100);
+
       socketRef.current.on('connect', () => {
         console.log('Connected to socket', socketRef.current.id);
       });
@@ -94,6 +99,13 @@ const Chat = () => {
 
       socketRef.current.on('doctortyping', ({ isTyping }) => {
         setDoctorIsTyping(isTyping);
+      });
+
+      socketRef.current.on('userStatus', ({ userId: statusUserId, online, type }) => {
+        if (statusUserId === doctorId && type === 'doctor') {
+          setIsDoctorOnline(online);
+          console.log(`Doctor ${doctorId} is ${online ? 'online' : 'offline'}`);
+        }
       });
 
       socketRef.current.on('connect_error', (err) => {
@@ -141,9 +153,14 @@ const Chat = () => {
                 <h3 className="text-lg font-semibold text-gray-800">
                   {doctor.name || 'Dr. Name'}
                 </h3>
-                <span className="text-sm text-gray-600">
-                  {doctor.specialization || 'Specialization'}
-                </span>
+                <div className="flex items-center">
+                  <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                    isDoctorOnline ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></span>
+                  <span className="text-sm text-gray-600">
+                    {isDoctorOnline ? 'Online' : 'Offline'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

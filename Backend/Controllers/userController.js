@@ -527,52 +527,6 @@ export const verifyPayment = async (req, res) => {
     }
 };
 
-// export const chatDetails = async (req,res) => {
-
-//     try{
-//         const {doctorId,userId} = req.params;
-
-//        console.log("doctorId,userId==================  req.params",doctorId,userId);
-//        const doctor = await Doctor.findById(doctorId);
-//        const user = await User.findById(userId);
-//        res.status(200).json({doctor,user});
-//     }
-//     catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
-//     }
-// }
-
-// export const sendMessage = async (req, res) => {
-//     try {
-//         const { roomId, doctorId, userId, message } = req.body;
-
-//         // Save the message to the database
-//         const chatMessage = new Chat({ roomId, doctorId, userId, message });
-//         await chatMessage.save();
-
-//         // Emit the message to the socket
-//         io.to(roomId).emit('getMessage', { doctorId, userId, message });
-
-//         res.status(200).json({ message: 'Message sent successfully' });
-//     } catch (error) {
-//         console.error('Error sending message:', error);
-//         res.status(500).json({ error: 'Error sending message' });
-//     }
-// }
-
-// export const getChat = async(req, res) => {
-//     const { roomId } = req.params;
-//     try {
-//         const messages = await Chat.find({ roomId }).sort({ createdAt: 1 });
-//         res.status(200).json(messages);
-//     } catch (error) {
-//         console.error('Error fetching chat:', error);
-//         res.status(500).json({ error: error.message });
-//     }
-// }
-
-
 export const fetchDoctor = async(req, res) => {
     const { doctorId } = req.params;
 
@@ -590,11 +544,8 @@ export const chatDetails = async (req,res) => {
     try {
         
         const { doctorId, userId } = req.params;
-        console.log('reqparams ==================================reqparams ',req.params)
       const roomId = doctorId + '_' + userId;
-        console.log('room id====================',roomId)
         const messages = await Chat.find({ roomId }).sort({ createdAt: 1 });
-        console.log('Chat details:', messages);
         res.status(200).json(messages);
     } catch (error) {
         console.error('Error fetching chat details:', error);
