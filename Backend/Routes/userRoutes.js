@@ -19,6 +19,7 @@ import {
        FetchAppoiments,
        verifyPayment,
        fetchDoctor,
+       chatDetails
       //  chatDetails,
       //  sendMessage,
       //  getChat
@@ -60,5 +61,6 @@ router.get('/doctorinfo/:doctorId',fetchDoctor);
 
 // router.post('/sendmessage',sendMessage);
 // router.get('/Chats/:roomId',getChat);
+router.get('/Chats/:doctorId/:userId',chatDetails);
 
 export default router;

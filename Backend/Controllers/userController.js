@@ -576,13 +576,28 @@ export const verifyPayment = async (req, res) => {
 export const fetchDoctor = async(req, res) => {
     const { doctorId } = req.params;
 
-    console.log('fetchdoctor details fjjj nvjnjdjdfnjlfanf' ,doctorId)
+    // console.log('fetchdoctor details fjjj nvjnjdjdfnjlfanf' ,doctorId)
     try {
         const doctor = await Doctor.findById(doctorId);
         res.status(200).json(doctor);
-        console.log('Doctor details:', doctor);
+        // console.log('Doctor details:', doctor);
     } catch (error) {
         console.error('Error fetching doctor:', error);
+        res.status(500).json({ error: error.message });
+    }
+}
+export const chatDetails = async (req,res) => {
+    try {
+        
+        const { doctorId, userId } = req.params;
+        console.log('reqparams ==================================reqparams ',req.params)
+      const roomId = doctorId + '_' + userId;
+        console.log('room id====================',roomId)
+        const messages = await Chat.find({ roomId }).sort({ createdAt: 1 });
+        console.log('Chat details:', messages);
+        res.status(200).json(messages);
+    } catch (error) {
+        console.error('Error fetching chat details:', error);
         res.status(500).json({ error: error.message });
     }
 }
