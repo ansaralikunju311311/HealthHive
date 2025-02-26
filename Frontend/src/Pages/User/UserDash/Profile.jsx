@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr'
 import { useNavigate } from 'react-router-dom'
+import HomeButton from '../../../Component/User/HomeButton/Homebutton'
 
 const Profile = () => {
   const userData = JSON.parse(localStorage.getItem('userId')) || {};
@@ -17,8 +18,13 @@ const Profile = () => {
     <div className="flex h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       <Sidebar activePage="Profile" />
       
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-8 ml-64">
         <div className="max-w-4xl mx-auto">
+          {/* Home Button with gradient */}
+          <div className="mb-6">
+            <HomeButton className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg" />
+          </div>
+
           {/* Profile Header */}
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center gap-8">

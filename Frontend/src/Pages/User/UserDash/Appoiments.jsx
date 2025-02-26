@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
+import Homebutton from '../../../Component/User/HomeButton/Homebutton';
 import {
   Box,
   Paper,
@@ -91,6 +92,20 @@ const Appointments = () => {
         marginLeft: '256px', // Add margin to account for sidebar width
         marginTop: '1rem'    // Add top margin for spacing
       }}>
+        {/* Home Button with gradient */}
+        <Box sx={{ mb: 3 }}>
+          <Homebutton sx={{ 
+            background: 'linear-gradient(to right, #3b82f6, #4f46e5)',
+            '&:hover': {
+              background: 'linear-gradient(to right, #2563eb, #4338ca)',
+            },
+            color: 'white',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            transition: 'all 0.2s ease-in-out',
+          }} />
+        </Box>
+
         <Typography 
           variant="h4" 
           sx={{ 
