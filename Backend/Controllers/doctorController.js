@@ -737,4 +737,22 @@ export const userDetails = async(req,res)=>
         res.status(500).json({ message: error.message });
     }
 }
+
+
+
+
+export const chatDetails = async(req,res)=>
+{
+    try {
+        console.log('reqparams ==================================reqparams ',req.params)
+        const {userId,doctorId} = req.params;
+      const roomId = doctorId+'_'+userId;
+        const chats = await Chat.find({roomId}).sort({ createdAt: 1 });
+        res.status(200).json(chats);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

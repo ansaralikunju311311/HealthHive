@@ -485,7 +485,7 @@ const Chat = () => {
     if (message.trim() === '') return;
     const newMessage = {
       sender: 'doctor',
-      content: message,
+      message: message,
       timestamp: new Date().toISOString(),
     };
     setChat(prev => [...prev, newMessage]);
@@ -507,6 +507,19 @@ const Chat = () => {
     };
 
     fetchUser();
+
+
+
+
+    const chatData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/doctor/Chats/${doctorId}/${userId}`);
+        setChat(response.data);
+      } catch (error) {
+        console.error('Error fetching chat:', error);
+      }
+    }
+    chatData();
 
 
 
@@ -540,7 +553,7 @@ const Chat = () => {
         console.log("doctor receving datamessage",data);
         const newMessage = {
           sender: 'user',
-          content: data,
+          message: data,
           timestamp: new Date().toISOString(),
         };
         setChat(prev => [...prev, newMessage]);
@@ -595,11 +608,11 @@ const Chat = () => {
                       ? 'bg-blue-600 text-white rounded-l-lg rounded-tr-lg'
                       : 'bg-gray-100 text-gray-800 rounded-r-lg rounded-tl-lg'
                   } px-4 py-3 shadow-sm`}>
-                    <p className="text-sm">{msg.content}</p>
+                    <p className="text-sm">{msg.message}</p>
                     <span className={`text-xs ${
                       msg.sender === 'doctor' ? 'text-blue-100' : 'text-gray-500'
                     } block mt-1`}>
-                      {format(new Date(msg.timestamp), 'HH:mm')}
+                      {/* {format(new Date(msg.timestamp), 'HH:mm')} */}
                     </span>
                   </div>
                 </div>
