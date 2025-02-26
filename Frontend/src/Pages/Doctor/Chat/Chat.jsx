@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../../../Component/Doctor/Sidebar';
@@ -21,6 +17,7 @@ const Chat = () => {
   const [user, setUser] = useState({});
   const socketRef = useRef(null);
   const [indication,setIndication] = useState(false);
+  const [userIsTyping, setUserIsTyping] = useState(false);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -71,18 +68,6 @@ const Chat = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:5000', {
         withCredentials: true,
@@ -90,7 +75,6 @@ const Chat = () => {
       });
 
       socketRef.current.emit('joinRoom', { doctorId, userId });
-
       socketRef.current.on('connect', () => {
         console.log('Connected to socket', socketRef.current.id);
       });
@@ -105,14 +89,8 @@ const Chat = () => {
         };
         setChat(prev => [...prev, newMessage]);
       });
-      socketRef.current.on('typing', (data) => {
-        console.log("from the doctor ",data)
-        setIndication(data)
-        if (data) {
-          setTimeout(() => {
-            setIndication(false);
-          }, 2000);
-        }
+      socketRef.current.on('usertyping', ({ isTyping }) => {
+        setUserIsTyping(isTyping);
       });
 
       socketRef.current.on('disconnect', () => {
@@ -135,6 +113,17 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [chat]);
+
+  const handleTyping = () => {
+    socketRef.current.emit("doctortyping", { doctorId, userId, isTyping: true });
+
+    // Clear typing indication after delay
+    const timeoutId = setTimeout(() => {
+      socketRef.current.emit("doctortyping", { doctorId, userId, isTyping: false });
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -170,21 +159,16 @@ const Chat = () => {
                     } block mt-1`}>
                       {/* {format(new Date(msg.timestamp), 'HH:mm')} */}
                     </span>
-
-
-
-                   
-
                   </div>
                 </div>
               ))}
-               {indication && (
-            <div className="flex justify-start">
-              <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm">
-                is typing...
-              </div>
-            </div>
-          )}
+              {userIsTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-800 rounded-r-lg rounded-tl-lg px-4 py-3 shadow-sm">
+                    <p className="text-sm">User is typing...</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -192,7 +176,10 @@ const Chat = () => {
             <div className="flex items-end space-x-4">
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {setMessage(e.target.value);
+                  handleTyping();
+                }
+              }
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();

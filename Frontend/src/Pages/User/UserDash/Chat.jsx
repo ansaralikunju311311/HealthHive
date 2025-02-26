@@ -17,6 +17,8 @@ const Chat = () => {
   const [message, setMessage] = useState('');
   const [doctor, setDoctor] = useState({});
   const socketRef = useRef(null);
+  const [indication,setIndication] = useState(false); 
+  const [doctorIsTyping, setDoctorIsTyping] = useState(false);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -55,9 +57,6 @@ const Chat = () => {
 
     fetchDoctor();
 
-
-
-
     const chatData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/user/Chats/${doctorId}/${userId}`);
@@ -93,6 +92,10 @@ const Chat = () => {
         console.log('Disconnected from socket');
       });
 
+      socketRef.current.on('doctortyping', ({ isTyping }) => {
+        setDoctorIsTyping(isTyping);
+      });
+
       socketRef.current.on('connect_error', (err) => {
         console.error('Connection error:', err.message);
       });
@@ -109,19 +112,17 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [chat]);
-  const [indication, setIndication] = useState(false);
-
 
   const handleTyping = () => {
-    setIndication(true);
-    socketRef.current.emit("typing", { doctorId, userId, isTyping: true });
+    socketRef.current.emit("usertyping", { doctorId, userId, isTyping: true });
 
-    // Stop typing after 2 seconds of inactivity
-    setTimeout(() => {
-        setIndication(false);
-        socketRef.current.emit("typing", { doctorId, userId, isTyping: false });
+    // Clear typing indication after delay
+    const timeoutId = setTimeout(() => {
+      socketRef.current.emit("usertyping", { doctorId, userId, isTyping: false });
     }, 2000);
-};
+
+    return () => clearTimeout(timeoutId);
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -173,6 +174,13 @@ const Chat = () => {
                   </div>
                 </div>
               ))}
+              {doctorIsTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-800 rounded-r-lg rounded-tl-lg px-4 py-3 shadow-sm">
+                    <p className="text-sm">Doctor is typing...</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

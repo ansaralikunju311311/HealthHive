@@ -63,11 +63,9 @@ io.on('connection', (socket) => {
     });
 
       
-    socket.on('typing', ({ doctorId, userId, isTyping }) => {
-        console.log("from the user ",isTyping)
-        console.log("DoctorId and userId==================  typing event is rechaed here inside the  function", doctorId, userId)
+    socket.on('doctortyping', ({ doctorId, userId, isTyping }) => {
         const roomId = `${doctorId}_${userId}`;
-        io.to(roomId).emit('typing', { doctorId, isTyping });
+        io.to(roomId).emit('doctortyping', { isTyping });
     });
 
 
@@ -94,12 +92,12 @@ io.on('connection', (socket) => {
             console.log(error);
             
         }
+    });
 
-
-        
-        // io.to(roomId).emit('usermessage', message);
-    })
-
+    socket.on('usertyping', ({ doctorId, userId, isTyping }) => {
+        const roomId = `${doctorId}_${userId}`;
+        io.to(roomId).emit('usertyping', { isTyping });
+    });
 
     socket.on('disconnect', () => {
         console.log(`Socket ${socket.id} disconnected`);
