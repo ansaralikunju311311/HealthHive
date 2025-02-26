@@ -572,4 +572,18 @@ export const verifyPayment = async (req, res) => {
 //     }
 // }
 
+
+export const fetchDoctor = async(req, res) => {
+    const { doctorId } = req.params;
+
+    console.log('fetchdoctor details fjjj nvjnjdjdfnjlfanf' ,doctorId)
+    try {
+        const doctor = await Doctor.findById(doctorId);
+        res.status(200).json(doctor);
+        console.log('Doctor details:', doctor);
+    } catch (error) {
+        console.error('Error fetching doctor:', error);
+        res.status(500).json({ error: error.message });
+    }
+}
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

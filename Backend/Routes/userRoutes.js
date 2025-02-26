@@ -18,6 +18,7 @@ import {
        bookAppointment,
        FetchAppoiments,
        verifyPayment,
+       fetchDoctor,
       //  chatDetails,
       //  sendMessage,
       //  getChat
@@ -49,6 +50,9 @@ router.post('/verify-payment', verifyPayment)
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);
 router.get('/getappointments/:userid',FetchAppoiments);
+
+
+router.get('/doctorinfo/:doctorId',fetchDoctor);
 // router.post('/chat/:doctorId/:userId',handleChat);
 // router.get('/doctorChat',getDoctorChat);
 // router.get('/ChatDetails/:doctorId/:userId',chatDetails);
