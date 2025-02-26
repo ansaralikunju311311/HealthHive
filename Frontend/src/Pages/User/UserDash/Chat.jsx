@@ -1,45 +1,52 @@
-
-
-
-
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import Sidebar from '../../../Component/Doctor/Sidebar';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
 import axios from 'axios';
+import { FiSend } from 'react-icons/fi';
+import { format } from 'date-fns';
 
 const Chat = () => {
-
-   const location = useLocation();
-   const navigate = useNavigate();
-   const { doctorId, userId } = location.state || {};
-
-   console.log("DoctorDetails==================  inside the  function", location.state)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { doctorId, userId } = location.state || {};
+  const chatContainerRef = useRef(null);
 
   const [chat, setChat] = useState([]);
-  const [message,setMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [doctor, setDoctor] = useState({});
-  const onSend = () => {
-    if(message.trim() === '') return; // Avoid empty messages
-    console.log('Message sent:');
-    socketRef.current.emit('usermessage', { doctorId, userId, message }); // Emit event to backend
-    setMessage(''); // Clear input after sending
-  };
-
   const socketRef = useRef(null);
 
-  useEffect(() => {
-   
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  };
 
-   console.log('wornfjnfjkn')
+  const onSend = () => {
+    if (message.trim() === '') return;
+    const newMessage = {
+      sender: 'user',
+      content: message,
+      timestamp: new Date().toISOString(),
+    };
+    setChat(prev => [...prev, newMessage]);
+    socketRef.current.emit('usermessage', { doctorId, userId, message });
+    setMessage('');
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSend();
+    }
+  };
+
+  useEffect(() => {
     const fetchDoctor = async () => {
-      console.log('Fetching doctor details...');
       try {
         const response = await axios.get(`http://localhost:5000/api/user/doctorinfo/${doctorId}`);
         setDoctor(response.data);
-        console.log('Doctor details:mfmfmfmmfmfmgmf gmgmgnmfngmnmgnmngmfngmfgnfmngmfgnfm', response.data);
       } catch (error) {
         console.error('Error fetching doctor:', error);
       }
@@ -47,7 +54,6 @@ const Chat = () => {
 
     fetchDoctor();
 
-    // Initialize socket only if it's not already initialized
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:5000', {
         withCredentials: true,
@@ -59,9 +65,14 @@ const Chat = () => {
       socketRef.current.on('connect', () => {
         console.log('Connected to socket', socketRef.current.id);
       });
+
       socketRef.current.on('drmessage', (data) => {
-        console.log('Message received:', data);
-        setChat((prevChat) => [...prevChat, data]);  // Append new message
+        const newMessage = {
+          sender: 'doctor',
+          content: data,
+          timestamp: new Date().toISOString(),
+        };
+        setChat(prev => [...prev, newMessage]);
       });
 
       socketRef.current.on('disconnect', () => {
@@ -76,24 +87,93 @@ const Chat = () => {
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
-        console.log('Socket manually disconnected');
-        socketRef.current = null; // Reset ref
+        socketRef.current = null;
       }
     };
-  }, [userId,doctorId]);
+  }, [userId, doctorId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat]);
 
   return (
-    <div>
+    <div className="flex h-screen bg-gray-100">
       <Sidebar />
-      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
-      <button onClick={onSend}>Send</button>
-      {/* <input type="text" /> */}
-      
-      {/* <button onClick={onSend}>onSend</button> */}
-      <div>
-        {chat.map((message, index) => (
-          <p key={index}>{message}</p>
-        ))}
+      <div className="flex-1 ml-72 p-6">
+        <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
+          {/* Chat Header */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center space-x-4">
+              <img 
+                src={doctor.profileImage || 'https://via.placeholder.com/40'} 
+                alt="Doctor" 
+                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+              />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {doctor.name || 'Dr. Name'}
+                </h3>
+                <span className="text-sm text-gray-600">
+                  {doctor.specialization || 'Specialization'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Messages Container */}
+          <div 
+            ref={chatContainerRef}
+            className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+          >
+            <div className="space-y-4">
+              {chat.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[70%] ${
+                    msg.sender === 'user' 
+                      ? 'bg-blue-600 text-white rounded-l-lg rounded-tr-lg' 
+                      : 'bg-gray-100 text-gray-800 rounded-r-lg rounded-tl-lg'
+                  } px-4 py-3 shadow-sm`}
+                  >
+                    <p className="text-sm">{msg.content}</p>
+                    <span className={`text-xs ${
+                      msg.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                    } block mt-1`}>
+                      {format(new Date(msg.timestamp), 'HH:mm')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Chat Input */}
+          <div className="px-6 py-4 border-t border-gray-200 bg-white">
+            <div className="flex items-end space-x-4">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                rows="1"
+                className="flex-1 resize-none rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-3 text-sm"
+              />
+              <button 
+                onClick={onSend}
+                disabled={!message.trim()}
+                className={`p-3 rounded-lg ${
+                  message.trim() 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-gray-300 cursor-not-allowed text-gray-500'
+                } transition-colors duration-200`}
+              >
+                <FiSend className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
