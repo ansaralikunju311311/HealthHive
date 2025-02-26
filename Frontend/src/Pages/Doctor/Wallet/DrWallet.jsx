@@ -67,7 +67,8 @@ useEffect(() => {
           flexGrow: 1, 
           p: 4, 
           bgcolor: '#f8fafc',
-          minHeight: '100vh'
+          minHeight: '100vh',
+          marginLeft: '256px' // Add this line (64 * 4 = 256px, matching sidebar width)
         }}
       >
         <Container maxWidth="lg" sx={{ mt: 2, mb: 4 }}>

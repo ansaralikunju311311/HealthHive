@@ -176,11 +176,10 @@ const Schedules = () => {
     }, [doctorId]);
 
     return (
-        <div className="flex">
+        <div className="flex min-h-screen bg-gray-50">
             <Sidebar activePage="Schedules" />
-
-            <div className="relative w-full p-5 box-border">
-                <h1 className="text-center text-2xl font-bold mb-5">Current Schedules</h1>
+            <div className="ml-64 flex-1 p-8 mt-4">
+                <h1 className="text-2xl font-bold mb-5">Current Schedules</h1>
 
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>

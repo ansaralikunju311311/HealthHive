@@ -129,12 +129,8 @@ const DoctorDash = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar doctorid ={doctor._id} />
-
-
-      {/* Main Content */}
-      <div className="flex-1 p-8">
+      <Sidebar doctorid={doctor._id} />
+      <div className="ml-64 flex-1 p-8 mt-4"> {/* Added ml-64 to match sidebar width and mt-4 for top margin */}
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="text-xl font-semibold">Welcome, Dr. {doctor?.name}</div>

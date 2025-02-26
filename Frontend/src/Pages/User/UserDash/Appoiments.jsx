@@ -85,7 +85,12 @@ const Appointments = () => {
   return (
     <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
       <Sidebar />
-      <Box sx={{ flex: 1, p: 3 }}>
+      <Box sx={{ 
+        flex: 1, 
+        p: 3, 
+        marginLeft: '256px', // Add margin to account for sidebar width
+        marginTop: '1rem'    // Add top margin for spacing
+      }}>
         <Typography 
           variant="h4" 
           sx={{ 

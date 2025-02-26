@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -11,10 +11,13 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
+
 const Sidebar = ({activePage}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const id = localStorage.getItem('userId');
   console.log(id)
-  const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       const token = cookies.get('usertoken');
@@ -51,54 +54,53 @@ const Sidebar = ({activePage}) => {
       icon: <MdDashboard className="w-6 h-6" />, 
       text: 'Profile', 
       path: '/user/Profile',
-      active: true 
+      id: 'profile'
     },
     { 
       icon: <MdEventAvailable className="w-6 h-6" />, 
       text: 'Appointments',
-      path: '/user/appointments' 
-    },
-    // { 
-    //   icon: <MdSchedule className="w-6 h-6" />, 
-    //   text: 'Current Schedules',
-    //   path: `/schedules`, 
-    // //   state: {userid: id}
-    // },
-    
-    { 
-      icon: <MdChat className="w-6 h-6" />, 
-      text: 'Chats',
-      path: '/user/chats' 
-    },
+      path: '/user/appointments',
+      id: 'appointments'
+    }
   ];
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
+
   return (
-    <div className="w-64 bg-white shadow-lg">
+    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen">
       <div className="p-6 space-y-4">
-        {sidebarItems.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => handleNavigation(item.path)}
-            className={`flex items-center space-x-3 ${
-              item.active
-                ? 'bg-blue-500 text-white'
-                : 'hover:bg-gray-100 text-gray-700'
-            } rounded-lg py-3 px-4 cursor-pointer transition-colors`}
-          >
-            {item.icon}
-            <span>{item.text}</span>
-          </div>
-        ))}
+        <div className="mb-8">
+          <h1 className="text-xl font-bold text-gray-800">HealthHive</h1>
+        </div>
         
-        <div>
+        <div className="space-y-2">
+          {sidebarItems.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => navigate(item.path)}
+              className={`flex items-center space-x-3 rounded-lg py-3 px-4 cursor-pointer transition-all duration-200 ${
+                location.pathname === item.path
+                  ? 'bg-blue-500 text-white shadow-md transform scale-105'
+                  : 'text-gray-700 hover:bg-gray-100 hover:scale-102'
+              }`}
+            >
+              <div className={`${
+                location.pathname === item.path 
+                  ? 'transform scale-110' 
+                  : ''
+              }`}>
+                {item.icon}
+              </div>
+              <span className="font-medium">{item.text}</span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="pt-6 mt-6 border-t border-gray-200">
           <button 
             onClick={handleLogout}
-            className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-colors"
+            className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-all duration-200"
           >
             <MdExitToApp className="w-6 h-6" />
-            <span>Logout</span>
+            <span className="font-medium">Logout</span>
           </button>
         </div>
       </div>
