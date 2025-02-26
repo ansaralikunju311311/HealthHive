@@ -8,7 +8,7 @@ import admin from './Routes/adminRoutes.js';
 import Razorpay from 'razorpay';
 import { Server } from 'socket.io';
 import http from 'http';
-
+import Chat from './Model/chat.js';
 
 
 import cookieParser from 'cookie-parser';
@@ -36,18 +36,59 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on('drmessage', ({doctorId,userId,message}) => {
+    socket.on('drmessage',  async ({doctorId,userId,message}) => {
         console.log("DoctorId and userId==================  inside the  function   messGIN FROM THE DOCTOR", doctorId, userId)
         console.log('Message received from doctor:', message);
-        const roomId = `${doctorId}_${userId}`;    
-        io.to(roomId).emit('drmessage', message);
+        const roomId = `${doctorId}_${userId}`;  
+
+           try {
+            
+            const newMessage = new Chat({
+                roomId:roomId,
+                message:message,
+                doctorId:doctorId,
+                userId:userId,
+                sender:'doctor',
+                reciever:'user',
+                date:new Date()
+            })
+            await newMessage.save();
+            io.to(roomId).emit('drmessage', message);
+
+           } catch (error) {
+            console.log(error);
+           }    
+
+
     });
 
-     socket.on('usermessage', ({doctorId,userId,message}) => {
+     socket.on('usermessage', async({doctorId,userId,message}) => {
         const roomId = `${doctorId}_${userId}`;
         console.log('Message received from user:', message);
+
+
+
+        try {
+            const newMessage = new Chat({
+                roomId:roomId,
+                message:message,
+                doctorId:doctorId,
+                userId:userId,
+                sender:'user',
+                reciever:'doctor',
+                date:new Date()
+            })
+            await newMessage.save();
+            io.to(roomId).emit('usermessage', message);
+
+        } catch (error) {
+            console.log(error);
+            
+        }
+
+
         
-        io.to(roomId).emit('usermessage', message);
+        // io.to(roomId).emit('usermessage', message);
     })
 
 

@@ -7,11 +7,11 @@ const chatSchema = new mongoose.Schema({
     message : {
         type:String,
     },
-    senderId : {
+    doctorId : {
         type:String,
         required:true
     },
-    recieverId : {
+    userId : {
         type:String,
         require:true
     },
