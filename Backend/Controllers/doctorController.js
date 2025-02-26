@@ -12,6 +12,7 @@ import appoimentSchedule from '../Model/appoimentSchedule.js';
 import Appointment from '../Model/appoiment.js';
 import DoctorWallet from '../Model/Drwallet.js';
 import User from '../Model/userModel.js';
+import Transaction from "../Model/Transaction.js";
 import Chat from '../Model/chat.js'; // Import the Chat model
 // import RejectedDoctor from "../Model/RejectedDoctors.js";
     // import ClearToken from '../utils/auth.js';    
@@ -645,6 +646,9 @@ export const fetchWalletBalance = async (req, res) => {
 
         let walletBalance = await DoctorWallet.findOne({ doctor: id });
 
+        const history = await Transaction.find({doctor: id});
+         console.log("history", history);
+
         if (!walletBalance) {
             // Create new wallet if it doesn't exist
             walletBalance = new DoctorWallet({
@@ -656,7 +660,7 @@ export const fetchWalletBalance = async (req, res) => {
             walletBalance.totalAmount = totalearnings;
         }
         await walletBalance.save();
-        res.status(200).json(walletBalance);
+        res.status(200).json({walletBalance,history});
     } catch (error) {
         console.error('Error in fetchWalletBalance:', error);
         res.status(500).json({ message: error.message });

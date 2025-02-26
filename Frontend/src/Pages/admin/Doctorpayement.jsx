@@ -130,7 +130,7 @@ const DoctorPayment = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={4}>
+            {/* <Grid item xs={12} md={4}>
               <Card sx={{ 
                 background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
                 color: 'white',
@@ -147,8 +147,8 @@ const DoctorPayment = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={12} md={4}>
+            </Grid> */}
+            {/* <Grid item xs={12} md={4}>
               <Card sx={{ 
                 background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
                 color: 'white',
@@ -165,7 +165,7 @@ const DoctorPayment = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           {/* Doctor Payment Details */}
@@ -186,8 +186,8 @@ const DoctorPayment = () => {
                       <TableCell>Doctor</TableCell>
                       <TableCell>Specialization</TableCell>
                       <TableCell align="right">Total Earnings</TableCell>
-                      <TableCell align="right">Paid Amount</TableCell>
-                      <TableCell align="right">Pending Amount</TableCell>
+                      {/* <TableCell align="right">Paid Amount</TableCell> */}
+                      {/* <TableCell align="right">Pending Amount</TableCell> */}
                       <TableCell align="center">Appointments</TableCell>
                       {/* <TableCell align="center">AppoimentDetails</TableCell> */}
                     </TableRow>
@@ -218,18 +218,18 @@ const DoctorPayment = () => {
                             }
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">
+                        {/* <TableCell align="right">
                           <Typography sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
                             ₹{doctor.appointmentCount
                             }
                           </Typography>
-                        </TableCell>
-                        <TableCell align="right">
+                        </TableCell> */}
+                        {/* <TableCell align="right">
                           <Typography sx={{ color: '#FF9800', fontWeight: 'bold' }}>
                             ₹{doctor.appointmentCount
                             }
                           </Typography>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell align="center">
                           <Chip
                             icon={<FaCalendarCheck />}

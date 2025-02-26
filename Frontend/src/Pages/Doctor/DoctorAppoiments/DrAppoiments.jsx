@@ -52,64 +52,78 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
   if (appointments.length === 0) return null;
 
   return (
-    <div className="mb-8">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center">
-        {Icon && <Icon className="mr-2 text-blue-500" />}
-        {title}
-        <span className="ml-2 text-sm text-gray-500">({appointments.length})</span>
+    <div className="mb-8 animate-fadeIn">
+      <h3 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-3 flex items-center">
+        {Icon && <Icon className="mr-3 text-blue-600" size={24} />}
+        <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+          {title}
+        </span>
+        <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+          {appointments.length}
+        </span>
       </h3>
-      <div className="space-y-4">
+      <div className="grid gap-6">
         {appointments.map((appointment) => (
           <div 
             key={appointment._id} 
-            className={`flex items-center p-4 rounded-lg transition-colors ${
+            className={`transform transition-all duration-300 hover:scale-[1.02] rounded-xl shadow-sm hover:shadow-xl ${
               title === 'Today' 
-                ? 'bg-green-50 hover:bg-green-100' 
+                ? 'bg-gradient-to-r from-green-50 to-blue-50 border border-green-100' 
                 : title === 'Upcoming'
-                ? 'bg-blue-50 hover:bg-blue-100'
-                : 'bg-gray-50 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100'
+                : 'bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-100'
             }`}
           >
-            <div className="flex-shrink-0 mr-4">
-              {appointment.user.image ? (
-                <img 
-                  src={appointment.user.image} 
-                  alt={appointment.user.name} 
-                  className="w-16 h-16 rounded-full object-cover"
-                />
-              ) : (
-                <FaUserCircle className="text-5xl text-gray-400" />
-              )}
-            </div>
-            <div className="flex-grow">
-              <div className="flex justify-between items-center">
-                <h4 className="text-lg font-semibold text-gray-800">
-                  {appointment.user.name}
-                </h4>
-                <span className="text-sm text-gray-500">
-                  <FaClock className="inline-block mr-1" />
-                  {appointment.slot}
-                </span>
+            <div className="p-6 flex items-start space-x-6">
+              <div className="flex-shrink-0">
+                {appointment.user.image ? (
+                  <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
+                    <img 
+                      src={appointment.user.image} 
+                      alt={appointment.user.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center ring-4 ring-white shadow-lg">
+                    <FaUserCircle className="text-4xl text-white" />
+                  </div>
+                )}
               </div>
-              <div className="mt-2 grid grid-cols-3 gap-2 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <FaVenusMars className="mr-2 text-blue-500" />
-                  {appointment.user.gender}
+              
+              <div className="flex-grow">
+                <div className="flex justify-between items-start">
+                  <h4 className="text-xl font-bold text-gray-900">
+                    {appointment.user.name}
+                  </h4>
+                  <span className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium flex items-center">
+                    <FaClock className="mr-2" />
+                    {appointment.slot}
+                  </span>
                 </div>
-                <div className="flex items-center">
-                  <FaUserMd className="mr-2 text-blue-500" />
-                  {appointment.user.age} years
+
+                <div className="mt-4 grid grid-cols-3 gap-4">
+                  {[
+                    { icon: FaVenusMars, text: appointment.user.gender },
+                    { icon: FaUserMd, text: `${appointment.user.age} years` },
+                    { icon: FaCalendarAlt, text: new Date(appointment.date).toLocaleDateString() }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center space-x-2 text-gray-600">
+                      <item.icon className="text-blue-600" />
+                      <span className="font-medium">{item.text}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center">
-                  <FaCalendarAlt className="mr-2 text-blue-500" />
-                  {new Date(appointment.date).toLocaleDateString()}
+
+                <div className="mt-6">
+                  <button 
+                    onClick={() => handleChat(appointment.user._id, doctor_Id)}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:-translate-y-0.5"
+                  >
+                    <FaComments className="mr-2" />
+                    Chat with Patient
+                  </button>
                 </div>
-              </div>
-              <div className="mt-4">
-                <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow flex items-center gap-2"
-                onClick={() => handleChat(appointment.user._id, doctor_Id)}>
-                  <FaComments /> Chat with Patient
-                </button>
               </div>
             </div>
           </div>
@@ -183,51 +197,42 @@ const DrAppoiments = () => {
   const { today, upcoming, past } = groupAppointmentsByCategory(filteredAppointments);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar activePage="Appointments" />
       <div className="flex-grow p-8">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            Appointments
-          </h2>
-          
-          {/* Date Picker */}
-          <div className="mb-6 flex items-center space-x-4">
-            <label className="text-gray-700 font-medium">Select Date:</label>
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
-              className="form-input w-64 px-4 py-2 border rounded-md"
-              placeholderText="Select a date"
-              isClearable
-            />
+        <div className="max-w-5xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Appointments Dashboard
+            </h2>
+            
+            <div className="flex items-center space-x-4 bg-white p-2 rounded-lg shadow-sm">
+              <FaCalendarAlt className="text-blue-600" />
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                className="form-input w-48 px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                placeholderText="Filter by date"
+                isClearable
+              />
+            </div>
           </div>
 
           {filteredAppointments.length === 0 ? (
-            <div className="bg-white shadow-md rounded-lg p-8 text-center">
+            <div className="bg-white rounded-xl p-8 text-center shadow-sm border border-gray-100">
+              <FaCalendarAlt className="mx-auto text-4xl text-gray-400 mb-4" />
               <p className="text-xl text-gray-600">
                 {selectedDate 
-                  ? "No appointments on this date" 
-                  : "No appointments scheduled"
+                  ? "No appointments scheduled for this date" 
+                  : "No appointments found"
                 }
               </p>
             </div>
           ) : (
             <>
-              <AppointmentSection 
-                title="Today" 
-                appointments={today} 
-                icon={FaCalendarAlt} 
-              />
-              <AppointmentSection 
-                title="Upcoming" 
-                appointments={upcoming} 
-                icon={FaClock} 
-              />
-              <AppointmentSection 
-                title="Past" 
-                appointments={past} 
-              />
+              <AppointmentSection title="Today" appointments={today} icon={FaCalendarAlt} />
+              <AppointmentSection title="Upcoming" appointments={upcoming} icon={FaClock} />
+              <AppointmentSection title="Past" appointments={past} />
             </>
           )}
         </div>
