@@ -527,132 +527,49 @@ export const verifyPayment = async (req, res) => {
     }
 };
 
-// export const handleChat = async (req,res) => {
-//     try {
+// export const chatDetails = async (req,res) => {
 
+//     try{
 //         const {doctorId,userId} = req.params;
-//         console.log("doctorId,userId====",doctorId,userId);
-//         const user = await User.findById(userId).select('name')
-//         const doctor = await Doctor.findById(doctorId).select('name profileImage')
-//         console.log("======user",user.name);
-//         console.log("======doctor",doctor.name);
-//         const username = user.name;
-//         const doctorDetails = doctor
-//         const existingChat = new Chat({
-//                 roomId: doctorId+userId,
-//                 senderId: userId,
-//                 recieverId: doctorId
-//             });
-//             await existingChat.save();
-//         res.status(200).json({existingChat,username,doctorDetails});
-//     } 
 
-
+//        console.log("doctorId,userId==================  req.params",doctorId,userId);
+//        const doctor = await Doctor.findById(doctorId);
+//        const user = await User.findById(userId);
+//        res.status(200).json({doctor,user});
+//     }
 //     catch (error) {
 //         console.log(error);
 //         res.status(500).json({ message: error.message });
 //     }
 // }
 
-
-
-
-// export const getDoctorChat = async (req,res) => {
+// export const sendMessage = async (req, res) => {
 //     try {
-//         const distinctRoomIds = await Chat.aggregate([
-//             {
-//                 $group: {
-//                     _id: "$roomId",
-//                     senderId: {
-//                         $first: "$senderId"
-//                     },
-//                     recieverId: {
-//                         $first: "$recieverId"
-//                     }
-//                 }
-//                 // ,
-//                 // $project: {
-//                 //     _id: 0,
-//                 //     roomId: "$_id",
-//                 //     senderId: 1,
-//                 //     recieverId: 1
-//                 // }
-//             }
-//         ]);
-//         res.status(200).json(distinctRoomIds);
+//         const { roomId, doctorId, userId, message } = req.body;
+
+//         // Save the message to the database
+//         const chatMessage = new Chat({ roomId, doctorId, userId, message });
+//         await chatMessage.save();
+
+//         // Emit the message to the socket
+//         io.to(roomId).emit('getMessage', { doctorId, userId, message });
+
+//         res.status(200).json({ message: 'Message sent successfully' });
 //     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
+//         console.error('Error sending message:', error);
+//         res.status(500).json({ error: 'Error sending message' });
 //     }
-// }s
+// }
 
-
-
-export const chatDetails = async (req,res) => {
-
-    try{
-        const {doctorId,userId} = req.params;
-
-       console.log("doctorId,userId==================  req.params",doctorId,userId);
-       const doctor = await Doctor.findById(doctorId);
-       const user = await User.findById(userId);
-       res.status(200).json({doctor,user});
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-}
-
-export const sendMessage = async (req, res) => {
-    try {
-        const { roomId, message, doctorId, userId } = req.body;
-        
-
-        console.log("roomId, message, doctorId, userId====",message);
-        // Create a new message
-        const newMessage = new Chat({
-            roomId,
-            message:message,
-            senderId:doctorId,
-            recieverId:userId,
-            sender: 'user',
-            reciever:'doctor',  
-            date: new Date(),
-            timestamp: new Date()
-        });
-
-        // Save the message
-        const savedMessage = await newMessage.save();
-        
-        res.status(200).json({
-            success: true,
-            message: 'Message sent successfully',
-            data: savedMessage
-        });
-    } catch (error) {
-        console.error('Error sending message:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to send message',
-            error: error.message 
-        });
-    }
-}
-export const getChat = async(req, res) => {
-    try {
-        const { roomId } = req.params;
-       const chats = await Chat.find({ roomId }).sort({ date: 1 });
-       res.status(200).json(chats);
-
-
-        // console.log(roomId)
-        // res.status(200).json(roomId)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-}
-
+// export const getChat = async(req, res) => {
+//     const { roomId } = req.params;
+//     try {
+//         const messages = await Chat.find({ roomId }).sort({ createdAt: 1 });
+//         res.status(200).json(messages);
+//     } catch (error) {
+//         console.error('Error fetching chat:', error);
+//         res.status(500).json({ error: error.message });
+//     }
+// }
 
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

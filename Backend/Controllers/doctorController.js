@@ -662,66 +662,66 @@ export const fetchWalletBalance = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-export const chatDetails = async (req, res) => {
-    try {
-        const {doctorId,userId} = req.params;
+// export const chatDetails = async (req, res) => {
+//     try {
+//         const {doctorId,userId} = req.params;
 
-       console.log("doctorId,userId==================  req.params",doctorId,userId);  
+//        console.log("doctorId,userId==================  req.params",doctorId,userId);  
        
-       const doctorData = await doctor.findById(doctorId);
+//        const doctorData = await doctor.findById(doctorId);
 
-       const user = await User.findById(userId);
-       res.status(200).json({doctor: doctorData, user});
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-}
-export const sendMessage = async (req, res) => {
-    try {
-        const { roomId, message, doctorId, userId } = req.body;
+//        const user = await User.findById(userId);
+//        res.status(200).json({doctor: doctorData, user});
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }
+// export const sendMessage = async (req, res) => {
+//     try {
+//         const { roomId, message, doctorId, userId } = req.body;
         
 
-        console.log("roomId, message, doctorId, userId====",message);
-        // Create a new message
-        const newMessage = new Chat({
-            roomId,
-            message:message,
-            senderId:doctorId,
-            recieverId:userId,
-            sender: 'doctor',
-            reciever:'user',
-            date: new Date(),
-            timestamp: new Date()
-        });
+//         console.log("roomId, message, doctorId, userId====",message);
+//         // Create a new message
+//         const newMessage = new Chat({
+//             roomId,
+//             message:message,
+//             senderId:doctorId,
+//             recieverId:userId,
+//             sender: 'doctor',
+//             reciever:'user',
+//             date: new Date(),
+//             timestamp: new Date()
+//         });
 
-        // Save the message
-        const savedMessage = await newMessage.save();
+//         // Save the message
+//         const savedMessage = await newMessage.save();
         
-        res.status(200).json({
-            success: true,
-            message: 'Message sent successfully',
-            data: savedMessage
-        });
-    } catch (error) {
-        console.error('Error sending message:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Failed to send message',
-            error: error.message 
-        });
-    }
-}
+//         res.status(200).json({
+//             success: true,
+//             message: 'Message sent successfully',
+//             data: savedMessage
+//         });
+//     } catch (error) {
+//         console.error('Error sending message:', error);
+//         res.status(500).json({ 
+//             success: false,
+//             message: 'Failed to send message',
+//             error: error.message 
+//         });
+//     }
+// }
 
 
-export const getChat = async(req, res) => {
-    try {
-        const { roomId } = req.params;
-       const chats = await Chat.find({ roomId }).sort({ date: 1 });
-       res.status(200).json(chats);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-}
+// export const getChat = async(req, res) => {
+//     try {
+//         const { roomId } = req.params;
+//        const chats = await Chat.find({ roomId }).sort({ date: 1 });
+//        res.status(200).json(chats);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

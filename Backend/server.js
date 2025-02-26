@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 
 
+
 import cookieParser from 'cookie-parser';
 
 
@@ -22,10 +23,44 @@ const io = new Server(server, {
     }
 });
 
+io.on('connection', (socket) => {
+    console.log(`Socket ${socket.id} connected`);
+
+
+    socket.on('joinRoom', ({ doctorId, userId }) => {
+        console.log("DoctorId and userId==================  inside the  function", doctorId, userId)
+        const roomId = `${doctorId}_${userId}`;
+        socket.join(roomId);
+        console.log(`User ${userId} joined room ${roomId}`);
+    });
+
+
+
+    socket.on('drmessage', ({doctorId,userId,message}) => {
+        console.log("DoctorId and userId==================  inside the  function   messGIN FROM THE DOCTOR", doctorId, userId)
+        console.log('Message received from doctor:', message);
+        const roomId = `${doctorId}_${userId}`;    
+        io.to(roomId).emit('drmessage', message);
+    });
+
+     socket.on('usermessage', ({doctorId,userId,message}) => {
+        const roomId = `${doctorId}_${userId}`;
+        console.log('Message received from user:', message);
+        
+        io.to(roomId).emit('usermessage', message);
+    })
+
+
+    socket.on('disconnect', () => {
+        console.log(`Socket ${socket.id} disconnected`);
+    });
+});
+
 dotenv.config();
 
 app.use(cors({
     origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders:["Content-Type","Authorization","cookie"],
     exposedHeaders: ["set-cookie"],
@@ -54,6 +89,6 @@ app.use('/api/admin', admin);
 
 
 ConnectDB();
-app.listen(5000, () => {
+server.listen(5000, () => {
     console.log('Server is running on port 5000');
 });
