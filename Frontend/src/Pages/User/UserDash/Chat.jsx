@@ -13,6 +13,7 @@ const Chat = () => {
   const chatContainerRef = useRef(null);
 
   const [chat, setChat] = useState([]);
+  const [isTyping,setIsTyping] = useState(false)
   const [message, setMessage] = useState('');
   const [doctor, setDoctor] = useState({});
   const socketRef = useRef(null);
@@ -74,7 +75,7 @@ const Chat = () => {
       });
 
       socketRef.current.emit('joinRoom', { doctorId, userId });
-
+     
       socketRef.current.on('connect', () => {
         console.log('Connected to socket', socketRef.current.id);
       });
@@ -108,6 +109,19 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [chat]);
+  const [indication, setIndication] = useState(false);
+
+
+  const handleTyping = () => {
+    setIndication(true);
+    socketRef.current.emit("typing", { doctorId, userId, isTyping: true });
+
+    // Stop typing after 2 seconds of inactivity
+    setTimeout(() => {
+        setIndication(false);
+        socketRef.current.emit("typing", { doctorId, userId, isTyping: false });
+    }, 2000);
+};
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -167,7 +181,8 @@ const Chat = () => {
             <div className="flex items-end space-x-4">
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {setMessage(e.target.value);
+                  handleTyping()}}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
                 rows="1"

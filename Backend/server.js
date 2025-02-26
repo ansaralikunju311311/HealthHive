@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
     });
 
 
-
+    
     socket.on('drmessage',  async ({doctorId,userId,message}) => {
         console.log("DoctorId and userId==================  inside the  function   messGIN FROM THE DOCTOR", doctorId, userId)
         console.log('Message received from doctor:', message);
@@ -62,11 +62,20 @@ io.on('connection', (socket) => {
 
     });
 
+      
+    socket.on('typing', ({ doctorId, userId, isTyping }) => {
+        console.log("from the user ",isTyping)
+        console.log("DoctorId and userId==================  typing event is rechaed here inside the  function", doctorId, userId)
+        const roomId = `${doctorId}_${userId}`;
+        io.to(roomId).emit('typing', { doctorId, isTyping });
+    });
+
+
      socket.on('usermessage', async({doctorId,userId,message}) => {
         const roomId = `${doctorId}_${userId}`;
         console.log('Message received from user:', message);
 
-
+       
 
         try {
             const newMessage = new Chat({
