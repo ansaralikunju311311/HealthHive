@@ -41,13 +41,7 @@ useEffect(() => {
       });
       setWalletBalance(balance.data.walletBalance);
       setHistory(balance.data.history);
-      // const history = await axios.get(`http://localhost:5000/api/doctor/EarningsHistory/${id}`,{
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   },
-      //   withCredentials: true
-      // })
-      // setHistory(history.data);
+      
     } catch (error) {
       console.log(error);
       navigate('/doctor/login');

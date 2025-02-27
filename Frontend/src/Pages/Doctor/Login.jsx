@@ -30,7 +30,6 @@ const Login = () => {
                 dispatch(setDoctor(response.data.doctor));
                 dispatch(setToken(response.data.token));
 
-                // localStorage.setItem('doctorId', response.data.doctor);
 
                 toast.success('Welcome back, Dr. ' + response.data.doctor.name, {
                     icon: '👋',

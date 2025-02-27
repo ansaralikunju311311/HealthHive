@@ -8,11 +8,8 @@ const chatSchema = new mongoose.Schema({
         type:String,
     },
     doctorId : {
-
-
         type:mongoose.Schema.Types.ObjectId,
-        ref
-        : 'Doctor',
+        ref:'Doctor',
         required:true
     },
     userId : {
@@ -22,15 +19,12 @@ const chatSchema = new mongoose.Schema({
     },
     sender : {
         type:String,
-        // required:true
     },
     date : {
         type:String,
-        // required:true
     },
     reciever : {
         type:String,
-        // required:true
     }
 },{
     timestamps:true

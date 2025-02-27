@@ -10,10 +10,7 @@ const doctorWalletSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // balance: {
-    //     type: Number,
-    //     required: true
-    // }
+    
 }, { timestamps: true });
 
 const DoctorWallet = mongoose.model('DoctorWallet', doctorWalletSchema);

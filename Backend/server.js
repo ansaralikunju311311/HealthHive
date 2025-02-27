@@ -28,11 +28,9 @@ const onlineUsers = new Map();
 io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} connected`);
 
-    // Handle user/doctor connection
     socket.on('userConnected', ({ userId, type }) => {
         onlineUsers.set(userId, { socketId: socket.id, type });
         
-        // Broadcast online status to all connected clients
         io.emit('userStatus', { userId, online: true, type });
         
         // Send current online users status to newly connected user
@@ -49,7 +47,6 @@ io.on('connection', (socket) => {
         const roomId = `${doctorId}_${userId}`;
         socket.join(roomId);
 
-        // Send status updates for both user and doctor
         if (type === 'user') {
             io.to(roomId).emit('userStatus', { 
                 userId: userId, 
@@ -76,8 +73,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('drmessage',  async ({doctorId,userId,message}) => {
-        console.log("DoctorId and userId==================  inside the  function   messGIN FROM THE DOCTOR", doctorId, userId)
-        console.log('Message received from doctor:', message);
         const roomId = `${doctorId}_${userId}`;  
 
            try {
@@ -142,7 +137,6 @@ io.on('connection', (socket) => {
         let disconnectedUserId = null;
         let disconnectedUserType = null;
 
-        // Find the disconnected user
         for (const [userId, data] of onlineUsers.entries()) {
             if (data.socketId === socket.id) {
                 disconnectedUserId = userId;
@@ -153,7 +147,6 @@ io.on('connection', (socket) => {
         }
 
         if (disconnectedUserId) {
-            // Broadcast offline status
             io.emit('userStatus', { 
                 userId: disconnectedUserId, 
                 online: false, 

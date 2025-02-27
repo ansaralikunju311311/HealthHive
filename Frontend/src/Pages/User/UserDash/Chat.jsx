@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import { FiSend } from 'react-icons/fi';
 import { format } from 'date-fns';
+import TypingIndicator from '../../../Component/Chat/TypingIndicator';
 
 const Chat = () => {
   const location = useLocation();
@@ -128,7 +129,6 @@ const Chat = () => {
   const handleTyping = () => {
     socketRef.current.emit("usertyping", { doctorId, userId, isTyping: true });
 
-    // Clear typing indication after delay
     const timeoutId = setTimeout(() => {
       socketRef.current.emit("usertyping", { doctorId, userId, isTyping: false });
     }, 2000);
@@ -192,10 +192,8 @@ const Chat = () => {
                 </div>
               ))}
               {doctorIsTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-800 rounded-r-lg rounded-tl-lg px-4 py-3 shadow-sm">
-                    <p className="text-sm">Doctor is typing...</p>
-                  </div>
+                <div className="flex justify-start ml-2">
+                  <TypingIndicator />
                 </div>
               )}
             </div>

@@ -281,18 +281,13 @@ const fetchDoctors = async (req, res) => {
 // working code
 const resetPassword = async (req, res) => {
     try {
-        // Detailed logging of entire request
-        // console.log("Full Request Body:", JSON.stringify(req.body, null, 2));
-        // console.log("Request Body Type:", typeof req.body);
+       
 
         // Destructure with additional logging, handling both camelCase and snake_case
         const email = req.body.email;
         const otp = req.body.otp;
         const newPassword = req.body.newPassword || req.body.new_password;
 
-        // console.log("Email:", email, "Type:", typeof email);
-        // console.log("OTP:", otp, "Type:", typeof otp);
-        // console.log("New Password:", newPassword, "Type:", typeof newPassword);
 
         // Validate input with detailed checks
         if (!email) {
@@ -410,18 +405,6 @@ export const logout = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-
-
- 
-
-// import AppointmentSchedule from '../Model/appoimentSchedule.js'; // Adjust the import based on your file structure
-
 export const schedule = async (req, res) => {
     const { id: doctorId } = req.params;
     const { appointments } = req.body;
@@ -487,7 +470,6 @@ export const schedule = async (req, res) => {
                 });
             }
 
-            // Merge appointments intelligently
             const mergedAppointments = [
                 ...existingSchedule.appointments,
                 ...validAppointments
@@ -501,7 +483,6 @@ export const schedule = async (req, res) => {
             existingSchedule.appointments = mergedAppointments;
             await existingSchedule.save();
 
-            // console.log("Updated Schedule:", existingSchedule);
 
             return res.status(200).json({ 
                 message: 'Schedules updated successfully',
@@ -525,7 +506,6 @@ export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
 
     try {
-        // Find the doctor's schedule by doctorId
         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
 
         if (!existingSchedule) {
@@ -537,19 +517,14 @@ export const getSchedules = async (req, res) => {
 
        
 
-        // Get the current date in 'Asia/Kolkata' timezone, with time set to 00:00:00
         const todayInIndia = moment().tz("Asia/Kolkata").startOf('day');
         
-        // Filter appointments to include those scheduled for today or in the future
         const upcomingAppointments = existingSchedule.appointments.filter(appointment => {
-            // Parse the appointment date in 'Asia/Kolkata' timezone and set time to 00:00:00
             const appointmentDate = moment.tz(appointment.appointmentDate, "Asia/Kolkata").startOf('day');
         
-            // Include appointment if it's today or in the future
             return appointmentDate.isSameOrAfter(todayInIndia, 'day');
         });
         
-        console.log("Upcoming Appointments:", upcomingAppointments); // Add this line for debugging
         
         return res.status(200).json({
             message: 'Schedules retrieved successfully',
@@ -666,68 +641,7 @@ export const fetchWalletBalance = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-// export const chatDetails = async (req, res) => {
-//     try {
-//         const {doctorId,userId} = req.params;
 
-//        console.log("doctorId,userId==================  req.params",doctorId,userId);  
-       
-//        const doctorData = await doctor.findById(doctorId);
-
-//        const user = await User.findById(userId);
-//        res.status(200).json({doctor: doctorData, user});
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
-//     }
-// }
-// export const sendMessage = async (req, res) => {
-//     try {
-//         const { roomId, message, doctorId, userId } = req.body;
-        
-
-//         console.log("roomId, message, doctorId, userId====",message);
-//         // Create a new message
-//         const newMessage = new Chat({
-//             roomId,
-//             message:message,
-//             senderId:doctorId,
-//             recieverId:userId,
-//             sender: 'doctor',
-//             reciever:'user',
-//             date: new Date(),
-//             timestamp: new Date()
-//         });
-
-//         // Save the message
-//         const savedMessage = await newMessage.save();
-        
-//         res.status(200).json({
-//             success: true,
-//             message: 'Message sent successfully',
-//             data: savedMessage
-//         });
-//     } catch (error) {
-//         console.error('Error sending message:', error);
-//         res.status(500).json({ 
-//             success: false,
-//             message: 'Failed to send message',
-//             error: error.message 
-//         });
-//     }
-// }
-
-
-// export const getChat = async(req, res) => {
-//     try {
-//         const { roomId } = req.params;
-//        const chats = await Chat.find({ roomId }).sort({ date: 1 });
-//        res.status(200).json(chats);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: error.message });
-//     }
-// }
 
 export const userDetails = async(req,res)=>
 {
@@ -748,7 +662,6 @@ export const userDetails = async(req,res)=>
 export const chatDetails = async(req,res)=>
 {
     try {
-        console.log('reqparams ==================================reqparams ',req.params)
         const {userId,doctorId} = req.params;
       const roomId = doctorId+'_'+userId;
         const chats = await Chat.find({roomId}).sort({ createdAt: 1 });

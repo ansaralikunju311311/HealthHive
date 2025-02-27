@@ -365,8 +365,7 @@ export const userCount = async (req, res) => {
 export const Earnings = async (req, res) => {
     try {
         const transaction =  await Transaction.find();
-        // const countTransarion = await Transaction.countDocuments();
-        // console.log(transaction);
+       
        res.status(200).json({transaction});
     } catch (error) {
         console.log(error);
@@ -376,10 +375,8 @@ export const Earnings = async (req, res) => {
 export const fetchDoctorPayments = async (req, res) => {
     console.log("fetchDoctorPayments=====");
     try {
-        // Get all transactions with populated doctor details
         const Drtransaction = await Transaction.find().populate('doctor', 'name email specialization profileImage');
         
-        // Get appointment counts for each doctor
         const appointmentCounts = await appointment.aggregate([
             {
                 $group: {
@@ -389,13 +386,11 @@ export const fetchDoctorPayments = async (req, res) => {
             }
         ]);
 
-        // Create a map of doctor appointment counts
         const appointmentCountMap = appointmentCounts.reduce((acc, curr) => {
             acc[curr._id.toString()] = curr.appointmentCount;
             return acc;
         }, {});
 
-        // Group transactions by doctor and calculate totals
         const doctorWiseTotals = Drtransaction.reduce((acc, transaction) => {
             const doctorId = transaction.doctor._id.toString();
             if (!acc[doctorId]) {
@@ -415,7 +410,6 @@ export const fetchDoctorPayments = async (req, res) => {
             return acc;
         }, {});
 
-        // Calculate overall total
         const totalAmount = Object.values(doctorWiseTotals).reduce((sum, doctor) => sum + doctor.totalAmount, 0);
 
         res.status(200).json({

@@ -1,15 +1,12 @@
 import express from 'express';
 import { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile,fetchDepartments,logout,schedule,getSchedules,slots,fullAppoiments,fetchAppointments,fetchWalletBalance,
-    // chatDetails,sendMessage,getChat
     userDetails,
     chatDetails
 } from '../Controllers/doctorController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
-// import { chatDetails } from '../Controllers/userController.js';
 
 const doctor = express.Router();
 
-// Public routes (no authentication needed)
 doctor.post("/signup", RegisterDoctor);
 doctor.post("/login", LoginDoctor);
 doctor.post('/forgot-password', forgotPassword);
@@ -26,10 +23,7 @@ doctor.get('/appoimentdetails/:id',fullAppoiments);
 doctor.get('/doctor-wallet-balance/:id',fetchWalletBalance);
 doctor.get('/userinfo/:userId',userDetails);
 doctor.get('/Chats/:doctorId/:userId',chatDetails)
-// doctor.get('/ChatDetails/:doctorId/:userId',chatDetails);
-// doctor.post('/sendmessage',sendMessage);
-// doctor.get('/Chats/:roomId',getChat);
-// Protected routes (require authentication)
+
 
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 

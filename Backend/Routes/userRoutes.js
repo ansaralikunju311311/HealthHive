@@ -20,11 +20,6 @@ import {
        verifyPayment,
        fetchDoctor,
        chatDetails
-      //  chatDetails,
-      //  sendMessage,
-      //  getChat
-    //    handleChat,
-      //  getDoctorChat
     } from '../Controllers/userController.js';
 const router = express.Router();
 

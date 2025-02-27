@@ -68,12 +68,7 @@ const Sidebar = ({activePage, doctorid}) => {
       id: 'schedules',
       state: {doctorid: id}
     },
-    // { 
-    //   icon: <MdChat className="w-6 h-6" />, 
-    //   text: 'Chats',
-    //   path: '/doctor/chats',
-    //   id: 'chats'
-    // },
+   
     { 
       icon: <MdAccountBalanceWallet className="w-6 h-6" />, 
       text: 'Wallet',

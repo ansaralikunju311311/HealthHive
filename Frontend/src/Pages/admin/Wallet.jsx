@@ -77,8 +77,6 @@ const Wallet = () => {
 
 
   
-  // Calculate total statistics
-  // const totalCommission = adminEarnings.reduce((sum, earning) => sum + earning.adminCommission, 0);
   const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
   const totalTransactions = adminEarning.length;
 
@@ -106,7 +104,6 @@ const Wallet = () => {
             Admin Commission Wallet
           </Typography>
 
-          {/* Commission Balance Card */}
           <Card sx={{ 
             mb: 4, 
             background: 'linear-gradient(90deg, #2196F3 0%, #21CBF3 100%)', 

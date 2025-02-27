@@ -306,10 +306,8 @@ const resetPassword = async(req, res) => {
     }
 }
 const verifyToken = async (req, res) => {
-    // console.log(" happen after middlware verify token=====",req.user);
     try {
         const user = await User.findById(req.user._id).select('-password');
-        // console.log("user after select=====",user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -357,10 +355,8 @@ export const logout = async (req, res) => {
 export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
-        // console.log("===========================",departmentname)
         
         const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
-        // console.log("doctors====================",doctors)
         res.status(200).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
@@ -372,7 +368,6 @@ export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
         const { slots,transactionData} = req.body;
-//   console.log("appoimentdata====================",appointmentData)      
         console.log("Doctor ID:", doctorid);
         console.log("User ID:", userid);
         console.log("Slot details:", slots);
@@ -391,8 +386,7 @@ export const bookAppointment = async (req, res) => {
             doctor: doctorid,
             date: slots.date,
             time: slots.time,
-            // status: 'confirmed',
-            // paymentStatus: 'completed'
+           
         });
 
         // Save the appointment
@@ -530,7 +524,6 @@ export const verifyPayment = async (req, res) => {
 export const fetchDoctor = async(req, res) => {
     const { doctorId } = req.params;
 
-    // console.log('fetchdoctor details fjjj nvjnjdjdfnjlfanf' ,doctorId)
     try {
         const doctor = await Doctor.findById(doctorId);
         res.status(200).json(doctor);

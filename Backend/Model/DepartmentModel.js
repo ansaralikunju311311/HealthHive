@@ -5,7 +5,7 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true,
         set: function(value) {
-            // Capitalize first letter, rest as is
+        
             return value.charAt(0).toUpperCase() + value.slice(1);
         }
     },
@@ -21,7 +21,7 @@ const departmentSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Create a case-insensitive index
+
 departmentSchema.index({ Departmentname: 1 }, { 
     unique: true,
     collation: { locale: 'en', strength: 2 }

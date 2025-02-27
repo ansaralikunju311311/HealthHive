@@ -64,14 +64,7 @@ const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
               <label className="block text-gray-600 text-sm font-medium mb-1">Age</label>
               <p className="text-gray-900">{patient.age}</p>
             </div>
-            {/* <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-medium mb-1">Blood Group</label>
-              <p className="text-gray-900">{patient.bloodGroup}</p>
-            </div> */}
-            {/* <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-medium mb-1">Address</label>
-              <p className="text-gray-900">{patient.address}</p>
-            </div> */}
+          
             <div className="mb-4">
               <label className="block text-gray-600 text-sm font-medium mb-1">Status</label>
               <span className="px-2 py-1 text-sm rounded-full bg-green-100 text-green-800">

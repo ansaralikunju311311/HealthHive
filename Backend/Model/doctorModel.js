@@ -14,10 +14,7 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // dateOfBirth: {
-    //     type: Date,
-    //     required: true,
-    // },
+   
     yearsOfExperience: {
         type: Number,
         required: true,

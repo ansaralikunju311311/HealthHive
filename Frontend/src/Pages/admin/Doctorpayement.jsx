@@ -218,18 +218,7 @@ const DoctorPayment = () => {
                             }
                           </Typography>
                         </TableCell>
-                        {/* <TableCell align="right">
-                          <Typography sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
-                            ₹{doctor.appointmentCount
-                            }
-                          </Typography>
-                        </TableCell> */}
-                        {/* <TableCell align="right">
-                          <Typography sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                            ₹{doctor.appointmentCount
-                            }
-                          </Typography>
-                        </TableCell> */}
+                       
                         <TableCell align="center">
                           <Chip
                             icon={<FaCalendarCheck />}
