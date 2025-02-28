@@ -421,4 +421,69 @@ export const fetchDoctorPayments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+export const getDoctorPayments = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const totalDoctors = await Doctor.countDocuments();
+    const totalPages = Math.ceil(totalDoctors / limit);
+
+    const doctorWiseTotals = await Doctor.aggregate([
+      {
+        $lookup: {
+          from: 'appointments',
+          localField: '_id',
+          foreignField: 'doctor',
+          as: 'appointments'
+        }
+      },
+      {
+        $project: {
+          doctorName: '$name',
+          specialization: '$specialization',
+          totalAmount: { $multiply: ['$consultFee', { $size: '$appointments' }] },
+          appointmentCount: { $size: '$appointments' }
+        }
+      },
+      { $skip: skip },
+      { $limit: limit }
+    ]);
+
+    const totalAmount = await Appointment.aggregate([
+      {
+        $lookup: {
+          from: 'doctors',
+          localField: 'doctor',
+          foreignField: '_id',
+          as: 'doctorInfo'
+        }
+      },
+      {
+        $unwind: '$doctorInfo'
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$doctorInfo.consultFee' }
+        }
+      }
+    ]);
+
+    res.json({
+      doctorWiseTotals,
+      totalAmount: totalAmount[0]?.total || 0,
+      currentPage: page,
+      totalPages,
+      hasMore: page < totalPages
+    });
+
+  } catch (error) {
+    console.error('Error in getDoctorPayments:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 export { LoginAdmin, verifyAdminToken };

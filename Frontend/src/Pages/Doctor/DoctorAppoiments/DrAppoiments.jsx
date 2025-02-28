@@ -10,7 +10,9 @@ import {
   FaClock, 
   FaUserMd, 
   FaVenusMars,
-  FaComments
+  FaComments,
+  FaChevronLeft, 
+  FaChevronRight 
 } from 'react-icons/fa';
 
 const groupAppointmentsByCategory = (appointments) => {
@@ -44,12 +46,27 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
   const doctorId = localStorage.getItem('doctorId');
   const DrdoctorId = JSON.parse(doctorId);
   const doctor_Id = DrdoctorId._id;
+  
+  // Add pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const appointmentsPerPage = 5;
+  
+  // Calculate pagination values
+  const indexOfLastAppointment = currentPage * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
+  const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
+
+  if (appointments.length === 0) return null;
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   const handleChat = (patientId, doctor_Id) => {
     console.log("patientId,doctor_Id==================  ",patientId,doctor_Id);
     navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id } });
   };
-
-  if (appointments.length === 0) return null;
 
   return (
     <div className="mb-8 animate-fadeIn">
@@ -63,7 +80,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
         </span>
       </h3>
       <div className="grid gap-6">
-        {appointments.map((appointment) => (
+        {currentAppointments.map((appointment) => (
           <div 
             key={appointment._id} 
             className={`transform transition-all duration-300 hover:scale-[1.02] rounded-xl shadow-sm hover:shadow-xl ${
@@ -129,6 +146,49 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
           </div>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6 space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`p-2 rounded-lg ${
+              currentPage === 1
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-blue-600 hover:bg-blue-50'
+            }`}
+          >
+            <FaChevronLeft />
+          </button>
+
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`w-8 h-8 rounded-lg ${
+                currentPage === index + 1
+                  ? 'bg-blue-600 text-white'
+                  : 'text-blue-600 hover:bg-blue-50'
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`p-2 rounded-lg ${
+              currentPage === totalPages
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-blue-600 hover:bg-blue-50'
+            }`}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -609,38 +609,123 @@ export const fullAppoiments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+// export const fetchWalletBalance = async (req, res) => {
+//     try {
+//         // Get pagination parameters with default values
+//         const limit = parseInt(req.query.limit) || 10;
+//         const page = parseInt(req.query.page) || 1;
+//         const skip = (page - 1) * limit;
+
+//         const { id } = req.params;
+        
+//         // Count appointments and get doctor fees
+//         const countAppoiments = await Appointment.countDocuments({ doctor: id });
+//         const fees = await doctor.findById(id).select('consultFee -_id');
+        
+//         // Calculate total earnings (90% of total fees - 10% platform fee)
+//         const totalearnings = countAppoiments * fees.consultFee - (countAppoiments * fees.consultFee * 0.1);
+
+//         // Get or create wallet
+//         let walletBalance = await DoctorWallet.findOne({ doctor: id });
+        
+//         // Get transaction history with pagination
+//         const history = await Transaction.find({ doctor: id })
+//             .sort({ createdAt: -1 }) // Sort by most recent
+//             .skip(skip)
+//             .limit(limit);
+            
+//         // Get total number of transactions for pagination
+//         const totalTransactions = await Transaction.countDocuments({ doctor: id });
+//         const totalPages = Math.ceil(totalTransactions / limit);
+
+//         if (!walletBalance) {
+//             walletBalance = new DoctorWallet({
+//                 doctor: id,
+//                 totalAmount: totalearnings
+//             });
+//             await walletBalance.save();
+//         } else {
+//             walletBalance.totalAmount = totalearnings;
+//             await walletBalance.save();
+//         }
+
+//         res.status(200).json({
+//             walletBalance,
+//             history,
+//             pagination: {
+//                 currentPage: page,
+//                 totalPages,
+//                 totalItems: totalTransactions,
+//                 itemsPerPage: limit
+//             }
+//         });
+//     } catch (error) {
+//         console.error('Error in fetchWalletBalance:', error);
+//         res.status(500).json({ message: error.message });
+//     }
+// }
 export const fetchWalletBalance = async (req, res) => {
     try {
-        const {id} = req.params;
+        // Get pagination parameters with default values
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
+        const skip = (page - 1) * limit;
+ 
+        const { id } = req.params;
+        
+        // Count appointments and get doctor fees
         const countAppoiments = await Appointment.countDocuments({ doctor: id });
-        const fees =  await doctor.findById(id).select('consultFee -_id');
+        const fees = await doctor.findById(id).select('consultFee -_id');
+        
+        // Calculate total earnings (90% of total fees - 10% platform fee)
+        const totalearnings = countAppoiments * fees.consultFee - (countAppoiments * fees.consultFee * 0.1);
 
-        let totalearnings = countAppoiments * fees.consultFee    - (countAppoiments * fees.consultFee * 0.1) ;
-
-        console.log("totaleearnings", totalearnings);
-
+        // Get or create wallet
         let walletBalance = await DoctorWallet.findOne({ doctor: id });
+        
+        // Get transaction history with pagination
+        const transactions = await Transaction.find({ doctor: id })
+            .sort({ createdAt: -1 }) // Sort by most recent
+            .skip(skip)
+            .limit(limit);
 
-        const history = await Transaction.find({doctor: id});
-         console.log("history", history);
+        // Add index to transactions
+        const history = transactions.map((transaction, index) => ({
+            index: skip + index + 1, // Adjust index based on pagination
+            ...transaction._doc // Spread transaction details
+        }));
+            
+        // Get total number of transactions for pagination
+        const totalTransactions = await Transaction.countDocuments({ doctor: id });
+        const totalPages = Math.ceil(totalTransactions / limit);
 
         if (!walletBalance) {
-            // Create new wallet if it doesn't exist
             walletBalance = new DoctorWallet({
                 doctor: id,
                 totalAmount: totalearnings
             });
+            await walletBalance.save();
         } else {
-            // Update existing wallet
             walletBalance.totalAmount = totalearnings;
+            await walletBalance.save();
         }
-        await walletBalance.save();
-        res.status(200).json({walletBalance,history});
+
+        res.status(200).json({
+            walletBalance,
+            history,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalItems: totalTransactions,
+                itemsPerPage: limit
+            }
+        });
     } catch (error) {
         console.error('Error in fetchWalletBalance:', error);
         res.status(500).json({ message: error.message });
     }
 }
+
 
 
 export const userDetails = async(req,res)=>

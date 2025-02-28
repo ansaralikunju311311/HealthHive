@@ -21,10 +21,15 @@ import { FaUserMd, FaMoneyBillWave, FaCalendarCheck } from 'react-icons/fa';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit] = useState(5); // Items per page
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -37,6 +42,10 @@ const DoctorPayment = () => {
         }
         console.log("this is the token", token);
         const response = await axios.get('http://localhost:5000/api/admin/getdoctorpayments', {
+          params: {
+            page: currentPage,
+            limit: limit
+          },
 
           headers: {
             Authorization: `Bearer ${token}`
@@ -45,6 +54,7 @@ const DoctorPayment = () => {
         });
         setPayments(response.data.doctorWiseTotals);
         setTotalAmount(response.data.totalAmount);
+        setTotalPages(response.data.totalPages || 1);
         console.log("jfnjvfnj",response.data.doctorWiseTotals);
 
       } catch (error) {
@@ -52,7 +62,7 @@ const DoctorPayment = () => {
       }
     }
     fetchDoctorPayments();
-  },[]);
+  },[currentPage, limit]);
   
   console.log("payments",payments);
   console.log("totalAmount",totalAmount);
@@ -91,6 +101,10 @@ const DoctorPayment = () => {
   const totalDoctorEarnings = doctorPayments.reduce((sum, doc) => sum + doc.totalEarnings, 0);
   const totalPendingAmount = doctorPayments.reduce((sum, doc) => sum + doc.pendingAmount, 0);
   const totalPaidAmount = doctorPayments.reduce((sum, doc) => sum + doc.paidAmount, 0);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
@@ -234,6 +248,36 @@ const DoctorPayment = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                mt: 3,
+                pb: 2
+              }}>
+                <Stack spacing={2}>
+                  <Pagination 
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                    sx={{
+                      '& .MuiPaginationItem-root': {
+                        fontSize: '1rem',
+                      },
+                      '& .Mui-selected': {
+                        backgroundColor: '#1976D2',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: '#1565C0',
+                        },
+                      },
+                    }}
+                  />
+                </Stack>
+              </Box>
             </CardContent>
           </Card>
         </Container>

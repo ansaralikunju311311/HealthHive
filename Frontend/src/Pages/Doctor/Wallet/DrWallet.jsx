@@ -4,6 +4,7 @@ import { Box, Card, Typography, Button, Container, Grid, Paper, Table, TableBody
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+// import { set } from 'mongoose';
 
 const DrWallet = () => {
 
@@ -11,6 +12,9 @@ const DrWallet = () => {
   const [doctor, setDoctor] = useState();
   const [history, setHistory] = useState();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
 
 useEffect(() => {
   const token = cookies.get('doctortoken');
@@ -34,6 +38,10 @@ useEffect(() => {
 
       const id = doctorData._id;
       const balance = await axios.get(`http://localhost:5000/api/doctor/doctor-wallet-balance/${id}`, {
+        params: {
+          page:currentPage,
+          limit: 10
+        },
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -41,6 +49,8 @@ useEffect(() => {
       });
       setWalletBalance(balance.data.walletBalance);
       setHistory(balance.data.history);
+      setCurrentPage(balance.data.pagination.currentPage);
+      console.log("=====",balance.data);
       
     } catch (error) {
       console.log(error);
@@ -51,7 +61,7 @@ useEffect(() => {
   };
 
   verifyTokenAndFetchData();
-},[])
+},[currentPage])
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
@@ -153,7 +163,8 @@ useEffect(() => {
                   <Table aria-label="transaction history">
                     <TableHead>
                       <TableRow sx={{ bgcolor: '#f8fafc' }}>
-                        <TableCell sx={{ fontWeight: 600, color: '#475569', py: 3 }}>Patient Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#475569', py: 3 }}>Sl No</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#475569', py: 3 }}>Patient Name</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#475569', py: 3 }}>Date</TableCell>
                         <TableCell sx={{ fontWeight: 600, color: '#475569', py: 3 }}>Amount</TableCell>
                       </TableRow>
@@ -161,6 +172,7 @@ useEffect(() => {
                     <TableBody>
                       {Array.isArray(history) && history.map((transaction, index) => (
                         <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
                           <TableCell>{transaction?.userName || 'N/A'}</TableCell>
                           <TableCell>
                             {transaction?.date ? 
@@ -183,6 +195,31 @@ useEffect(() => {
                     </TableBody>
                   </Table>
                 </TableContainer>
+                <div className="flex justify-between items-center mt-6">
+            <button 
+              onClick={() => setCurrentPage(currentPage - 1)} 
+              disabled={currentPage === 1} 
+              className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </button>
+            <div className="text-sm text-gray-600">
+              Page {currentPage} of {totalPages}
+            </div>
+            <button 
+              onClick={() => setCurrentPage(currentPage + 1)} 
+              disabled={currentPage === totalPages} 
+              className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              Next
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
               </Card>
             </Grid>
           </Grid>
