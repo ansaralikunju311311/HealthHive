@@ -28,19 +28,19 @@ const cookieOptions = {
         // Check if admin exists
         const existingAdmin = await Admin.findOne({ email });
         if (!existingAdmin) {
-            return res.status(404).json({ message: "Admin not found" });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: "Admin not found" });
         }
 
         // Check password
         const isMatch = await bcrypt.compare(password, existingAdmin.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Invalid credentials" });
         }
     
            const adminToken = setToken(existingAdmin);
            res.cookie('admintoken', adminToken, cookieOptions);
         // Send response
-        res.status(200).json({
+        res.status(STATUS_CODE.CREATED).json({
             message: "Login successful",
             Admin: {
                 _id: existingAdmin._id, 
@@ -50,7 +50,7 @@ const cookieOptions = {
             adminToken:adminToken
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
 
@@ -68,9 +68,10 @@ export const patients = async (req,res)=>
             ...patient.toObject(),
             serialNumber: index + 1
         }));
-        res.send({patientsWithIndex,totalpage});
+        res.status(STATUS_CODE.OK).json({patientsWithIndex,totalpage});
+        // res.send({patientsWithIndex,totalpage});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
    
 }
@@ -87,9 +88,9 @@ export const pendingDoctors = async (req,res)=>
             ...doctor.toObject(),
             serialNumber: index + 1
           }));
-        res.status(200).json({doctorsWithIndex,totalpage});
+        res.status(STATUS_CODE.OK).json({doctorsWithIndex,totalpage});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const approveDoctor = async (req,res)=>
@@ -101,7 +102,7 @@ export const approveDoctor = async (req,res)=>
         const doctorData = await Doctor.findById(doctorid);
         console.log("doctorData=====",doctorData);
         if(!doctorData){
-            return res.status(404).json({message:"Doctor is not found"})
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor is not found"})
         }
 
         // Send approval email before updating status
@@ -118,7 +119,7 @@ export const approveDoctor = async (req,res)=>
         doctorData.isActive = true;
         await doctorData.save();
 
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             message: "Doctor approved successfully",
             doctor:{
                 _id: doctorData._id,
@@ -130,7 +131,7 @@ export const approveDoctor = async (req,res)=>
     }
     catch (error) {
         console.error("Error in approveDoctor:", error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const rejectDoctor = async(req,res)=>
@@ -139,7 +140,7 @@ export const rejectDoctor = async(req,res)=>
         const {doctorid} = req.params;
         const doctorData = await Doctor.findById(doctorid);
         if(!doctorData){
-            return res.status(404).json({message:"Doctor not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor not found"});
         }
 
         // Send rejection email before making any changes
@@ -172,10 +173,10 @@ export const rejectDoctor = async(req,res)=>
         // Delete from doctors collection
         await Doctor.findByIdAndDelete(doctorid);
 
-        res.status(200).json({message:"Doctor rejected successfully"});
+        res.status(STATUS_CODE.NO_CONTENT).json({message:"Doctor rejected successfully"});
     } catch(error){
         console.error("Error in rejectDoctor:", error);
-        res.status(500).json({message:error.message});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
 export const doctors = async (req,res)=>
@@ -194,20 +195,20 @@ export const doctors = async (req,res)=>
             ...doctor.toObject(),
             serialNumber: index + 1
           }));
-          res.status(200).json({doctorsWithIndex,totalpage});
+          res.status(STATUS_CODE.OK).json({doctorsWithIndex,totalpage});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 
  const verifyAdminToken = async (req, res) => {
     try {
         // req.admin is set by the protectAdmin middleware
-        res.status(200).json({ admin: req.admin });
+        res.status(STATUS_CODE.OK).json({ admin: req.admin });
         // console.log("req.admin=====",req.admin);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
 export const addDepartment = async (req, res) => {
@@ -220,7 +221,7 @@ export const addDepartment = async (req, res) => {
         });
         
         if (department) {
-            return res.status(400).json({ message: 'Department already exists' });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Department already exists' });
         }
         
         // Create new department with original capitalization
@@ -231,11 +232,11 @@ export const addDepartment = async (req, res) => {
         });
         
         await newDepartment.save();
-        res.status(201).json({ message: 'Department created successfully' });
+        res.status(STATUS_CODE.CREATED).json({ message: 'Department created successfully' });
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const getDepartments = async (req, res) => 
@@ -264,9 +265,9 @@ export const getDepartments = async (req, res) =>
             serialNumber: index + 1
           }));
 
-        res.status(200).json({departments:departmentWithIndex,totalpage});
+        res.status(STATUS_CODE.OK).json({departments:departmentWithIndex,totalpage});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const updateDepartment = async (req, res) => {
@@ -279,7 +280,7 @@ export const updateDepartment = async (req, res) => {
         
         const department = await Department.findById(id);
         if (!department) {
-            return res.status(404).json({ message: 'Department not found' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Department not found' });
         }
         if(department.status === 'Listed'){
             department.status = 'Unlisted';
@@ -287,10 +288,10 @@ export const updateDepartment = async (req, res) => {
             department.status = 'Listed';
         }
         await department.save();
-        res.status(200).json({ message: 'Department status updated successfully' });
+        res.status(STATUS_CODE.OK).json({ message: 'Department status updated successfully' });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const handleBlock = async (req, res) => {
@@ -298,7 +299,7 @@ export const handleBlock = async (req, res) => {
         const { doctorid } = req.params;
         const doctor = await Doctor.findById(doctorid);
         if(!doctor){
-            return res.status(404).json({message:"Doctor not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor not found"});
         }
         if(doctor.isBlocked===true){
             doctor.isBlocked=false;
@@ -306,15 +307,15 @@ export const handleBlock = async (req, res) => {
             doctor.isBlocked=true;
         }
         await doctor.save();
-        res.status(200).json({message:"Doctor blocked successfully"});
+        res.status(STATUS_CODE.OK).json({message:"Doctor blocked successfully"});
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
         if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ message: 'Invalid token' });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Invalid token' });
         }
         if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Token expired' });
         }
     }
 }
@@ -324,22 +325,18 @@ export const patientblock = async (req, res) => {
         console.log("patientid=====",patientid);
         const patient = await User.findById(patientid);
         if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Patient not found' });
         }
         if(patient.isBlocked===true){
             patient.isBlocked=false;
         }else{
             patient.isBlocked=true;
         }
-
-
-        
-        
         await patient.save();
-        res.status(200).json({ message: 'Patient unblocked successfully' });
+        res.status(STATUS_CODE.OK).json({ message: 'Patient unblocked successfully' });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
 export const userCount = async (req, res) => {
@@ -358,19 +355,19 @@ export const userCount = async (req, res) => {
         ]);
         const totalAmount = transactions[0]?.totalAmount || 0;
         
-        res.status(200).json({ userCount: count, doctorCount: DrCount, totalAmount });
+        res.status(STATUS_CODE.OK).json({ userCount: count, doctorCount: DrCount, totalAmount });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const Earnings = async (req, res) => {
     try {
         const transaction =  await Transaction.find();
        
-       res.status(200).json({transaction});
+       res.status(STATUS_CODE.OK).json({transaction});
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const fetchDoctorPayments = async (req, res) => {
@@ -413,13 +410,13 @@ export const fetchDoctorPayments = async (req, res) => {
 
         const totalAmount = Object.values(doctorWiseTotals).reduce((sum, doctor) => sum + doctor.totalAmount, 0);
 
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             doctorWiseTotals: Object.values(doctorWiseTotals),
             totalAmount
         });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const getDoctorPayments = async (req, res) => {
@@ -483,7 +480,7 @@ export const getDoctorPayments = async (req, res) => {
 
   } catch (error) {
     console.error('Error in getDoctorPayments:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
   }
 };
 

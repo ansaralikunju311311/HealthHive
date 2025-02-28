@@ -12,6 +12,7 @@ import Transaction from '../Model/Transaction.js';
 import Chat from '../Model/chat.js';
 import e from 'cors';
 import { timeStamp } from 'console';
+import STATUS_CODE from '../StatusCode/StatusCode.js';
 const cookieOptions = {
     httpOnly: false,
     secure: true,
@@ -44,10 +45,10 @@ const RegisterUser = async (req, res) => {
         if (existingUser) { 
             // Ensure existingUser is not null before accessing properties
             if (existingUser.isBlocked === true && existingUser.isActive === true) {
-                return res.status(400).json({ message: "User is blocked" });
+                return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "User is blocked" });
             }
             if (existingUser.isActive) {
-                return res.status(400).json({ message: "User already exists" });
+                return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "User already exists" });
             }
         }
         // Hash password
@@ -88,13 +89,13 @@ const RegisterUser = async (req, res) => {
         // Generate and send OTP
         await generateAndSendOTP(user, email);
 
-        res.status(201).json({
+        res.status(STATUS_CODE.POST).json({
             message: "Verification code sent to your email",
             email
         });
     } catch (error) {
         console.error('Error in RegisterUser:', error);
-        res.status(500).json({ error: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
@@ -106,17 +107,17 @@ const verifyOtp = async(req,res)=>{
         // Get user
         const user = await User.findOne({email});
         if(!user){
-            return res.status(404).json({message:"User not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"User not found"});
         }
         
         // Check if OTP matches
         if(user.otp !== otp){
-            return res.status(400).json({message:"Invalid verification code"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid verification code"});
         }
         
         // Check if OTP is expired
         if(Date.now() > user.otpExpiresAt){
-            return res.status(400).json({message:"Verification code has expired"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Verification code has expired"});
         }
         
         // Activate user
@@ -133,7 +134,7 @@ const verifyOtp = async(req,res)=>{
     
         await user.save();
        
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             message: "Account verified successfully",
             user: {
                 _id: user._id,
@@ -147,7 +148,7 @@ const verifyOtp = async(req,res)=>{
         });
     } catch (error) {
         console.error('Error verifying OTP:', error);
-        res.status(500).json({error:error.message});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({error:error.message});
     }
 }
 const LoginUser = async(req,res)=>{
@@ -157,25 +158,25 @@ const LoginUser = async(req,res)=>{
         // Check if user exists
         const user = await User.findOne({email});
         if(!user){
-            return res.status(404).json({message:"User not found"});
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"User not found"});
         }
         if(user.isBlocked===true){
-            return res.status(400).json({message:"User is blocked"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User is blocked"});
         }
         // Check if user is active
         if(!user.isActive){
-            return res.status(400).json({message:"Please verify your account first"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Please verify your account first"});
         }
         // Check password
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
-            return res.status(400).json({message:"Invalid credentials"});
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid credentials"});
         }
         
         // Generate tokens
         const userToken = setToken(user);
        res.cookie('usertoken', userToken, cookieOptions)
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             message:"Login successful",
             user:{
                 _id:user._id,
@@ -189,7 +190,7 @@ const LoginUser = async(req,res)=>{
             userToken: userToken
         });
     } catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({error:error.message});
     }
 };
 
@@ -199,13 +200,13 @@ const getOtpRemainingTime = async(req, res) => {
         
         const user = await User.findOne({ email });
         if (!user || !user.otpExpiresAt) {
-            return res.status(404).json({ remainingTime: 0 });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ remainingTime: 0 });
         }
 
         const remainingTime = Math.max(0, Math.floor((user.otpExpiresAt - Date.now()) / 1000));
-        res.status(200).json({ remainingTime });
+        res.status(STATUS_CODE.OK).json({ remainingTime });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
@@ -215,7 +216,7 @@ const resendOtp = async(req, res) => {
         console.log("Resend OTP request for email:", email);
         
         if (!email) {
-            return res.status(400).json({ message: "Email is required" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Email is required" });
         }
 
         // Find user
@@ -223,31 +224,31 @@ const resendOtp = async(req, res) => {
         console.log("Found user:", user ? "yes" : "no");
         
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: "User not found" });
         }
         
         if (user.isActive) {
-            return res.status(400).json({ message: "User is already verified" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "User is already verified" });
         }
 
         try {
             await generateAndSendOTP(user, email);
             console.log("OTP sent successfully");
             
-            res.status(200).json({ 
+            res.status(STATUS_CODE.OK).json({ 
                 message: "New verification code sent to your email",
                 email 
             });
         } catch (error) {
             console.error("Error sending OTP:", error);
-            res.status(500).json({ 
+            res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ 
                 message: "Failed to send verification code",
                 error: error.message 
             });
         }
     } catch (error) {
         console.error('Error in resendOtp:', error);
-        res.status(500).json({ 
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ 
             message: "Failed to process resend OTP request",
             error: error.message 
         });
@@ -260,21 +261,21 @@ const resendOtp = async(req, res) => {
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found. Please register first.' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found. Please register first.' });
         }
         if(user.isBlocked===true){
-            return res.status(400).json({ message: 'User is blocked' });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'User is blocked' });
         }
         // Generate and send OTP
         await generateAndSendOTP(user, email);
         
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             message: "Verification code sent to your email",
             email
         });
     } catch (error) {
         console.error('Error in forgotPassword:', error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 const resetPassword = async(req, res) => {
@@ -286,10 +287,10 @@ const resetPassword = async(req, res) => {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found. Please register first.' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found. Please register first.' });
         }
         if(user.otp !== otp){
-            return res.status(400).json({ message: 'Invalid verification code' });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid verification code' });
         }
 
         // Hash new password
@@ -300,22 +301,22 @@ const resetPassword = async(req, res) => {
         user.password = hashedPassword;
         await user.save();
         
-        res.status(200).json({ message: 'Password reset successful' });
+        res.status(STATUS_CODE.OK).json({ message: 'Password reset successful' });
     } catch (error) {
         console.error('Error in resetPassword:', error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 const verifyToken = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
         }
-        res.status(200).json({ user });
+        res.status(STATUS_CODE.OK).json({ user });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
 export const getDoctorsData = async (req, res) => {
@@ -323,19 +324,19 @@ export const getDoctorsData = async (req, res) => {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
 
         // console.log("Fetched doctors:", doctors);
-        res.status(200).json({ doctors: doctors }); 
+        res.status(STATUS_CODE.OK).json({ doctors: doctors }); 
     } catch (error) {
         console.error("Error fetching doctors:", error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const getDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
-        res.status(200).json(departments);
+        res.status(STATUS_CODE.OK).json(departments);
         // console.log("departments",departments);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const logout = async (req, res) => {
@@ -347,10 +348,10 @@ export const logout = async (req, res) => {
             secure: true,
             sameSite: 'None'
         });
-        res.status(200).json({ message: 'Logged out successfully' });
+        res.status(STATUS_CODE.OK).json({ message: 'Logged out successfully' });
     } catch (error) {
         console.error('Error logging out:', error); 
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export const dptdoctor = async (req, res) => {
@@ -358,10 +359,10 @@ export const dptdoctor = async (req, res) => {
         const { departmentname } = req.params;
         
         const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
-        res.status(200).json({ doctors });
+        res.status(STATUS_CODE.OK).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 //importent for checking i comment this code 
@@ -376,7 +377,7 @@ export const bookAppointment = async (req, res) => {
 
         // Basic validation
         if (!doctorid || !userid || !slots) {
-            return res.status(400).json({ 
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ 
                 message: 'Invalid booking request. Missing required fields.'
             });
         }
@@ -432,14 +433,14 @@ export const bookAppointment = async (req, res) => {
         } catch (error) {
             console.error('Error updating appointment schedule:', error);
         }
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             message: 'Appointment booked successfully',
             appointment: newAppointment
         });
 
     } catch (error) {
         console.error('Error booking appointment:', error);
-        res.status(500).json({ 
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ 
             message: 'Failed to book appointment',
             error: error.message 
         });
@@ -462,14 +463,14 @@ export const FetchAppoiments = async(req, res) => {
         }).sort({ timeStamp: -1 }).skip(skip).limit(limit);
         const totalAppointments = await Appointment.countDocuments({ user: userid });
         const totalPages = Math.ceil(totalAppointments / limit);
-        res.status(200).json({ appointments, pagination: { currentPage: page, totalPages } });
+        res.status(STATUS_CODE.OK).json({ appointments, pagination: { currentPage: page, totalPages } });
 
         console.log("Appointments:", appointments);
-        // res.status(200).json(appointments);
+        // res.status(STATUS_CODE.OK).json(appointments);
     } catch (error) {
 
         console.error('Error fetching appointments:', error);
-        res.status(500).json({ message: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 export  const handlePayment = async(req, res) => {
@@ -488,7 +489,7 @@ export  const handlePayment = async(req, res) => {
         
         const order = await razorpay.orders.create(options);
         
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             id: order.id,
             amount: order.amount,
             currency: order.currency,
@@ -496,7 +497,7 @@ export  const handlePayment = async(req, res) => {
         });
     } catch (error) {
         console.error('Payment error:', error);
-        res.status(400).json({ 
+        res.status(STATUS_CODE.BAD_REQUEST).json({ 
             message: 'Error processing payment',
             error: error.message 
         });
@@ -515,19 +516,19 @@ export const verifyPayment = async (req, res) => {
             .update(sign)
             .digest("hex");
         if (razorpay_signature === expectedSign) {
-            return res.status(200).json({
+            return res.status(STATUS_CODE.OK).json({
                 message: "Payment verified successfully",
                 orderId: razorpay_order_id,
                 paymentId: razorpay_payment_id
             });
         } else {
-            return res.status(400).json({
+            return res.status(STATUS_CODE.BAD_REQUEST).json({
                 message: "Invalid signature sent!"
             });
         }
     } catch (error) {
         console.error('Payment verification error:', error);
-        res.status(500).json({
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
             message: "Internal Server Error!",
             error: error.message
         });
@@ -539,11 +540,11 @@ export const fetchDoctor = async(req, res) => {
 
     try {
         const doctor = await Doctor.findById(doctorId);
-        res.status(200).json(doctor);
+        res.status(STATUS_CODE.OK).json(doctor);
         // console.log('Doctor details:', doctor);
     } catch (error) {
         console.error('Error fetching doctor:', error);
-        res.status(500).json({ error: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
 export const chatDetails = async (req,res) => {
@@ -552,10 +553,10 @@ export const chatDetails = async (req,res) => {
         const { doctorId, userId } = req.params;
       const roomId = doctorId + '_' + userId;
         const messages = await Chat.find({ roomId }).sort({ createdAt: 1 });
-        res.status(200).json(messages);
+        res.status(STATUS_CODE.OK).json(messages);
     } catch (error) {
         console.error('Error fetching chat details:', error);
-        res.status(500).json({ error: error.message });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
