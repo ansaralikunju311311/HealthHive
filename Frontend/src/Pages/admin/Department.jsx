@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Pagination from '../../Components/Common/Pagination';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -235,31 +236,13 @@ const Department = () => {
             </table>
           </div>
 
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-6">
-            <button 
-              onClick={() => setCurrentPage(currentPage - 1)} 
-              disabled={currentPage === 1} 
-              className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-              Previous
-            </button>
-            <div className="text-sm text-gray-600">
-              Page {currentPage} of {totalPages}
-            </div>
-            <button 
-              onClick={() => setCurrentPage(currentPage + 1)} 
-              disabled={currentPage === totalPages} 
-              className="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              Next
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+          {/* Replace the existing pagination with the Pagination component */}
+          <div className="mt-6">
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
       </div>

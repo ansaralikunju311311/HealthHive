@@ -23,6 +23,7 @@ import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import CustomPagination from '../../Components/Common/Pagination';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
@@ -254,29 +255,11 @@ const DoctorPayment = () => {
                 mt: 3,
                 pb: 2
               }}>
-                <Stack spacing={2}>
-                  <Pagination 
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    color="primary"
-                    size="large"
-                    showFirstButton
-                    showLastButton
-                    sx={{
-                      '& .MuiPaginationItem-root': {
-                        fontSize: '1rem',
-                      },
-                      '& .Mui-selected': {
-                        backgroundColor: '#1976D2',
-                        color: 'white',
-                        '&:hover': {
-                          backgroundColor: '#1565C0',
-                        },
-                      },
-                    }}
-                  />
-                </Stack>
+                <CustomPagination 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => handlePageChange(null, page)}
+                />
               </Box>
             </CardContent>
           </Card>

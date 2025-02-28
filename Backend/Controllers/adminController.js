@@ -10,6 +10,7 @@ import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 import appointment from '../Model/appoiment.js';
+import STATUS_CODE from '../StatusCode/StatusCode.js';
 
 const cookieOptions = {
     
@@ -452,7 +453,7 @@ export const getDoctorPayments = async (req, res) => {
       { $limit: limit }
     ]);
 
-    const totalAmount = await Appointment.aggregate([
+    const totalAmount = await appointment.aggregate([
       {
         $lookup: {
           from: 'doctors',

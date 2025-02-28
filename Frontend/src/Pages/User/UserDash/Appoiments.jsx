@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import Homebutton from '../../../Component/User/HomeButton/Homebutton';
+import cookies from 'js-cookie';
 import {
   Box,
   Paper,
@@ -19,6 +20,7 @@ import {
   Chip,
 } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
+import Pagination from '../../../Components/Common/Pagination';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
@@ -29,57 +31,54 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const Appointments = () => {
+  const token = cookies.get('usertoken');
   const [appointments, setAppointments] = useState([]);
   const [chatData, setChatData] = useState(null);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage] = useState(10);
   const userId = JSON.parse(localStorage.getItem('userId'))._id;
 
-
-
-  // console.log("==========for debug",userId)
   useEffect(() => {
-    fetchAppointments();
-  }, []);
+    fetchAppointments(currentPage);
+  }, [currentPage]);
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = async (pageNumber = currentPage) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/user/getappointments/${userId}`
+        `http://localhost:5000/api/user/getappointments/${userId}`,{
+        params: {
+          page: pageNumber,
+          limit: itemsPerPage
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: true
+      }
       );
-      setAppointments(response.data);
-
-
-      // console.log("===========xchuduvdvdhvfuf",response.data)
-      // console.log("=========cjdnndofuoh cheling id",response.data[0].doctor._id)
-      // const doctorId = response.data[0].doctor._id
-      // console.log("=========cjdnndofuoh chefddbndmscnvfdkmvbccfjdvnmfjkmvnjfvnmbjkgfling id",doctorId)
+      setAppointments(response.data.appointments);
+      setTotalPages(response.data.pagination.totalPages);
+      
+      // If we get an empty page and we're not on page 1, go to previous page
+      if (response.data.appointments.length === 0 && pageNumber > 1) {
+        fetchAppointments(pageNumber - 1);
+        return;
+      }
     } catch (error) {
       console.error('Error fetching appointments:', error);
     }
   };
 
-  // const handleChat = async (doctorId,userId) => {
-  //   console.log("doctorId,userId====",doctorId,userId)
-  //   try {
-  //     const chat = await axios.post(`http://localhost:5000/api/user/chat/${doctorId}/${userId}`);
-      
-
-  //     setChatData(chat.data);
-  //     console.log("========chat.data",chat.data);
-  //     // alert(chat.data)
-  //     navigate('/user/chats', { state: chat.data });
-
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-
-  // };
-    
-
-
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleChat = (doctorId,userId) => {
-    // console.log("doctorId,userId       wilfknxknkknkdnklnvfnv  ====",doctorId,userId);
     navigate('/user/chats', { state: { doctorId, userId } }); 
   }
 
@@ -226,6 +225,15 @@ const Appointments = () => {
             </Box>
           )}
         </TableContainer>
+        {appointments.length > 0 && (
+          <Box sx={{ mt: 3 }}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );
