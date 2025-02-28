@@ -162,7 +162,7 @@ dotenv.config();
 
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders:["Content-Type","Authorization","cookie"],
     exposedHeaders: ["set-cookie"],
