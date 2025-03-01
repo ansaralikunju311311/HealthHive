@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
+import DataTable from '../../Components/Common/DataTable';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
@@ -107,6 +108,54 @@ const DoctorPayment = () => {
     setCurrentPage(value);
   };
 
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'Doctor',
+      accessor: 'doctorName',
+      render: (row) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar sx={{ mr: 2 }}>
+            <FaUserMd />
+          </Avatar>
+          <Typography>{row.doctorName}</Typography>
+        </Box>
+      )
+    },
+    {
+      header: 'Specialization',
+      accessor: 'specialization',
+      render: (row) => (
+        <Chip 
+          label={row.specialization}
+          size="small"
+          sx={{ bgcolor: '#E3F2FD', color: '#1976D2' }}
+        />
+      )
+    },
+    {
+      header: 'Total Earnings',
+      accessor: 'totalAmount',
+      render: (row) => (
+        <Typography sx={{ color: '#1976D2', fontWeight: 'bold' }}>
+          ₹{row.totalAmount - (row.totalAmount * 0.1)}
+        </Typography>
+      )
+    },
+    {
+      header: 'Appointments',
+      accessor: 'appointmentCount',
+      render: (row) => (
+        <Chip
+          icon={<FaCalendarCheck />}
+          label={row.appointmentCount}
+          size="small"
+          sx={{ bgcolor: '#F3E5F5', color: '#9C27B0' }}
+        />
+      )
+    }
+  ];
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <div style={{ width: '240px', flexShrink: 0 }}>
@@ -138,123 +187,29 @@ const DoctorPayment = () => {
                     <FaMoneyBillWave size={24} />
                     <Typography variant="h6" sx={{ ml: 1 }}>Total Earnings</Typography>
                   </Box>
-                  <Typography variant="h4">₹{totalAmount   - (totalAmount*0.1)}</Typography>
+                  <Typography variant="h4">₹{totalAmount - (totalAmount * 0.1)}</Typography>
                   <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
                     Total earnings across all doctors
                   </Typography>
                 </CardContent>
               </Card>
             </Grid>
-            {/* <Grid item xs={12} md={4}>
-              <Card sx={{ 
-                background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
-                color: 'white',
-                height: '100%'
-              }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <FaMoneyBillWave size={24} />
-                    <Typography variant="h6" sx={{ ml: 1 }}>Paid Amount</Typography>
-                  </Box>
-                  <Typography variant="h4">₹{}</Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
-                    Total amount paid to doctors
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid> */}
-            {/* <Grid item xs={12} md={4}>
-              <Card sx={{ 
-                background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
-                color: 'white',
-                height: '100%'
-              }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <FaMoneyBillWave size={24} />
-                    <Typography variant="h6" sx={{ ml: 1 }}>Pending Amount</Typography>
-                  </Box>
-                  <Typography variant="h4">₹{totalPendingAmount.toLocaleString()}</Typography>
-                  <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
-                    Total pending payments
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid> */}
           </Grid>
 
-          {/* Doctor Payment Details */}
+          {/* Doctor Payment Details Table */}
           <Card sx={{ mb: 4 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>
                 Doctor Payment Details
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow sx={{ 
-                      '& th': {
-                        backgroundColor: '#f5f5f5',
-                        fontWeight: 'bold',
-                      }
-                    }}>
-                      <TableCell>Doctor</TableCell>
-                      <TableCell>Specialization</TableCell>
-                      <TableCell align="right">Total Earnings</TableCell>
-                      {/* <TableCell align="right">Paid Amount</TableCell> */}
-                      {/* <TableCell align="right">Pending Amount</TableCell> */}
-                      <TableCell align="center">Appointments</TableCell>
-                      {/* <TableCell align="center">AppoimentDetails</TableCell> */}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {payments.map((doctor) => (
-                      <TableRow key={doctor._id} sx={{ '&:hover': { bgcolor: '#f8f9fa' } }}>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Avatar sx={{ mr: 2 }}>
-                              <FaUserMd />
-                            </Avatar>
-                            <Typography>{doctor.doctorName
-                            }</Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={doctor.specialization
-                            }
-                            size="small"
-                            sx={{ bgcolor: '#E3F2FD', color: '#1976D2' }}
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography sx={{ color: '#1976D2', fontWeight: 'bold' }}>
-                            ₹{doctor.totalAmount - (doctor.totalAmount*0.1)
-                            }
-                          </Typography>
-                        </TableCell>
-                       
-                        <TableCell align="center">
-                          <Chip
-                            icon={<FaCalendarCheck />}
-                            label={doctor.appointmentCount
-                            }
-                            size="small"
-                            sx={{ bgcolor: '#F3E5F5', color: '#9C27B0' }}
-                          />
-                        </TableCell>
-                        
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                mt: 3,
-                pb: 2
-              }}>
+              <DataTable 
+                columns={columns}
+                data={payments}
+                emptyMessage="No payment records found"
+                headerClassName="bg-gray-50"
+                rowClassName="hover:bg-gray-50 transition-colors"
+              />
+              <Box sx={{ mt: 3 }}>
                 <CustomPagination 
                   currentPage={currentPage}
                   totalPages={totalPages}

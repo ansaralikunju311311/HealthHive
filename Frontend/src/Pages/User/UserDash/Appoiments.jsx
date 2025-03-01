@@ -7,20 +7,16 @@ import cookies from 'js-cookie';
 import {
   Box,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   Button,
   styled,
   Avatar,
   Chip,
+  TableCell
 } from '@mui/material';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import Pagination from '../../../Components/Common/Pagination';
+import DataTable from '../../../Components/Common/DataTable';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
@@ -82,6 +78,94 @@ const Appointments = () => {
     navigate('/user/chats', { state: { doctorId, userId } }); 
   }
 
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'Doctor',
+      accessor: 'doctor',
+      render: (row) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Avatar 
+            src={row.doctor.image} 
+            alt={row.doctor.name}
+            sx={{ width: 40, height: 40 }}
+          />
+          <Box>
+            <Typography variant="subtitle2" sx={{ color: '#1e293b', fontWeight: 'medium' }}>
+              {row.doctor.name}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b' }}>
+              {row.doctor.email}
+            </Typography>
+          </Box>
+        </Box>
+      )
+    },
+    {
+      header: 'Department',
+      accessor: 'doctor.specialization',
+      render: (row) => (
+        <Chip 
+          label={row.doctor.specialization} 
+          sx={{ 
+            bgcolor: '#e2e8f0',
+            color: '#475569',
+            fontWeight: 'medium'
+          }}
+        />
+      )
+    },
+    {
+      header: 'Date',
+      accessor: 'date',
+      render: (row) => (
+        <Typography variant="body2" sx={{ color: '#1e293b' }}>
+          {new Date(row.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </Typography>
+      )
+    },
+    {
+      header: 'Time',
+      accessor: 'time',
+      render: (row) => (
+        <Chip 
+          label={row.time}
+          size="small"
+          sx={{ 
+            bgcolor: '#bfdbfe',
+            color: '#1e40af',
+            fontWeight: 'medium'
+          }}
+        />
+      )
+    },
+    {
+      header: 'Actions',
+      accessor: '_id',
+      render: (row) => (
+        <Button
+          variant="contained"
+          onClick={() => handleChat(row.doctor._id, row.user)}
+          startIcon={<ChatIcon />}
+          sx={{ 
+            bgcolor: '#3b82f6',
+            '&:hover': { bgcolor: '#2563eb' },
+            textTransform: 'none',
+            borderRadius: 2,
+            boxShadow: 'none'
+          }}
+        >
+          Chat with Doctor
+        </Button>
+      )
+    }
+  ];
+
   return (
     <Box sx={{ display: 'flex', bgcolor: '#f8fafc', minHeight: '100vh' }}>
       <Sidebar />
@@ -119,112 +203,21 @@ const Appointments = () => {
           My Appointments
         </Typography>
 
-        <TableContainer 
-          component={Paper} 
-          sx={{ 
-            borderRadius: 2,
-            overflow: 'hidden',
-            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Doctor</StyledTableCell>
-                <StyledTableCell>Department</StyledTableCell>
-                <StyledTableCell>Date</StyledTableCell>
-                <StyledTableCell>Time</StyledTableCell>
-                <StyledTableCell align="center">Actions</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {appointments.map((appointment) => (
-                <TableRow 
-                  key={appointment._id}
-                  sx={{ 
-                    '&:hover': { bgcolor: '#f1f5f9' },
-                    transition: 'background-color 0.2s'
-                  }}
-                >
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar 
-                        src={appointment.doctor.image} 
-                        alt={appointment.doctor.name}
-                        sx={{ width: 40, height: 40 }}
-                      />
-                      <Box>
-                        <Typography variant="subtitle2" sx={{ color: '#1e293b', fontWeight: 'medium' }}>
-                          {appointment.doctor.name}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#64748b' }}>
-                          {appointment.doctor.email}  
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={appointment.doctor.specialization} 
-                      sx={{ 
-                        bgcolor: '#e2e8f0',
-                        color: '#475569',
-                        fontWeight: 'medium'
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" sx={{ color: '#1e293b' }}>
-                      {new Date(appointment.date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={appointment.time}
-                      size="small"
-                      sx={{ 
-                        bgcolor: '#bfdbfe',
-                        color: '#1e40af',
-                        fontWeight: 'medium'
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      onClick={() => handleChat(appointment.doctor._id, appointment.user)}
-                      startIcon={<ChatIcon />}
-                      sx={{ 
-                        bgcolor: '#3b82f6',
-                        '&:hover': { bgcolor: '#2563eb' },
-                        textTransform: 'none',
-                        borderRadius: 2,
-                        boxShadow: 'none'
-                      }}
-                    >
-                      Chat with Doctor
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {appointments.length === 0 && (
-            <Box sx={{ 
-              p: 4, 
-              textAlign: 'center',
-              color: '#64748b'
-            }}>
-              <Typography variant="h6">No appointments found</Typography>
-              <Typography variant="body2">Your upcoming appointments will appear here</Typography>
-            </Box>
-          )}
-        </TableContainer>
+        <Paper sx={{ borderRadius: 2, overflow: 'hidden', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
+          <DataTable 
+            columns={columns}
+            data={appointments}
+            emptyMessage={
+              <Box sx={{ p: 4, textAlign: 'center', color: '#64748b' }}>
+                <Typography variant="h6">No appointments found</Typography>
+                <Typography variant="body2">Your upcoming appointments will appear here</Typography>
+              </Box>
+            }
+            headerClassName="bg-gray-50"
+            rowClassName="hover:bg-gray-50 transition-colors"
+          />
+        </Paper>
+
         {appointments.length > 0 && (
           <Box sx={{ mt: 3 }}>
             <Pagination

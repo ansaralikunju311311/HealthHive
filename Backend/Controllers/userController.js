@@ -10,7 +10,7 @@ import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/Transaction.js';
 import Chat from '../Model/chat.js';
-import e from 'cors';
+// import e from 'cors';
 import { timeStamp } from 'console';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 const cookieOptions = {

@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
+import DataTable from '../../Components/Common/DataTable';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -149,6 +150,46 @@ const Department = () => {
     }
   };
 
+  // Define table columns configuration
+  const columns = [
+    {
+      header: 'Sl NO',
+      accessor: 'serialNumber',
+      width: '100px'
+    },
+    {
+      header: 'DEPARTMENT',
+      accessor: 'Departmentname'
+    },
+    {
+      header: 'STATUS',
+      accessor: 'status',
+      render: (row) => (
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+          row.status === 'Listed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {row.status}
+        </span>
+      )
+    },
+    {
+      header: 'ACTION',
+      accessor: 'action',
+      render: (row) => (
+        <button
+          className={`px-4 py-1 rounded-lg text-sm font-medium ${
+            row.status === 'Listed' 
+              ? 'bg-red-500 text-white hover:bg-red-600' 
+              : 'bg-green-500 text-white hover:bg-green-600'
+          } transition-colors`}
+          onClick={() => handleListingConfirmation(row)}
+        >
+          {row.status === 'Listed' ? 'Unlist' : 'List'}
+        </button>
+      )
+    }
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/departments" />
@@ -192,49 +233,14 @@ const Department = () => {
             </button>
           </div>
 
-          {/* Department Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-gray-100">
-                <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Sl NO</th>
-
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">DEPARTMENT</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">STATUS</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">ACTION</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredDepartments.map((dept, index) => (
-
-                  <tr key={index} className="hover:bg-gray-50">
-
-<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {dept.serialNumber}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-800">{dept.Departmentname}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        dept.status === 'Listed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {dept.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className={`px-4 py-1 rounded-lg text-sm font-medium ${
-                          dept.status === 'Listed' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600'
-                        } transition-colors`}
-                        onClick={() => handleListingConfirmation(dept)}
-                      >
-                        {dept.status === 'Listed' ? 'Unlist' : 'List'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Replace the table with DataTable component */}
+          <DataTable 
+            columns={columns}
+            data={filteredDepartments}
+            emptyMessage="No departments found"
+            headerClassName="bg-gray-100"
+            rowClassName="hover:bg-gray-50 transition-colors"
+          />
 
           {/* Replace the existing pagination with the Pagination component */}
           <div className="mt-6">

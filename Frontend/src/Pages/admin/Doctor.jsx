@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
+import DataTable from '../../Components/Common/DataTable';
 
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
@@ -131,10 +132,76 @@ const Doctor = () => {
     setSelectedBlockDoctor(null);
   };
 
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'S.No',
+      accessor: 'serialNumber',
+      width: '80px'
+    },
+    {
+      header: 'Name',
+      accessor: 'name'
+    },
+    {
+      header: 'Profile',
+      accessor: 'profileImage',
+      render: (row) => (
+        row.profileImage ? (
+          <img
+            className="h-10 w-10 rounded-full object-cover"
+            src={row.profileImage}
+            alt={`${row.name}'s profile`}
+          />
+        ) : (
+          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-sm">
+              {row.name?.charAt(0)?.toUpperCase() || 'U'}
+            </span>
+          </div>
+        )
+      )
+    },
+    {
+      header: 'Specialization',
+      accessor: 'specialization'
+    },
+    {
+      header: 'Details',
+      accessor: '_id',
+      render: (row) => (
+        <button 
+          onClick={() => {
+            setSelectedDoctor(row);
+            setShowModal(true);
+          }}
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+        >
+          View Details
+        </button>
+      )
+    },
+    {
+      header: 'Action',
+      accessor: 'isBlocked',
+      render: (row) => (
+        <button 
+          className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
+            row.isBlocked === true 
+              ? 'bg-green-500 hover:bg-green-600' 
+              : 'bg-red-500 hover:bg-red-600'
+          }`} 
+          onClick={() => handleBlockConfirmation(row)}
+        >
+          {row.isBlocked === true ? 'Unblock' : 'Block'}
+        </button>
+      )
+    }
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />
-      {/* Main Content */}
       <div className="flex-1 ml-64 p-8">
         <div className="bg-white rounded-lg shadow-sm">
           {/* Header with Search */}
@@ -152,91 +219,14 @@ const Doctor = () => {
             </div>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    S.No
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Profile
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Specialization
-                  </th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th> */}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredDoctors.map((doctor) => (
-                  <tr key={doctor._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {doctor.serialNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{doctor.name}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {doctor.profileImage ? (
-                        <img
-                          className="h-10 w-10 rounded-full object-cover"
-                          src={doctor.profileImage}
-                          alt={`${doctor.name}'s profile`}
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm">
-                            {doctor.name?.charAt(0)?.toUpperCase() || 'U'}
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{doctor.specialization}</div>
-                    </td>
-                   
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button 
-                        onClick={() => {
-                          setSelectedDoctor(doctor);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        View Details
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                     
-                    
-                    
-                      <button 
-                        className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
-                          doctor.isBlocked === true 
-                            ? 'bg-green-500 hover:bg-green-600' 
-                            : 'bg-red-500 hover:bg-red-600'
-                        }`} 
-                        onClick={() => handleBlockConfirmation(doctor)}
-                      >
-                        {doctor.isBlocked === true ? 'Unblock' : 'Block'}
-                      </button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Replace table with DataTable component */}
+          <DataTable 
+            columns={columns}
+            data={filteredDoctors}
+            emptyMessage="No doctors found"
+            headerClassName="bg-gray-50"
+            rowClassName="hover:bg-gray-50 transition-colors"
+          />
 
           {/* Pagination */}
           <Pagination 
@@ -244,7 +234,6 @@ const Doctor = () => {
             totalPages={totalPages}
             onPageChange={setCurrentPage}
           />
-
         </div>
       </div>
 

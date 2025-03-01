@@ -7,44 +7,57 @@ import {
   CardContent,
   Typography,
   Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Chip,
+  Paper,
   Container,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie'
+import DataTable from '../../Components/Common/DataTable';
+import Pagination from '../../Components/Common/Pagination';
+
 const Wallet = () => {
   const navigate = useNavigate();
   const [adminEarning, setAdminEarnings] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [count, setCount] = useState(0);
   
-   useEffect(()=>
-  {
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
     const token = cookies.get('admintoken');
-    if(!token)
-    {
+    if(!token) {
       navigate('/admin');
       return;
     }
-    const fetchDetails =async()=>
-    {
-           const commition = await axios.get('http://localhost:5000/api/admin/admin-earnings',{
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
-            withCredentials: true
-           })
-           setAdminEarnings(commition.data.transaction);
-           setCount(commition.data.transaction.length);
-    }
+    const fetchDetails = async () => {
+      try {
+        const commition = await axios.get('http://localhost:5000/api/admin/admin-earnings', {
+          params: {
+            page: currentPage,
+            limit: 10
+          },
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          withCredentials: true
+        });
+        setAdminEarnings(commition.data.transaction);
+        setTotalPages(commition.data.totalPages);
+        setCount(commition.data.transaction.length);
+      } catch (error) {
+        console.error('Error fetching earnings:', error);
+      }
+    };
     fetchDetails();
-  },[])
+  }, [currentPage]);
+
   {adminEarning.map((er)=>
   {
     console.log("=============hhhh",er.user);
@@ -73,10 +86,6 @@ const Wallet = () => {
     },
   ]);
 
-
-
-
-  
   const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
   const totalTransactions = adminEarning.length;
 
@@ -85,11 +94,64 @@ const Wallet = () => {
   console.log("=============",totalamount);
   console.log("=============fff",totalTransactions);
 
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'User',
+      accessor: 'userName',
+      render: (row) => (
+        <div>
+          <Typography variant="body2" color="textSecondary">
+            {row.userName}
+          </Typography>
+          <Typography variant="body1">
+            {row.userName}
+          </Typography>
+        </div>
+      )
+    },
+    {
+      header: 'Doctor',
+      accessor: 'doctorName',
+      render: (row) => (
+        <Chip
+          label={row.doctorName}
+          size="small"
+          sx={{ 
+            bgcolor: '#E3F2FD',
+            color: '#1976D2',
+            '&:hover': { bgcolor: '#BBDEFB' }
+          }}
+        />
+      )
+    },
+    {
+      header: 'Payment Date & Time',
+      accessor: 'date',
+      render: (row) => row.date.slice(4, 24)
+    },
+    {
+      header: 'User Payment',
+      accessor: 'amount',
+      render: (row) => (
+        <div className="text-right">₹{row.amount}</div>
+      )
+    },
+    {
+      header: 'Admin Commission (10%)',
+      accessor: 'commission',
+      render: (row) => (
+        <div className="text-right text-green-600 font-bold">
+          ₹{row.amount * 0.1}
+        </div>
+      )
+    }
+  ];
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
       <div style={{ width: '240px', flexShrink: 0 }}>
         <Sidebar />
-       
       </div>
       <Box sx={{ 
         flexGrow: 1, 
@@ -173,87 +235,34 @@ const Wallet = () => {
             </Grid>
           </Grid>
 
-          {/* Commission Earnings Table */}
+          {/* Replace Table with DataTable */}
           <Card sx={{ borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>
                 Commission Earnings History
               </Typography>
-              <TableContainer component={Paper} sx={{ maxHeight: '60vh', overflow: 'auto' }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow sx={{ 
-                      bgcolor: '#f5f5f5',
-                      '& th': {
-                        backgroundColor: '#f5f5f5',
-                        fontWeight: 'bold',
-                        position: 'sticky',
-                        top: 0,
-                        zIndex: 1
-                      }
-                    }}>
-                      <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Doctor</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>PaymentDate &Time</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>User Payment</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>Admin Commission (10%)</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {adminEarning.map((earning) => (
-                      <TableRow key={earning._id} sx={{ '&:hover': { bgcolor: '#f8f9fa' }, borderBottom: '1px solid #e0e0e0' }}>
-                        <TableCell>
-                          <Typography variant="body2" color="textSecondary">
-                            {earning.userName}
-                          </Typography>
-                          <Typography variant="body1">
-                            {earning.userName}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            label={earning.doctorName}
-                            size="small"
-                            sx={{ 
-                              bgcolor: '#E3F2FD',
-                              color: '#1976D2',
-                              '&:hover': { bgcolor: '#BBDEFB' }
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          {
-                          // new Date
-                          (earning.date).slice(4,24)
-                          // .toLocaleDateString('en-IN', {
-                          //   year: 'numeric',
-                          //   month: 'short',
-                          //   day: 'numeric'
-                          // })
-                          }
-                        </TableCell>
-                        <TableCell align="right">
-                          ₹{earning.amount
-                          // .
-                          // toLocaleString()
-                          }
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
-                            ₹{earning.amount * 0.1 }
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  
-                </Table>
-              </TableContainer>
+              <div className="max-h-[60vh] overflow-auto">
+                <DataTable 
+                  columns={columns}
+                  data={adminEarning}
+                  emptyMessage="No commission earnings found"
+                  headerClassName="bg-gray-50 sticky top-0 z-10"
+                  rowClassName="hover:bg-gray-50 transition-colors border-b border-gray-200"
+                />
+              </div>
+              {adminEarning.length > 0 && (
+                <Box sx={{ mt: 3, borderTop: 1, borderColor: 'divider' }}>
+                  <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Container>
       </Box>
-      
     </div>
   );
 };

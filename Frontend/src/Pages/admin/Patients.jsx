@@ -7,6 +7,7 @@ import PatientDetailsModal from './PatientDetailsModal';
 import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
+import DataTable from '../../Components/Common/DataTable';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -134,11 +135,86 @@ const Patients = () => {
 
   const navigate = useNavigate();
 
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'Patient ID',
+      accessor: 'serialNumber',
+      width: '100px'
+    },
+    {
+      header: 'Profile',
+      accessor: 'image',
+      render: (row) => (
+        row.image ? (
+          <img
+            src={row.image}
+            alt={`${row.name}'s profile`}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+        ) : (
+          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-sm">
+              {row.name?.charAt(0)?.toUpperCase() || 'U'}
+            </span>
+          </div>
+        )
+      )
+    },
+    {
+      header: 'Name',
+      accessor: 'name',
+      render: (row) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{row.name}</div>
+          <div className="text-sm text-gray-500">{row.email}</div>
+        </div>
+      )
+    },
+    {
+      header: 'Age',
+      accessor: 'age'
+    },
+    {
+      header: 'Gender',
+      accessor: 'gender'
+    },
+    {
+      header: 'Details',
+      accessor: '_id',
+      render: (row) => (
+        <button
+          onClick={() => {
+            setSelectedPatient(row);
+            setShowModal(true);
+          }}
+          className="text-blue-600 hover:text-blue-900"
+        >
+          View Details
+        </button>
+      )
+    },
+    {
+      header: 'Action',
+      accessor: 'isBlocked',
+      render: (row) => (
+        <button 
+          className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
+            row.isBlocked === true 
+              ? 'bg-green-500 hover:bg-green-600' 
+              : 'bg-red-500 hover:bg-red-600'
+          }`} 
+          onClick={() => handleBlockConfirmation(row)}
+        >
+          {row.isBlocked === true ? 'Unblock' : 'Block'}
+        </button>
+      )
+    }
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/patients" />
-
-      {/* Main Content */}
       <div className="flex-1 ml-64">
         <div className="p-8">
           <h1 className="text-2xl font-bold mb-8">Patient Management</h1>
@@ -155,100 +231,25 @@ const Patients = () => {
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
 
-          {/* Patient Table */}
+          {/* Replace table with DataTable component */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Patient ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Profile
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Age
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Gender
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredPatients.map((patient) => (
-                  <tr key={patient._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {patient.serialNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {patient.image ? (
-                        <img
-                          src={patient.image}
-                          alt={`${patient.name}'s profile`}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm">
-                            {patient.name?.charAt(0)?.toUpperCase() || 'U'}
-                          </span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{patient.name}</div>
-                      <div className="text-sm text-gray-500">{patient.email}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.age}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.gender}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <button
-                        onClick={() => {
-                          setSelectedPatient(patient);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button 
-                        className={`px-3 py-1 text-white text-sm rounded hover:opacity-80 transition-colors ${
-                          patient.isBlocked === true 
-                            ? 'bg-green-500 hover:bg-green-600' 
-                            : 'bg-red-500 hover:bg-red-600'
-                        }`} 
-                        onClick={() => handleBlockConfirmation(patient)}
-                      >
-                        {patient.isBlocked === true ? 'Unblock' : 'Block'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable 
+              columns={columns}
+              data={filteredPatients}
+              emptyMessage="No patients found"
+              headerClassName="bg-gray-50"
+              rowClassName="hover:bg-gray-50 transition-colors"
+            />
           </div>
 
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-
+          {/* Pagination */}
+          <div className="mt-6">
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </div>
       </div>
 

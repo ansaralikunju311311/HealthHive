@@ -19,6 +19,7 @@ import {
 } from 'react-icons/fa';
 import DetailsModel from '../Doctor/DetailsModel';
 import { toast } from 'react-toastify';
+import DataTable from '../../Components/Common/DataTable';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
@@ -28,15 +29,11 @@ const DoctorVerification = () => {
   const [showModal, setShowModal] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedActionDoctor, setSelectedActionDoctor] = useState(null);
-  const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
+  const [actionType, setActionType] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage] = useState(10);
-  const [totalDoctors, setTotalDoctors] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
-  const [hasPrev, setHasPrev] = useState(false);
 
-  const fetchDoctors = async () => {
+  const fetchDoctors = async (page) => {
     try {
       const token = cookies.get('admintoken');
       if(!token) {
@@ -45,8 +42,9 @@ const DoctorVerification = () => {
       }
       const response = await axios.get('http://localhost:5000/api/admin/pending-doctors', {
         params: {
-          page: currentPage,
-          limit: itemsPerPage
+          page,
+          limit: 10,
+          search: searchTerm // Add search term to API query
         },
         headers: {
           Authorization: `Bearer ${token}`
@@ -54,48 +52,30 @@ const DoctorVerification = () => {
         withCredentials: true
       });
       
-      const { 
-        doctorsWithIndex, 
-        totalPages, 
-        totalDoctors, 
-        hasNext, 
-        hasPrev 
-      } = response.data;
+      const { doctorsWithIndex, totalPages } = response.data;
       
-      if (doctorsWithIndex.length === 0 && currentPage > 1) {
-        // If current page is empty and not the first page, go to previous page
-        setCurrentPage(prev => prev - 1);
-        return;
-      }
-
       setDoctors(doctorsWithIndex);
       setFilteredDoctors(doctorsWithIndex);
       setTotalPages(totalPages);
-      setTotalDoctors(totalDoctors);
-      setHasNext(hasNext);
-      setHasPrev(hasPrev);
     } catch (error) {
       console.error('Error fetching doctors:', error);
-      toast.error('Error fetching doctors. Please try again.', {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored"
-      });
+      toast.error('Error fetching doctors. Please try again.');
     }
   };
 
+  // Fetch doctors when page changes or search term changes
   useEffect(() => {
-    fetchDoctors();
-  }, [currentPage]);
+    const delayDebounceFn = setTimeout(() => {
+      fetchDoctors(currentPage);
+    }, 500); // Debounce search
 
-  useEffect(() => {
-    const result = doctors.filter(
-      (doctor) =>
-        doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredDoctors(result);
-  }, [searchTerm, doctors]);
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentPage, searchTerm]);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleApprove = async (doctorid) => {
     try {
@@ -182,7 +162,80 @@ const DoctorVerification = () => {
   };
 
   const navigate = useNavigate();
-  
+
+  // Define columns for DataTable
+  const columns = [
+    {
+      header: 'SL. NO',
+      accessor: 'serialNumber'
+    },
+    {
+      header: 'NAME',
+      accessor: 'name'
+    },
+    {
+      header: 'PROFILE IMAGE',
+      accessor: 'profileImage',
+      render: (row) => (
+        <div className="flex items-center justify-center">
+          <img
+            src={row.profileImage}
+            alt={`${row.name}'s profile`}
+            className="h-12 w-12 rounded-full object-cover"
+          />
+        </div>
+      )
+    },
+    {
+      header: 'SPECIALIZATION',
+      accessor: 'specialization'
+    },
+    {
+      header: 'STATUS',
+      accessor: 'status',
+      render: () => (
+        <span className="px-2 py-1 text-yellow-600 bg-yellow-100 rounded-full text-sm">
+          Pending
+        </span>
+      )
+    },
+    {
+      header: 'DETAILS',
+      accessor: '_id',
+      render: (row) => (
+        <button
+          onClick={() => {
+            setSelectedDoctor(row);
+            setShowModal(true);
+          }}
+          className="text-blue-600 hover:text-blue-800"
+        >
+          View Details
+        </button>
+      )
+    },
+    {
+      header: 'ACTION',
+      accessor: 'actions',
+      render: (row) => (
+        <div className="flex justify-end space-x-2">
+          <button 
+            onClick={() => handleActionConfirmation(row, 'approve')}
+            className="text-green-600 hover:text-green-900 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-colors"
+          >
+            Approve
+          </button>
+          <button 
+            onClick={() => handleActionConfirmation(row, 'reject')}
+            className="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full transition-colors"
+          >
+            Reject
+          </button>
+        </div>
+      )
+    }
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/doctor/verification" />
@@ -202,82 +255,21 @@ const DoctorVerification = () => {
             </div>
           </div>
 
-          <div className="w-full">
-            <div className="grid grid-cols-7 bg-gray-100 p-4 rounded-t-lg font-medium text-gray-600">
-              <div>SL. NO</div>
-              <div>NAME</div>
-              <div>PROFILE IMAGE</div>
-              <div>SPECIALIZATION</div>
-              <div>STATUS</div>
-              <div>DETAILS</div>
-              <div>ACTION</div>
-            </div>
+          <DataTable 
+            columns={columns}
+            data={filteredDoctors}
+            emptyMessage="No pending doctors found"
+            headerClassName="bg-gray-100"
+            rowClassName="hover:bg-gray-50 transition-colors"
+          />
 
-            {filteredDoctors.length > 0 ? (
-              <div className="divide-y divide-gray-200">
-                {filteredDoctors.map((doctor, index) => (
-                  <div key={doctor._id} className="grid grid-cols-7 p-4 hover:bg-gray-50">
-                   <div className='text-gray-900'>{doctor.serialNumber}</div>
-                    <div className="text-gray-900">{doctor.name}</div>
-                    <div className="flex items-center justify-center">
-                      <img
-                        src={doctor.profileImage}
-                        alt={`${doctor.name}'s profile`}
-                        className="h-12 w-12 rounded-full object-cover"
-                      />
-                    </div>
-                    <div className="text-gray-900">{doctor.specialization}</div>
-                    <div>
-                      <span className="px-2 py-1 text-yellow-600 bg-yellow-100 rounded-full text-sm">
-                        Pending
-                      </span>
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => {
-                          setSelectedDoctor(doctor);
-                          setShowModal(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        View Details
-                      </button>
-                    </div>
-                    <div className="px-6 py-4 text-sm font-medium text-right">
-                      <div className="flex justify-end space-x-2">
-                        <button 
-                          onClick={() => handleActionConfirmation(doctor, 'approve')}
-                          className="text-green-600 hover:text-green-900 bg-green-100 hover:bg-green-200 px-3 py-1 rounded-full transition-colors"
-                        >
-                          Approve
-                        </button>
-                        <button 
-                          onClick={() => handleActionConfirmation(doctor, 'reject')}
-                          className="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-full transition-colors"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-600">
-                No pending doctors found
-              </div>
-            )}
-
-            {totalDoctors > 0 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-                hasNext={hasNext}
-                hasPrev={hasPrev}
-              />
-            )}
-          </div>
+          {filteredDoctors.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
         </div>
       </div>
       <DetailsModel

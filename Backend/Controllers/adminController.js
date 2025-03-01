@@ -361,10 +361,17 @@ export const userCount = async (req, res) => {
     }
 }
 export const Earnings = async (req, res) => {
+     const {page,limit} = req.query;
+    console.log(req.query)
+    console.log("page=====",page);
     try {
-        const transaction =  await Transaction.find();
+        const page = +(req.query.page || 1);
+        const limit = +(req.query.limit || 10);
+        const skip = (page - 1) * limit;
+        const transaction =  await Transaction.find().skip(skip).limit(limit);
+        const totalpage = Math.ceil(await Transaction.countDocuments() / limit);
        
-       res.status(STATUS_CODE.OK).json({transaction});
+       res.status(STATUS_CODE.OK).json({transaction,totalpage});
     } catch (error) {
         console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
