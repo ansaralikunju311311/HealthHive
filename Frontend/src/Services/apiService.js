@@ -419,7 +419,20 @@ export const DrProfile = async(doctorId)=>{
   }
 }
 
-
+export const getwalletBalance = async(id,page,limit=10)=>{
+  try {
+    const response = await apidoctor.get(`/doctor/doctor-wallet-balance/${id}`,{
+      params:{
+        page,
+        limit
+      }
+    }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch wallet balance');
+  }
+}
 
 
 //

@@ -6,9 +6,10 @@ import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import DataTable from '../../../Components/Common/DataTable';
 import Pagination from '../../../Components/Common/Pagination';
+import { verifyDoctorToken,getwalletBalance } from '../../../Services/apiService';
 
 const DrWallet = () => {
-
+ const limit =10;
   const [walletBalance, setWalletBalance] = useState(0);
   const [doctor, setDoctor] = useState();
   const [history, setHistory] = useState();
@@ -25,31 +26,23 @@ const DrWallet = () => {
 
     const verifyTokenAndFetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/doctor/verify-token`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true
-        });
-        const doctorData = response.data.doctor;
+       
+        const response = await verifyDoctorToken();
+        const doctorData = response.doctor;
         console.log("Doctor data from response:", doctorData);
         setDoctor(doctorData);
 
         const id = doctorData._id;
-        const balance = await axios.get(`http://localhost:5000/api/doctor/doctor-wallet-balance/${id}`, {
-          params: {
-            page:currentPage,
-            limit: 10
-          },
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true
-        });
-        setWalletBalance(balance.data.walletBalance);
-        setHistory(balance.data.history);
-        setCurrentPage(balance.data.pagination.currentPage);
-        console.log("=====",balance.data);
+       
+
+   const balance = await getwalletBalance(id,currentPage,limit);
+
+        setWalletBalance(balance.walletBalance);
+        setHistory(balance.history);
+        setTotalPages(balance.pagination.totalPages);
+        setCurrentPage(balance.pagination.currentPage);
+        // console.log("=====",balance.data);
+        // console.log("====pahes",balance.data)
         
       } catch (error) {
         console.log(error);
@@ -65,7 +58,7 @@ const DrWallet = () => {
     {
       header: 'Sl No',
       accessor: 'index',
-      render: (row, index) => index + 1
+      render: (row) => row.index+ 0
     },
     {
       header: 'Patient Name',
