@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
+import { schedules,ExstingSchedules } from '../../../Services/apiService';
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
     let doctorId;
@@ -68,9 +68,12 @@ const Schedules = () => {
                 })
             );
             console.log("Prepared Appointments Data:", appointmentsData);
-            const response = await axios.post(`http://localhost:5000/api/doctor/schedule/${doctorId}`, {
-                appointments: appointmentsData
-            });
+            // const response = await axios.post(`http://localhost:5000/api/doctor/schedule/${doctorId}`, {
+            //     appointments: appointmentsData
+
+            // });
+            const response = await schedules(doctorId, appointmentsData);
+
             console.log("Schedule Response:", response.data);
             
             // Immediately update the existingSchedules state with the new appointments
@@ -161,10 +164,13 @@ const Schedules = () => {
 
     const fetchExistingSchedules = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
-            setExistingSchedules(response.data.schedules || []);
+            // const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
+            // setExistingSchedules(response.data.schedules || []);
+            const response = await ExstingSchedules(doctorId);
+            
+            setExistingSchedules(response.schedules || []);
 
-            console.log("Existing Schedules:", response.data.schedules);
+            console.log("Existing Schedules:", response.schedules);
         } catch (error) {
             console.error('Error fetching schedules:', error);
             setExistingSchedules([]);

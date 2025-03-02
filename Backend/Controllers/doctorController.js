@@ -752,7 +752,7 @@ export const chatDetails = async(req,res)=>
       const roomId = doctorId+'_'+userId;
         const chats = await Chat.find({roomId}).sort({ createdAt: 1 });
         res.status(STATUS_CODE.OK).json(chats);
-
+        console.log("chats",chats);
     } catch (error) {
         console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });

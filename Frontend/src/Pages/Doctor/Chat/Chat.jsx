@@ -6,6 +6,7 @@ import { FiSend } from 'react-icons/fi';
 import { format } from 'date-fns';
 import axios from 'axios';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
+import { userInfo,chatHistory } from '../../../Services/apiService';
 
 const Chat = () => {
   const location = useLocation();
@@ -44,9 +45,11 @@ const Chat = () => {
 
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/doctor/userinfo/${userId}`);
-        setUser(response.data);
-        console.log("===========================user user",response.data)
+        
+        // setUser(response.data);
+        // console.log("===========================user user",response.data)
+        const data = await userInfo(userId);
+        setUser(data);
       } catch (error) {
         console.error('Error fetching doctor:', error);
       }
@@ -59,8 +62,10 @@ const Chat = () => {
 
     const chatData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/doctor/Chats/${doctorId}/${userId}`);
-        setChat(response.data);
+      
+        const chatDatas = await chatHistory(doctorId, userId);
+        console.log("chatDatas",chatDatas);
+        setChat(chatDatas);
       } catch (error) {
         console.error('Error fetching chat:', error);
       }

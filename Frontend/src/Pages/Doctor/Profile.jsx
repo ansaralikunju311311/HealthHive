@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DrProfile } from '../../Services/apiService';
 import axios from 'axios';
 
 const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
@@ -52,8 +53,10 @@ const Profile = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await axios.get(`http://localhost:5000/api/doctor/profile/${id}`);
-                setDoctor(response.data.doctorData);
+                // const response = await axios.get(`http://localhost:5000/api/doctor/profile/${id}`);
+                const response = await DrProfile(id);
+                
+                // setDoctor(response.doctorData);
             } catch (error) {
                 setError(error.response?.data?.message || "Failed to fetch doctor profile");
                 console.error("Error fetching doctor profile:", error);

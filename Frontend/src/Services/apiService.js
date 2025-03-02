@@ -1,8 +1,11 @@
 import axios from 'axios';
 import cookie from 'js-cookie';
-
+// import { toast } from 'react-toastify';
+// import { useNavigate } from 'react-router-dom';
 const BASE_URL = 'http://localhost:5000/api';
 
+
+// const navigate = useNavigate();
 // Helper functions
 const getUserToken = () => cookie.get('usertoken');
 
@@ -260,13 +263,6 @@ export const getOtpRemainingTime = async (email) => {
 
 const getDoctorToken = () => cookie.get('doctortoken');
 
-// const handleApiError = (error, defaultMessage) => {
-//   if (error.response?.data?.message) {
-//     throw new Error(error.response.data.message);
-//   }
-//   throw new Error(defaultMessage);
-// };
-
 // Create axios instance with default config
 const apidoctor = axios.create({
   baseURL: BASE_URL,
@@ -294,4 +290,132 @@ apidoctor.interceptors.response.use(
   }
 );
 
+export const verifyDoctorToken = async () => {
+  try {
+    const token = getDoctorToken();
+    if (!token) {
+      throw new Error('No token found');
+    }
+    const response = await apidoctor.get('/doctor/verify-token', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      withCredentials:true,
+    });
+    return response.data;
+  }
+  catch (error) {
+    if(error.response?.status === 401){
+      cookie.remove('doctortoken', { path: '/doctor/login' });
+      localStorage.removeItem('doctorId');
+    }
+    console.error(error);
+  }
+}
 
+
+export const DoctorSignUp = async (doctorData) => {
+  try {
+    const response = await apidoctor.post('/doctor/signup', doctorData, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Sign Up failed');
+  }
+}
+
+export const DoctorLogin = async(data,withCredentials=true)=>{
+  try {
+    const response = await apidoctor.post('/doctor/login', data, {
+      withCredentials
+    });
+    return response.data;
+  }
+  catch (error) {
+    handleApiError(error, 'Login failed');
+  }
+}
+export const logoutDoctor = async () => {
+  try {
+    await apidoctor.post('/doctor/logout');
+  }
+  catch (error) {
+    console.error(error);
+  }
+   finally {
+    cookie.remove('doctortoken', { path: '/' });
+    localStorage.removeItem('doctorId');
+  }
+
+}
+export const userInfo = async (userId) => {
+  try { 
+    const response = await apidoctor.get(`/doctor/userinfo/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch user information');
+  }
+}
+export const chatHistory = async (doctorId,userId) => {
+  try {
+    const response = await apidoctor.get(`/doctor/chats/${doctorId}/${userId}`);
+    return response.data;
+  }
+  catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch chat data');
+  }
+}
+export const schedules = async (doctorId,appointmentData) => {
+  console.log("appointmentData",appointmentData)
+  try {
+       const response = await apidoctor.post(`/doctor/schedule/${doctorId}`,{
+         appointments:appointmentData
+       });
+       return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch schedule data');
+  }
+}
+
+export const ExstingSchedules = async(doctorId)=>{
+  try {
+    const response = await apidoctor.get(`/doctor/existing-schedules/${doctorId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch existing schedules');
+  }
+}
+
+
+export const DrAppoinments = async (doctorId) => {
+  console.log("working properly")
+  const response = await apidoctor.get(`/doctor/appointments/${doctorId}`);
+  return response.data;
+}
+export const appoimentDetails = async (doctorId)=>
+{
+  try {
+    const response = await apidoctor.get(`/doctor/appoimentdetails/${doctorId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch appointment details');
+  }
+}
+export const doctorVerification = async(doctoremail)=>
+{
+  try {
+    const response = await apidoctor.get(`/doctor/get-doctor?email=${doctoremail}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to verify doctor');
+  }
+}
+export const DrProfile = async(doctorId)=>{
+  try {
+    const response = await apidoctor.get(`/doctor/profile/${doctorId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch doctor profile');
+  }
+}

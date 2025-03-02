@@ -2,43 +2,40 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
-import cookies from 'js-cookie'
+// import cookies from 'js-cookie'
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import { setDoctor, setToken } from '../../redux/Features/DoctorSlice';
+import { DoctorLogin } from '../../Services/apiService';
 
 const Login = () => {
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     const [error, setError] = useState('');
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/doctor/login', data, {withCredentials: true})
-            console.log(response.data)
-            if (response.data.doctor.isActive === false) {
+            const { doctor } = await DoctorLogin(data, { withCredentials: true });
+ 
+            if (doctor.isActive === false) {
                 toast.error('Your account is pending verification');
                 navigate('/beforeverification');
-            } else if (response.data.doctor.isBlocked) {
+            } else if (doctor.isBlocked===true) {
                 toast.error('Your account has been blocked. Please contact support.', {
                     icon: '⛔',
                     backgroundColor: '#ef4444'
                 });
                 return;
             } else {
-                dispatch(setDoctor(response.data.doctor));
-                dispatch(setToken(response.data.token));
-
-
-                toast.success('Welcome back, Dr. ' + response.data.doctor.name, {
+                toast.success('Welcome back, Dr. ' + doctor.name, {
                     icon: '👋',
                     backgroundColor: '#22c55e'
                 });
                 navigate('/doctor/dashboard');
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Login failed');
+            toast.error(error.response?.message || 'Login failed');
         }
     }
 

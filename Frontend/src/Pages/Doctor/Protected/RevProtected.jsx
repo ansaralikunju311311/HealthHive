@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import cookies from 'js-cookie'
+import { verifyDoctorToken } from '../../../Services/apiService'
 
 const RevProtected = ({children}) => {
     const navigate = useNavigate();
@@ -10,18 +11,19 @@ const RevProtected = ({children}) => {
         const verifyToken = async () => {
         try {
             // const token = localStorage.getItem('doctortoken');
-            const token = cookies.get('doctortoken');
-            if (!token) {
-                navigate('/doctor/signup');
-                return;
-            }
-            const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-                withCredentials:true,
-            });
-            if (response.data.doctor) {
+            // const token = cookies.get('doctortoken');
+            // if (!token) {
+            //     navigate('/doctor/signup');
+            //     return;
+            // }
+            // const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
+            //     headers: {
+            //         Authorization: `Bearer ${token}`
+            //     },
+            //     withCredentials:true,
+            // });
+            const response = await verifyDoctorToken();
+            if (response.doctor) {
                 navigate('/doctor/dashboard');
                 
             } else {

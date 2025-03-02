@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { FaSpinner, FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 import axios from 'axios';
+import { doctorVerification } from '../../Services/apiService';
 
 const BeforeVerification = () => {
   const location = useLocation();
@@ -23,16 +24,18 @@ const BeforeVerification = () => {
           return;
         }
 
-        const response = await axios.get(`http://localhost:5000/api/doctor/get-doctor?email=${doctorEmail}`);
-        console.log('Verification response:', response.data);
+        // const response = await axios.get(`http://localhost:5000/api/doctor/get-doctor?email=${doctorEmail}`);
+        // console.log('Verification response:', response.data);
+        const response = await doctorVerification(doctorEmail);
+        console.log('Verification response:', response);
 
-        if (response.data.isRejected) {
+        if (response.isRejected) {
           setVerificationStatus('rejected');
           setMessage('Your registration has been rejected');
           if (intervalId) {
             clearInterval(intervalId);
           }
-        } else if (response.data.isVerified) {
+        } else if (response.isVerified) {
           setVerificationStatus('verified');
           setMessage('Your account has been verified!');
           if (intervalId) {
@@ -43,12 +46,12 @@ const BeforeVerification = () => {
           }, 2000);
         } else {
           setVerificationStatus('pending');
-          setMessage(response.data.message || 'Your account is pending verification');
+          setMessage(response.message || 'Your account is pending verification');
         }
       } catch (error) {
         console.error('Error checking verification:', error);
         setVerificationStatus('error');
-        setMessage(error.response?.data?.message || 'An error occurred');
+        setMessage(error.response?.message || 'An error occurred');
       }
     };
 

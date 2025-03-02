@@ -25,6 +25,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
+import { appoimentDetails, verifyDoctorToken } from '../../../Services/apiService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -37,38 +38,44 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const token = cookies.get('doctortoken');
-        if (!token) {
-          navigate('/doctor/login');
-          return;
-        }
+        // const token = cookies.get('doctortoken');
+        // if (!token) {
+        //   navigate('/doctor/login');
+        //   return;
+        // }
 
-        const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials:true,
-        });
+        // const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`
+        //   },
+        //   withCredentials:true,
+        // });
+        const reponse = await verifyDoctorToken();
+        console.log('doctorccccc=======',reponse);  
+        
+       const doctors = reponse?.doctor;
+        console.log('doctorccddddddddddddccc=======',doctors);
+        // const doctorData = response.data.doctor;
+        setDoctor(doctors);
 
-        const doctorData = response.data.doctor;
-        setDoctor(doctorData);
-
-        const datas = await axios.get(`http://localhost:5000/api/doctor/appoimentdetails/${doctorData._id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials:true,
-        });
-
+        // const datas = await axios.get(`http://localhost:5000/api/doctor/appoimentdetails/${doctorData._id}`, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`
+        //   }, 
+        //   withCredentials:true,
+        // });
+        const responses  = await appoimentDetails(doctors._id);
+        // const datas = response.data;
 
 
-        console.log('=====socfjgfoijv',datas.data)
-        setAppoiment(datas.data);
-        console.log("response.data.doctor", doctorData);
-        localStorage.setItem('doctorId', JSON.stringify(doctorData));
+
+        // console.log('=====socfjgfoijv',datas.data)
+        setAppoiment(responses);
+        // console.log("response.data.doctor", doctors);
+        localStorage.setItem('doctorId', JSON.stringify(doctors));
          
         setLoading(false);
-        if(doctorData.isBlocked === true && doctorData.isActive === true){
+        if(doctors.isBlocked === true && doctors.isActive === true){
          
           cookies.remove('doctortoken');
           toast.error('Your account has been blocked', {

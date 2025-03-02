@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import { DoctorSignUp } from '../../Services/apiService';
 
 const SignUp = () => {
     const [profileImageUrl, setProfileImageUrl] = useState('');
@@ -109,13 +110,13 @@ const SignUp = () => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:5000/api/doctor/signup', {
-                name: data.name,  
+            const doctorData = {
+                name: data.name,
                 email: data.email,
                 password: data.password,
                 phone: data.phone,
-                yearsOfExperience: parseInt(data.yearsOfExperience),  
-                specialization: data.specialization,  
+                yearsOfExperience: parseInt(data.yearsOfExperience),
+                specialization: data.specialization,
                 profileImage: profileImageUrl,
                 medicalLicense: medicalLicenseUrl,
                 about: data.about,
@@ -123,21 +124,18 @@ const SignUp = () => {
                 gender: data.gender,
                 idProof: idProofUrl,
                 availability: data.availability
-            });
-            console.log("responnse come backend",response.data);
-            console.log("debuggin isActivate======",response.data.user.isActive)
-            console.log("user details======",response.data.user);
-            
-            if(response.data.user.isActive===false){
+            };
+
+            const response = await DoctorSignUp(doctorData);
+
+            if (response?.user?.isActive === false) {
                 toast.success('Account created! Please wait for admin verification.');
                 navigate('/beforeverification', { state: { email: data.email } });
-            }
-            else{
+            } else {
                 toast.success('Account created successfully!');
                 navigate('/doctor/login');
             }
-            
-        } catch(error) {
+        } catch (error) {
             toast.error(error.response?.data?.message || 'Registration failed');
         }
     }

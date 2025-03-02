@@ -14,6 +14,7 @@ import {
   FaChevronLeft, 
   FaChevronRight 
 } from 'react-icons/fa';
+import { DrAppoinments } from '../../../Services/apiService';
 
 const groupAppointmentsByCategory = (appointments) => {
   const today = new Date();
@@ -212,9 +213,10 @@ const DrAppoiments = () => {
 
     const fetchAppoiments = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/doctor/appointments/${doctor_Id}`);
-        setAppointments(response.data);
-        setFilteredAppointments(response.data);
+        // const response = await axios.get(`http://localhost:5000/api/doctor/appointments/${doctor_Id}`);
+        const response = await DrAppoinments(doctor_Id);
+        setAppointments(response);
+        setFilteredAppointments(response);
         setLoading(false);
       } catch (error) {
         console.log(error);
