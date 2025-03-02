@@ -18,7 +18,8 @@ import Pagination from '../../Components/Common/Pagination';
 
 const Wallet = () => {
   const navigate = useNavigate();
-  const [adminEarning, setAdminEarnings] = useState([]);
+  const [adminEarning, setAdminEarnings] = useState(0);
+  const [history, setHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [count, setCount] = useState(0);
@@ -48,9 +49,17 @@ const Wallet = () => {
           },
           withCredentials: true
         });
-        setAdminEarnings(commition.data.transaction);
-        setTotalPages(commition.data.totalPages);
-        setCount(commition.data.transaction.length);
+        
+        console.log("this is the respXXXXXonse", commition.data.totalEarnings);
+        setHistory(commition.data.transaction);
+        console.log("this is the response", commition.data.transaction);
+        setAdminEarnings(commition.data.totalEarnings);
+      
+
+        setTotalPages(commition.data.totalpage);
+        // console.log("this is the response", commition.totalPages);
+        setCount(commition.data.count);
+        console.log("this is the responselvnfjvj", commition.data.count);
       } catch (error) {
         console.error('Error fetching earnings:', error);
       }
@@ -58,12 +67,12 @@ const Wallet = () => {
     fetchDetails();
   }, [currentPage]);
 
-  {adminEarning.map((er)=>
-  {
-    console.log("=============hhhh",er.user);
-  })}
+  // {adminEarning.map((er)=>
+  // {
+  //   console.log("=============hhhh",er.user);
+  // })}
   // console.log("=============hhhh",adminEarning.user);
-  console.log("=============",count);
+  // console.log("=============",count);
   // Sample data - replace with actual data from your backend
   const [adminEarnings] = useState([
     {
@@ -86,13 +95,13 @@ const Wallet = () => {
     },
   ]);
 
-  const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
-  const totalTransactions = adminEarning.length;
+  // const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
+  // const totalTransactions = adminEarning.length;
 
-  const averageCommission = totalamount / totalTransactions;
+  // const averageCommission = totalamount / totalTransactions;
 
-  console.log("=============",totalamount);
-  console.log("=============fff",totalTransactions);
+  // console.log("=============",totalamount);
+  // console.log("=============fff",totalTransactions);
 
   // Define columns for DataTable
   const columns = [
@@ -103,6 +112,7 @@ const Wallet = () => {
         <div>
           <Typography variant="body2" color="textSecondary">
             {row.userName}
+  
           </Typography>
           <Typography variant="body1">
             {row.userName}
@@ -178,7 +188,7 @@ const Wallet = () => {
                 Total Commission Balance
               </Typography>
               <Typography variant="h3" sx={{ mb: 1, fontWeight: 500 }}>
-                ₹{totalamount.toLocaleString()}
+                ₹{adminEarning}
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9 }}>
                 Based on 10% commission rate
@@ -214,7 +224,7 @@ const Wallet = () => {
                   Total Transactions
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                  {totalTransactions}
+                   {count}
                 </Typography>
               </Paper>
             </Grid>
@@ -229,7 +239,7 @@ const Wallet = () => {
                   Average Commission/Transaction
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#9C27B0', fontWeight: 'bold' }}>
-                  ₹{averageCommission.toFixed(2)}
+                   ₹{adminEarning/count}
                 </Typography>
               </Paper>
             </Grid>
@@ -244,13 +254,13 @@ const Wallet = () => {
               <div className="max-h-[60vh] overflow-auto">
                 <DataTable 
                   columns={columns}
-                  data={adminEarning}
+                  data={history}
                   emptyMessage="No commission earnings found"
                   headerClassName="bg-gray-50 sticky top-0 z-10"
                   rowClassName="hover:bg-gray-50 transition-colors border-b border-gray-200"
                 />
               </div>
-              {adminEarning.length > 0 && (
+              {history.length > 0 && (
                 <Box sx={{ mt: 3, borderTop: 1, borderColor: 'divider' }}>
                   <Pagination 
                     currentPage={currentPage}

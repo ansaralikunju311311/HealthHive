@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
+import { AdminDash } from '../../Services/apiService';
 
 // Sample data for charts
 const userGrowthData = [
@@ -44,21 +45,22 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = cookies.get('admintoken');
-        if (!token) {
-          navigate('/admin');
-          return;
-        }
-        const response = await axios.get('http://localhost:5000/api/admin/usercount', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true
-        });
+        // const token = cookies.get('admintoken');
+        // if (!token) {
+        //   navigate('/admin');
+        //   return;
+        // }
+        // const response = await axios.get('http://localhost:5000/api/admin/usercount', {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`
+        //   },
+        //   withCredentials: true
+        // });
+        const response = await AdminDash();
         console.log("usercount=====", response.data);
-        setUserCount(response.data.userCount + response.data.doctorCount);
-        setDoctorCount(response.data.doctorCount);
-        setTotalAmount(response.data.totalAmount);
+        setUserCount(response?.userCount + response?.doctorCount);
+        setDoctorCount(response?.doctorCount);
+        setTotalAmount(response?.totalAmount);
       } catch (error) {
         console.error("Error fetching user count:", error);
         toast.error('Failed to fetch user count');

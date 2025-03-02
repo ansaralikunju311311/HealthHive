@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
+import { Departments, UpdateDepartment ,AddDepartment} from '../../Services/apiService';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,20 +17,16 @@ const Department = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
+  const limit = 10;
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/department', {
-          params:{
-            page:currentPage,
-            limit:10
-          },
-          withCredentials: true,
-        });
-        console.log(response.data);
-        setDepartments(response.data.departments);
-        setTotalPages(response.data.totalpage);
+       
+        const response = await Departments(currentPage,limit);
+
+        // console.log("===============================",response?.data);
+        setDepartments(response?.departments);
+        setTotalPages(response?.totalpage);
       } catch (error) {
         console.log(error);
       }
@@ -47,21 +44,23 @@ const Department = () => {
 
   const handleListing = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {}, {
-        withCredentials: true,
-      });
+      // const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {}, {
+      //   withCredentials: true,
+      // });
+      const response = await UpdateDepartment(id);
       
       // Fetch updated departments for the current page
-      const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
-        params: {
-          page: currentPage,
-          limit: 10
-        },
-        withCredentials: true,
-      });
+      // const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
+      //   params: {
+      //     page: currentPage,
+      //     limit: 10
+      //   },
+      //   withCredentials: true,
+      // });
+      const updatedResponse = await Departments(currentPage,limit);
 
-      setDepartments(updatedResponse.data.departments);
-      setTotalPages(updatedResponse.data.totalpage);
+      setDepartments(updatedResponse?.departments);
+      setTotalPages(updatedResponse?.totalpage);
       setIsConfirmModalOpen(false);
       setSelectedDepartment(null);
 
@@ -119,27 +118,29 @@ const Department = () => {
 
     try {
       console.log("Adding department:", trimmedDepartmentName);
-      const response = await axios.post('http://localhost:5000/api/admin/department', {
-        Departmentname: trimmedDepartmentName,
-        Description: description
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      // const response = await axios.post('http://localhost:5000/api/admin/department', {
+      //   Departmentname: trimmedDepartmentName,
+      //   Description: description
+      // }, {
+      //   withCredentials: true,
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // });
+      const response = await AddDepartment(trimmedDepartmentName,description);
       
       // Fetch updated departments for the current page
-      const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
-        params: {
-          page: currentPage,
-          limit: 10
-        },
-        withCredentials: true,
-      });
+      // const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
+      //   params: {
+      //     page: currentPage,
+      //     limit: 10
+      //   },
+      //   withCredentials: true,
+      // });
+      const updatedResponse = await Departments(currentPage,limit);
       
-      setDepartments(updatedResponse.data.departments);
-      setTotalPages(updatedResponse.data.totalpage);
+      setDepartments(updatedResponse?.departments);
+      setTotalPages(updatedResponse?.totalpage);
       
       console.log("Response from backend:", response.data);
       toast.success('Department added successfully');

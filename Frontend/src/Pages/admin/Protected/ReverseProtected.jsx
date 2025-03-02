@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
+import { verifyAdminToken } from '../../../Services/apiService';
 
 const ReverseProtected = ({ children }) => {
     const navigate = useNavigate();
@@ -10,20 +11,20 @@ const ReverseProtected = ({ children }) => {
     useEffect(() => {
         const verifyToken = async () => {
             try {
-                const token = cookies.get('admintoken');
-                if (!token) {
-                    setLoading(false);
-                    return;
-                }
+                // const token = cookies.get('admintoken');
+                // if (!token) {
+                //     setLoading(false);
+                //     return;
+                // }
 
-                const response = await axios.get('http://localhost:5000/api/admin/verify-token', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                    withCredentials: true,
-                });
-
-                if (response.data.admin) {
+                // const response = await axios.get('http://localhost:5000/api/admin/verify-token', {
+                //     headers: {
+                //         Authorization: `Bearer ${token}`
+                //     },
+                //     withCredentials: true,
+                // });
+                 const response = await verifyAdminToken();
+                if (response?.admin) {
                     navigate('/admin/dashboard');
                 } else {
                     cookies.remove('admintoken');

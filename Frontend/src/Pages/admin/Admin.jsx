@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { AdminLogin } from '../../Services/apiService';
+import cookies from 'js-cookie';
 
 const Admin = () => {
     const navigate = useNavigate();
@@ -12,24 +12,23 @@ const Admin = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/admin/login', data, {
-                withCredentials: true
-            });
+            const response = await AdminLogin(data);
 
-            if (response.data.adminToken) {
-                // cookies.set('admintoken', response.data.adminToken);
+            if (response && response.adminToken) {
                 toast.success('Login successful!', {
                     position: "top-right",
                     autoClose: 3000,
                     theme: "colored"
                 });
                 
-                // Add a small delay before navigation
+                // Store the token if needed
+                cookies.set('admintoken', response.adminToken);
+                
                 setTimeout(() => {
                     navigate('/admin/dashboard', { replace: true });
                 }, 100);
             } else {
-                setError('Login failed - No token received');
+                setError('Login failed - Invalid credentials');
                 toast.error('Login failed', {
                     position: "top-right",
                     autoClose: 3000,
@@ -37,13 +36,13 @@ const Admin = () => {
                 });
             }
         } catch (error) {
-            console.error('Login error:', error.response?.data?.message);
-            toast.error(error.response?.data?.message || 'Login failed', {
+            console.error('Login error:', error.message);
+            toast.error(error.message || 'Login failed', {
                 position: "top-right",
                 autoClose: 3000,
                 theme: "colored"
             });
-            setError(error.response?.data?.message || 'An error occurred');
+            setError(error.message || 'An error occurred');
         }
     };
 

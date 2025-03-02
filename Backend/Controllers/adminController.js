@@ -368,10 +368,24 @@ export const Earnings = async (req, res) => {
         const page = +(req.query.page || 1);
         const limit = +(req.query.limit || 10);
         const skip = (page - 1) * limit;
-        const transaction =  await Transaction.find().skip(skip).limit(limit);
+        const transaction =  await Transaction.find().skip(skip).limit(limit).sort({createdAt: -1});
         const totalpage = Math.ceil(await Transaction.countDocuments() / limit);
-       
-       res.status(STATUS_CODE.OK).json({transaction,totalpage});
+        const count = await Transaction.countDocuments();
+
+        const eranings = await Transaction.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$amount" }
+                }
+            }
+        ]);
+        const totalAmount = eranings[0]?.totalAmount || 0;
+        const totalEarnings = totalAmount*0.1;
+        console.log("transactionffnfnfnnnfnfn=====",totalEarnings);
+        // totalamount = transaction.reduce((sum, earning) => sum + earning.amount*0.1, 0);
+       console.log("transaction=====",transaction);
+       res.status(STATUS_CODE.OK).json({transaction,totalpage,totalEarnings,count});
     } catch (error) {
         console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });

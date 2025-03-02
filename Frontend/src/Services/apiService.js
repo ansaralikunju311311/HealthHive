@@ -1,7 +1,6 @@
 import axios from 'axios';
 import cookie from 'js-cookie';
-// import { toast } from 'react-toastify';
-// import { useNavigate } from 'react-router-dom';
+
 const BASE_URL = 'http://localhost:5000/api';
 
 
@@ -417,5 +416,200 @@ export const DrProfile = async(doctorId)=>{
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch doctor profile');
+  }
+}
+
+
+
+
+//
+const getadminToken = () => cookie.get('admintoken');
+
+// const handleApiError = (error, defaultMessage) => {
+//   if (error.response?.data?.message) {
+//     throw new Error(error.response.data.message);
+//   }
+//   throw new Error(defaultMessage);
+// };
+
+// Create axios instance with default config
+const apiadmin = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+});
+
+// Request interceptor
+apiadmin.interceptors.request.use(config => {
+  const token = getadminToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor
+apiadmin.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      cookie.remove('usertoken', { path: '/' });
+      localStorage.removeItem('userId');
+    }
+    return Promise.reject(error);
+  }
+);
+
+
+
+export const verifyAdminToken = async () => {
+  try {
+    const token = getadminToken();
+    if (!token) return { user: null };
+    const response = await apiadmin.get('/admin/verify-token');
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      cookie.remove('admintoken', { path: '/' });
+      return { user: null };
+    }
+    handleApiError(error, 'Token verification failed');
+  }
+};
+export const AdminLogin = async (data) => {
+  try {
+    const response = await apiadmin.post('/admin/login', data, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Login failed');
+  }
+};
+export const AdminDash = async () => {
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/usercount');
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to fetch admin dashboard');
+  }
+}
+export const Departments = async (currentPage, limit = 10) => {
+  try {
+    const response = await apiadmin.get('/admin/department', {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to fetch departments');
+  }
+}
+export const UpdateDepartment = async (id) => {
+  try {
+    const response = await apiadmin.put(`/admin/department/${id}`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update department');
+  }
+}
+export const AddDepartment = async (Departmentname,Description) => {
+  try {
+    const response = await apiadmin.post('/admin/department', {Departmentname,Description}, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to add department');
+  }
+}
+export const DoctorList = async(currentPage, limit = 10) => {
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/doctors', {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    
+    // Calculate starting index for current page
+    const startIndex = (currentPage - 1) * limit;
+    
+    // Add correct serial numbers to the doctors array
+    const doctorsWithSerialNumbers = response.data.doctorsWithIndex.map((doctor, index) => ({
+      ...doctor,
+      serialNumber: startIndex + index + 1
+    }));
+
+    return {
+      ...response.data,
+      doctorsWithIndex: doctorsWithSerialNumbers
+    };
+  } catch (error) {
+    handleApiError(error, 'Failed to fetch doctors');
+  }
+}
+export const handleAction = async(id)=>
+{
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.put(`/admin/blockdoctor/${id}`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update department');
+  }
+}
+export const Getdoctorpayment = async(currentPage, limit = 10)=>{
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/getdoctorpayments', {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to fetch doctor payments');
+  }
+}
+export const PendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>{
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/pending-doctors', {
+      params: {
+        page: currentPage,
+        limit,
+        search
+      }
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to fetch pending doctors');
+  }
+}
+export const PatientAction= async(id)=>
+{
+  try {
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.put(`/admin/unblockpatient/${id}`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error, 'Failed to update department');
   }
 }

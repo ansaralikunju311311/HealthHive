@@ -8,6 +8,7 @@ import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
+import { PatientAction } from '../../Services/apiService';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -65,23 +66,24 @@ const Patients = () => {
 
   const handleBlockUnblock = async (patientid) => {
     try {
-        const token = cookies.get('admintoken');
-        if (!token) {
-            toast.error('Please login to continue', {
-                position: "top-right",
-                autoClose: 3000,
-                theme: "colored"
-            });
-            navigate('/admin');
-            return;
-        }
-        const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`, {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            withCredentials: true
-        });
-        console.log("api response", response.data);
+        // const token = cookies.get('admintoken');
+        // if (!token) {
+        //     toast.error('Please login to continue', {
+        //         position: "top-right",
+        //         autoClose: 3000,
+        //         theme: "colored"
+        //     });
+        //     navigate('/admin');
+        //     return;
+        // }
+        // const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`, {}, {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     },
+        //     withCredentials: true
+        // });
+        // console.log("api response", response.data);
+        const response = await PatientAction(patientid);
 
         // Find the patient and toggle their blocked status
         const updatedPatients = patients.map(patient => {

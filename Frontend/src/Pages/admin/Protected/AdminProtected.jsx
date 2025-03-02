@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import cookies from 'js-cookie';
+import { verifyAdminToken } from '../../../Services/apiService';
 
 const AdminProtected = ({ children }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const verifyToken = async () => {
+        const checkAuth = async () => {
             try {
-                const token = cookies.get('admintoken');
-                if (!token) {
-                    navigate('/admin');
-                    return;
-                }
-
-                const response = await axios.get('http://localhost:5000/api/admin/verify-token', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                    withCredentials: true,
-                });
-
-                if (response.data.admin) {
+                const response = await verifyAdminToken();
+                
+                if (response?.admin) {
                     setLoading(false);
                 } else {
                     cookies.remove('admintoken');
@@ -36,7 +25,7 @@ const AdminProtected = ({ children }) => {
             }
         };
 
-        verifyToken();
+        checkAuth();
     }, [navigate]);
 
     if (loading) {

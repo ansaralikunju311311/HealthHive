@@ -20,6 +20,7 @@ import {
 import DetailsModel from '../Doctor/DetailsModel';
 import { toast } from 'react-toastify';
 import DataTable from '../../Components/Common/DataTable';
+import { PendingDoctors } from '../../Services/apiService';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
@@ -32,27 +33,28 @@ const DoctorVerification = () => {
   const [actionType, setActionType] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
+const limit =10;
   const fetchDoctors = async (page) => {
     try {
-      const token = cookies.get('admintoken');
-      if(!token) {
-        navigate('/admin');
-        return;
-      }
-      const response = await axios.get('http://localhost:5000/api/admin/pending-doctors', {
-        params: {
-          page,
-          limit: 10,
-          search: searchTerm // Add search term to API query
-        },
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true
-      });
+      // const token = cookies.get('admintoken');
+      // if(!token) {
+      //   navigate('/admin');
+      //   return;
+      // }
+      // const response = await axios.get('http://localhost:5000/api/admin/pending-doctors', {
+      //   params: {
+      //     page,
+      //     limit: 10,
+      //     search: searchTerm // Add search term to API query
+      //   },
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   },
+      //   withCredentials: true
+      // });
+      const response = await PendingDoctors(page, searchTerm,limit);
       
-      const { doctorsWithIndex, totalPages } = response.data;
+      const { doctorsWithIndex, totalPages } = response;
       
       setDoctors(doctorsWithIndex);
       setFilteredDoctors(doctorsWithIndex);

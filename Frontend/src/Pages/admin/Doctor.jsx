@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-
+import { DoctorList, handleAction } from '../../Services/apiService';
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,44 +22,29 @@ const Doctor = () => {
   const [showModal, setShowModal] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedBlockDoctor, setSelectedBlockDoctor] = useState(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const {isBlocked} = useSelector((state) => state.doctor);
+const limit = 10;
   useEffect(() => {
-    
     const fetchDoctors = async () => {
       try {
-        const token = cookies.get('admintoken');
-        console.log("this is the token", token);
-        if(!token) {
-          navigate('/admin');
-          return;
-        }
-        const response = await axios.get('http://localhost:5000/api/admin/doctors', {
-          params:{
-            page:currentPage,
-            limit:10
-          },
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            withCredentials: true 
-        });
+        const response = await DoctorList(currentPage, limit);
         
-        setDoctors(response.data.doctorsWithIndex);
-        setTotalPages(response.data.totalpage);
-        setFilteredDoctors(response.data.doctorsWithIndex);
-        console.log("api response", response.data);
+        if (response) {
+          // The serial numbers are now correctly set in the API service
+          setDoctors(response.doctorsWithIndex);
+          setFilteredDoctors(response.doctorsWithIndex);
+          setTotalPages(response.totalpage);
+        }
       } catch (error) {
         console.error('Error fetching doctors:', error);
+        toast.error('Failed to fetch doctors');
       }
     };
+
     fetchDoctors();
   }, [currentPage]);
-
 
   useEffect(() => {
     const result = doctors.filter((doctor) =>
@@ -70,17 +55,18 @@ const Doctor = () => {
   }, [searchTerm, doctors]);
   const handleBlockUnblock = async (doctorid) => {
     try {
-      const token = cookies.get('admintoken');
-      if(!token) {
-        navigate('/admin');
-        return;
-      }
-      const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true 
-      });
+      // const token = cookies.get('admintoken');
+      // if(!token) {
+      //   navigate('/admin');
+      //   return;
+      // }
+      // const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`, {}, {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   },
+      //   withCredentials: true 
+      // });
+      const response = await handleAction(doctorid);
 
       // Find the doctor and toggle their blocked status
       const updatedDoctors = doctors.map(doctor => {
@@ -136,7 +122,7 @@ const Doctor = () => {
   const columns = [
     {
       header: 'S.No',
-      accessor: 'serialNumber',
+      accessor: 'serialNumber', // This will now show continuous numbers across pages
       width: '80px'
     },
     {

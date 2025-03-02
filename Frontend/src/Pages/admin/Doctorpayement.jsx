@@ -25,6 +25,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
+import { Getdoctorpayment } from '../../Services/apiService';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
@@ -37,27 +38,29 @@ const DoctorPayment = () => {
   useEffect(() => {
     const fetchDoctorPayments = async () => {
       try {
-        const token = cookies.get('admintoken');
-        if (!token) {
-          navigate('/admin');
-          return;
-        }
-        console.log("this is the token", token);
-        const response = await axios.get('http://localhost:5000/api/admin/getdoctorpayments', {
-          params: {
-            page: currentPage,
-            limit: limit
-          },
+        // const token = cookies.get('admintoken');
+        // if (!token) {
+        //   navigate('/admin');
+        //   return;
+        // }
+        // console.log("this is the token", token);
+        // const response = await axios.get('http://localhost:5000/api/admin/getdoctorpayments', {
+        //   params: {
+        //     page: currentPage,
+        //     limit: limit
+        //   },
 
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true,
-        });
-        setPayments(response.data.doctorWiseTotals);
-        setTotalAmount(response.data.totalAmount);
-        setTotalPages(response.data.totalPages || 1);
-        console.log("jfnjvfnj",response.data.doctorWiseTotals);
+        //   headers: {
+        //     Authorization: `Bearer ${token}`
+        //   },
+        //   withCredentials: true,
+        // });
+        const response = await Getdoctorpayment(currentPage, limit);
+        console.log("this is the response", response);
+        setPayments(response?.doctorWiseTotals);
+        setTotalAmount(response?.totalAmount);
+        setTotalPages(response?.totalPages || 1);
+        // console.log("jfnjvfnj",response?.doctorWiseTotals);
 
       } catch (error) {
         console.error('Error fetching doctor payments:', error);
@@ -69,40 +72,40 @@ const DoctorPayment = () => {
   console.log("payments",payments);
   console.log("totalAmount",totalAmount);
   // Sample data - replace with actual data from your backend
-  const [doctorPayments] = useState([
-    {
-      id: 1,
-      doctorName: "Dr. Sarah Johnson",
-      specialization: "Cardiologist",
-      totalEarnings: 50000,
-      pendingAmount: 15000,
-      paidAmount: 35000,
-      appointments: 25,
-      avatar: "https://example.com/avatar1.jpg",
-      recentPayments: [
-        { date: '2025-02-15', amount: 5000, appointmentId: 'APT001' },
-        { date: '2025-02-14', amount: 4500, appointmentId: 'APT002' },
-      ]
-    },
-    {
-      id: 2,
-      doctorName: "Dr. Michael Chen",
-      specialization: "Neurologist",
-      totalEarnings: 45000,
-      pendingAmount: 10000,
-      paidAmount: 35000,
-      appointments: 20,
-      avatar: "https://example.com/avatar2.jpg",
-      recentPayments: [
-        { date: '2025-02-16', amount: 6000, appointmentId: 'APT003' },
-        { date: '2025-02-13', amount: 4000, appointmentId: 'APT004' },
-      ]
-    },
-  ]);
-  // Calculate total statistics
-  const totalDoctorEarnings = doctorPayments.reduce((sum, doc) => sum + doc.totalEarnings, 0);
-  const totalPendingAmount = doctorPayments.reduce((sum, doc) => sum + doc.pendingAmount, 0);
-  const totalPaidAmount = doctorPayments.reduce((sum, doc) => sum + doc.paidAmount, 0);
+  // const [doctorPayments] = useState([
+  //   {
+  //     id: 1,
+  //     doctorName: "Dr. Sarah Johnson",
+  //     specialization: "Cardiologist",
+  //     totalEarnings: 50000,
+  //     pendingAmount: 15000,
+  //     paidAmount: 35000,
+  //     appointments: 25,
+  //     avatar: "https://example.com/avatar1.jpg",
+  //     recentPayments: [
+  //       { date: '2025-02-15', amount: 5000, appointmentId: 'APT001' },
+  //       { date: '2025-02-14', amount: 4500, appointmentId: 'APT002' },
+  //     ]
+  //   },
+  //   {
+  //     id: 2,
+  //     doctorName: "Dr. Michael Chen",
+  //     specialization: "Neurologist",
+  //     totalEarnings: 45000,
+  //     pendingAmount: 10000,
+  //     paidAmount: 35000,
+  //     appointments: 20,
+  //     avatar: "https://example.com/avatar2.jpg",
+  //     recentPayments: [
+  //       { date: '2025-02-16', amount: 6000, appointmentId: 'APT003' },
+  //       { date: '2025-02-13', amount: 4000, appointmentId: 'APT004' },
+  //     ]
+  //   },
+  // ]);
+  // // Calculate total statistics
+  // const totalDoctorEarnings = doctorPayments.reduce((sum, doc) => sum + doc.totalEarnings, 0);
+  // const totalPendingAmount = doctorPayments.reduce((sum, doc) => sum + doc.pendingAmount, 0);
+  // const totalPaidAmount = doctorPayments.reduce((sum, doc) => sum + doc.paidAmount, 0);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
