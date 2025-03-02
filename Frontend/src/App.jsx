@@ -42,6 +42,7 @@ import Wallet from './Pages/admin/Wallet'
 import DrWallet from './Pages/Doctor/Wallet/DrWallet'
 import Chat from './Pages/User/UserDash/Chat'
 import DrChat from './Pages/Doctor/Chat/Chat'
+import { verifyUserToken } from './Services/apiService.js';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -53,23 +54,18 @@ const App = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+
+
+
+
       try {
-        const token = cookies.get('usertoken');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-        const response = await axios.get('http://localhost:5000/api/user/verify-token', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true,
-        });
-        setUserData(response.data.user);
+        const {user} = await verifyUserToken();
+        setUserData(user);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        setLoading(false);
+       if(!error.response || error.response.status !== 401) {
+          console.error(error);
+        }
       }
     };
     fetchUserData();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getUserAppointments } from '../../../Services/apiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import Homebutton from '../../../Component/User/HomeButton/Homebutton';
 import cookies from 'js-cookie';
@@ -42,23 +42,12 @@ const Appointments = () => {
 
   const fetchAppointments = async (pageNumber = currentPage) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/user/getappointments/${userId}`,{
-        params: {
-          page: pageNumber,
-          limit: itemsPerPage
-        },
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true
-      }
-      );
-      setAppointments(response.data.appointments);
-      setTotalPages(response.data.pagination.totalPages);
+      const response = await getUserAppointments(userId, pageNumber, itemsPerPage);
+      setAppointments(response.appointments);
+      setTotalPages(response.pagination.totalPages);
       
       // If we get an empty page and we're not on page 1, go to previous page
-      if (response.data.appointments.length === 0 && pageNumber > 1) {
+      if (response.appointments.length === 0 && pageNumber > 1) {
         fetchAppointments(pageNumber - 1);
         return;
       }

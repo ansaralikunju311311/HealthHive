@@ -26,25 +26,25 @@ const router = express.Router();
 
 // Public routes (no authentication needed)
 
-router.post('/signup', RegisterUser);
-router.post('/login', LoginUser);
+router.post('/signup', RegisterUser);//
+router.post('/login', LoginUser);//
 router.post('/verify-otp', verifyOtp);
 router.post('/resend-otp', resendOtp);
 router.get('/otp-remaining-time', getOtpRemainingTime);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-router.get('/publicdoctors', getDoctorsData);
-router.get('/Aboutdoctors', getDoctorsData);
-router.post('/logout', logout);
-router.get('/departments', getDepartments);
+router.get('/publicdoctors', getDoctorsData);//
+router.get('/Aboutdoctors', getDoctorsData);//
+router.post('/logout', logout);//
+router.get('/departments', getDepartments);//
 router.get('/appointments/:departmentname',dptdoctor)
 router.post('/book-appointments/:doctorid/:userid', bookAppointment);
 // Payment routes
 router.post('/pay',handlePayment)
-router.post('/verify-payment', verifyPayment)
+router.post('/verify-payment', verifyPayment)//
 // Protected routes (require authentication)
 router.get('/verify-token', protect, verifyToken);
-router.get('/doctorsdetails', protect,getDoctorsData);
+router.get('/doctorsdetails', protect,getDoctorsData);//
 router.get('/getappointments/:userid',FetchAppoiments);
 
 

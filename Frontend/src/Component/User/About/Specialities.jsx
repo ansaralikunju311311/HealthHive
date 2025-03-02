@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getAboutDoctors } from "../../../Services/apiService";
 
-const Specialities =  () => {
+const Specialities = () => {
     const [doctorsData, setDoctorsData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/user/Aboutdoctors');
-                setDoctorsData(response.data.doctors);
-                
+                const response = await getAboutDoctors();
+                setDoctorsData(response.doctors);
             } catch (error) {
-                console.log('Error fetching doctors:', error);
+                console.error('Error fetching doctors:', error);
+            } finally {
+                setLoading(false);
             }
         }
         fetchDoctors();
     }, []);
 
-    console.log(doctorsData);
+    if (loading) return <div>Loading...</div>;
+
     return (
         <section className="bg-gray-50 py-16 px-4 md:px-8 lg:px-16">
             <div className="max-w-7xl mx-auto">

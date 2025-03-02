@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../../Common/Footer';
-import axios from 'axios';
+import { getDoctorSlots } from '../../../Services/apiService';
 
 const Slot = () => {
     const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Slot = () => {
 
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:5000/api/doctor/slots/${doctorData._id}`);
-            if (response.data && Array.isArray(response.data.schedules)) {
-                setSchedules(response.data.schedules);
-                if (response.data.schedules.length === 0) {
+            const data = await getDoctorSlots(doctorData._id);
+            if (data && Array.isArray(data.schedules)) {
+                setSchedules(data.schedules);
+                if (data.schedules.length === 0) {
                     setError('No available slots for this doctor');
                 }
             } else {
@@ -37,7 +37,7 @@ const Slot = () => {
                 setSchedules([]);
             }
         } catch (err) {
-            setError(err.response?.data.message || 'Failed to fetch slots');
+            setError(err.message || 'Failed to fetch slots');
             setSchedules([]);
         } finally {
             setLoading(false);
@@ -47,63 +47,6 @@ const Slot = () => {
     useEffect(() => {
         fetchDoctorSchedules();
     }, [doctorData?._id]);
-
-
-
-
-
-    // const handleSlotSelection = (schedule, slot) => {
-    //     if (slot.isBooked) {
-    //         alert('This slot is already booked');
-    //         return;
-    //     }
-
-    //     const isAlreadySelected = selectedSlots.some(
-    //         selectedSlot => 
-    //             selectedSlot.schedule.date === schedule.appointmentDate && 
-    //             selectedSlot.slot.label === slot.slotTime
-    //     );
-
-    //     if (isAlreadySelected) {
-    //         setSelectedSlots(prevSlots => 
-    //             prevSlots.filter(
-    //                 selectedSlot => 
-    //                     !(selectedSlot.schedule.date === schedule.appointmentDate && 
-    //                       selectedSlot.slot.label === slot.slotTime)
-    //             )
-    //         );
-    //     } else {
-    //         setSelectedSlots(prevSlots => [
-    //             ...prevSlots, 
-    //             { schedule, slot }
-    //         ]);
-    //     }
-    // };
-
-    // const handleBookAppointment = async () => {
-    //     if (selectedSlots.length === 0) {
-    //         alert('Please select at least one slot');
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post(
-    //             `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId}`, 
-    //             { 
-    //                 slots: selectedSlots.map(selectedSlot => ({
-    //                     date: selectedSlot.schedule.appointmentDate,
-    //                     time: selectedSlot.schedule.slotTime
-    //                 }))
-    //             }
-    //         );
-
-    //         alert('Appointments booked successfully');
-    //         fetchDoctorSchedules();
-    //         setSelectedSlots([]);
-    //     } catch (error) {
-    //         alert(error.response?.data?.message || 'Error booking appointments');
-    //     }
-    // };
 
     const parseTime = (timeStr, date) => {
         // Add PM if not present and no colon

@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import { useDispatch } from 'react-redux';
-// import { setUser, setToken } from '../../Components/redux/Features/userSlice';
-import  cookies  from 'js-cookie';
+import { verifyOtp, resendOtp, getOtpRemainingTime } from '../../Services/apiService';
 import { toast } from 'react-toastify';
+
 const GenerateOtp = () => {
-  // const dispatch = useDispatch();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -21,11 +18,11 @@ const GenerateOtp = () => {
       navigate('/signup');
       return;
     }
-    // Get initial remaining time from backend
+
     const fetchRemainingTime = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/user/otp-remaining-time?email=${email}`);
-        setRemainingTime(response.data.remainingTime);
+        const response = await getOtpRemainingTime(email);
+        setRemainingTime(response.remainingTime);
       } catch (error) {
         console.error('Error fetching remaining time:', error);
         setRemainingTime(0);
@@ -55,19 +52,18 @@ const GenerateOtp = () => {
     setError('');
     setSuccess('');
     setIsLoading(true);
+
     try {
       toast.info('Verifying your email...');
-      const response = await axios.post('http://localhost:5000/api/user/verify-otp', { email, otp: otp.trim() }, { withCredentials: true });
+      const response = await verifyOtp(email, otp);
+      setSuccess(response.message);
       
-      setSuccess(response.data.message);
-      
-      if(response.data){
-        // cookies.set('useraccessToken', response.data.userToken);
+      if (response) {
         toast.success('Email verified successfully! Welcome to HealthHive.');
         navigate('/home');
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Invalid verification code. Please try again.');
+      toast.error(error.message || 'Invalid verification code. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -85,15 +81,13 @@ const GenerateOtp = () => {
     
     try {
       toast.info('Sending new verification code...');
-      await axios.post('http://localhost:5000/api/user/resend-otp', {
-        email
-      });
-      
+      await resendOtp(email);
       toast.success('New verification code sent to your email.');
-      const timeResponse = await axios.get(`http://localhost:5000/api/user/otp-remaining-time?email=${email}`);
-      setRemainingTime(timeResponse.data.remainingTime);
+      
+      const timeResponse = await getOtpRemainingTime(email);
+      setRemainingTime(timeResponse.remainingTime);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send verification code. Please try again.');
+      toast.error(error.message || 'Failed to send verification code. Please try again.');
     } finally {
       setIsLoading(false);
     }

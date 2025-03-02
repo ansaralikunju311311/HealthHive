@@ -1,50 +1,28 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { 
   MdDashboard, 
   MdEventAvailable,
-  MdSchedule,
-  MdChat,
-  MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
+import { logoutUser } from '../../../Services/apiService';
 
 const Sidebar = ({activePage}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const id = localStorage.getItem('userId');
-  console.log(id)
 
   const handleLogout = async () => {
     try {
-      const token = cookies.get('usertoken');
-      
-      // Optional: Call backend logout endpoint if needed
-      await axios.post('http://localhost:5000/api/user/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true,
-      });
-
-      // Remove doctor token
-      cookies.remove('usertoken', { path: '/' });
-      localStorage.removeItem('userId');
-      // Show logout toast
+      await logoutUser();
       toast.info('You have been logged out', {
-        icon: '👋.'
+        icon: '👋'
       });
-      // Navigate to login
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
-
-      // Fallback logout even if backend call fails
-      cookies.remove('usertoken', { path: '/' });
-      localStorage.removeItem('userId');
+      // Force logout even if API call fails
       navigate('/login');
     }
   };

@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import cookies from 'js-cookie';
 import Heading from "../Appoiment/Heading";
 import Schedulebtn from "../Appoiment/Schedulebtn";
+import { getDepartments,getAppointments } from "../../../Services/apiService";
+
 const Datadpt = ({ limit =null}) => {
   const [departments, setDepartments] = useState([]);
   const [departmentColors, setDepartmentColors] = useState({});
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-
   // Function to generate random gradient colors
   const generateRandomGradient = () => {
     const colors = [
@@ -33,46 +34,30 @@ const Datadpt = ({ limit =null}) => {
   }, [departments]);
 
   useEffect(() => {
-    console.log("use effect");
-    const token = cookies.get('usertoken');
-    console.log("token from cookie", token);
-    if (token) {
-      console.log("token", token);
-      const fetchUserData = async () => {
-        try {
-          // const response = await axios.get('http://localhost:5000/api/user/verify-token', {
-          //   headers: {
-          //     Authorization: `Bearer ${token}`
-          //   },
-          //   withCredentials: true,
-          // });
-          // setUserData(response.data.user);
-          // console.log("user data", response.data.user);
-          // console.log("token", token);
-          // console.log("user data", userData);
 
 
-           const response1 = await axios.get('http://localhost:5000/api/user/departments', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
-            withCredentials: true,
-          });
-          setDepartments(response1.data);
-          console.log(response1.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-      fetchUserData();
-    }
+const loadDepartments = async () => {
+  try {
+    const departments = await getDepartments();
+    setDepartments(departments);
+  } catch (error) {
+    console.error('Error loading departments:', error);
+  }
+};
+loadDepartments();
   }, []);
   const handleDepartmentClick = async (department) => {   
 
-    console.log("department", department);
-     const dr =    await axios.get(`http://localhost:5000/api/user/appointments/${department.Departmentname}`);
-     console.log("dr", dr.data);
-     navigate('/bookings',{state: { data: dr.data }})
+
+    try {
+      const data = await getAppointments(department.Departmentname);
+      console.log("data", data);
+      navigate('/bookings',{state: { data: data }})
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+      
+    }
+
   };
   
   return (

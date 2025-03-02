@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import cookies from 'js-cookie';
+import { 
+  verifyUserToken, 
+  getDoctorsDetails, 
+  getPublicDoctors 
+} from '../../../Services/apiService';
 import Footer from '../../../Common/Footer';
 import StayConnected from '../../../Component/User/UserCommons/StayConnected.jsx';
 import NavBar from '../../../Common/NavBar';
 import Hero from '../../../Component/User/UserCommons/Hero.jsx';
-import cookies from 'js-cookie';
 import Service from '../../../Component/User/UserCommons/Service.jsx';
 import DentalSignUp from '../../../Component/User/UserCommons/DentalSignUp.jsx';
 import Specialties from '../../../Component/User/UserCommons/Specialties.jsx';
 import QuickAction from '../../../Component/User/UserCommons/QuickAction.jsx';
 import HealthTips from '../../../Component/User/UserCommons/HealthTips.jsx';
 import Department from '../../../Component/User/UserCommons/Department.jsx';
+
 const HomePageUser = () => {
   const navigate = useNavigate();
   const [doctorsDataW, setDoctorsDataW] = useState([]);
@@ -28,30 +33,19 @@ const HomePageUser = () => {
         
         if (token) {
           try {
-            // Verify token and get user data
-            const userResponse = await axios.get('http://localhost:5000/api/user/verify-token', {
-              headers: {
-                Authorization: `Bearer ${token}`
-              },
-              withCredentials: true,
-            });
-            setUserData(userResponse.data.user);
+            const { user } = await verifyUserToken();
+            setUserData(user);
 
-            // Fetch doctors data only if user is authenticated
-            const doctorsResponse = await axios.get('http://localhost:5000/api/user/doctorsdetails', {
-              headers: {
-                Authorization: `Bearer ${token}`
-              },
-              withCredentials: true,
-            });
-            setDoctorsData(doctorsResponse.data.doctors);
-            localStorage.setItem('userId', JSON.stringify(userResponse.data.user));
-                 console.log('userid=====',userResponse.data.user)
-          } catch (error) {
-            if (error.response?.status === 401) {
-              cookies.remove('useraccessToken');
+            if (user) {
+              const doctorsResponse = await getDoctorsDetails();
+              setDoctorsData(doctorsResponse.doctors || []);
+              localStorage.setItem('userId', JSON.stringify(user));
             }
+          } catch (error) {
             console.error("Error fetching user data:", error);
+            if (error.response?.status === 401) {
+              cookies.remove('usertoken', { path: '/' });
+            }
           }
         }
         setLoading(false);
@@ -68,9 +62,8 @@ const HomePageUser = () => {
   useEffect(() => {
     const fetchPublicDoctors = async () => {
       try {
-        // Fetch public doctors data for non-authenticated users
-        const response = await axios.get('http://localhost:5000/api/user/publicdoctors');
-        setDoctorsDataW(response.data.doctors);
+        const response = await getPublicDoctors();
+        setDoctorsDataW(response.doctors || []);
       } catch (error) {
         console.error("Error fetching public doctors:", error);
       }
@@ -232,7 +225,7 @@ const HomePageUser = () => {
                     className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center group"
                   >
                     Book Appointment
-                    <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </button>

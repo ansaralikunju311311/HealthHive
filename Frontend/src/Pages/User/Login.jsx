@@ -1,26 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setUser, setToken } from '../../Components/redux/Features/userSlice';
+import { loginUser } from '../../Services/apiService';
 import { toast } from 'react-toastify';
-import cookies from 'js-cookie';
+import Bannerdoctor from '../../assets/Bannerdoctor.png';
 
 const Login = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const user = useSelector((state) => state.user.user);
-  // console.log("user from redux:", user);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/user/login', data, {withCredentials: true});
+      const response = await loginUser(data);
       
-      console.log("token after login", cookies.get('usertoken'))
-      if (response.data.user.isBlocked) {
+      if (response.user.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.', {
           backgroundColor: '#ef4444',
           icon: '⛔'
@@ -28,14 +21,11 @@ const Login = () => {
         return;
       }
 
-      if (!response.data.user.isActive) {
+      if (!response.user.isActive) {
         toast.error('Please verify your email first');
         return;
       }
 
-      // Make sure to set the cookie before navigation
-      // cookies.set('useraccessToken', response.data.userToken);
-      
       toast.success('Welcome back!', {
         backgroundColor: '#22c55e',
         icon: '👋'
@@ -47,7 +37,7 @@ const Login = () => {
       }, 100);
       
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.message || 'Login failed');
     }
   };
 

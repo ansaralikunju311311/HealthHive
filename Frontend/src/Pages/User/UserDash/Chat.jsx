@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getDoctorInfo, getChatHistory } from '../../../Services/apiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
-import axios from 'axios';
 import { FiSend } from 'react-icons/fi';
-import { format } from 'date-fns';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
 
 const Chat = () => {
@@ -48,26 +47,20 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const fetchDoctor = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/user/doctorinfo/${doctorId}`);
-        setDoctor(response.data);
+        const [doctorData, chatHistory] = await Promise.all([
+          getDoctorInfo(doctorId),
+          getChatHistory(doctorId, userId)
+        ]);
+        setDoctor(doctorData);
+        setChat(chatHistory);
       } catch (error) {
-        console.error('Error fetching doctor:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchDoctor();
-
-    const chatData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/user/Chats/${doctorId}/${userId}`);
-        setChat(response.data);
-      } catch (error) {
-        console.error('Error fetching chat:', error);
-      }
-    }
-    chatData();
+    fetchData();
 
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:5000', {

@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaCalendarAlt, FaInfoCircle, FaEnvelope, FaChevronDown, FaUserCircle, FaUser, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
-import cookies from 'js-cookie';
-import axios from 'axios';
+import { verifyUserToken, logoutUser } from '../Services/apiService';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -11,45 +10,29 @@ const NavBar = () => {
   const profileRef = useRef(null);
 
   useEffect(() => {
-    console.log('navajhdhfhd')
-    const token = cookies.get('usertoken');
-    console.log("token", token)
-    if (token) {
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/api/user/verify-token', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
-            withCredentials: true,
-          });
-          setUserData(response.data.user);
-        } catch (error) {
+    const fetchUserData = async () => {
+      try {
+        const { user } = await verifyUserToken();
+        setUserData(user);
+      } catch (error) {
+        // Only log critical errors, not auth-related ones
+        if (!error.response || error.response.status !== 401) {
           console.error('Error fetching user data:', error);
         }
-      };
-      fetchUserData();
-    }
+        setUserData(null);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
-  const handleLogout =  async() => {
+  const handleLogout = async () => {
     try {
-      
-     await axios.post('http://localhost:5000/api/user/logout', {
-      // headers: {
-      //   Authorization: `Bearer ${token}`
-      // },
-      withCredentials: true,
-    });
-    const token = cookies.remove('usertoken', { path: '/' });
-    localStorage.removeItem('userId');
-    // console.log('logged out====', token)
+      await logoutUser();
       setUserData(null);
       navigate('/');
     } catch (error) {
-      console.error('Error logging out:', error);
-      // Handle error
-      cookies.remove('usertoken', { path: '/' });
+      console.error('Error during logout:', error);
       navigate('/');
     }
   };

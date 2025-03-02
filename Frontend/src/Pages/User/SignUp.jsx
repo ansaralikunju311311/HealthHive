@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
+import axios from 'axios'; // Only needed for Cloudinary upload
+
+// Import the API service
+import { registerUser } from '../../Services/apiService';
 
 const SignUp = () => {
   const { register, handleSubmit, formState: { errors }, getValues, setValue } = useForm();
@@ -71,7 +74,7 @@ const SignUp = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/user/signup', {
+      const response = await registerUser({
         ...data,
         image: image
       });
@@ -79,7 +82,7 @@ const SignUp = () => {
       toast.success('Account created successfully!');
       navigate('/generate-otp', { state: { email: data.email } });
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      toast.error(error.message || 'Registration failed');
     }
   };
 

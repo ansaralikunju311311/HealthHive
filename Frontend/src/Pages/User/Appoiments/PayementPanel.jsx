@@ -25,6 +25,7 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import SecurityIcon from '@mui/icons-material/Security';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LockIcon from '@mui/icons-material/Lock';
+import { initiatePayment, verifyPayment, bookAppointment } from '../../../Services/apiService';
 
 const shine = keyframes`
   to {
@@ -146,87 +147,88 @@ const PayementPanel = () => {
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/user/pay', {
-        amount: doctorData?.consultFee
-      });
+      if (!doctorData?.consultFee) {
+        toast.error('Invalid consultation fee');
+        return;
+      }
+
+      // Initialize payment
+      const paymentResponse = await initiatePayment(doctorData.consultFee);
+      console.log('Payment initiated:', paymentResponse);
+
+      if (!paymentResponse || !paymentResponse.id) {
+        toast.error('Failed to initialize payment');
+        return;
+      }
 
       const options = {
-        key: "rzp_test_R1PIEzD9jZhBnz", 
-        amount: response.data.amount,
-        currency: response.data.currency,
+        key: "rzp_test_R1PIEzD9jZhBnz",
+        amount: paymentResponse.amount,
+        currency: paymentResponse.currency,
         name: "HealthHive",
         description: `Consultation with Dr. ${doctorData?.name}`,
-        order_id: response.data.id,
-        handler: async function (response) {
+        order_id: paymentResponse.id,
+        handler: async function (razorpayResponse) {
           try {
             // Verify payment
-            const verificationResponse = await axios.post('http://localhost:5000/api/user/verify-payment', {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
+            const verificationResponse = await verifyPayment({
+              razorpay_order_id: razorpayResponse.razorpay_order_id,
+              razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+              razorpay_signature: razorpayResponse.razorpay_signature,
             });
-            
-            // Set the transaction data
-            setTransactionData(verificationResponse.data);
-            console.log("verificationResponse=======", verificationResponse.data);
 
-            if (verificationResponse.status === 200) {
-              // Create appointment data with transaction details
+            if (verificationResponse) {
+              // Prepare appointment data
               const appointmentData = {
                 slots: {
                   date: slot.appointmentDate,
                   time: slot.slotTime
                 },
                 transactionData: {
-                  order_id: response.razorpay_order_id,
-                  payment_id: response.razorpay_payment_id,
+                  order_id: razorpayResponse.razorpay_order_id,
+                  payment_id: razorpayResponse.razorpay_payment_id,
                   amount: doctorData.consultFee,
                   status: 'completed'
-                }
+                },
+                status: 'confirmed'
               };
 
               try {
-                console.log("Sending appointment data:", appointmentData);
-                const appointment = await axios.post(
-                  `http://localhost:5000/api/user/book-appointments/${doctorData._id}/${userId._id}`,
+                // Book appointment
+                const bookingResult = await bookAppointment(
+                  doctorData._id,
+                  userId._id,
                   appointmentData
                 );
-                console.log("appointment=======",appointment)
 
-                if (appointment.status === 200) {
-                    toast.success('Appointment booked successfully!');
-
-
-                    setTimeout(() => {
-                        navigate('/home');
-                    }, 100);
+                if (bookingResult && bookingResult.appointment) {
+                  toast.success('Appointment booked successfully!');
+                  setTimeout(() => {
+                    navigate('/user/appointments');
+                  }, 1500);
+                } else {
+                  throw new Error('Booking confirmation not received');
                 }
               } catch (error) {
-                console.error("Error booking appointment:", error);
-                toast.error('Failed to book appointment');
+                console.error("Booking error:", error);
+                toast.error('Payment successful but booking failed. Our team will contact you.');
               }
-
-              // Payment successful and verified
-              console.log("Payment successful and verified:", verificationResponse.data);
-              toast.success('Payment successful! Appointment confirmed.');
-              // Add navigation to appointment confirmation or listing page
             }
           } catch (error) {
-            console.error("Payment verification failed:", error);
+            console.error("Payment verification error:", error);
             toast.error('Payment verification failed. Please contact support.');
           }
         },
         prefill: {
-          name: "Patient",
-          email: "patient@example.com",
-          contact: ""
+          name: userId.name || "Patient",
+          email: userId.email || "",
+          contact: userId.phone || ""
         },
         theme: {
           color: "#3b82f6"
         },
         modal: {
           ondismiss: function() {
-            console.log('Payment cancelled');
             toast.info('Payment cancelled');
           }
         }
@@ -237,11 +239,11 @@ const PayementPanel = () => {
 
       razorpayInstance.on('payment.failed', function (response) {
         console.error("Payment failed:", response.error);
-        toast.error('Payment failed. Please try again.');
+        toast.error('Payment failed: ' + response.error.description);
       });
 
     } catch (error) {
-      console.error("Error initiating payment:", error);
+      console.error("Payment initiation error:", error);
       toast.error('Could not initiate payment. Please try again.');
     }
   };

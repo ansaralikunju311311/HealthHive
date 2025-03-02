@@ -71,7 +71,8 @@ const RegisterUser = async (req, res) => {
         } else {
             // Create new user
             user = new User({
-                name,
+  
+                    name,
                 email,
                 password: hashedPassword,
                 dateOfBirth,
@@ -89,7 +90,7 @@ const RegisterUser = async (req, res) => {
         // Generate and send OTP
         await generateAndSendOTP(user, email);
 
-        res.status(STATUS_CODE.POST).json({
+        res.status(STATUS_CODE.CREATED).json({
             message: "Verification code sent to your email",
             email
         });
@@ -460,7 +461,7 @@ export const FetchAppoiments = async(req, res) => {
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization',
-        }).sort({ timeStamp: -1 }).skip(skip).limit(limit);
+        }).sort({ createdAt:-1 }).skip(skip).limit(limit);
         const totalAppointments = await Appointment.countDocuments({ user: userid });
         const totalPages = Math.ceil(totalAppointments / limit);
         res.status(STATUS_CODE.OK).json({ appointments, pagination: { currentPage: page, totalPages } });
