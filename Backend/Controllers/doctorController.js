@@ -758,4 +758,29 @@ export const chatDetails = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
+
+export const updateDoctorProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { consultFee, about } = req.body;
+        
+        // Find and update the doctor
+        const updatedoctor = await doctor.findById(id);
+        if (!updatedoctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        
+        // Update the doctor's fields
+        updatedoctor.consultFee = consultFee;
+        updatedoctor.about = about;
+        
+        // Save the updated doctor
+        await updatedoctor.save();
+        
+        res.status(200).json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error updating profile' });
+    }
+}
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

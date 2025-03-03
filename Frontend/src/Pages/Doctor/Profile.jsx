@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DrProfile } from '../../Services/apiService';
+import { DrProfile ,DrupdateDoctorProfile} from '../../Services/apiService';
 import axios from 'axios';
 
 const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
@@ -39,13 +39,36 @@ const Profile = () => {
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null); 
+    const [editing, setEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
     const location = useLocation();
     const navigate = useNavigate();
     const id = location.state?.userId;
 
     const handleBack = () => {
         navigate('/doctor/dashboard');
+    };
+
+    const updateDoctorProfile = async () => {
+        try {
+            // const response = await axios.put(`http://localhost:5000/api/doctor/profile/${id}`, {
+            //     consultFee: doctor.consultFee,
+            //     about: doctor.about
+            // });
+            const response = await DrupdateDoctorProfile(id,doctor.consultFee,doctor.about)
+            console.log("Profile updated successfully:", response.data);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        }
+    };
+
+    const handleEditToggle = () => {
+        if (isEditing) {
+            updateDoctorProfile();
+        }
+        setIsEditing(!isEditing);
     };
 
     useEffect(() => {
@@ -56,7 +79,7 @@ const Profile = () => {
                 // const response = await axios.get(`http://localhost:5000/api/doctor/profile/${id}`);
                 const response = await DrProfile(id);
                 
-                // setDoctor(response.doctorData);
+                setDoctor(response.doctorData);
             } catch (error) {
                 setError(error.response?.data?.message || "Failed to fetch doctor profile");
                 console.error("Error fetching doctor profile:", error);
@@ -137,6 +160,9 @@ const Profile = () => {
                     <div className="text-sm text-gray-500">
                         Doctor Profile
                     </div>
+                    <button onClick={handleEditToggle} className="text-blue-600 hover:text-blue-700 font-medium">
+                        {isEditing ? 'Save Changes' : 'Edit Profile'}
+                    </button>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-lg">
@@ -166,7 +192,11 @@ const Profile = () => {
                                 </div>
                                 <div className="bg-purple-50 px-6 py-3 rounded-xl">
                                     <p className="text-sm text-gray-600 font-medium">Consultation Fee</p>
-                                    <p className="text-lg font-bold text-purple-700">₹{doctor.consultFee}</p>
+                                    {isEditing ? (
+                                        <input type="number" value={doctor.consultFee} onChange={(e) => setDoctor({...doctor, consultFee: e.target.value})} className="text-lg font-bold text-purple-700" />
+                                    ) : (
+                                        <p className="text-lg font-bold text-purple-700">₹{doctor.consultFee}</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -181,7 +211,11 @@ const Profile = () => {
                                 </svg>
                                 About Doctor
                             </h4>
-                            <p className="text-gray-700 leading-relaxed text-lg">{doctor.about}</p>
+                            {isEditing ? (
+                                <textarea value={doctor.about} onChange={(e) => setDoctor({...doctor, about: e.target.value})} className="text-gray-700 leading-relaxed text-lg" />
+                            ) : (
+                                <p className="text-gray-700 leading-relaxed text-lg">{doctor.about}</p>
+                            )}
                         </div>
 
                         {/* Contact and Personal Information */}

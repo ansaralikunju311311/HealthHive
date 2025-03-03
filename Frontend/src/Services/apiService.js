@@ -59,136 +59,136 @@ export const verifyUserToken = async () => {
 };
 
 export const loginUser = async (credentials) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/login', credentials);
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Login failed');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Login failed');
+  // }
 };
 
 export const logoutUser = async () => {
-  try {
+  // try {
     await apiuser.post('/user/logout');
-  } finally {
+  // } finally {
     cookie.remove('usertoken', { path: '/' });
     localStorage.removeItem('userId');
-  }
+  // }
 };
 
 export const registerUser = async (userData) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/signup', userData);
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Registration failed');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Registration failed');
+  // }
 };
 
 // Department APIs
 export const getDepartments = async () => {
-  try {
+  // try {
     const response = await apiuser.get('/user/departments');
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch departments');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch departments');
+  // }
 };
 
 // Specialties API
 export const getSpecialties = async () => {
-  try {
+  // try {
     const response = await apiuser.get('/user/specialties');//
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch specialties');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch specialties');
+  // }
 };
 
 // Doctor APIs
 export const getAboutDoctors = async () => {
-  try {
+  // try {
     const response = await apiuser.get('/user/Aboutdoctors');
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch doctor information');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch doctor information');
+  // }
 };
 
 export const getDoctorsDetails = async () => {
-  try {
+  // try {
     const response = await apiuser.get('/user/doctorsdetails');
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch doctor details');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch doctor details');
+  // }
 };
 
 export const getPublicDoctors = async () => {
-  try {
+  // try {
     const response = await apiuser.get('/user/publicdoctors');
     return response.data;
-  } catch (error) {
-  }
+  // } catch (error) {
+  // }
 };
 
 export const verifyPayment = async (paymentData) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/verify-payment', {
       razorpay_order_id: paymentData.razorpay_order_id,
       razorpay_payment_id: paymentData.razorpay_payment_id,
       razorpay_signature: paymentData.razorpay_signature,
     });
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Payment verification failed');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Payment verification failed');
+  // }
 };
 
 export const initiatePayment = async (amount) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/pay', { 
       amount: parseInt(amount), // Ensure amount is sent as a number
       currency: 'INR'
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to initiate payment');
-  }
-};
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to initiate payment');
+  // }
+};  
 
 export const getDoctorSlots = async (doctorId, date) => {
-  try {
+  // try {
     const response = await apiuser.get(`/doctor/slots/${doctorId}`, {//
       params: { date }
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch doctor slots');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch doctor slots');
+  // }
 };
 
 // Appointment APIs
 export const getAppointments = async (departments) => {
-  try {
+  // try {
     const response = await apiuser.get(`/user/appointments/${departments}`);  // Changed from '/doctor/appointments'
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch appointments');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch appointments');
+  // }
 };
 
 export const getUserAppointments = async (userId, pageNumber, itemsPerPage) => {
-  try {
+  // try {
     const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { pageNumber, itemsPerPage } });  // Changed from '/doctor/appointments/:userId'
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch user appointments');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch user appointments');
+  // }
 };
 
 export const bookAppointment = async (doctorId, userId, appointmentData) => {
-  try {
+  // try {
     // Send request to the correct endpoint with correct params
     const response = await apiuser.post(`/user/book-appointments/${doctorId}/${userId}`, {
       slots: {
@@ -199,58 +199,58 @@ export const bookAppointment = async (doctorId, userId, appointmentData) => {
       status: appointmentData.status
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to book appointment');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to book appointment');
+  // }
 };
 
 // Chat APIs
 export const getDoctorInfo = async (doctorId) => {
-  try {
+  // try {
     const response = await apiuser.get(`/user/doctorinfo/${doctorId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch doctor information');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch doctor information');
+  // }
 };
 
 export const getChatHistory = async (doctorId, userId) => {
-  try {
+  // try {
     const response = await apiuser.get(`/user/Chats/${doctorId}/${userId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch chat history');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch chat history');
+  // }
 };
 
 // OTP APIs
 export const verifyOtp = async (email, otp) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/verify-otp', { email, otp: otp.trim() });
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to verify OTP');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to verify OTP');
+  // }
 };
 
 export const resendOtp = async (email) => {
-  try {
+  // try {
     const response = await apiuser.post('/user/resend-otp', { email });
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to resend OTP');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to resend OTP');
+  // }
 };
 
 export const getOtpRemainingTime = async (email) => {
-  try {
+  // try {
     const response = await apiuser.get('/user/otp-remaining-time', {   
       params: { email }
     });
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch remaining time');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch remaining time');
+  // }
 };
 
 
@@ -314,76 +314,76 @@ export const verifyDoctorToken = async () => {
 
 
 export const DoctorSignUp = async (doctorData) => {
-  try {
+  // try {
     const response = await apidoctor.post('/doctor/signup', doctorData, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Sign Up failed');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Sign Up failed');
+  // }
 }
 
 export const DoctorLogin = async(data,withCredentials=true)=>{
-  try {
+  // try {
     const response = await apidoctor.post('/doctor/login', data, {
       withCredentials
     });
     return response.data;
+  // }
+  // catch (error) {
+  //  handleApiError(error, 'Login failed');
   }
-  catch (error) {
-    handleApiError(error, 'Login failed');
-  }
-}
+//}
 export const logoutDoctor = async () => {
-  try {
+  // try {
     await apidoctor.post('/doctor/logout');
-  }
-  catch (error) {
-    console.error(error);
-  }
-   finally {
-    cookie.remove('doctortoken', { path: '/' });
-    localStorage.removeItem('doctorId');
-  }
+  // }
+  // catch (error) {
+   // console.error(error);
+  // }
+  //  finally {
+  //   cookie.remove('doctortoken', { path: '/' });
+  //   localStorage.removeItem('doctorId');
+  // }
 
 }
 export const userInfo = async (userId) => {
-  try { 
+  // try { 
     const response = await apidoctor.get(`/doctor/userinfo/${userId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch user information');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch user information');
+  // }
 }
 export const chatHistory = async (doctorId,userId) => {
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/chats/${doctorId}/${userId}`);
     return response.data;
-  }
-  catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch chat data');
-  }
+  // }
+  // catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch chat data');
+  // }
 }
 export const schedules = async (doctorId,appointmentData) => {
   console.log("appointmentData",appointmentData)
-  try {
+  // try {
        const response = await apidoctor.post(`/doctor/schedule/${doctorId}`,{
          appointments:appointmentData
        });
        return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch schedule data');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch schedule data');
+  // }
 }
 
 export const ExstingSchedules = async(doctorId)=>{
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/existing-schedules/${doctorId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch existing schedules');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch existing schedules');
+  // }
 }
 
 
@@ -394,33 +394,56 @@ export const DrAppoinments = async (doctorId) => {
 }
 export const appoimentDetails = async (doctorId)=>
 {
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/appoimentdetails/${doctorId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch appointment details');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch appointment details');
+  // }
 }
+
+// export const DrupdateDoctorProfile = async (id,consultFee,about) => {
+//   try {
+//     const response = await apidoctor.put(`/doctor/profile/${id}`, {
+//       consultFee,
+//       about
+//     });
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || 'Failed to update profile');
+//   }
+// }
+
+export const DrupdateDoctorProfile = async (id, consultFee, about) => {
+  const response = await apidoctor.put(`/doctor/profile/${id}`, {
+    consultFee,
+    about
+  });
+  return response.data;
+};
+
+
+
 export const doctorVerification = async(doctoremail)=>
 {
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/get-doctor?email=${doctoremail}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to verify doctor');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to verify doctor');
+  // }
 }
 export const DrProfile = async(doctorId)=>{
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/profile/${doctorId}`);
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch doctor profile');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch doctor profile');
+  // }
 }
 
 export const getwalletBalance = async(id,page,limit=10)=>{
-  try {
+  // try {
     const response = await apidoctor.get(`/doctor/doctor-wallet-balance/${id}`,{
       params:{
         page,
@@ -429,21 +452,15 @@ export const getwalletBalance = async(id,page,limit=10)=>{
     }
     );
     return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch wallet balance');
-  }
+  // } catch (error) {
+  //   throw new Error(error.response?.data?.message || 'Failed to fetch wallet balance');
+  // }
 }
 
 
 //
 const getadminToken = () => cookie.get('admintoken');
 
-// const handleApiError = (error, defaultMessage) => {
-//   if (error.response?.data?.message) {
-//     throw new Error(error.response.data.message);
-//   }
-//   throw new Error(defaultMessage);
-// };
 
 // Create axios instance with default config
 const apiadmin = axios.create({
@@ -489,27 +506,27 @@ export const verifyAdminToken = async () => {
   }
 };
 export const AdminLogin = async (data) => {
-  try {
+  // try {
     const response = await apiadmin.post('/admin/login', data, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Login failed');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Login failed');
+  // }
 };
 export const AdminDash = async () => {
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.get('/admin/usercount');
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch admin dashboard');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch admin dashboard');
+  // }
 }
 export const Departments = async (currentPage, limit = 10) => {
-  try {
+  // try {
     const response = await apiadmin.get('/admin/department', {
       params: {
         page: currentPage,
@@ -517,32 +534,32 @@ export const Departments = async (currentPage, limit = 10) => {
       }
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch departments');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch departments');
+  // }
 }
 export const UpdateDepartment = async (id) => {
-  try {
+  // try {
     const response = await apiadmin.put(`/admin/department/${id}`, {}, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to update department');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to update department');
+  // }
 }
 export const AddDepartment = async (Departmentname,Description) => {
-  try {
+  // try {
     const response = await apiadmin.post('/admin/department', {Departmentname,Description}, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to add department');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to add department');
+  // }
 }
 export const DoctorList = async(currentPage, limit = 10) => {
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.get('/admin/doctors', {
@@ -565,25 +582,25 @@ export const DoctorList = async(currentPage, limit = 10) => {
       ...response.data,
       doctorsWithIndex: doctorsWithSerialNumbers
     };
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch doctors');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch doctors');
+  // }
 }
 export const handleAction = async(id)=>
 {
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.put(`/admin/blockdoctor/${id}`, {}, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to update department');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to update department');
+  // }
 }
 export const Getdoctorpayment = async(currentPage, limit = 10)=>{
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.get('/admin/getdoctorpayments', {
@@ -593,12 +610,12 @@ export const Getdoctorpayment = async(currentPage, limit = 10)=>{
       }
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch doctor payments');
-  }
+    // } catch (error) {
+    //   handleApiError(error, 'Failed to fetch doctor payments');
+    // }
 }
 export const PendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>{
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.get('/admin/pending-doctors', {
@@ -609,20 +626,20 @@ export const PendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>
       }
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to fetch pending doctors');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to fetch pending doctors');
+  // }
 }
 export const PatientAction= async(id)=>
 {
-  try {
+  // try {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.put(`/admin/unblockpatient/${id}`, {}, {
       withCredentials: true
     });
     return response.data;
-  } catch (error) {
-    handleApiError(error, 'Failed to update department');
-  }
+  // } catch (error) {
+  //   handleApiError(error, 'Failed to update department');
+  // }
 }
