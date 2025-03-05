@@ -180,7 +180,8 @@ export const getAppointments = async (departments) => {
 
 export const getUserAppointments = async (userId, pageNumber, limit) => {
   // try {
-    const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { pageNumber, limit } });  // Changed from '/doctor/appointments/:userId'
+    const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { page:pageNumber, limit } });  // Changed from '/doctor/appointments/:userId'
+    console.log("debugiing ========",response.data);
     return response.data;
   // } catch (error) {
   //   handleApiError(error, 'Failed to fetch user appointments');

@@ -536,10 +536,12 @@ export const bookAppointment = async (req, res) => {
 export const FetchAppoiments = async(req, res) => {
     // const {page,limit} = req.query;
     // console.log("page,limit",page,limit);
+       const {page,limit} = req.query;
+       const { userid } = req.params;
+
 
     try {
 
-        const { userid } = req.params;
         console.log("userid",userid);
         const page = +(req.query.page || 1);
         console.log(page)
@@ -549,18 +551,19 @@ export const FetchAppoiments = async(req, res) => {
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization consultFee profileImage',
-        }).sort({ createdAt:-1 }).skip(skip).limit(limit);
+        }).skip(skip).limit(limit);
         // const doctorsWithIndex = doctors.map((doctor, index) => ({
         //     ...doctor.toObject(),
         //     serialNumber: index + 1
         //   }));
+        const totalPages = Math.ceil(await Appointment.countDocuments({ user: userid })/limit);
+
         const appoinmentwithindex = appointments.map((appointment, index) => ({
-            ...appointment._doc, // Use _doc to access the document data
+            ...appointment.toObject(), // Use _doc to access the document data
             serialNumber: index + 1 + skip // Adjust serial number based on the skip value
         }));
-        const totalAppointments = await Appointment.countDocuments({ user: userid });
-        console.log("=========",totalAppointments)
-        const totalPages = Math.ceil(totalAppointments / limit);
+        // console.log("=========",totalAppointments)
+        // const totalPages = Math.ceil(totalAppointments / limit);
         res.status(STATUS_CODE.OK).json({appointments:appoinmentwithindex, pagination: { currentPage: page, totalPages } });
 
         // console.log("Appointments:", appointments);
