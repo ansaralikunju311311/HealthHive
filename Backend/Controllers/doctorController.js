@@ -585,6 +585,7 @@ export const fetchAppointments = async (req, res) => {
             path: 'user',
             select: 'name email phone age gender image' // Select specific user fields you want to retrieve
         });
+//    const 
     
     res.status(STATUS_CODE.OK).json(appoiments)
 }

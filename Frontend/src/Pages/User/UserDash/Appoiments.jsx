@@ -38,24 +38,26 @@ const Appointments = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage] = useState(10);
+  // const [itemsPerPage] = useState(10);
   const userId = JSON.parse(localStorage.getItem('userId'))._id;
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-
+  const limit = 10;
   useEffect(() => {
     fetchAppointments(currentPage);
   }, [currentPage]);
 
-  const fetchAppointments = async (pageNumber = currentPage) => {
+  const fetchAppointments = async () => {
     try {
-      const response = await getUserAppointments(userId, pageNumber, itemsPerPage);
+      // console.log('Fetching appointments for page:', pageNumber); // Debugging log
+      const response = await getUserAppointments(userId, currentPage, limit);
+      console.log('Response from backend:', response); // Debugging log
       setAppointments(response.appointments);
       setTotalPages(response.pagination.totalPages);
-      
+
       // If we get an empty page and we're not on page 1, go to previous page
-      if (response.appointments.length === 0 && pageNumber > 1) {
-        fetchAppointments(pageNumber - 1);
+      if (response.appointments.length === 0 && currentPage > 1) {
+        fetchAppointments(currentPage - 1);
         return;
       }
     } catch (error) {
@@ -66,6 +68,7 @@ const Appointments = () => {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
+      fetchAppointments(newPage); // Fetch appointments for the new page
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -86,6 +89,15 @@ const Appointments = () => {
 
   // Define columns for DataTable
   const columns = [
+    {
+      header: 'Serial Number',
+      accessor: 'serialNumber',
+      render: (row) => (
+        <Typography variant="body2" sx={{ color: '#1e293b' }}>
+          {row.serialNumber}
+        </Typography>
+      )
+    },
     {
       header: 'Doctor',
       accessor: 'doctor',
