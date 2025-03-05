@@ -96,16 +96,6 @@ const ViewDetailsModal = ({ appointment, isOpen, onClose }) => {
                 <p className="text-sm text-gray-600">Time Slot</p>
                 <p className="font-medium">{appointment.time}</p>
               </div>
-              {/* <div>
-                <p className="text-sm text-gray-600">Status</p>
-                <p className="font-medium capitalize">{appointment.status}</p>
-              </div> */}
-              {/* {appointment.symptoms && (
-                <div className="col-span-2">
-                  <p className="text-sm text-gray-600">Symptoms</p>
-                  <p className="font-medium">{appointment.symptoms}</p>
-                </div>
-              )} */}
             </div>
           </div>
         </div>

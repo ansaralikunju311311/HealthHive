@@ -195,6 +195,7 @@ export const doctors = async (req,res)=>
             ...doctor.toObject(),
             serialNumber: index + 1
           }));
+          
           res.status(STATUS_CODE.OK).json({doctorsWithIndex,totalpage});
     } catch (error) {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });

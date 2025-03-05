@@ -26,6 +26,7 @@ const Department = () => {
 
         // console.log("===============================",response?.data);
         setDepartments(response?.departments);
+        console.log("jfdfj========",response.departments)
         setTotalPages(response?.totalpage);
       } catch (error) {
         console.log(error);
@@ -49,14 +50,7 @@ const Department = () => {
       // });
       const response = await UpdateDepartment(id);
       
-      // Fetch updated departments for the current page
-      // const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
-      //   params: {
-      //     page: currentPage,
-      //     limit: 10
-      //   },
-      //   withCredentials: true,
-      // });
+      
       const updatedResponse = await Departments(currentPage,limit);
 
       setDepartments(updatedResponse?.departments);
@@ -118,25 +112,8 @@ const Department = () => {
 
     try {
       console.log("Adding department:", trimmedDepartmentName);
-      // const response = await axios.post('http://localhost:5000/api/admin/department', {
-      //   Departmentname: trimmedDepartmentName,
-      //   Description: description
-      // }, {
-      //   withCredentials: true,
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-      const response = await AddDepartment(trimmedDepartmentName,description);
       
-      // Fetch updated departments for the current page
-      // const updatedResponse = await axios.get('http://localhost:5000/api/admin/department', {
-      //   params: {
-      //     page: currentPage,
-      //     limit: 10
-      //   },
-      //   withCredentials: true,
-      // });
+      const response = await AddDepartment(trimmedDepartmentName,description);
       const updatedResponse = await Departments(currentPage,limit);
       
       setDepartments(updatedResponse?.departments);
@@ -191,6 +168,9 @@ const Department = () => {
     }
   ];
 
+  // Calculate the starting serial number based on current page and items per page
+  const startSerial = (currentPage - 1) * limit + 1;
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/departments" />
@@ -237,7 +217,7 @@ const Department = () => {
           {/* Replace the table with DataTable component */}
           <DataTable 
             columns={columns}
-            data={filteredDepartments}
+            data={filteredDepartments.map((dept, index) => ({...dept, serialNumber: startSerial + index}))}
             emptyMessage="No departments found"
             headerClassName="bg-gray-100"
             rowClassName="hover:bg-gray-50 transition-colors"

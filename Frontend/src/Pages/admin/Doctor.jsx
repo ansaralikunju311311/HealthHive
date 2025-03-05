@@ -34,6 +34,7 @@ const limit = 10;
         if (response) {
           // The serial numbers are now correctly set in the API service
           setDoctors(response.doctorsWithIndex);
+          console.log("with index====== ",response.doctorsWithIndex)
           setFilteredDoctors(response.doctorsWithIndex);
           setTotalPages(response.totalpage);
         }
@@ -55,17 +56,7 @@ const limit = 10;
   }, [searchTerm, doctors]);
   const handleBlockUnblock = async (doctorid) => {
     try {
-      // const token = cookies.get('admintoken');
-      // if(!token) {
-      //   navigate('/admin');
-      //   return;
-      // }
-      // const response = await axios.put(`http://localhost:5000/api/admin/blockdoctor/${doctorid}`, {}, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   },
-      //   withCredentials: true 
-      // });
+      
       const response = await handleAction(doctorid);
 
       // Find the doctor and toggle their blocked status
