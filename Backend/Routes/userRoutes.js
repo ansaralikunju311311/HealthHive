@@ -19,8 +19,12 @@ import {
        FetchAppoiments,
        verifyPayment,
        fetchDoctor,
-       chatDetails
+       chatDetails,
+         GoogleSignUp,
+         profileSetup,
+         GoogleSignIn
     } from '../Controllers/userController.js';
+// import Google from '../../Frontend/src/Component/User/Google/Google.jsx';
 const router = express.Router();
 
 
@@ -46,6 +50,7 @@ router.post('/verify-payment', verifyPayment)//
 router.get('/verify-token', protect, verifyToken);
 router.get('/doctorsdetails', protect,getDoctorsData);//
 router.get('/getappointments/:userid',FetchAppoiments);
+router.post('/google-signup',GoogleSignUp);
 
 
 router.get('/doctorinfo/:doctorId',fetchDoctor);
@@ -57,5 +62,7 @@ router.get('/doctorinfo/:doctorId',fetchDoctor);
 // router.post('/sendmessage',sendMessage);
 // router.get('/Chats/:roomId',getChat);
 router.get('/Chats/:doctorId/:userId',chatDetails);
+router.post('/profile-completion',profileSetup);
+router.post('/google-login',GoogleSignIn);
 
 export default router;

@@ -58,6 +58,14 @@ const userSchema = new mongoose.Schema({
     otpExpiresAt: {
         type: Date,
         required: false,
+    },
+    uid: {
+        type: String,
+    
+    },
+    profileCompletion:{
+        type:String,
+        default:false,
     }
 });
 

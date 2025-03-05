@@ -67,6 +67,8 @@ const RegisterUser = async (req, res) => {
             existingUser.image = image;
             existingUser.bloodGroup = bloodGroup;
             existingUser.address = address;
+            existingUser.profileCompletion = true;
+
             user = existingUser;
         } else {
             // Create new user
@@ -83,7 +85,8 @@ const RegisterUser = async (req, res) => {
                 isActive: false,
                 isBlocked: false,
                 bloodGroup,
-                address
+                address,
+                profileCompletion:true
             });
         }
 
@@ -100,6 +103,89 @@ const RegisterUser = async (req, res) => {
     }
 };
 
+
+export const GoogleSignUp = async(req,res)=>{
+    try{
+        const { email, name, uid } = req.body;
+
+        console.log("req.body.userData",req.body);
+        const user = await User.findOne({ email });
+        if(user){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'User already exists' });
+        }
+        const newuser = new User({
+            name,
+            email,
+            uid,
+            isActive: true,
+            isBlocked: false,
+            bloodGroup: 'N/A',
+            image: 'N/A',
+            address: 'N/A',
+            gender: 'N/A',
+            age: 'N/A',
+            dateOfBirth: Date.now(),
+            phone: 'N/A',
+            password: 'N/A',
+            profileCompletion:false
+        })
+        await newuser.save();
+        res.status(STATUS_CODE.OK).json({ message: 'Google sign up successful' });
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
+export const GoogleSignIn = async(req,res)=>{
+    try{
+        const { email, name, uid } = req.body;
+        const user = await User.findOne({ email});
+        if(!user){
+            return res.status(STATUS_CODE.NOT_FOUND).json({message:"User not found"});
+        }
+        if(user.isBlocked===true){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User is blocked"});
+        }
+        if(!user.isActive){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Please verify your account first"});
+        }
+        if(user.profileCompletion===false){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Please complete your profile first"});
+        }
+        if(user.uid!==uid){
+            return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User not found"});
+        }
+        // if(user && user.uid===uid){
+        //     res.status(STATUS_CODE.OK).json({message:"User found",user});
+        //     return;
+        // }
+        if(user.uid===uid && email===user.email){
+            const token = setToken(user);
+            console.log("token   coolesdsjdnfjdfjdfr=====",token);
+
+            res.cookie('usertoken', token, cookieOptions);
+            res.status(STATUS_CODE.OK).json({
+                message:"Login successful",
+                user:{
+                    _id:user._id,
+                    email:user.email,
+                    name:user.name,
+                    // profileImage:user.profileImage,
+                    phone:user.phone,
+                    dateOfBirth:user.dateOfBirth,
+                    isActive:user.isActive,
+                    profileCompletion:user.profileCompletion
+                }
+                ,usertoken:token
+            });
+    }   
+} catch(error)
+    {
+        console.log(error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+}
 // Verify OTP
 const verifyOtp = async(req,res)=>{
     try {
@@ -560,4 +646,92 @@ export const chatDetails = async (req,res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
+// export const profileSetup = async (req, res) => {
+//     try {
+//         const {email,profileImage,bloodGroup,address,dob,phone,gender} = req.body;
+
+//         console.log("req.body ",req.body);
+//         const user = await User.find({email});
+//         if(!user){
+//             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
+//         }
+//         if(user && user.profileCompletion === true){
+//             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Profile already completed' });
+//         }
+//         else
+//         {
+//             const token = setToken(user);
+//         // console.log("token   coolesdsjdnfjdfjdfr=====",token);
+//         res.cookie('usertoken', token, cookieOptions);
+
+          
+//             const googlgeuser = new User =({
+//              googlgeuser.profileImage = profileImage;
+//             googlgeuser.bloodGroup = bloodGroup;
+//             googleuser.address = address;
+//             user.dateOfBirth = dob;
+//             googleuser.phone = phone;
+//             googleuser.dateOfBirth = dob;
+//             googleuser.gender = gender;
+//             googleuser.profileCompletion = true;
+//             })
+//             await user.save();
+//         }
+// //  const user = await User.findById(userId);
+// //         if (!user) {
+// //             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
+// //         }
+// //         user.profileCompletion = true;
+// //         await user.save();
+
+       
+//         res.status(STATUS_CODE.OK).json({ message: 'Profile setup completed' });
+//     }
+//     catch (error) {
+//         console.error('Error setting up profile:', error);
+//         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+//     }
+// }
+
+export const profileSetup = async (req, res) => {
+    try {
+        const { email, profileImage, bloodGroup, address, dob, phone, gender,age } = req.body;
+
+        console.log("req.body:", req.body);
+        const user = await User.findOne({ email }).select('-password');
+
+        if (!user) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
+        }
+
+        if (user.profileCompletion === true) {
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Profile already completed' });
+        }
+
+        // Update user fields
+        user.profileImage = profileImage;
+        user.bloodGroup = bloodGroup;
+        user.address = address;
+        user.dateOfBirth = dob;
+        user.phone = phone;
+        user.gender = gender;
+        user.image = profileImage;
+        user.age = age;
+        user.profileCompletion = true;
+       
+        await user.save();
+
+        // Generate and set token after saving user
+        const token = setToken(user);
+        res.cookie('usertoken', token, cookieOptions);
+        
+        res.status(STATUS_CODE.CREATED).json(user)
+    } 
+    catch (error) {
+        console.error('Error setting up profile:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+};
+
+
 export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

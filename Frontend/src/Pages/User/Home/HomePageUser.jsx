@@ -30,6 +30,7 @@ const HomePageUser = () => {
     const checkAuthAndFetchData = async () => {
       try {
         const token = cookies.get('usertoken');
+        console.log("throgh google lohin",token)
         
         if (token) {
           try {

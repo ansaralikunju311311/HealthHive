@@ -1,23 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { loginUser } from '../../Services/apiService';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../Firebase/config.js';
+import Google from '../../Component/User/Google/Google.jsx';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const glogin = async() => {
+    try {
+      setIsLoading(true);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      const response = await axios.post(
+        'http://localhost:5000/api/user/google-login',
+        {
+          email: result.user.email,
+          uid: result.user.uid
+        },
+        {
+          withCredentials: true, // Important for handling cookies
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      const userData = response.data;
+      console.log('Response:', response);
+      console.log('Cookies:', document.cookie);
+
+      if (userData?.token) {
+        // Store token in cookie
+        Cookies.set('token', userData.token, { expires: 7 });
+        localStorage.setItem('user', JSON.stringify(userData.user));
+      }
+
+      // Check user status
+      if (userData?.isBlocked) {
+        toast.error('Your account has been blocked. Please contact support.');
+        return;
+      }
+
+      if (userData?.isActive === false) {
+        toast.error('Please verify your email first');
+        return;
+      }
+
+      if (userData?.profileCompletion === false) {
+        toast.warning('Please complete your profile first');
+        navigate('/profilecompletion', { 
+          state: { email: result.user.email }
+        });
+        return;
+      }
+
+      // Success case - wait for cookie to be set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      toast.success('Welcome back!');
+      navigate('/home', { replace: true });
+
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const response = await loginUser(data);
       
       if (response.user.isBlocked) {
-        toast.error('Your account has been blocked. Please contact support.', {
-          backgroundColor: '#ef4444',
-          icon: '⛔'
-        });
+        toast.error('Your account has been blocked. Please contact support.');
         return;
       }
 
@@ -26,18 +92,21 @@ const Login = () => {
         return;
       }
 
-      toast.success('Welcome back!', {
-        backgroundColor: '#22c55e',
-        icon: '👋'
-      });
+      if (response.user.profileCompletion === false) {
+        toast.warning('Please complete your profile first');
+        navigate('/profilecompletion', { 
+          state: { email: data.email }
+        });
+        return;
+      }
 
-      // Add a small delay before navigation to ensure cookie is set
-      setTimeout(() => {
-        navigate('/home');
-      }, 100);
+      toast.success('Welcome back!');
+      navigate('/home');
       
     } catch (error) {
       toast.error(error.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,13 +179,16 @@ const Login = () => {
               <div>
                 <button
                   type="submit"
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                  disabled={isLoading}
+                  className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-white ${
+                    isLoading ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
                 >
-                  Sign in
+                  {isLoading ? 'Signing in...' : 'Sign in'}
                 </button>
               </div>
             </div>
-
+            <Google onClick={glogin} disabled={isLoading} />
             <div className="text-center text-sm">
               <span className="text-gray-600">Don't have an account?</span>
               <button

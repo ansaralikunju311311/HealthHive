@@ -43,6 +43,8 @@ import DrWallet from './Pages/Doctor/Wallet/DrWallet'
 import Chat from './Pages/User/UserDash/Chat'
 import DrChat from './Pages/Doctor/Chat/Chat'
 import { verifyUserToken } from './Services/apiService.js';
+// import Demo from './Pages/admin/Demo.jsx';
+import ProfileCompletion from './Pages/User/ProfileCompletion.jsx';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -150,6 +152,8 @@ const App = () => {
          
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
+          {/* <Route path='/sample' element={<Demo/>}/> */}
+          <Route path="/profilecompletion" element={<ProfileCompletion />} />
  
       </Routes>
     </>
