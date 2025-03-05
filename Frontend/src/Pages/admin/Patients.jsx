@@ -18,7 +18,7 @@ const Patients = () => {
   const [showModal, setShowModal] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedBlockPatient, setSelectedBlockPatient] = useState(null);
-
+const limit = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   // const navigate = useNavigate();
@@ -36,7 +36,7 @@ const Patients = () => {
         const response = await axios.get('http://localhost:5000/api/admin/patients', {
           params:{
             page:currentPage,
-            limit:10
+            limit,
           },
           headers: {
             Authorization: `Bearer ${token}`
@@ -66,23 +66,7 @@ const Patients = () => {
 
   const handleBlockUnblock = async (patientid) => {
     try {
-        // const token = cookies.get('admintoken');
-        // if (!token) {
-        //     toast.error('Please login to continue', {
-        //         position: "top-right",
-        //         autoClose: 3000,
-        //         theme: "colored"
-        //     });
-        //     navigate('/admin');
-        //     return;
-        // }
-        // const response = await axios.put(`http://localhost:5000/api/admin/unblockpatient/${patientid}`, {}, {
-        //     headers: {
-        //         Authorization: `Bearer ${token}`
-        //     },
-        //     withCredentials: true
-        // });
-        // console.log("api response", response.data);
+       
         const response = await PatientAction(patientid);
 
         // Find the patient and toggle their blocked status
@@ -213,7 +197,7 @@ const Patients = () => {
       )
     }
   ];
-
+  const startSerial = (currentPage - 1) * limit + 1;
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/patients" />
@@ -237,7 +221,10 @@ const Patients = () => {
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <DataTable 
               columns={columns}
-              data={filteredPatients}
+              data={filteredPatients.map((patient, index) => ({
+                ...patient,
+                serialNumber: startSerial + index
+              }))}
               emptyMessage="No patients found"
               headerClassName="bg-gray-50"
               rowClassName="hover:bg-gray-50 transition-colors"
