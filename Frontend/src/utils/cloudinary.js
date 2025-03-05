@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const cloudinaryUpload = async (file) => {
-  const cloudName = 'dliraelbo'; // Replace with your Cloudinary cloud name
-  const uploadPreset = 'testing'; // Replace with your upload preset
+  const cloudName = 'dliraelbo';
+  const uploadPreset = 'testing'; 
 
   const formData = new FormData();
   formData.append('file', file);

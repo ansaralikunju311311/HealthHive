@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 import { DoctorSignUp } from '../../Services/apiService';
+import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
     const [profileImageUrl, setProfileImageUrl] = useState('');
@@ -60,13 +61,8 @@ const SignUp = () => {
         reader.readAsDataURL(file);
         
         setIsUploading(true);
-        const data = new FormData();
-        data.append("file", file);
-        data.append("upload_preset", "testing");
-        
         try {
-            const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload', data);
-            const imageUrl = response.data.url;
+            const imageUrl = await cloudinaryUpload(file);
             
             switch(type) {
                 case 'profile':

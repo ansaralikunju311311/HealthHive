@@ -10,6 +10,7 @@ import {auth} from '../../Firebase/config.js'
 import {GoogleAuthProvider,signInWithPopup} from 'firebase/auth'
 // Import the API service
 import { registerUser } from '../../Services/apiService';
+import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
 
@@ -89,11 +90,8 @@ const SignUp = () => {
       // Set preview immediately when file is selected
       setImagePreview(URL.createObjectURL(file));
       
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", 'testing');
-      const response = await axios.post('https://api.cloudinary.com/v1_1/dliraelbo/image/upload', data);
-      setImage(response.data.url);
+      const imageUrl = await cloudinaryUpload(file);
+      setImage(imageUrl);
     } catch (error) {
       toast.error('Failed to upload image');
       setImagePreview(null); // Clear preview on error
