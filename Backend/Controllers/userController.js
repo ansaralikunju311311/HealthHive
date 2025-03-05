@@ -546,7 +546,7 @@ export const FetchAppoiments = async(req, res) => {
         const skip = (page - 1) * limit;
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
-            select:'name specialization',
+            select:'name specialization consultFee profileImage',
         }).sort({ createdAt:-1 }).skip(skip).limit(limit);
         const totalAppointments = await Appointment.countDocuments({ user: userid });
         const totalPages = Math.ceil(totalAppointments / limit);

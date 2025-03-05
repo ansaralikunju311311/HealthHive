@@ -12,9 +12,14 @@ import {
   styled,
   Avatar,
   Chip,
-  TableCell
+  TableCell,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
 } from '@mui/material';
-import { Chat as ChatIcon } from '@mui/icons-material';
+import { Chat as ChatIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
 import Pagination from '../../../Components/Common/Pagination';
 import DataTable from '../../../Components/Common/DataTable';
 
@@ -35,6 +40,8 @@ const Appointments = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage] = useState(10);
   const userId = JSON.parse(localStorage.getItem('userId'))._id;
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     fetchAppointments(currentPage);
@@ -67,6 +74,16 @@ const Appointments = () => {
     navigate('/user/chats', { state: { doctorId, userId } }); 
   }
 
+  const handleViewDetails = (appointment) => {
+    setSelectedAppointment(appointment);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedAppointment(null);
+  };
+
   // Define columns for DataTable
   const columns = [
     {
@@ -75,7 +92,7 @@ const Appointments = () => {
       render: (row) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Avatar 
-            src={row.doctor.image} 
+            src={row.doctor.profileImage} 
             alt={row.doctor.name}
             sx={{ width: 40, height: 40 }}
           />
@@ -137,20 +154,39 @@ const Appointments = () => {
       header: 'Actions',
       accessor: '_id',
       render: (row) => (
-        <Button
-          variant="contained"
-          onClick={() => handleChat(row.doctor._id, row.user)}
-          startIcon={<ChatIcon />}
-          sx={{ 
-            bgcolor: '#3b82f6',
-            '&:hover': { bgcolor: '#2563eb' },
-            textTransform: 'none',
-            borderRadius: 2,
-            boxShadow: 'none'
-          }}
-        >
-          Chat with Doctor
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="contained"
+            onClick={() => handleChat(row.doctor._id, row.user)}
+            startIcon={<ChatIcon />}
+            sx={{ 
+              bgcolor: '#3b82f6',
+              '&:hover': { bgcolor: '#2563eb' },
+              textTransform: 'none',
+              borderRadius: 2,
+              boxShadow: 'none'
+            }}
+          >
+            Chat
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => handleViewDetails(row)}
+            startIcon={<VisibilityIcon />}
+            sx={{ 
+              borderColor: '#3b82f6',
+              color: '#3b82f6',
+              '&:hover': { 
+                bgcolor: '#eff6ff',
+                borderColor: '#2563eb' 
+              },
+              textTransform: 'none',
+              borderRadius: 2
+            }}
+          >
+            View Details
+          </Button>
+        </Box>
       )
     }
   ];
@@ -217,6 +253,142 @@ const Appointments = () => {
           </Box>
         )}
       </Box>
+
+      {/* Add Modal */}
+      <Dialog 
+        open={openModal} 
+        onClose={handleCloseModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ 
+          bgcolor: '#f8fafc',
+          borderBottom: '1px solid #e2e8f0',
+          color: '#1e293b',
+          fontWeight: 'bold'
+        }}>
+          Appointment Details
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          {selectedAppointment && (
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Avatar 
+                    src={selectedAppointment.doctor.profileImage} 
+                    alt={selectedAppointment.doctor.name}
+                    sx={{ width: 64, height: 64 }}
+                  />
+                  <Box>
+                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 'bold' }}>
+                      Dr. {selectedAppointment.doctor.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#64748b' }}>
+                      {selectedAppointment.doctor.specialization}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 1 }}>
+                  Appointment Date
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#1e293b', fontWeight: 'medium' }}>
+                  {new Date(selectedAppointment.date).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 1 }}>
+                  Appointment Time
+                </Typography>
+                <Chip 
+                  label={selectedAppointment.time}
+                  sx={{ 
+                    bgcolor: '#bfdbfe',
+                    color: '#1e40af',
+                    fontWeight: 'medium'
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 1 }}>
+                  Consultation Fee
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#1e293b', fontWeight: 'medium' }}>
+                  ₹{selectedAppointment.doctor.consultFee}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 1 }}>
+                  Department
+                </Typography>
+                <Chip 
+                  label={selectedAppointment.doctor.specialization}
+                  sx={{ 
+                    bgcolor: '#e2e8f0',
+                    color: '#475569',
+                    fontWeight: 'medium'
+                  }}
+                />
+              </Grid>
+
+              {selectedAppointment.doctor.about && (
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 1 }}>
+                    Doctor's Note
+                  </Typography>
+                  <Paper sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: 2 }}>
+                    <Typography variant="body2" sx={{ color: '#475569' }}>
+                      {selectedAppointment.doctor.about}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              )}
+            </Grid>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2.5, borderTop: '1px solid #e2e8f0' }}>
+          <Button 
+            onClick={handleCloseModal}
+            variant="outlined"
+            sx={{ 
+              borderColor: '#cbd5e1',
+              color: '#64748b',
+              '&:hover': { 
+                bgcolor: '#f1f5f9',
+                borderColor: '#94a3b8' 
+              },
+              textTransform: 'none',
+              borderRadius: 2
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            onClick={() => handleChat(selectedAppointment.doctor._id, selectedAppointment.user)}
+            variant="contained"
+            startIcon={<ChatIcon />}
+            sx={{ 
+              bgcolor: '#3b82f6',
+              '&:hover': { bgcolor: '#2563eb' },
+              textTransform: 'none',
+              borderRadius: 2,
+              boxShadow: 'none'
+            }}
+          >
+            Chat with Doctor
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
