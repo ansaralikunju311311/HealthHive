@@ -6,7 +6,7 @@ const Banner = () => {
     <div className="bg-gradient-to-r from-blue-100 to-blue-50 min-h-[500px]">
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row items-center justify-between">
-          {/* Left side - Text content */}
+        
           <div className="md:w-1/2 mb-8 md:mb-0">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
               Contact Us
@@ -15,7 +15,6 @@ const Banner = () => {
               Kindly reach us to get the fastest response and treatment.
             </p>
             
-            {/* Doctor Info Card */}
             <div className="bg-white p-4 rounded-lg shadow-md mb-6 max-w-sm">
               <div className="flex items-center mb-3">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -31,7 +30,6 @@ const Banner = () => {
               <p className="text-sm text-gray-600">Available Mon - Sat, 7 AM - 5 PM</p>
             </div>
 
-            {/* Patient Stats */}
             <div className="bg-white p-4 rounded-lg shadow-md max-w-sm">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
@@ -47,7 +45,6 @@ const Banner = () => {
             </div>
           </div>
 
-          {/* Right side - Image */}
           <div className="md:w-1/2">
             <img 
               src={Bannerdoctor} 

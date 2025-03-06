@@ -28,7 +28,7 @@ const Login = () => {
           uid: result.user.uid
         },
         {
-          withCredentials: true, // Important for handling cookies
+          withCredentials: true, 
           headers: {
             'Content-Type': 'application/json',
           }
@@ -40,12 +40,10 @@ const Login = () => {
       console.log('Cookies:', document.cookie);
 
       if (userData?.token) {
-        // Store token in cookie
         Cookies.set('token', userData.token, { expires: 7 });
         localStorage.setItem('user', JSON.stringify(userData.user));
       }
 
-      // Check user status
       if (userData?.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
@@ -64,7 +62,6 @@ const Login = () => {
         return;
       }
 
-      // Success case - wait for cookie to be set
       await new Promise(resolve => setTimeout(resolve, 100));
       toast.success('Welcome back!');
       navigate('/home', { replace: true });

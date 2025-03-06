@@ -17,7 +17,6 @@ const Sidebar = ({ activePage }) => {
 
   const handleLogout = () => {
     cookies.remove('admintoken');
-    // First navigate, then show toast
     navigate('/admin');
     toast.error('Logged out successfully', {
       position: "top-right",

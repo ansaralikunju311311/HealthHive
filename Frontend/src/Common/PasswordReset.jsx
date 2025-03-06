@@ -33,7 +33,6 @@ const ResetPassword = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Determine the correct API endpoint based on user type
       const endpointMap = {
         'user': 'http://localhost:5000/api/user/reset-password',
         'doctor': 'http://localhost:5000/api/doctor/reset-password',
@@ -48,8 +47,6 @@ const ResetPassword = () => {
       });
 
       toast.success('Password reset successfully!');
-      
-      // Navigate to the appropriate login page based on user type
       const loginRoutes = {
         'user': '/login',
         'doctor': '/doctor/login',
@@ -64,7 +61,7 @@ const ResetPassword = () => {
 
   return (
     <div className={`min-h-screen ${theme.background} flex`}>
-      {/* Left Side - Form */}
+      
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
@@ -131,8 +128,6 @@ const ResetPassword = () => {
           </form>
         </div>
       </div>
-
-      {/* Right Side - Image */}
       <div className="hidden lg:block lg:w-1/2">
         <img
           className="object-cover w-full h-full"

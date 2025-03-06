@@ -57,7 +57,6 @@ const Wallet = () => {
       
 
         setTotalPages(commition.data.totalpage);
-        // console.log("this is the response", commition.totalPages);
         setCount(commition.data.count);
         console.log("this is the responselvnfjvj", commition.data.count);
       } catch (error) {
@@ -67,13 +66,7 @@ const Wallet = () => {
     fetchDetails();
   }, [currentPage]);
 
-  // {adminEarning.map((er)=>
-  // {
-  //   console.log("=============hhhh",er.user);
-  // })}
-  // console.log("=============hhhh",adminEarning.user);
-  // console.log("=============",count);
-  // Sample data - replace with actual data from your backend
+ 
   const [adminEarnings] = useState([
     {
       id: 1,
@@ -94,16 +87,6 @@ const Wallet = () => {
       service: 'Lab Test',
     },
   ]);
-
-  // const totalamount = adminEarning.reduce((sum, earning) => sum + earning.amount*0.1, 0);
-  // const totalTransactions = adminEarning.length;
-
-  // const averageCommission = totalamount / totalTransactions;
-
-  // console.log("=============",totalamount);
-  // console.log("=============fff",totalTransactions);
-
-  // Define columns for DataTable
   const columns = [
     {
       header: 'User',
@@ -245,7 +228,6 @@ const Wallet = () => {
             </Grid>
           </Grid>
 
-          {/* Replace Table with DataTable */}
           <Card sx={{ borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>

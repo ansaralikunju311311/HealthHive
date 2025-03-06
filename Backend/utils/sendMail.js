@@ -4,7 +4,6 @@ dotenv.config();
 
 console.log('Email config:', {
     user: process.env.EMAIL_USER,
-    // Don't log the actual password
     hasPass: !!process.env.EMAIL_PASS
 });
 
@@ -14,10 +13,9 @@ const transporter = Nodemailer.createTransport({
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
     },
-    debug: true // Enable debug logging
+    debug: true
 });
 
-// Test the connection on startup
 transporter.verify(function(error, success) {
     if (error) {
         console.error('Email configuration error:', error);

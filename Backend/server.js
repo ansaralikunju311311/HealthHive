@@ -32,8 +32,6 @@ io.on('connection', (socket) => {
         onlineUsers.set(userId, { socketId: socket.id, type });
         
         io.emit('userStatus', { userId, online: true, type });
-        
-        // Send current online users status to newly connected user
         onlineUsers.forEach((value, key) => {
             socket.emit('userStatus', {
                 userId: key,

@@ -53,10 +53,7 @@ const Profile = () => {
 
     const updateDoctorProfile = async () => {
         try {
-            // const response = await axios.put(`http://localhost:5000/api/doctor/profile/${id}`, {
-            //     consultFee: doctor.consultFee,
-            //     about: doctor.about
-            // });
+           
             const response = await DrupdateDoctorProfile(id,doctor.consultFee,doctor.about)
             console.log("Profile updated successfully:", response.data);
         } catch (error) {
@@ -76,7 +73,6 @@ const Profile = () => {
             try {
                 setLoading(true);
                 setError(null);
-                // const response = await axios.get(`http://localhost:5000/api/doctor/profile/${id}`);
                 const response = await DrProfile(id);
                 
                 setDoctor(response.doctorData);
@@ -146,7 +142,6 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-4xl mx-auto px-4">
-                {/* Navigation Header */}
                 <div className="mb-6 flex items-center justify-between">
                     <button
                         onClick={handleBack}
@@ -166,8 +161,7 @@ const Profile = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-lg">
-                    {/* Profile Header */}
-                    <div className="flex flex-col items-center bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-t-2xl">
+]                    <div className="flex flex-col items-center bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-t-2xl">
                         <div className="relative mb-6">
                             <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white shadow-xl">
                                 <img
@@ -203,7 +197,6 @@ const Profile = () => {
                     </div>
 
                     <div className="p-8 space-y-8">
-                        {/* About Section */}
                         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                             <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,7 +211,6 @@ const Profile = () => {
                             )}
                         </div>
 
-                        {/* Contact and Personal Information */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                                 <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -282,7 +274,6 @@ const Profile = () => {
                     </div>
                 </div>
 
-                {/* Quick Actions Footer */}
                 <div className="mt-6 flex justify-center gap-4">
                     <button
                         onClick={handleBack}

@@ -4,13 +4,9 @@ import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, handleB
 import { protectAdmin } from "../Middleware/authMiddleware.js";
 
 const admin = express.Router();
-
-// Public routes (no authentication needed)
 admin.post("/login", LoginAdmin);
 admin.get("/verify-token", protectAdmin, verifyAdminToken);
-
-// Protected routes (require admin authentication)
-admin.use(protectAdmin); // Apply protectAdmin middleware to all routes below this line
+admin.use(protectAdmin);
 
 admin.get("/patients", patients);
 admin.get("/pending-doctors", pendingDoctors);

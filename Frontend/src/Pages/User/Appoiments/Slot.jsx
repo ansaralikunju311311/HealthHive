@@ -58,15 +58,12 @@ const Slot = () => {
         let [hours, minutes] = time.includes(':') ? time.split(':') : [time, '00'];
         hours = parseInt(hours);
         
-        // Adjust hours for PM
         if (period === 'PM' && hours !== 12) {
             hours += 12;
         }
-        // Handle 12 PM (noon)
         if (period === 'PM' && hours === 12) {
             hours = 12;
         }
-        // Handle 12 AM (midnight)
         if (period === 'AM' && hours === 12) {
             hours = 0;
         }

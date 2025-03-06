@@ -19,33 +19,31 @@ const ProfileCompletion = () => {
       setIsUploading(true);
       let imageUrl = null;
 
-      // Upload image if exists
+      
       if (data.profileImage[0]) {
         imageUrl = await cloudinaryUpload(data.profileImage[0]);
       }
 
-      // Prepare data
       const submitData = {
         email: email,
         ...data,
         profileImage: imageUrl
       };
 
-      // Make API call
       const response = await axios.post(
         'http://localhost:5000/api/user/profile-completion', 
         submitData,
-        { withCredentials: true } // Add this to handle cookies if needed
+        { withCredentials: true } 
       );
 
       if (response.data.success || response.data.profileCompletion) {
         toast.success('Profile completed successfully!');
-        localStorage.setItem('profileCompleted', 'true'); // Add this to track profile completion
+        localStorage.setItem('profileCompleted', 'true'); 
         
-        // Force a delay before navigation
+      
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Use replace to prevent going back to profile completion
+      
         navigate('/home', { replace: true });
       } else {
         toast.error(response.data.message || 'Failed to complete profile');
@@ -79,14 +77,13 @@ const ProfileCompletion = () => {
     let months = today.getMonth() - birth.getMonth();
     let days = today.getDate() - birth.getDate();
 
-    // Adjust for negative days
     if (days < 0) {
       months--;
       const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
       days += lastMonth.getDate();
     }
 
-    // Adjust for negative months
+  
     if (months < 0) {
       years--;
       months += 12;
@@ -94,7 +91,7 @@ const ProfileCompletion = () => {
 
     const ageString = `${years} years, ${months} months, ${days} days`;
     setCalculatedAge(ageString);
-    setValue('age', ageString); // Update the form value
+    setValue('age', ageString); 
   };
 
   return (
@@ -127,13 +124,13 @@ const ProfileCompletion = () => {
           {errors.profileImage && <span style={errorStyle}>{errors.profileImage.message}</span>}
         </div>
 
-        {/* Date of Birth */}
+        
         <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <label htmlFor="dob">Date of Birth</label>
           <input
             type="date"
             id="dob"
-            max={new Date().toISOString().split('T')[0]} // Prevents future dates
+            max={new Date().toISOString().split('T')[0]} 
             {...register('dob', {
               required: 'Date of birth is required',
               onChange: (e) => calculateAge(e.target.value)
@@ -143,7 +140,7 @@ const ProfileCompletion = () => {
           {errors.dob && <span style={errorStyle}>{errors.dob.message}</span>}
         </div>
 
-        {/* Age (Read-only) */}
+        
         <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <label htmlFor="age">Age</label>
           <input
@@ -219,7 +216,6 @@ const ProfileCompletion = () => {
           {errors.gender && <span style={errorStyle}>{errors.gender.message}</span>}
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={isUploading}
@@ -241,7 +237,6 @@ const ProfileCompletion = () => {
   );
 };
 
-// Styles
 const inputStyle = {
   padding: '8px 12px',
   borderRadius: '4px',

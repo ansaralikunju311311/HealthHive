@@ -13,7 +13,7 @@ const SignUp = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [departments, setDepartments] = useState([]);
     
-    // For local preview before upload
+   
     const [profilePreview, setProfilePreview] = useState('');
     const [licensePreview, setLicensePreview] = useState('');
     const [idProofPreview, setIdProofPreview] = useState('');
@@ -41,7 +41,7 @@ const SignUp = () => {
             return;
         }
 
-        // Create local preview
+       
         const reader = new FileReader();
         reader.onloadend = () => {
             switch(type) {

@@ -38,40 +38,19 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        // const token = cookies.get('doctortoken');
-        // if (!token) {
-        //   navigate('/doctor/login');
-        //   return;
-        // }
-
-        // const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`
-        //   },
-        //   withCredentials:true,
-        // });
         const reponse = await verifyDoctorToken();
         console.log('doctorccccc=======',reponse);  
         
        const doctors = reponse?.doctor;
         console.log('doctorccddddddddddddccc=======',doctors);
-        // const doctorData = response.data.doctor;
         setDoctor(doctors);
 
-        // const datas = await axios.get(`http://localhost:5000/api/doctor/appoimentdetails/${doctorData._id}`, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`
-        //   }, 
-        //   withCredentials:true,
-        // });
+       
         const responses  = await appoimentDetails(doctors._id);
-        // const datas = response.data;
 
 
 
-        // console.log('=====socfjgfoijv',datas.data)
         setAppoiment(responses);
-        // console.log("response.data.doctor", doctors);
         localStorage.setItem('doctorId', JSON.stringify(doctors));
          
         setLoading(false);
@@ -109,13 +88,6 @@ const DoctorDash = () => {
       <div className="text-xl">Loading...</div>
     </div>;
   }
-
-  // const dummyAppointments = [
-  //   { id: 1, patientName: 'John Doe', date: '2023-10-10', time: '10:00 AM', status: 'Pending' },
-  //   { id: 2, patientName: 'Jane Smith', date: '2023-10-11', time: '11:00 AM', status: 'Confirmed' },
-  //   { id: 3, patientName: 'Emily Johnson', date: '2023-10-12', time: '12:00 PM', status: 'Cancelled' },
-  // ];
-
   const appointmentData = [
     { month: 'Jan', appointments: 15 },
     { month: 'Feb', appointments: 20 },
@@ -137,8 +109,8 @@ const DoctorDash = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar doctorid={doctor._id} />
-      <div className="ml-64 flex-1 p-8 mt-4"> {/* Added ml-64 to match sidebar width and mt-4 for top margin */}
-        {/* Header */}
+      <div className="ml-64 flex-1 p-8 mt-4">
+      
         <div className="flex justify-between items-center mb-8">
           <div className="text-xl font-semibold">Welcome, Dr. {doctor?.name}</div>
           <div className="flex items-center space-x-4">
@@ -153,9 +125,9 @@ const DoctorDash = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
+       
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Total Appointments */}
+         
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
             <div className="bg-blue-100 p-3 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -168,7 +140,7 @@ const DoctorDash = () => {
             </div>
           </div>
 
-          {/* Total Patients */}
+          
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
             <div className="bg-green-100 p-3 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,7 +153,7 @@ const DoctorDash = () => {
             </div>
           </div>
 
-          {/* Payment Due */}
+          
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
             <div className="bg-red-100 p-3 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -195,9 +167,9 @@ const DoctorDash = () => {
           </div>
         </div>
 
-        {/* Charts */}
+     
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-          {/* Appointments Chart */}
+         
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold mb-4">Appointment Trends</h3>
             <div className="h-80">

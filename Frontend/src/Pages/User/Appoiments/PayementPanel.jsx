@@ -152,7 +152,6 @@ const PayementPanel = () => {
         return;
       }
 
-      // Initialize payment
       const paymentResponse = await initiatePayment(doctorData.consultFee);
       console.log('Payment initiated:', paymentResponse);
 
@@ -170,7 +169,6 @@ const PayementPanel = () => {
         order_id: paymentResponse.id,
         handler: async function (razorpayResponse) {
           try {
-            // Verify payment
             const verificationResponse = await verifyPayment({
               razorpay_order_id: razorpayResponse.razorpay_order_id,
               razorpay_payment_id: razorpayResponse.razorpay_payment_id,
@@ -178,7 +176,6 @@ const PayementPanel = () => {
             });
 
             if (verificationResponse) {
-              // Prepare appointment data
               const appointmentData = {
                 slots: {
                   date: slot.appointmentDate,
@@ -194,7 +191,6 @@ const PayementPanel = () => {
               };
 
               try {
-                // Book appointment
                 const bookingResult = await bookAppointment(
                   doctorData._id,
                   userId._id,
@@ -273,7 +269,6 @@ const PayementPanel = () => {
         backgroundPosition: 'center',
         position: 'relative'
       }}>
-        {/* Decorative Elements */}
         <Box sx={{
           position: 'absolute',
           top: 0,

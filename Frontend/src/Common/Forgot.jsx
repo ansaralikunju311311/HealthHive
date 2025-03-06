@@ -15,7 +15,6 @@ const For = () => {
     if (path === '/user/forgotpassword') return 'user';
   };
 
-  // Theme configurations for different user types
   const themeConfig = {
     user: {
       background: "bg-gradient-to-br from-blue-50 to-blue-100",
@@ -45,8 +44,6 @@ const For = () => {
       }
       const response = await axios.post(endpoint, data);
       toast.success('OTP sent successfully!');
-         
-      // Determine the correct reset password route based on user type
       const resetPasswordRoutes = {
         'doctor': '/doctor/reset-password',
         'user': '/user/reset-password',

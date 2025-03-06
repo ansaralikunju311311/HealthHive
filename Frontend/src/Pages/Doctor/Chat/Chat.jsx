@@ -45,9 +45,6 @@ const Chat = () => {
 
     const fetchUser = async () => {
       try {
-        
-        // setUser(response.data);
-        // console.log("===========================user user",response.data)
         const data = await userInfo(userId);
         setUser(data);
       } catch (error) {
@@ -135,8 +132,6 @@ const Chat = () => {
 
   const handleTyping = () => {
     socketRef.current.emit("doctortyping", { doctorId, userId, isTyping: true });
-
-    // Clear typing indication after delay
     const timeoutId = setTimeout(() => {
       socketRef.current.emit("doctortyping", { doctorId, userId, isTyping: false });
     }, 2000);

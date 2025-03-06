@@ -11,28 +11,16 @@ const DoctorProtected = ({ children }) => {
       {
         const verifyToken = async () => {
           try {
-            // const token = cookies.get('doctortoken');
-            // if (!token) {
-            //   navigate('/doctor/login');
-            //   return;
-            // }
-            // const response = await axios.get('http://localhost:5000/api/doctor/verify-token', {
-            //   headers: {
-            //     Authorization: `Bearer ${token}`
-            //   },
-            //   withCredentials:true,
-            // });
+           
             const response = await verifyDoctorToken();
             if (response.doctor) {
               setVerified(true);
             } else {
-              // localStorage.removeItem('doctortoken');
               cookies.remove('doctortoken');
               navigate('/doctor/login');
             }
           } catch (error) {
             console.error('Error verifying token:', error);
-            // localStorage.removeItem('doctortoken');
             cookies.remove('doctortoken');
             navigate('/doctor/login');
           }

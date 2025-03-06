@@ -60,15 +60,12 @@ const SignUp = () => {
     let months = today.getMonth() - birth.getMonth();
     let days = today.getDate() - birth.getDate();
     
-    // Adjust for negative days
     if (days < 0) {
       months--;
-      // Get the last day of the previous month
       const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
       days += lastMonth.getDate();
     }
     
-    // Adjust for negative months
     if (months < 0) {
       years--;
       months += 12;
@@ -76,7 +73,7 @@ const SignUp = () => {
     
     const ageString = `${years} years, ${months} months, ${days} days`;
     setCalculatedAge(ageString);
-    setValue('age', ageString); // Update the form value
+    setValue('age', ageString); 
   };
 
   const handleImageUpload = async (file) => {
@@ -87,14 +84,13 @@ const SignUp = () => {
         return;
       }
       
-      // Set preview immediately when file is selected
       setImagePreview(URL.createObjectURL(file));
       
       const imageUrl = await cloudinaryUpload(file);
       setImage(imageUrl);
     } catch (error) {
       toast.error('Failed to upload image');
-      setImagePreview(null); // Clear preview on error
+      setImagePreview(null); 
     }
   }
 
@@ -119,7 +115,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
-      {/* Left Side - Image */}
+      
       <div className="hidden lg:block lg:w-1/2 relative">
         <img
           src={Bannerdoctor}
@@ -160,7 +156,7 @@ const SignUp = () => {
         </div>
       </div>
 
-      {/* Right Side - Form */}
+     
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
@@ -169,7 +165,7 @@ const SignUp = () => {
           </div>
 
           <form className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
-            {/* Image Upload Section at top */}
+            
             <div className="text-center mb-6">
               <div className="relative w-32 h-32 mx-auto mb-4">
                 {imagePreview ? (

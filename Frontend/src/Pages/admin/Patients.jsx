@@ -21,12 +21,10 @@ const Patients = () => {
 const limit = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        // const token = localStorage.getItem('admintoken');
         const token = cookies.get('admintoken');
         console.log("this is the token", token);
         if(!token) {
@@ -54,7 +52,6 @@ const limit = 10;
     fetchPatients();
   }, [currentPage])
 
-  // Search functionality
   useEffect(() => {
     const results = patients.filter(patient =>
       patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,7 +66,6 @@ const limit = 10;
        
         const response = await PatientAction(patientid);
 
-        // Find the patient and toggle their blocked status
         const updatedPatients = patients.map(patient => {
             if (patient._id === patientid) {
                 const newBlockedStatus = !patient.isBlocked;
@@ -78,13 +74,11 @@ const limit = 10;
             return patient;
         });
 
-        // Update both patients and filtered patients lists
         setPatients(updatedPatients);
         setFilteredPatients(updatedPatients);
         setIsConfirmModalOpen(false);
         setSelectedBlockPatient(null);
 
-        // Show appropriate toast message based on new status
         const patient = patients.find(p => p._id === patientid);
         const newStatus = !patient.isBlocked;
         if (newStatus) {
@@ -121,7 +115,6 @@ const limit = 10;
 
   const navigate = useNavigate();
 
-  // Define columns for DataTable
   const columns = [
     {
       header: 'Patient ID',
@@ -205,7 +198,6 @@ const limit = 10;
         <div className="p-8">
           <h1 className="text-2xl font-bold mb-8">Patient Management</h1>
 
-          {/* Search Bar */}
           <div className="mb-6 relative">
             <input
               type="text"
@@ -217,7 +209,6 @@ const limit = 10;
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
 
-          {/* Replace table with DataTable component */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <DataTable 
               columns={columns}
@@ -231,7 +222,6 @@ const limit = 10;
             />
           </div>
 
-          {/* Pagination */}
           <div className="mt-6">
             <Pagination 
               currentPage={currentPage}
@@ -242,14 +232,12 @@ const limit = 10;
         </div>
       </div>
 
-      {/* Patient Details Modal */}
       <PatientDetailsModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         patient={selectedPatient}
       />
 
-      {/* Confirmation Modal */}
       {isConfirmModalOpen && selectedBlockPatient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-96">

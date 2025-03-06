@@ -45,17 +45,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const token = cookies.get('admintoken');
-        // if (!token) {
-        //   navigate('/admin');
-        //   return;
-        // }
-        // const response = await axios.get('http://localhost:5000/api/admin/usercount', {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`
-        //   },
-        //   withCredentials: true
-        // });
+      
         const response = await AdminDash();
         console.log("usercount=====", response.data);
         setUserCount(response?.userCount + response?.doctorCount);
@@ -74,7 +64,6 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/admin/dashboard" />
 
-      {/* Main Content */}
       <div className="flex-1 ml-64"> 
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="p-4">
@@ -82,7 +71,7 @@ const AdminDashboard = () => {
           </div>
         </header>
 
-        {/* Stats Cards */}
+      
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
@@ -113,9 +102,9 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Charts */}
+       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-          {/* User Growth Chart */}
+        
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold mb-4">User Growth</h3>
             <div className="h-80">
@@ -138,7 +127,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Revenue Chart */}
+         
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold mb-4">Revenue Growth</h3>
             <div className="h-80">

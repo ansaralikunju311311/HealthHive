@@ -36,22 +36,7 @@ const DoctorVerification = () => {
 const limit =10;
   const fetchDoctors = async (page) => {
     try {
-      // const token = cookies.get('admintoken');
-      // if(!token) {
-      //   navigate('/admin');
-      //   return;
-      // }
-      // const response = await axios.get('http://localhost:5000/api/admin/pending-doctors', {
-      //   params: {
-      //     page,
-      //     limit: 10,
-      //     search: searchTerm // Add search term to API query
-      //   },
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   },
-      //   withCredentials: true
-      // });
+    
       const response = await PendingDoctors(page, searchTerm,limit);
       
       const { doctorsWithIndex, totalPages } = response;
@@ -65,11 +50,10 @@ const limit =10;
     }
   };
 
-  // Fetch doctors when page changes or search term changes
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchDoctors(currentPage);
-    }, 500); // Debounce search
+    }, 500); 
 
     return () => clearTimeout(delayDebounceFn);
   }, [currentPage, searchTerm]);
@@ -98,7 +82,7 @@ const limit =10;
           autoClose: 3000,
           theme: "colored"
         });
-        // Remove the approved doctor from both states
+      
         const updatedDoctors = doctors.filter(doctor => doctor._id !== doctorid);
         setDoctors(updatedDoctors);
         setFilteredDoctors(prevFiltered => prevFiltered.filter(doctor => doctor._id !== doctorid));

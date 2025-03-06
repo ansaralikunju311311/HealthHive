@@ -71,47 +71,12 @@ const DoctorPayment = () => {
   
   console.log("payments",payments);
   console.log("totalAmount",totalAmount);
-  // Sample data - replace with actual data from your backend
-  // const [doctorPayments] = useState([
-  //   {
-  //     id: 1,
-  //     doctorName: "Dr. Sarah Johnson",
-  //     specialization: "Cardiologist",
-  //     totalEarnings: 50000,
-  //     pendingAmount: 15000,
-  //     paidAmount: 35000,
-  //     appointments: 25,
-  //     avatar: "https://example.com/avatar1.jpg",
-  //     recentPayments: [
-  //       { date: '2025-02-15', amount: 5000, appointmentId: 'APT001' },
-  //       { date: '2025-02-14', amount: 4500, appointmentId: 'APT002' },
-  //     ]
-  //   },
-  //   {
-  //     id: 2,
-  //     doctorName: "Dr. Michael Chen",
-  //     specialization: "Neurologist",
-  //     totalEarnings: 45000,
-  //     pendingAmount: 10000,
-  //     paidAmount: 35000,
-  //     appointments: 20,
-  //     avatar: "https://example.com/avatar2.jpg",
-  //     recentPayments: [
-  //       { date: '2025-02-16', amount: 6000, appointmentId: 'APT003' },
-  //       { date: '2025-02-13', amount: 4000, appointmentId: 'APT004' },
-  //     ]
-  //   },
-  // ]);
-  // // Calculate total statistics
-  // const totalDoctorEarnings = doctorPayments.reduce((sum, doc) => sum + doc.totalEarnings, 0);
-  // const totalPendingAmount = doctorPayments.reduce((sum, doc) => sum + doc.pendingAmount, 0);
-  // const totalPaidAmount = doctorPayments.reduce((sum, doc) => sum + doc.paidAmount, 0);
+ 
+ 
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-
-  // Define columns for DataTable
   const columns = [
     {
       header: 'Doctor',
@@ -199,7 +164,6 @@ const DoctorPayment = () => {
             </Grid>
           </Grid>
 
-          {/* Doctor Payment Details Table */}
           <Card sx={{ mb: 4 }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>

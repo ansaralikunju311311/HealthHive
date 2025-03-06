@@ -22,10 +22,6 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // slot: {
-    //     type: String,
-    //     required: true
-    // }
 }, { timestamps: true });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);

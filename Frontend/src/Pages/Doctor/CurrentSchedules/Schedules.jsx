@@ -164,8 +164,7 @@ const Schedules = () => {
 
     const fetchExistingSchedules = async () => {
         try {
-            // const response = await axios.get(`http://localhost:5000/api/doctor/existing-schedules/${doctorId}`);
-            // setExistingSchedules(response.data.schedules || []);
+          
             const response = await ExstingSchedules(doctorId);
             
             setExistingSchedules(response.schedules || []);
@@ -195,7 +194,7 @@ const Schedules = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {(() => {
                                 const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
-                                    const dateKey = schedule.appointmentDate; // Use the date directly from the schedule
+                                    const dateKey = schedule.appointmentDate; 
 
                                     if (!acc[dateKey]) {
                                         acc[dateKey] = {
@@ -203,13 +202,13 @@ const Schedules = () => {
                                             slots: []
                                         };
                                     }
-                                    acc[dateKey].slots.push(schedule); // Store the entire schedule object
+                                    acc[dateKey].slots.push(schedule); 
                                     return acc;
                                 }, {});
                                 return Object.values(schedulesByDate)
                                     .map((dateGroup, index) => (
                                         <div key={index} className="border rounded-lg p-4 shadow-sm">
-                                            <h3 className="font-bold mb-2">{dateGroup.date}</h3> {/* Directly use the date */}
+                                            <h3 className="font-bold mb-2">{dateGroup.date}</h3> 
                                             <div className="space-y-2">
                                                 {dateGroup.slots.map((slot, slotIndex) => (
                                                     <div 
@@ -231,7 +230,6 @@ const Schedules = () => {
                                                                     if (period === 'PM' && hours === 12) {
                                                                         hours = 12;
                                                                     }
-                                                                    // Handle 12 AM (midnight)
                                                                     if (period === 'AM' && hours === 12) {
                                                                         hours = 0;
                                                                     }

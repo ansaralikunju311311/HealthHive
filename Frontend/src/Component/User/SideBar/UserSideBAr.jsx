@@ -22,7 +22,6 @@ const Sidebar = ({activePage}) => {
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
-      // Force logout even if API call fails
       navigate('/login');
     }
   };

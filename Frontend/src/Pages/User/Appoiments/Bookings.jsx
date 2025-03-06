@@ -10,14 +10,12 @@ const Bookings = () => {
     const [doctors, setDoctors] = useState([])
 
     useEffect(() => {
-        // Safely extract doctors data from location state
         if (location.state && location.state.data) {
             setDoctors(location.state.data.doctors || [])
         }
     }, [location.state])
 
     const handleBookAppointment = (doctor) => {
-        // Navigate to appointment booking page with doctor details
         navigate('/bookappointment', { state: { doctor } })
     }
 

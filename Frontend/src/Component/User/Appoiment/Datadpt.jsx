@@ -11,7 +11,7 @@ const Datadpt = ({ limit =null}) => {
   const [departmentColors, setDepartmentColors] = useState({});
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-  // Function to generate random gradient colors
+  
   const generateRandomGradient = () => {
     const colors = [
       'rose', 'violet', 'sky', 'emerald', 'indigo', 
@@ -22,7 +22,6 @@ const Datadpt = ({ limit =null}) => {
     return `from-${randomColor}-100 via-${randomColor}-200 to-${randomColor}-300`;
   };
 
-  // Assign random colors to departments when they're loaded
   useEffect(() => {
     const newDepartmentColors = {};
     departments.forEach(dept => {
@@ -62,23 +61,20 @@ loadDepartments();
   
   return (
     <>
-      {/* {userData ? ( */}
+    
         <div className="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Title section remains unchanged */}
+          
            
     
-          {/* <Heading/> */}
+         
 
 
 
-            {/* New departments container with improved hover effect */}
             <div className="relative">
                 
-            {/* <Schedulebtn/> */}
 
               <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                {/* Use limit prop to slice if provided */}
                 {(limit ? departments.slice(0, limit) : departments).map((department) => (
                
 
@@ -105,9 +101,7 @@ loadDepartments();
             </div>
           </div>
         </div>
-      {/* ) : ( */}
-        {/* <div>Loading...</div> */}
-      {/* )} */}
+     
     </>
   );
 };

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-// import Appointment from "./appoiment";
 const transactionSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,

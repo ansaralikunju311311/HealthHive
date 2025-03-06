@@ -152,7 +152,6 @@ const App = () => {
          
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
-          {/* <Route path='/sample' element={<Demo/>}/> */}
           <Route path="/profilecompletion" element={<ProfileCompletion />} />
  
       </Routes>

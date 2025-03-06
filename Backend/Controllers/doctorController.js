@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import moment from 'moment-timezone';
 import bcrypt from 'bcrypt';
-// import {jwtToken} from '../utils/auth.js'
 import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
@@ -14,18 +13,16 @@ import DoctorWallet from '../Model/Drwallet.js';
 import User from '../Model/userModel.js';
 import Transaction from "../Model/Transaction.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
-import Chat from '../Model/chat.js'; // Import the Chat model
-// import RejectedDoctor from "../Model/RejectedDoctors.js";
-    // import ClearToken from '../utils/auth.js';    
+import Chat from '../Model/chat.js';    
  import cookies from 'js-cookie';
-// import appoimentSchedule from '../Model/appoimentSchedule.js';
+
 
  const cookieOptions = {
      
     httpOnly: false,
     secure: true,
     sameSite: 'none',
-    maxAge: 10 * 60 * 1000, // 1 minute
+    maxAge: 10 * 60 * 1000,
 };
 
 
@@ -35,13 +32,12 @@ import Chat from '../Model/chat.js'; // Import the Chat model
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
     
-    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute expiry
+    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
     
-    // Update user with new OTP
+    
     doctor.otp = otp;
     doctor.otpExpiresAt = otpExpiresAt;
     await doctor.save();
-    // Send OTP
     await sendOtp(email, otp);
     
     return true;
@@ -49,8 +45,7 @@ import Chat from '../Model/chat.js'; // Import the Chat model
  const RegisterDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
-        // console.log(req.body);
-        // Check if user already exists and is active
+       
         const existingUser = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email})
          
@@ -69,13 +64,10 @@ import Chat from '../Model/chat.js'; // Import the Chat model
         if(existingUser && existingUser.isActive){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User already exists"});
         }
-       
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
         let user;
         if (existingUser) {
-            // Update existing inactive user
             existingUser.name = name;
             existingUser.password = hashedPassword;
             existingUser.yearsOfExperience = yearsOfExperience;
@@ -90,10 +82,9 @@ import Chat from '../Model/chat.js'; // Import the Chat model
             existingUser.isActive = true;
             existingUser.availability = availability;
             user = existingUser;
-            // console.log("Updated user:", user);
-            // console.log("Existing user:", existingUser);
+           
         } else {
-            // Create new user
+            
             user = new doctor({
                 name,
                 email,
@@ -110,7 +101,6 @@ import Chat from '../Model/chat.js'; // Import the Chat model
                 isActive: false,
                 availability
             });
-            // console.log("New user:", user);
         }
         await user.save();
         res.status(STATUS_CODE.OK).json({message:"User registered successfully",user});
@@ -123,7 +113,7 @@ import Chat from '../Model/chat.js'; // Import the Chat model
     try {
         const {email,password} = req.body;
         
-        // Check if user exists
+    
         const existingDoctor = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email});
         if(!existingDoctor){
@@ -132,8 +122,6 @@ import Chat from '../Model/chat.js'; // Import the Chat model
         if(existingDoctor.isBlocked===true && existingDoctor.isActive===true &&existingDoctor){
             return res.status(STATUS_CODE.OK).json({message:"Your account is blocked. Please contact the admin."});
         }
-        // console.log(existingDoctor.isActive);
-        // Check if user is active
         if(!existingDoctor.isActive){
             return res.status(STATUS_CODE.OK).json({message:"Please verify your account first",
                 doctor:{
@@ -148,14 +136,12 @@ import Chat from '../Model/chat.js'; // Import the Chat model
                 }
             });
         }
-        // Check password
         const isMatch = await bcrypt.compare(password,existingDoctor.password);
         if(!isMatch){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid credentials"});
         }
         const doctorToken = setToken(existingDoctor);
         res.cookie('doctortoken', doctorToken, cookieOptions);
-        // Generate tokens
         res.status(STATUS_CODE.OK).json({
             message:"Login successful",
             doctor:{
@@ -180,7 +166,6 @@ import Chat from '../Model/chat.js'; // Import the Chat model
 
  const verifyDoctorToken = async (req, res) => {
     try {
-        // req.doctor is set by the protectDoctor middleware
         res.status(STATUS_CODE.OK).json({ doctor: req.doctor });
     } catch (error) {
         console.log(error);
@@ -194,8 +179,6 @@ const fetchDoctors = async (req, res) => {
         if (!email) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Email is required" });
         }
-
-        // Check if the doctor exists in rejected list first
         const rejectedDoctor = await RejectedDoctor.findOne({ email });
         if (rejectedDoctor) {
             return res.status(STATUS_CODE.OK).json({
@@ -203,8 +186,6 @@ const fetchDoctors = async (req, res) => {
                 message: "Your registration has been rejected. Please contact the admin."
             });
         }
-
-        // Fetch the doctor from the main collection
         const doctorData = await doctor.findOne({ email });
         if (!doctorData) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ 
@@ -213,7 +194,7 @@ const fetchDoctors = async (req, res) => {
             });
         }
 
-        // Check activation status
+       
         if (doctorData.isActive === true) {
             return res.status(STATUS_CODE.OK).json({ 
                 isVerified: true,
@@ -279,18 +260,16 @@ const fetchDoctors = async (req, res) => {
 
 
 
-// working code
+
 const resetPassword = async (req, res) => {
     try {
        
 
-        // Destructure with additional logging, handling both camelCase and snake_case
         const email = req.body.email;
         const otp = req.body.otp;
         const newPassword = req.body.newPassword || req.body.new_password;
 
 
-        // Validate input with detailed checks
         if (!email) {
             console.log("Email is missing or undefined");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Email is required' });
@@ -306,7 +285,6 @@ const resetPassword = async (req, res) => {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'New password is required' });
         }
         
-        // Find user
         const doctorData = await doctor.findOne({ email });
        const rejectedDoctor = await RejectedDoctor.findOne({ email });
         if(rejectedDoctor){
@@ -317,14 +295,12 @@ const resetPassword = async (req, res) => {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found. Please register first.' });
         }
         
-        // Validate OTP
         console.log("Stored Reset Password OTP:", doctorData.resetPasswordOtp);
         if(!doctorData.otp || doctorData.otp !== otp){
             console.log("OTP Validation Failed");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid OTP' });
         }
 
-        // Check OTP expiration
         console.log("OTP Expires:", doctorData.resetPasswordOtpExpires);
         console.log("Current Time:", Date.now());
         if(doctorData.resetPasswordOtpExpires < Date.now()){
@@ -332,11 +308,9 @@ const resetPassword = async (req, res) => {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'OTP has expired' });
         }
         
-        // Hash the new password
         try {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             
-            // Update password and clear OTP
             doctorData.password = hashedPassword;
             doctorData.resetPasswordOtp = undefined;
             doctorData.resetPasswordOtpExpires = undefined;
@@ -360,16 +334,9 @@ const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;
 
-        // console.log("Doctor ID:", doctorId);
-
-
-        // const doctorData = await doctor.findOne({ email });
+       
 
         const doctorData = await doctor.findById(doctorId).select('-password');
-
-
-
-        // console.log("Doctor Data:", doctorData);
         if (!doctorData) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found' });
         }
@@ -416,34 +383,27 @@ export const schedule = async (req, res) => {
 
     try {
         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
-
-        // Validate and normalize appointments
         const validAppointments = appointments.map(appt => {
             const appointmentDate = new Date(appt.appointmentDate);
-
-            // Log any parsing issues
             if (isNaN(appointmentDate.getTime())) {
                 console.warn(`Invalid date detected: ${appt.appointmentDate}`);
             }
 
-            // Store the appointment date as a string in YYYY-MM-DD format
+            
             return {
-                appointmentDate: appointmentDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
+                appointmentDate: appointmentDate.toISOString().split('T')[0], 
                 slotTime: appt.slotTime,
-                bookingTime: new Date(appt.bookingTime) // Assuming you want to keep bookingTime as a Date object
+                bookingTime: new Date(appt.bookingTime)
             };
         });
 
         if (!existingSchedule) {
-            // If no existing schedule, create new
             const newSchedule = new AppointmentSchedule({
                 doctorId,
                 appointments: validAppointments
             });
 
             await newSchedule.save();
-
-            // console.log("New Schedule Created:", newSchedule);
 
             return res.status(STATUS_CODE.POST).json({ 
                 message: 'Schedules created successfully',
@@ -453,10 +413,9 @@ export const schedule = async (req, res) => {
                 }))
             });
         } else {
-            // Check for duplicate appointments
             const duplicateAppointments = validAppointments.filter(newAppt => 
                 existingSchedule.appointments.some(existingAppt => 
-                    existingAppt.appointmentDate === newAppt.appointmentDate && // Compare as strings
+                    existingAppt.appointmentDate === newAppt.appointmentDate && 
                     existingAppt.slotTime === newAppt.slotTime
                 )
             );
@@ -476,7 +435,7 @@ export const schedule = async (req, res) => {
                 ...validAppointments
             ].filter((appointment, index, self) => 
                 index === self.findIndex(a => 
-                    a.appointmentDate === appointment.appointmentDate && // Compare as strings
+                    a.appointmentDate === appointment.appointmentDate && 
                     a.slotTime === appointment.slotTime
                 )
             );
@@ -501,7 +460,7 @@ export const schedule = async (req, res) => {
         });
     }
 };
-import AppointmentSchedule from '../Model/appoimentSchedule.js'; // Ensure correct path
+import AppointmentSchedule from '../Model/appoimentSchedule.js';
 
 export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
@@ -529,7 +488,7 @@ export const getSchedules = async (req, res) => {
         
         return res.status(STATUS_CODE.OK).json({
             message: 'Schedules retrieved successfully',
-            schedules: upcomingAppointments // Use the simplified field name
+            schedules: upcomingAppointments 
         });
     } catch (error) {
         console.error('Error retrieving schedules:', error);
@@ -558,12 +517,9 @@ export const slots = async (req, res) => {
 
        const schedules = existingSchedule.appointments.filter(appointment => {
            const appointmentDate = moment.tz(appointment.appointmentDate, "Asia/Kolkata").startOf('day');
-        
-            // Include appointment if it's today or in the future
+    
             return appointmentDate.isSameOrAfter(todayInIndia, 'day');
         });
-
-        // console.log("schedules=====",schedules)
 
         res.status(STATUS_CODE.OK).json({ 
             message: 'Schedules retrieved successfully',
@@ -583,9 +539,8 @@ export const fetchAppointments = async (req, res) => {
     const appoiments = await Appointment.find({doctor:doctor_Id})
         .populate({
             path: 'user',
-            select: 'name email phone age gender image' // Select specific user fields you want to retrieve
+            select: 'name email phone age gender image' 
         });
-//    const 
     
     res.status(STATUS_CODE.OK).json(appoiments)
 }
@@ -614,36 +569,27 @@ export const fullAppoiments = async (req, res) => {
 
 export const fetchWalletBalance = async (req, res) => {
     try {
-        // Get pagination parameters with default values
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
         const skip = (page - 1) * limit;
  
         const { id } = req.params;
         
-        // Count appointments and get doctor fees
         const countAppoiments = await Appointment.countDocuments({ doctor: id });
         const fees = await doctor.findById(id).select('consultFee -_id');
         
-        // Calculate total earnings (90% of total fees - 10% platform fee)
         const totalearnings = countAppoiments * fees.consultFee - (countAppoiments * fees.consultFee * 0.1);
 
-        // Get or create wallet
         let walletBalance = await DoctorWallet.findOne({ doctor: id });
         
-        // Get transaction history with pagination
         const transactions = await Transaction.find({ doctor: id })
-            .sort({ createdAt: -1 }) // Sort by most recent
+            .sort({ createdAt: -1 }) 
             .skip(skip)
             .limit(limit);
-
-        // Add index to transactions
         const history = transactions.map((transaction, index) => ({
-            index: skip + index + 1, // Adjust index based on pagination
-            ...transaction._doc // Spread transaction details
+            index: skip + index + 1,
+            ...transaction._doc 
         }));
-            
-        // Get total number of transactions for pagination
         const totalTransactions = await Transaction.countDocuments({ doctor: id });
         const totalPages = Math.ceil(totalTransactions / limit);
 
@@ -710,18 +656,12 @@ export const updateDoctorProfile = async (req, res) => {
     try {
         const { id } = req.params;
         const { consultFee, about } = req.body;
-        
-        // Find and update the doctor
         const updatedoctor = await doctor.findById(id);
         if (!updatedoctor) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found' });
         }
-        
-        // Update the doctor's fields
         updatedoctor.consultFee = consultFee;
         updatedoctor.about = about;
-        
-        // Save the updated doctor
         await updatedoctor.save();
         
         res.status(200).json({ message: 'Profile updated successfully' });

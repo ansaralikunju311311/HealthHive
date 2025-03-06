@@ -21,7 +21,6 @@ const Admin = () => {
                     theme: "colored"
                 });
                 
-                // Store the token if needed
                 cookies.set('admintoken', response.adminToken);
                 
                 setTimeout(() => {

@@ -15,7 +15,6 @@ const NavBar = () => {
         const { user } = await verifyUserToken();
         setUserData(user);
       } catch (error) {
-        // Only log critical errors, not auth-related ones
         if (!error.response || error.response.status !== 401) {
           console.error('Error fetching user data:', error);
         }
@@ -41,14 +40,14 @@ const NavBar = () => {
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
+      
           <div className="flex-shrink-0">
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-teal-400 text-transparent bg-clip-text hover:from-teal-400 hover:to-blue-600 transition-all duration-300">
               HealthHive
             </span>
           </div>
 
-          {/* Center Navigation */}
+         
           <div className="hidden md:flex flex-1 justify-center items-center space-x-12">
             <button 
               onClick={() => navigate(userData ? '/home' : '/')} 
@@ -85,7 +84,7 @@ const NavBar = () => {
             </button>
           </div>
 
-          {/* Right Section - Profile or Login/Signup */}
+         
           {userData ? (
             <div className="relative flex items-center" ref={profileRef}>
               <div className="flex items-center">
@@ -110,7 +109,6 @@ const NavBar = () => {
                 </button>
               </div>
 
-              {/* Profile Dropdown */}
               {isProfileOpen && (
                 <div className="absolute right-0 mt-32 w-56 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100">
                   <div className="px-4 py-3 border-b border-gray-100">
@@ -195,7 +193,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+
       <div className="md:hidden border-t border-gray-100">
         <div className="px-2 py-3 space-y-1">
           <button 

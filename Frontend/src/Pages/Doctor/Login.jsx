@@ -2,15 +2,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
-// import cookies from 'js-cookie'
+
 import { toast } from 'react-toastify';
-// import { useDispatch } from 'react-redux';
+
 import { setDoctor, setToken } from '../../redux/Features/DoctorSlice';
 import { DoctorLogin } from '../../Services/apiService';
 
 const Login = () => {
     const navigate = useNavigate()
-    // const dispatch = useDispatch()
     const [error, setError] = useState('');
     const { register, handleSubmit, formState: { errors } } = useForm()
 

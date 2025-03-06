@@ -45,9 +45,7 @@ const Department = () => {
 
   const handleListing = async (id) => {
     try {
-      // const response = await axios.put(`http://localhost:5000/api/admin/department/${id}`, {}, {
-      //   withCredentials: true,
-      // });
+      
       const response = await UpdateDepartment(id);
       
       
@@ -88,20 +86,17 @@ const Department = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Trim the department name and check if it's empty
     const trimmedDepartmentName = departmentName.trim();
     if (!trimmedDepartmentName) {
       toast.error('Department name cannot be empty');
       return;
     }
 
-    // Check if department name contains only spaces
     if (trimmedDepartmentName.length < 3) {
       toast.error('Department name must be at least 3 characters long');
       return;
     }
 
-    // Check if department already exists
     const departmentExists = departments.some(
       dept => dept.Departmentname.toLowerCase() === trimmedDepartmentName.toLowerCase()
     );
@@ -128,7 +123,6 @@ const Department = () => {
     }
   };
 
-  // Define table columns configuration
   const columns = [
     {
       header: 'Sl NO',
@@ -168,7 +162,6 @@ const Department = () => {
     }
   ];
 
-  // Calculate the starting serial number based on current page and items per page
   const startSerial = (currentPage - 1) * limit + 1;
 
   return (
@@ -176,7 +169,6 @@ const Department = () => {
       <Sidebar activePage="/departments" />
       <div className="flex-1 ml-64 p-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          {/* Header with Search and Add Department */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex gap-4 items-center">
               <div className="relative w-96">
@@ -214,7 +206,6 @@ const Department = () => {
             </button>
           </div>
 
-          {/* Replace the table with DataTable component */}
           <DataTable 
             columns={columns}
             data={filteredDepartments.map((dept, index) => ({...dept, serialNumber: startSerial + index}))}
@@ -223,7 +214,6 @@ const Department = () => {
             rowClassName="hover:bg-gray-50 transition-colors"
           />
 
-          {/* Replace the existing pagination with the Pagination component */}
           <div className="mt-6">
             <Pagination 
               currentPage={currentPage}
@@ -234,7 +224,6 @@ const Department = () => {
         </div>
       </div>
 
-      {/* Add Department Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-96">
@@ -296,7 +285,6 @@ const Department = () => {
         </div>
       )}
 
-      {/* Confirmation Modal */}
       {isConfirmModalOpen && selectedDepartment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 w-96">

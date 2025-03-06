@@ -119,11 +119,9 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
   const DrdoctorId = JSON.parse(doctorId);
   const doctor_Id = DrdoctorId._id;
   
-  // Add pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const appointmentsPerPage = 5;
   
-  // Calculate pagination values
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
@@ -309,7 +307,6 @@ const DrAppoiments = () => {
 
     const fetchAppoiments = async () => {
       try {
-        // const response = await axios.get(`http://localhost:5000/api/doctor/appointments/${doctor_Id}`);
         const response = await DrAppoinments(doctor_Id);
         setAppointments(response);
         setFilteredAppointments(response);
@@ -323,7 +320,6 @@ const DrAppoiments = () => {
     fetchAppoiments();
   }, []);
 
-  // Filter appointments when date is selected
   useEffect(() => {
     if (selectedDate) {
       const filtered = appointments.filter(appointment => {
@@ -336,7 +332,6 @@ const DrAppoiments = () => {
       });
       setFilteredAppointments(filtered);
     } else {
-      // If no date is selected, show all appointments
       setFilteredAppointments(appointments);
     }
   }, [selectedDate, appointments]);

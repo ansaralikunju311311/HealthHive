@@ -3,7 +3,6 @@ import User from '../Model/userModel.js';
 import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
-// import jwt from 'jsonwebtoken';
 import Transaction from '../Model/Transaction.js';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
@@ -17,21 +16,17 @@ const cookieOptions = {
     httpOnly: false,
     secure: true,
     sameSite: 'None',
-    maxAge: 9 * 60 * 60 * 1000, // 1 hour
+    maxAge: 9 * 60 * 60 * 1000, 
 };
 
 
  const LoginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Check if admin exists
         const existingAdmin = await Admin.findOne({ email });
         if (!existingAdmin) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: "Admin not found" });
         }
-
-        // Check password
         const isMatch = await bcrypt.compare(password, existingAdmin.password);
         if (!isMatch) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Invalid credentials" });
@@ -69,7 +64,6 @@ export const patients = async (req,res)=>
             serialNumber: index + 1
         }));
         res.status(STATUS_CODE.OK).json({patientsWithIndex,totalpage});
-        // res.send({patientsWithIndex,totalpage});
     } catch (error) {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -97,25 +91,21 @@ export const approveDoctor = async (req,res)=>
 {
     try {
         const {doctorid} = req.params;
-
-        console.log("doctorid=====",doctorid);
+    
         const doctorData = await Doctor.findById(doctorid);
-        console.log("doctorData=====",doctorData);
         if(!doctorData){
             return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor is not found"})
         }
 
-        // Send approval email before updating status
+    
         console.log("Attempting to send approval email to:", doctorData.email);
         try {
             await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'approved');
             console.log("Approval email sent successfully");
         } catch (emailError) {
             console.error("Error sending approval email:", emailError);
-            // Continue with the approval process even if email fails
+        
         }
-
-        // Update doctor status
         doctorData.isActive = true;
         await doctorData.save();
 
@@ -143,17 +133,16 @@ export const rejectDoctor = async(req,res)=>
             return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor not found"});
         }
 
-        // Send rejection email before making any changes
+    
         console.log("Attempting to send rejection email to:", doctorData.email);
         try {
             await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'rejected');
             console.log("Rejection email sent successfully");
         } catch (emailError) {
             console.error("Error sending rejection email:", emailError);
-            // Continue with the rejection process even if email fails
+        
         }
 
-        // Create rejected doctor record
         const rejectedDoctor = new RejectedDoctor({
             name: doctorData.name,
             email: doctorData.email,
@@ -170,7 +159,6 @@ export const rejectDoctor = async(req,res)=>
         });
         await rejectedDoctor.save();
 
-        // Delete from doctors collection
         await Doctor.findByIdAndDelete(doctorid);
 
         res.status(STATUS_CODE.NO_CONTENT).json({message:"Doctor rejected successfully"});
@@ -182,9 +170,6 @@ export const rejectDoctor = async(req,res)=>
 export const doctors = async (req,res)=>
 {
     const {page,limit} = req.query;
-    console.log(req.query)
-    console.log("page=====",page);
-    console.log("limit=====",limit);
     try {
            const page =  +(req.query.page || 1);
            const limit =  +(req.query.limit || 10);
@@ -204,9 +189,8 @@ export const doctors = async (req,res)=>
 
  const verifyAdminToken = async (req, res) => {
     try {
-        // req.admin is set by the protectAdmin middleware
+    
         res.status(STATUS_CODE.OK).json({ admin: req.admin });
-        // console.log("req.admin=====",req.admin);
     } catch (error) {
         console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -216,7 +200,7 @@ export const addDepartment = async (req, res) => {
     try {
         const { Departmentname,Description } = req.body;
         
-        // Check if department exists (case-insensitive)
+        
         const department = await Department.findOne({
             Departmentname: { $regex: new RegExp(`^${Departmentname}$`, 'i') }
         });
@@ -225,7 +209,7 @@ export const addDepartment = async (req, res) => {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Department already exists' });
         }
         
-        // Create new department with original capitalization
+    
         const newDepartment = new Department({ 
             Departmentname,
             status: 'Listed',
@@ -250,9 +234,7 @@ export const getDepartments = async (req, res) =>
     console.log("limit=====",limit);
     try {
          
-        // const limit = 10;
-        // const page = parseInt(req.query.page) || 1;
-        // const skip = (page - 1) * limit;
+        
         const page = +(req.query.page || 1);
         const limit = +(req.query.limit || 10);
         const skip = (page - 1) * limit;
@@ -342,7 +324,7 @@ export const patientblock = async (req, res) => {
 };
 export const userCount = async (req, res) => {
     try {
-        console.log("userCount=====");
+    
         const count = await User.countDocuments({ isActive: true });
         const DrCount = await Doctor.countDocuments({ isActive: true });
 
@@ -364,7 +346,6 @@ export const userCount = async (req, res) => {
 export const Earnings = async (req, res) => {
      const {page,limit} = req.query;
     console.log(req.query)
-    console.log("page=====",page);
     try {
         const page = +(req.query.page || 1);
         const limit = +(req.query.limit || 10);
@@ -383,9 +364,6 @@ export const Earnings = async (req, res) => {
         ]);
         const totalAmount = eranings[0]?.totalAmount || 0;
         const totalEarnings = totalAmount*0.1;
-        console.log("transactionffnfnfnnnfnfn=====",totalEarnings);
-        // totalamount = transaction.reduce((sum, earning) => sum + earning.amount*0.1, 0);
-       console.log("transaction=====",transaction);
        res.status(STATUS_CODE.OK).json({transaction,totalpage,totalEarnings,count});
     } catch (error) {
         console.log(error);
@@ -446,8 +424,6 @@ export const getDoctorPayments = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
-
-    // Get total count for pagination
     const totalDoctors = await Doctor.countDocuments();
     const totalPages = Math.ceil(totalDoctors / limit);
 

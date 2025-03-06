@@ -20,12 +20,10 @@ const Profile = () => {
       
       <div className="flex-1 overflow-y-auto p-8 ml-64">
         <div className="max-w-4xl mx-auto">
-          {/* Home Button with gradient */}
           <div className="mb-6">
             <HomeButton className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg" />
           </div>
 
-          {/* Profile Header */}
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="relative">
@@ -48,7 +46,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Personal Information Card */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

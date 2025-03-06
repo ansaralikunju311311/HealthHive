@@ -10,40 +10,34 @@ import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/Transaction.js';
 import Chat from '../Model/chat.js';
-// import e from 'cors';
 import { timeStamp } from 'console';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 const cookieOptions = {
     httpOnly: false,
     secure: true,
     sameSite: 'None',
-    maxAge: 9 * 60 * 60 * 1000, // 1 hour
+    maxAge: 9 * 60 * 60 * 1000, 
 };
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
     
-    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute expiry
+    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
     
-    // Update user with new OTP
+
     user.otp = otp;
     user.otpExpiresAt = otpExpiresAt;
     await user.save();
-    // Send OTP
     await sendOtp(email, otp);
     
     return true;
 };
-
-// Register user
 const RegisterUser = async (req, res) => {
     try {
         const { name, email, password, dateOfBirth, phone, age, gender, image,bloodGroup,address } = req.body;
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
 
         if (existingUser) { 
-            // Ensure existingUser is not null before accessing properties
             if (existingUser.isBlocked === true && existingUser.isActive === true) {
                 return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "User is blocked" });
             }
@@ -51,13 +45,11 @@ const RegisterUser = async (req, res) => {
                 return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "User already exists" });
             }
         }
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         let user;
 
         if (existingUser) {
-            // Update existing inactive user
             existingUser.name = name;
             existingUser.password = hashedPassword;
             existingUser.dateOfBirth = dateOfBirth;
@@ -71,7 +63,6 @@ const RegisterUser = async (req, res) => {
 
             user = existingUser;
         } else {
-            // Create new user
             user = new User({
   
                     name,
@@ -90,7 +81,6 @@ const RegisterUser = async (req, res) => {
             });
         }
 
-        // Generate and send OTP
         await generateAndSendOTP(user, email);
 
         res.status(STATUS_CODE.CREATED).json({
@@ -156,10 +146,7 @@ export const GoogleSignIn = async(req,res)=>{
         if(user.uid!==uid){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User not found"});
         }
-        // if(user && user.uid===uid){
-        //     res.status(STATUS_CODE.OK).json({message:"User found",user});
-        //     return;
-        // }
+        
         if(user.uid===uid && email===user.email){
             const token = setToken(user);
             console.log("token   coolesdsjdnfjdfjdfr=====",token);
@@ -171,7 +158,6 @@ export const GoogleSignIn = async(req,res)=>{
                     _id:user._id,
                     email:user.email,
                     name:user.name,
-                    // profileImage:user.profileImage,
                     phone:user.phone,
                     dateOfBirth:user.dateOfBirth,
                     isActive:user.isActive,
@@ -186,39 +172,25 @@ export const GoogleSignIn = async(req,res)=>{
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-// Verify OTP
 const verifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
-        
-        // Get user
         const user = await User.findOne({email});
         if(!user){
             return res.status(STATUS_CODE.NOT_FOUND).json({message:"User not found"});
         }
-        
-        // Check if OTP matches
         if(user.otp !== otp){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid verification code"});
         }
-        
-        // Check if OTP is expired
         if(Date.now() > user.otpExpiresAt){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Verification code has expired"});
         }
-        
-        // Activate user
         user.isActive = true;
         user.otp = undefined;
         user.otpExpiresAt = undefined;
-        
-        // Generate tokens
         const token = setToken(user);
     console.log("token   coolesdsjdnfjdfjdfr=====",token);
         res.cookie('usertoken', token, cookieOptions);
-
-        // console.log("token   coolesdsjdnfjdfjdfr=====",token);
-    
         await user.save();
        
         res.status(STATUS_CODE.OK).json({
@@ -241,8 +213,6 @@ const verifyOtp = async(req,res)=>{
 const LoginUser = async(req,res)=>{
     try {
         const {email,password} = req.body;
-        
-        // Check if user exists
         const user = await User.findOne({email});
         if(!user){
             return res.status(STATUS_CODE.NOT_FOUND).json({message:"User not found"});
@@ -250,17 +220,13 @@ const LoginUser = async(req,res)=>{
         if(user.isBlocked===true){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"User is blocked"});
         }
-        // Check if user is active
         if(!user.isActive){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Please verify your account first"});
         }
-        // Check password
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid credentials"});
         }
-        
-        // Generate tokens
         const userToken = setToken(user);
        res.cookie('usertoken', userToken, cookieOptions)
         res.status(STATUS_CODE.OK).json({
@@ -305,8 +271,6 @@ const resendOtp = async(req, res) => {
         if (!email) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Email is required" });
         }
-
-        // Find user
         const user = await User.findOne({ email });
         console.log("Found user:", user ? "yes" : "no");
         
@@ -345,7 +309,7 @@ const resendOtp = async(req, res) => {
     try {
         const { email } = req.body;
         
-        // Find user
+        
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found. Please register first.' });
@@ -353,7 +317,6 @@ const resendOtp = async(req, res) => {
         if(user.isBlocked===true){
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'User is blocked' });
         }
-        // Generate and send OTP
         await generateAndSendOTP(user, email);
         
         res.status(STATUS_CODE.OK).json({
@@ -370,8 +333,7 @@ const resetPassword = async(req, res) => {
         
         const { email, otp, new_password } = req.body;
 
-        // console.log("req.body=====",req.body)
-        // Find user by email
+       
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found. Please register first.' });
@@ -380,11 +342,10 @@ const resetPassword = async(req, res) => {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid verification code' });
         }
 
-        // Hash new password
+       
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(new_password, salt);
-        
-        // Save new password
+    
         user.password = hashedPassword;
         await user.save();
         
@@ -410,7 +371,6 @@ export const getDoctorsData = async (req, res) => {
     try {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
 
-        // console.log("Fetched doctors:", doctors);
         res.status(STATUS_CODE.OK).json({ doctors: doctors }); 
     } catch (error) {
         console.error("Error fetching doctors:", error);
@@ -421,7 +381,6 @@ export const getDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
         res.status(STATUS_CODE.OK).json(departments);
-        // console.log("departments",departments);
     } catch (error) {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -460,7 +419,6 @@ export const dptdoctor = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-//importent for checking i comment this code 
 export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
@@ -470,14 +428,12 @@ export const bookAppointment = async (req, res) => {
         console.log("Slot details:", slots);
         console.log("Transaction datanvnfjdjjjfdjccccf:", transactionData.order_id);
 
-        // Basic validation
         if (!doctorid || !userid || !slots) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ 
                 message: 'Invalid booking request. Missing required fields.'
             });
         }
 
-        // Create new appointment
         const newAppointment = new Appointment({
             user: userid,
             doctor: doctorid,
@@ -486,15 +442,12 @@ export const bookAppointment = async (req, res) => {
            
         });
 
-        // Save the appointment
         await newAppointment.save();
 
-        // Update appointment schedule
         try {
             const doctorSchedule = await appointmentSchedule.findOne({ doctorId: doctorid });
             
             if (doctorSchedule) {
-                // Find and update the specific slot
                 const updatedAppointments = doctorSchedule.appointments.map(appointment => {
                     if (appointment.appointmentDate === slots.date && 
                         appointment.slotTime === slots.time) {
@@ -542,8 +495,7 @@ export const bookAppointment = async (req, res) => {
     }
 };
 export const FetchAppoiments = async(req, res) => {
-    // const {page,limit} = req.query;
-    // console.log("page,limit",page,limit);
+    
        const {page,limit} = req.query;
        const { userid } = req.params;
 
@@ -560,22 +512,15 @@ export const FetchAppoiments = async(req, res) => {
             path:'doctor',
             select:'name specialization consultFee profileImage',
         }).sort({createdAt:-1}).skip(skip).limit(limit);
-        // const doctorsWithIndex = doctors.map((doctor, index) => ({
-        //     ...doctor.toObject(),
-        //     serialNumber: index + 1
-        //   }));
+        
         const totalPages = Math.ceil(await Appointment.countDocuments({ user: userid })/limit);
 
         const appoinmentwithindex = appointments.map((appointment, index) => ({
-            ...appointment.toObject(), // Use _doc to access the document data
-            serialNumber: index + 1 + skip // Adjust serial number based on the skip value
+            ...appointment.toObject(), 
+            serialNumber: index + 1 + skip
         }));
-        // console.log("=========",totalAppointments)
-        // const totalPages = Math.ceil(totalAppointments / limit);
+      
         res.status(STATUS_CODE.OK).json({appointments:appoinmentwithindex, pagination: { currentPage: page, totalPages } });
-
-        // console.log("Appointments:", appointments);
-        // res.status(STATUS_CODE.OK).json(appointments);
     } catch (error) {
 
         console.error('Error fetching appointments:', error);
@@ -650,7 +595,6 @@ export const fetchDoctor = async(req, res) => {
     try {
         const doctor = await Doctor.findById(doctorId);
         res.status(STATUS_CODE.OK).json(doctor);
-        // console.log('Doctor details:', doctor);
     } catch (error) {
         console.error('Error fetching doctor:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
@@ -668,52 +612,7 @@ export const chatDetails = async (req,res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
-// export const profileSetup = async (req, res) => {
-//     try {
-//         const {email,profileImage,bloodGroup,address,dob,phone,gender} = req.body;
 
-//         console.log("req.body ",req.body);
-//         const user = await User.find({email});
-//         if(!user){
-//             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
-//         }
-//         if(user && user.profileCompletion === true){
-//             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Profile already completed' });
-//         }
-//         else
-//         {
-//             const token = setToken(user);
-//         // console.log("token   coolesdsjdnfjdfjdfr=====",token);
-//         res.cookie('usertoken', token, cookieOptions);
-
-          
-//             const googlgeuser = new User =({
-//              googlgeuser.profileImage = profileImage;
-//             googlgeuser.bloodGroup = bloodGroup;
-//             googleuser.address = address;
-//             user.dateOfBirth = dob;
-//             googleuser.phone = phone;
-//             googleuser.dateOfBirth = dob;
-//             googleuser.gender = gender;
-//             googleuser.profileCompletion = true;
-//             })
-//             await user.save();
-//         }
-// //  const user = await User.findById(userId);
-// //         if (!user) {
-// //             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
-// //         }
-// //         user.profileCompletion = true;
-// //         await user.save();
-
-       
-//         res.status(STATUS_CODE.OK).json({ message: 'Profile setup completed' });
-//     }
-//     catch (error) {
-//         console.error('Error setting up profile:', error);
-//         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
-//     }
-// }
 
 export const profileSetup = async (req, res) => {
     try {

@@ -11,7 +11,6 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
-// import { logout } from '../../../../Backend/Controllers/doctorController';
 import { logoutDoctor } from '../../Services/apiService';
 
 const Sidebar = ({activePage, doctorid}) => {
@@ -21,31 +20,16 @@ const Sidebar = ({activePage, doctorid}) => {
 
   const handleLogout = async () => {
     try {
-      // const token = cookies.get('doctortoken');
-      
-      // Optional: Call backend logout endpoint if needed
-      // await axios.post('http://localhost:5000/api/doctor/logout', {}, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   },
-      //   withCredentials: true,
-      // });
-
-      // Remove doctor token
-      // cookies.remove('doctortoken', { path: '/' });
-      // localStorage.removeItem('doctorId');
+     
       await logoutDoctor();
-      // setUserData(null);
-      // Show logout toast
+      
       toast.info('You have been logged out', {
         icon: '👋'
       });
-      // Navigate to login
+      
       navigate('/doctor/login');
     } catch (error) {
       console.error('Error logging out:', error);
-
-      // Fallback logout even if backend call fails
       cookies.remove('doctortoken', { path: '/' });
       localStorage.removeItem('doctorId');
       navigate('/doctor/login');

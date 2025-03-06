@@ -59,7 +59,6 @@ const limit = 10;
       
       const response = await handleAction(doctorid);
 
-      // Find the doctor and toggle their blocked status
       const updatedDoctors = doctors.map(doctor => {
         if (doctor._id === doctorid) {
           const newBlockedStatus = !doctor.isBlocked;
@@ -68,13 +67,11 @@ const limit = 10;
         return doctor;
       });
 
-      // Update both doctors and filtered doctors
       setDoctors(updatedDoctors);
       setFilteredDoctors(updatedDoctors);
       setIsConfirmModalOpen(false);
       setSelectedBlockDoctor(null);
 
-      // Show appropriate toast message
       const doctor = doctors.find(d => d._id === doctorid);
       const newStatus = !doctor.isBlocked;
       if (newStatus) {
@@ -109,11 +106,10 @@ const limit = 10;
     setSelectedBlockDoctor(null);
   };
 
-  // Define columns for DataTable
   const columns = [
     {
       header: 'S.No',
-      accessor: 'serialNumber', // This will now show continuous numbers across pages
+      accessor: 'serialNumber', 
       width: '80px'
     },
     {
@@ -196,7 +192,6 @@ const limit = 10;
             </div>
           </div>
 
-          {/* Replace table with DataTable component */}
           <DataTable 
             columns={columns}
             data={filteredDoctors}
@@ -205,7 +200,7 @@ const limit = 10;
             rowClassName="hover:bg-gray-50 transition-colors"
           />
 
-          {/* Pagination */}
+         
           <Pagination 
             currentPage={currentPage}
             totalPages={totalPages}
@@ -214,7 +209,7 @@ const limit = 10;
         </div>
       </div>
 
-      {/* Details Modal */}
+     
       <DetailsModel
         isOpen={showModal}
         onClose={() => setShowModal(false)}

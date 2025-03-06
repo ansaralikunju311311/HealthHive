@@ -11,18 +11,7 @@ const ReverseProtected = ({ children }) => {
     useEffect(() => {
         const verifyToken = async () => {
             try {
-                // const token = cookies.get('admintoken');
-                // if (!token) {
-                //     setLoading(false);
-                //     return;
-                // }
-
-                // const response = await axios.get('http://localhost:5000/api/admin/verify-token', {
-                //     headers: {
-                //         Authorization: `Bearer ${token}`
-                //     },
-                //     withCredentials: true,
-                // });
+              
                  const response = await verifyAdminToken();
                 if (response?.admin) {
                     navigate('/admin/dashboard');

@@ -24,8 +24,7 @@ const BeforeVerification = () => {
           return;
         }
 
-        // const response = await axios.get(`http://localhost:5000/api/doctor/get-doctor?email=${doctorEmail}`);
-        // console.log('Verification response:', response.data);
+        
         const response = await doctorVerification(doctorEmail);
         console.log('Verification response:', response);
 
