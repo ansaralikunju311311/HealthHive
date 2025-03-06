@@ -4,49 +4,49 @@ import {protect} from '../Middleware/authMiddleware.js';
 import {
     RegisterUser,
      LoginUser, 
-     verifyOtp, 
-     getOtpRemainingTime,
-      resendOtp, 
-      forgotPassword,
-       resetPassword, 
-       verifyToken,
-       getDoctorsData,
-       logout,
-       getDepartments,
-       dptdoctor,
-       handlePayment,
-       bookAppointment,
+     VerifyOtp, 
+     GetOtpRemainingTime,
+      ResendOtp, 
+      ForgotPassword,
+       ResetPassword, 
+       VerifyToken,
+       GetDoctorsData,
+       Logout,
+       GetDepartments,
+       Dptdoctor,
+       HandlePayment,
+       BookAppointment,
        FetchAppoiments,
-       verifyPayment,
-       fetchDoctor,
-       chatDetails,
+       VerifyPayment,
+       FetchDoctor,
+       ChatDetails,
          GoogleSignUp,
-         profileSetup,
+         ProfileSetup,
          GoogleSignIn
     } from '../Controllers/userController.js';
 const router = express.Router();
 router.post('/signup', RegisterUser);//
 router.post('/login', LoginUser);//
-router.post('/verify-otp', verifyOtp);
-router.post('/resend-otp', resendOtp);
-router.get('/otp-remaining-time', getOtpRemainingTime);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
-router.get('/publicdoctors', getDoctorsData);//
-router.get('/Aboutdoctors', getDoctorsData);//
-router.post('/logout', logout);//
-router.get('/departments', getDepartments);//
-router.get('/appointments/:departmentname',dptdoctor)
-router.post('/book-appointments/:doctorid/:userid', bookAppointment);
-router.post('/pay',handlePayment)
-router.post('/verify-payment', verifyPayment)//
-router.get('/verify-token', protect, verifyToken);
-router.get('/doctorsdetails', protect,getDoctorsData);//
+router.post('/verify-otp', VerifyOtp);
+router.post('/resend-otp', ResendOtp);
+router.get('/otp-remaining-time', GetOtpRemainingTime);
+router.post('/forgot-password', ForgotPassword);
+router.post('/reset-password', ResetPassword);
+router.get('/publicdoctors', GetDoctorsData);//
+router.get('/Aboutdoctors', GetDoctorsData);//
+router.post('/logout', Logout);//
+router.get('/departments', GetDepartments);//
+router.get('/appointments/:departmentname',Dptdoctor)
+router.post('/book-appointments/:doctorid/:userid', BookAppointment);
+router.post('/pay',HandlePayment)
+router.post('/verify-payment', VerifyPayment)//
+router.get('/verify-token', protect, VerifyToken);
+router.get('/doctorsdetails', protect,GetDoctorsData);//
 router.get('/getappointments/:userid',FetchAppoiments);
 router.post('/google-signup',GoogleSignUp);
-router.get('/doctorinfo/:doctorId',fetchDoctor);
-router.get('/Chats/:doctorId/:userId',chatDetails);
-router.post('/profile-completion',profileSetup);
+router.get('/doctorinfo/:doctorId',FetchDoctor);
+router.get('/Chats/:doctorId/:userId',ChatDetails);
+router.post('/profile-completion',ProfileSetup);
 router.post('/google-login',GoogleSignIn);
 
 export default router;

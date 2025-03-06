@@ -1,24 +1,23 @@
 import express from "express";
-import { LoginAdmin, verifyAdminToken } from "../Controllers/adminController.js";
-import { patients, pendingDoctors, approveDoctor, doctors, rejectDoctor, handleBlock,patientblock  ,addDepartment,getDepartments,updateDepartment,userCount,Earnings,fetchDoctorPayments} from "../Controllers/adminController.js";
+import { LoginAdmin, VerifyAdminToken } from "../Controllers/adminController.js";
+import { Patients, PendingDoctors, ApproveDoctor, Doctors, RejectDoctor, HandleBlock,PatientBlock  ,AddDepartment,GetDepartments,UpdateDepartment,UserCount,Earnings,FetchDoctorPayments} from "../Controllers/adminController.js";
 import { protectAdmin } from "../Middleware/authMiddleware.js";
-
 const admin = express.Router();
 admin.post("/login", LoginAdmin);
-admin.get("/verify-token", protectAdmin, verifyAdminToken);
-admin.use(protectAdmin);
+admin.get("/verify-token", protectAdmin, VerifyAdminToken);
+admin.use(protectAdmin); 
 
-admin.get("/patients", patients);
-admin.get("/pending-doctors", pendingDoctors);
-admin.get("/doctors", doctors);
-admin.put("/approve-doctor/:doctorid", approveDoctor);
-admin.put("/reject-doctor/:doctorid", rejectDoctor);
-admin.put('/unblockpatient/:patientid', patientblock);
-admin.put("/blockdoctor/:doctorid", handleBlock);
-admin.post("/department", addDepartment)
-admin.get("/department", getDepartments)
-admin.put("/department/:id", updateDepartment)
-admin.get("/usercount", userCount);
+admin.get("/patients", Patients);
+admin.get("/pending-doctors", PendingDoctors);
+admin.get("/doctors", Doctors);
+admin.put("/approve-doctor/:doctorid", ApproveDoctor);
+admin.put("/reject-doctor/:doctorid", RejectDoctor);
+admin.put('/unblockpatient/:patientid', PatientBlock);
+admin.put("/blockdoctor/:doctorid", HandleBlock);
+admin.post("/department", AddDepartment)
+admin.get("/department", GetDepartments)
+admin.put("/department/:id", UpdateDepartment)
+admin.get("/usercount", UserCount);
 admin.get("/admin-earnings",Earnings)
-admin.get("/getdoctorpayments",fetchDoctorPayments)
+admin.get("/getdoctorpayments",FetchDoctorPayments)
 export default admin;

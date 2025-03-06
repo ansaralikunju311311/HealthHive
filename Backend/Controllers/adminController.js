@@ -34,7 +34,6 @@ const cookieOptions = {
     
            const adminToken = setToken(existingAdmin);
            res.cookie('admintoken', adminToken, cookieOptions);
-        // Send response
         res.status(STATUS_CODE.CREATED).json({
             message: "Login successful",
             Admin: {
@@ -49,7 +48,7 @@ const cookieOptions = {
     }
 };
 
-export const patients = async (req,res)=>
+export const Patients = async (req,res)=>
 {
     const {page,limit} = req.params;
     try {
@@ -69,7 +68,7 @@ export const patients = async (req,res)=>
     }
    
 }
-export const pendingDoctors = async (req,res)=>
+export const PendingDoctors = async (req,res)=>
 {
     const {page,limit} = req.params;
     try {
@@ -87,7 +86,7 @@ export const pendingDoctors = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const approveDoctor = async (req,res)=>
+export const ApproveDoctor = async (req,res)=>
 {
     try {
         const {doctorid} = req.params;
@@ -124,7 +123,7 @@ export const approveDoctor = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const rejectDoctor = async(req,res)=>
+export const RejectDoctor = async(req,res)=>
 {
     try{
         const {doctorid} = req.params;
@@ -167,7 +166,7 @@ export const rejectDoctor = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
-export const doctors = async (req,res)=>
+export const Doctors = async (req,res)=>
 {
     const {page,limit} = req.query;
     try {
@@ -187,7 +186,7 @@ export const doctors = async (req,res)=>
     }
 }
 
- const verifyAdminToken = async (req, res) => {
+ const VerifyAdminToken = async (req, res) => {
     try {
     
         res.status(STATUS_CODE.OK).json({ admin: req.admin });
@@ -196,7 +195,7 @@ export const doctors = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const addDepartment = async (req, res) => {
+export const AddDepartment = async (req, res) => {
     try {
         const { Departmentname,Description } = req.body;
         
@@ -224,7 +223,7 @@ export const addDepartment = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const getDepartments = async (req, res) => 
+export const GetDepartments = async (req, res) => 
 
 {
     const {page,limit} = req.query;
@@ -253,7 +252,7 @@ export const getDepartments = async (req, res) =>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const updateDepartment = async (req, res) => {
+export const UpdateDepartment = async (req, res) => {
        const {id} = req.params;
        console.log("id=====",id);
 
@@ -277,7 +276,7 @@ export const updateDepartment = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const handleBlock = async (req, res) => {
+export const HandleBlock = async (req, res) => {
     try {
         const { doctorid } = req.params;
         const doctor = await Doctor.findById(doctorid);
@@ -302,7 +301,7 @@ export const handleBlock = async (req, res) => {
         }
     }
 }
-export const patientblock = async (req, res) => {
+export const PatientBlock = async (req, res) => {
     try {
         const { patientid } = req.params;
         console.log("patientid=====",patientid);
@@ -322,7 +321,7 @@ export const patientblock = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const userCount = async (req, res) => {
+export const UserCount = async (req, res) => {
     try {
     
         const count = await User.countDocuments({ isActive: true });
@@ -370,7 +369,7 @@ export const Earnings = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const fetchDoctorPayments = async (req, res) => {
+export const FetchDoctorPayments = async (req, res) => {
     console.log("fetchDoctorPayments=====");
     try {
         const Drtransaction = await Transaction.find().populate('doctor', 'name email specialization profileImage');
@@ -419,7 +418,7 @@ export const fetchDoctorPayments = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const getDoctorPayments = async (req, res) => {
+export const GetDoctorPayments = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -482,4 +481,4 @@ export const getDoctorPayments = async (req, res) => {
   }
 };
 
-export { LoginAdmin, verifyAdminToken };
+export { LoginAdmin, VerifyAdminToken };

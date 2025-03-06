@@ -18,7 +18,7 @@ const cookieOptions = {
     sameSite: 'None',
     maxAge: 9 * 60 * 60 * 1000, 
 };
-const generateAndSendOTP = async (user, email) => {
+const GenerateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
     
@@ -81,7 +81,7 @@ const RegisterUser = async (req, res) => {
             });
         }
 
-        await generateAndSendOTP(user, email);
+        await GenerateAndSendOTP(user, email);
 
         res.status(STATUS_CODE.CREATED).json({
             message: "Verification code sent to your email",
@@ -172,7 +172,7 @@ export const GoogleSignIn = async(req,res)=>{
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const verifyOtp = async(req,res)=>{
+const VerifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
         const user = await User.findOne({email});
@@ -247,7 +247,7 @@ const LoginUser = async(req,res)=>{
     }
 };
 
-const getOtpRemainingTime = async(req, res) => {
+const GetOtpRemainingTime = async(req, res) => {
     try {
         const { email } = req.query;
         
@@ -263,7 +263,7 @@ const getOtpRemainingTime = async(req, res) => {
     }
 };
 
-const resendOtp = async(req, res) => {
+const ResendOtp = async(req, res) => {
     try {
         const { email } = req.body;
         console.log("Resend OTP request for email:", email);
@@ -305,7 +305,7 @@ const resendOtp = async(req, res) => {
         });
     }
 };
- const forgotPassword = async(req, res) => {
+ const ForgotPassword = async(req, res) => {
     try {
         const { email } = req.body;
         
@@ -328,7 +328,7 @@ const resendOtp = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const resetPassword = async(req, res) => {
+const ResetPassword = async(req, res) => {
     try {
         
         const { email, otp, new_password } = req.body;
@@ -355,7 +355,7 @@ const resetPassword = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const verifyToken = async (req, res) => {
+const VerifyToken = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
@@ -367,7 +367,7 @@ const verifyToken = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const getDoctorsData = async (req, res) => {
+export const GetDoctorsData = async (req, res) => {
     try {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
 
@@ -377,7 +377,7 @@ export const getDoctorsData = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const getDepartments = async (req, res) => {
+export const GetDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
         res.status(STATUS_CODE.OK).json(departments);
@@ -385,7 +385,7 @@ export const getDepartments = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const logout = async (req, res) => {
+export const Logout = async (req, res) => {
     try {
         req.user = null;
         res.cookie('usertoken', null, {
@@ -400,7 +400,7 @@ export const logout = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const dptdoctor = async (req, res) => {
+export const Dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
         
@@ -419,7 +419,7 @@ export const dptdoctor = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const bookAppointment = async (req, res) => {
+export const BookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
         const { slots,transactionData} = req.body;
@@ -527,7 +527,7 @@ export const FetchAppoiments = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export  const handlePayment = async(req, res) => {
+export  const HandlePayment = async(req, res) => {
     console.log("req.body",req.body)
     const { amount } = req.body;
     try {
@@ -557,7 +557,7 @@ export  const handlePayment = async(req, res) => {
         });
     }
 }
-export const verifyPayment = async (req, res) => {
+export const VerifyPayment = async (req, res) => {
     try {
         const {
             razorpay_order_id,
@@ -589,7 +589,7 @@ export const verifyPayment = async (req, res) => {
     }
 };
 
-export const fetchDoctor = async(req, res) => {
+export const FetchDoctor = async(req, res) => {
     const { doctorId } = req.params;
 
     try {
@@ -600,7 +600,7 @@ export const fetchDoctor = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
-export const chatDetails = async (req,res) => {
+export const ChatDetails = async (req,res) => {
     try {
         
         const { doctorId, userId } = req.params;
@@ -614,7 +614,7 @@ export const chatDetails = async (req,res) => {
 }
 
 
-export const profileSetup = async (req, res) => {
+export const ProfileSetup = async (req, res) => {
     try {
         const { email, profileImage, bloodGroup, address, dob, phone, gender,age } = req.body;
 
@@ -655,4 +655,4 @@ export const profileSetup = async (req, res) => {
 };
 
 
-export { RegisterUser, LoginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};
+export { RegisterUser, LoginUser, VerifyOtp, GetOtpRemainingTime, ResendOtp, ForgotPassword, ResetPassword, VerifyToken};
