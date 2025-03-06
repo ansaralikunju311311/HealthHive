@@ -25,7 +25,7 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import SecurityIcon from '@mui/icons-material/Security';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LockIcon from '@mui/icons-material/Lock';
-import { initiatePayment, verifyPayment, bookAppointment } from '../../../Services/apiService';
+import { InitiatePayment, VerifyPayment, BookAppointment } from '../../../Services/apiService';
 
 const shine = keyframes`
   to {
@@ -152,7 +152,7 @@ const PayementPanel = () => {
         return;
       }
 
-      const paymentResponse = await initiatePayment(doctorData.consultFee);
+      const paymentResponse = await InitiatePayment(doctorData.consultFee);
       console.log('Payment initiated:', paymentResponse);
 
       if (!paymentResponse || !paymentResponse.id) {
@@ -169,7 +169,7 @@ const PayementPanel = () => {
         order_id: paymentResponse.id,
         handler: async function (razorpayResponse) {
           try {
-            const verificationResponse = await verifyPayment({
+            const verificationResponse = await VerifyPayment({
               razorpay_order_id: razorpayResponse.razorpay_order_id,
               razorpay_payment_id: razorpayResponse.razorpay_payment_id,
               razorpay_signature: razorpayResponse.razorpay_signature,
@@ -191,7 +191,7 @@ const PayementPanel = () => {
               };
 
               try {
-                const bookingResult = await bookAppointment(
+                const bookingResult = await BookAppointment(
                   doctorData._id,
                   userId._id,
                   appointmentData

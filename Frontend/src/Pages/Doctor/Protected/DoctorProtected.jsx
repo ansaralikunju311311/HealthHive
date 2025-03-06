@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import cookies from 'js-cookie';
-import { verifyDoctorToken } from '../../../Services/apiService';
+import { VerifyDoctorToken } from '../../../Services/apiService';
 const DoctorProtected = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [verified, setVerified] = useState(false);
@@ -12,7 +12,7 @@ const DoctorProtected = ({ children }) => {
         const verifyToken = async () => {
           try {
            
-            const response = await verifyDoctorToken();
+            const response = await VerifyDoctorToken();
             if (response.doctor) {
               setVerified(true);
             } else {

@@ -6,7 +6,7 @@ import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import DataTable from '../../../Components/Common/DataTable';
 import Pagination from '../../../Components/Common/Pagination';
-import { verifyDoctorToken,getwalletBalance } from '../../../Services/apiService';
+import { VerifyDoctorToken,GetwalletBalance } from '../../../Services/apiService';
 
 const DrWallet = () => {
  const limit =10;
@@ -41,8 +41,7 @@ const DrWallet = () => {
         setHistory(balance.history);
         setTotalPages(balance.pagination.totalPages);
         setCurrentPage(balance.pagination.currentPage);
-        // console.log("=====",balance.data);
-        // console.log("====pahes",balance.data)
+        
         
       } catch (error) {
         console.log(error);

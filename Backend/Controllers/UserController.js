@@ -1,12 +1,12 @@
-import User from '../Model/userModel.js'
+import User from '../Model/UserModel.js'
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';
-import Doctor from '../Model/doctorModel.js';
+import Doctor from '../Model/DoctorModel.js';
 import Department from '../Model/DepartmentModel.js';
-import Appointment from '../Model/appoiment.js';
-import appointmentSchedule from '../Model/appoimentSchedule.js';
+import Appointment from '../Model/Appoiment.js';
+import appointmentSchedule from '../Model/AppoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/Transaction.js';
 import Chat from '../Model/chat.js';

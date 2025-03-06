@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getDoctorInfo, getChatHistory } from '../../../Services/apiService';
+import { GetDoctorInfo, GetChatHistory } from '../../../Services/apiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
 import { FiSend } from 'react-icons/fi';
@@ -50,8 +50,8 @@ const Chat = () => {
     const fetchData = async () => {
       try {
         const [doctorData, chatHistory] = await Promise.all([
-          getDoctorInfo(doctorId),
-          getChatHistory(doctorId, userId)
+          GetDoctorInfo(doctorId),
+          GetChatHistory(doctorId, userId)
         ]);
         setDoctor(doctorData);
         setChat(chatHistory);

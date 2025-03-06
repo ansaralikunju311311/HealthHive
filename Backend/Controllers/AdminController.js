@@ -1,6 +1,6 @@
-import Admin from '../Model/AdminModel/adminModel.js';
-import User from '../Model/userModel.js';
-import Doctor from '../Model/doctorModel.js';
+import Admin from '../Model/AdminModel/AdminModel.js';
+import User from '../Model/UserModel.js';
+import Doctor from '../Model/DoctorModel.js';
 import bcrypt from 'bcrypt';
 import RejectedDoctor from '../Model/RejectedDoctors.js';
 import Transaction from '../Model/Transaction.js';
@@ -8,7 +8,7 @@ import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
 import Department from '../Model/DepartmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
-import appointment from '../Model/appoiment.js';
+import appointment from '../Model/Appoiment.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 
 const cookieOptions = {

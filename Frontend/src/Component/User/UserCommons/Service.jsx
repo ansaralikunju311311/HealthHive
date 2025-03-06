@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { verifyUserToken } from '../../../Services/apiService';
+import { VerifyUserToken } from '../../../Services/apiService';
 
 const Service = () => {
     const [userData, setUserData] = useState(null);
@@ -9,7 +9,7 @@ const Service = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const { user } = await verifyUserToken();
+                const { user } = await VerifyUserToken();
                 setUserData(user);
             } catch (error) {
                 console.error('Error fetching user data:', error);

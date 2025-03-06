@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import User from '../Model/userModel.js';
-import doctor from '../Model/doctorModel.js';
-import Admin from '../Model/AdminModel/adminModel.js';
+import User from '../Model/UserModel.js';
+import doctor from '../Model/DoctorModel.js';
+import Admin from '../Model/AdminModel/AdminModel.js';
 import cookies from 'js-cookie'; 
 import RejectedDoctor from '../Model/RejectedDoctors.js';
 

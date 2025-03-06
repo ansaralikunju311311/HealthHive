@@ -3,8 +3,8 @@ import { RegisterDoctor, LoginDoctor, VerifyDoctorToken,FetchDoctors,ForgotPassw
     UserDetails,
     ChatDetails,
     UpdateDoctorProfile
-} from '../Controllers/doctorController.js';
-import { protectDoctor } from '../Middleware/authMiddleware.js';
+} from '../Controllers/DoctorController.js';
+import { protectDoctor } from '../Middleware/AuthMiddleware.js';
 
 const doctor = express.Router();
 

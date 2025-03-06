@@ -1,7 +1,7 @@
 import express from "express";
-import { LoginAdmin, VerifyAdminToken } from "../Controllers/adminController.js";
-import { Patients, PendingDoctors, ApproveDoctor, Doctors, RejectDoctor, HandleBlock,PatientBlock  ,AddDepartment,GetDepartments,UpdateDepartment,UserCount,Earnings,FetchDoctorPayments} from "../Controllers/adminController.js";
-import { protectAdmin } from "../Middleware/authMiddleware.js";
+import { LoginAdmin, VerifyAdminToken } from "../Controllers/AdminController.js";
+import { Patients, PendingDoctors, ApproveDoctor, Doctors, RejectDoctor, HandleBlock,PatientBlock  ,AddDepartment,GetDepartments,UpdateDepartment,UserCount,Earnings,FetchDoctorPayments} from "../Controllers/AdminController.js";
+import { protectAdmin } from "../Middleware/AuthMiddleware.js";
 const admin = express.Router();
 admin.post("/login", LoginAdmin);
 admin.get("/verify-token", protectAdmin, VerifyAdminToken);

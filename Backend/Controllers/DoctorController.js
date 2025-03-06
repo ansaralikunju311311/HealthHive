@@ -1,4 +1,4 @@
-import doctor from "../Model/doctorModel.js";
+import doctor from "../Model/DoctorModel.js";
 import mongoose from 'mongoose';
 import RejectedDoctor from "../Model/RejectedDoctors.js";
 import moment from 'moment-timezone';
@@ -7,10 +7,10 @@ import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
 import Department from '../Model/DepartmentModel.js';
-import appoimentSchedule from '../Model/appoimentSchedule.js';
-import Appointment from '../Model/appoiment.js';
-import DoctorWallet from '../Model/Drwallet.js';
-import User from '../Model/userModel.js';
+import appoimentSchedule from '../Model/AppoimentSchedule.js';
+import Appointment from '../Model/Appoiment.js';
+import DoctorWallet from '../Model/DrWallet.js';
+import User from '../Model/UserModel.js';
 import Transaction from "../Model/Transaction.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
 import Chat from '../Model/chat.js';    
@@ -460,7 +460,7 @@ export const Schedule = async (req, res) => {
         });
     }
 };
-import AppointmentSchedule from '../Model/appoimentSchedule.js';
+import AppointmentSchedule from '../Model/AppoimentSchedule.js';
 
 export const GetSchedules = async (req, res) => {
     const { id: doctorId } = req.params;

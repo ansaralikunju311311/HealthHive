@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAboutDoctors } from "../../../Services/apiService";
+import { GetAboutDoctors } from "../../../Services/apiService";
 
 const Specialities = () => {
     const [doctorsData, setDoctorsData] = useState([]);
@@ -8,7 +8,7 @@ const Specialities = () => {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const response = await getAboutDoctors();
+                const response = await GetAboutDoctors();
                 setDoctorsData(response.doctors);
             } catch (error) {
                 console.error('Error fetching doctors:', error);

@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import {protect} from '../Middleware/authMiddleware.js';
+import {protect} from '../Middleware/AuthMiddleware.js';
 import {
     RegisterUser,
      LoginUser, 
@@ -23,7 +23,7 @@ import {
          GoogleSignUp,
          ProfileSetup,
          GoogleSignIn
-    } from '../Controllers/userController.js';
+    } from '../Controllers/UserController.js';
 const router = express.Router();
 router.post('/signup', RegisterUser);//
 router.post('/login', LoginUser);//

@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { DoctorList, handleAction } from '../../Services/apiService';
+import { DoctorList, HandleAction } from '../../Services/apiService';
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,7 +57,7 @@ const limit = 10;
   const handleBlockUnblock = async (doctorid) => {
     try {
       
-      const response = await handleAction(doctorid);
+      const response = await HandleAction(doctorid);
 
       const updatedDoctors = doctors.map(doctor => {
         if (doctor._id === doctorid) {

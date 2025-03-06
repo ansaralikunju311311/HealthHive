@@ -25,7 +25,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { Getdoctorpayment } from '../../Services/apiService';
+import { GetDoctorPayment } from '../../Services/apiService';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
@@ -38,29 +38,11 @@ const DoctorPayment = () => {
   useEffect(() => {
     const fetchDoctorPayments = async () => {
       try {
-        // const token = cookies.get('admintoken');
-        // if (!token) {
-        //   navigate('/admin');
-        //   return;
-        // }
-        // console.log("this is the token", token);
-        // const response = await axios.get('http://localhost:5000/api/admin/getdoctorpayments', {
-        //   params: {
-        //     page: currentPage,
-        //     limit: limit
-        //   },
-
-        //   headers: {
-        //     Authorization: `Bearer ${token}`
-        //   },
-        //   withCredentials: true,
-        // });
-        const response = await Getdoctorpayment(currentPage, limit);
+        const response = await GetDoctorPayment(currentPage, limit);
         console.log("this is the response", response);
         setPayments(response?.doctorWiseTotals);
         setTotalAmount(response?.totalAmount);
         setTotalPages(response?.totalPages || 1);
-        // console.log("jfnjvfnj",response?.doctorWiseTotals);
 
       } catch (error) {
         console.error('Error fetching doctor payments:', error);

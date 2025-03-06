@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
-import { verifyAdminToken } from '../../../Services/apiService';
+import { VerifyAdminToken } from '../../../Services/apiService';
 
 const ReverseProtected = ({ children }) => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ const ReverseProtected = ({ children }) => {
         const verifyToken = async () => {
             try {
               
-                 const response = await verifyAdminToken();
+                 const response = await VerifyAdminToken();
                 if (response?.admin) {
                     navigate('/admin/dashboard');
                 } else {

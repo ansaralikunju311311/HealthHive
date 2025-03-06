@@ -9,7 +9,7 @@ import Google from '../../Component/User/Google/Google.jsx';
 import {auth} from '../../Firebase/config.js'
 import {GoogleAuthProvider,signInWithPopup} from 'firebase/auth'
 // Import the API service
-import { registerUser } from '../../Services/apiService';
+import { RegisterUser } from '../../Services/apiService';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
@@ -101,7 +101,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await registerUser({
+      const response = await RegisterUser({
         ...data,
         image: image
       });

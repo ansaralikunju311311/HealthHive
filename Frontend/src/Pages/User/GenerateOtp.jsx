@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { verifyOtp, resendOtp, getOtpRemainingTime } from '../../Services/apiService';
+import { VerifyOtp, ResendOtp, GetOtpRemainingTime } from '../../Services/apiService';
 import { toast } from 'react-toastify';
 
 const GenerateOtp = () => {
@@ -18,10 +18,9 @@ const GenerateOtp = () => {
       navigate('/signup');
       return;
     }
-
     const fetchRemainingTime = async () => {
       try {
-        const response = await getOtpRemainingTime(email);
+        const response = await GetOtpRemainingTime(email);
         setRemainingTime(response.remainingTime);
       } catch (error) {
         console.error('Error fetching remaining time:', error);
@@ -55,7 +54,7 @@ const GenerateOtp = () => {
 
     try {
       toast.info('Verifying your email...');
-      const response = await verifyOtp(email, otp);
+      const response = await VerifyOtp(email, otp);
       setSuccess(response.message);
       
       if (response) {
@@ -81,10 +80,10 @@ const GenerateOtp = () => {
     
     try {
       toast.info('Sending new verification code...');
-      await resendOtp(email);
+      await ResendOtp(email);
       toast.success('New verification code sent to your email.');
       
-      const timeResponse = await getOtpRemainingTime(email);
+      const timeResponse = await GetOtpRemainingTime(email);
       setRemainingTime(timeResponse.remainingTime);
     } catch (error) {
       toast.error(error.message || 'Failed to send verification code. Please try again.');

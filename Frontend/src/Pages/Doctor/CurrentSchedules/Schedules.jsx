@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { schedules,ExstingSchedules } from '../../../Services/apiService';
+import { Schedule,ExstingSchedules } from '../../../Services/apiService';
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
     let doctorId;
@@ -68,11 +68,8 @@ const Schedules = () => {
                 })
             );
             console.log("Prepared Appointments Data:", appointmentsData);
-            // const response = await axios.post(`http://localhost:5000/api/doctor/schedule/${doctorId}`, {
-            //     appointments: appointmentsData
-
-            // });
-            const response = await schedules(doctorId, appointmentsData);
+           
+            const response = await Schedule(doctorId, appointmentsData);
 
             console.log("Schedule Response:", response.data);
             

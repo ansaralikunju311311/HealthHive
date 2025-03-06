@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { loginUser } from '../../Services/apiService';
+import { LoginUser } from '../../Services/apiService';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -77,7 +77,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const response = await loginUser(data);
+      const response = await LoginUser(data);
       
       if (response.user.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
