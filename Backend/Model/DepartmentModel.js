@@ -5,7 +5,6 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true,
         set: function(value) {
-        
             return value.charAt(0).toUpperCase() + value.slice(1);
         }
     },
@@ -16,11 +15,14 @@ const departmentSchema = new mongoose.Schema({
     Description: {
         type: String,
         required: true
-    }
+    },
+    doctor: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor'  
+    }]
 }, {
     timestamps: true
 });
-
 
 departmentSchema.index({ Departmentname: 1 }, { 
     unique: true,

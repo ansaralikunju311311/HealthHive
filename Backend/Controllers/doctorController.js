@@ -245,13 +245,13 @@ const fetchDoctors = async (req, res) => {
                 return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found. Please register first.' });
             }
             if (!doctorData.isActive) {
-                return res.status(403).json({ message: 'Your account is not active. Please contact the admin.' });
+                return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is not active. Please contact the admin.' });
             }
             if (rejectedDoctor) {
-                return res.status(403).json({ message: 'Your account is rejected. Please contact the admin.' });
+                return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is rejected. Please contact the admin.' });
             }
             if (doctorData.isBlocked === true) {
-                return res.status(403).json({ message: 'Your account is blocked. Please contact the admin.' });
+                return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is blocked. Please contact the admin.' });
             }
             // Generate and send OTP
             await generateAndSendOTP(doctorData, email);
@@ -310,7 +310,7 @@ const resetPassword = async (req, res) => {
         const doctorData = await doctor.findOne({ email });
        const rejectedDoctor = await RejectedDoctor.findOne({ email });
         if(rejectedDoctor){
-            return res.status(403).json({ message: 'Your account is rejected. Please contact the admin.' });
+            return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is rejected. Please contact the admin.' });
        }
         if (!doctorData) {
             console.log("Doctor not found with email:", email);
@@ -714,7 +714,7 @@ export const updateDoctorProfile = async (req, res) => {
         // Find and update the doctor
         const updatedoctor = await doctor.findById(id);
         if (!updatedoctor) {
-            return res.status(404).json({ message: 'Doctor not found' });
+            return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found' });
         }
         
         // Update the doctor's fields
@@ -727,7 +727,7 @@ export const updateDoctorProfile = async (req, res) => {
         res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error updating profile' });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Error updating profile' });
     }
 }
 export { RegisterDoctor, LoginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

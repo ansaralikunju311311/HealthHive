@@ -12,7 +12,7 @@ export const protect = async (req, res, next) => {
         
         // Check if token exists and is not empty or undefined
         if (!token || token.trim() === '') {
-            return res.status(401).json({ message: 'Not authorized, no valid token' });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, no valid token' });
         }
 
         try {
@@ -30,7 +30,7 @@ export const protect = async (req, res, next) => {
                     sameSite: 'None',
                     path: '/'
                 });
-                return res.status(401).json({ message: 'Not authorized, user not found' });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, user not found' });
             }
 
             req.user = user;
@@ -49,13 +49,13 @@ export const protect = async (req, res, next) => {
             
             // More specific error handling
             if (verifyError.name === 'JsonWebTokenError') {
-                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Invalid token structure', clearToken: true });
             }
             if (verifyError.name === 'TokenExpiredError') {
-                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Token has expired', clearToken: true });
             }
             
-            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Authentication failed', clearToken: true });
         }
     } catch (error) {
         console.error('Unexpected auth middleware error:', error);
@@ -69,7 +69,7 @@ export const protect = async (req, res, next) => {
             path: '/'
         });
         
-        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };
 
@@ -79,7 +79,7 @@ export const protectDoctor = async (req, res, next) => {
         
         // Check if token exists and is not empty or undefined
         if (!token || token.trim() === '') {
-            return res.status(401).json({ message: 'Not authorized, no valid token' });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, no valid token' });
         }
 
         try {
@@ -96,15 +96,15 @@ export const protectDoctor = async (req, res, next) => {
                     sameSite: 'None',
                     path: '/'
                 });
-                return res.status(401).json({ message: 'Not authorized, doctor not found' });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, doctor not found' });
             }
 
             // Verify if doctor is active
             if (!doctorUser.isActive) {
-                return res.status(401).json({ message: 'Account is not yet verified' });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Account is not yet verified' });
             }
             if(doctorUser.isBlocked===true){
-                return res.status(401).json({ message: 'Account is blocked' });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Account is blocked' });
             }
 
             req.doctor = doctorUser;
@@ -123,13 +123,13 @@ export const protectDoctor = async (req, res, next) => {
             
             // More specific error handling
             if (verifyError.name === 'JsonWebTokenError') {
-                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Invalid token structure', clearToken: true });
             }
             if (verifyError.name === 'TokenExpiredError') {
-                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Token has expired', clearToken: true });
             }
             
-            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Authentication failed', clearToken: true });
         }
     } catch (error) {
         console.error('Unexpected auth middleware error:', error);
@@ -143,7 +143,7 @@ export const protectDoctor = async (req, res, next) => {
             path: '/'
         });
         
-        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };
 
@@ -153,7 +153,7 @@ export const protectAdmin = async (req, res, next) => {
         
         // Check if token exists and is not empty or undefined
         if (!token || token.trim() === '') {
-            return res.status(401).json({ message: 'Not authorized, no valid token' });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, no valid token' });
         }
 
         try {
@@ -170,7 +170,7 @@ export const protectAdmin = async (req, res, next) => {
                     sameSite: 'None',
                     path: '/'
                 });
-                return res.status(401).json({ message: 'Not authorized, admin not found' });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, admin not found' });
             }
 
             req.admin = admin;
@@ -189,13 +189,13 @@ export const protectAdmin = async (req, res, next) => {
             
             // More specific error handling
             if (verifyError.name === 'JsonWebTokenError') {
-                return res.status(401).json({ message: 'Invalid token structure', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Invalid token structure', clearToken: true });
             }
             if (verifyError.name === 'TokenExpiredError') {
-                return res.status(401).json({ message: 'Token has expired', clearToken: true });
+                return res.status(STATUS_CODE.Unauthorized).json({ message: 'Token has expired', clearToken: true });
             }
             
-            return res.status(401).json({ message: 'Authentication failed', clearToken: true });
+            return res.status(STATUS_CODE.Unauthorized).json({ message: 'Authentication failed', clearToken: true });
         }
     } catch (error) {
         console.error('Unexpected auth middleware error:', error);
@@ -209,6 +209,6 @@ export const protectAdmin = async (req, res, next) => {
             path: '/'
         });
         
-        res.status(500).json({ message: 'Internal server error during authentication', clearToken: true });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error during authentication', clearToken: true });
     }
 };

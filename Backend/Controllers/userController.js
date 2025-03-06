@@ -446,6 +446,14 @@ export const dptdoctor = async (req, res) => {
         const { departmentname } = req.params;
         
         const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
+
+
+        const doctorsssssss  = await Department.find({Departmentname:departmentname}).populate({
+            path:'doctor',
+            match:{isActive:true},
+            select:'name'
+        })
+        console.log("sdmcndj===",doctorsssssss)
         res.status(STATUS_CODE.OK).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
@@ -551,7 +559,7 @@ export const FetchAppoiments = async(req, res) => {
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization consultFee profileImage',
-        }).skip(skip).limit(limit);
+        }).sort({createdAt:-1}).skip(skip).limit(limit);
         // const doctorsWithIndex = doctors.map((doctor, index) => ({
         //     ...doctor.toObject(),
         //     serialNumber: index + 1
@@ -722,7 +730,7 @@ export const profileSetup = async (req, res) => {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Profile already completed' });
         }
 
-        // Update user fields
+    
         user.profileImage = profileImage;
         user.bloodGroup = bloodGroup;
         user.address = address;
@@ -735,7 +743,7 @@ export const profileSetup = async (req, res) => {
        
         await user.save();
 
-        // Generate and set token after saving user
+      
         const token = setToken(user);
         res.cookie('usertoken', token, cookieOptions);
         
