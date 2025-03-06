@@ -8,7 +8,7 @@ import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { PatientAction } from '../../Services/apiService';
+import { patientAction } from '../../Services/apiService';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -64,7 +64,7 @@ const limit = 10;
   const handleBlockUnblock = async (patientid) => {
     try {
        
-        const response = await PatientAction(patientid);
+        const response = await patientAction(patientid);
 
         const updatedPatients = patients.map(patient => {
             if (patient._id === patientid) {

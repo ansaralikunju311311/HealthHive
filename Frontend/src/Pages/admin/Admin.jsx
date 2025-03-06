@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { AdminLogin } from '../../Services/apiService';
+import { adminLogin } from '../../Services/apiService';
 import cookies from 'js-cookie';
 
 const Admin = () => {
@@ -12,7 +12,7 @@ const Admin = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await AdminLogin(data);
+            const response = await adminLogin(data);
 
             if (response && response.adminToken) {
                 toast.success('Login successful!', {

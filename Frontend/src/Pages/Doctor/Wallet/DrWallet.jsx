@@ -6,7 +6,7 @@ import cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import DataTable from '../../../Components/Common/DataTable';
 import Pagination from '../../../Components/Common/Pagination';
-import { VerifyDoctorToken,GetwalletBalance } from '../../../Services/apiService';
+import { verifyDoctorToken,getwalletBalance } from '../../../Services/apiService';
 
 const DrWallet = () => {
  const limit =10;

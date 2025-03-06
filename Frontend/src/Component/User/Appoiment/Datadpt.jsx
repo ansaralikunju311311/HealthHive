@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import cookies from 'js-cookie';
 import Heading from "../Appoiment/Heading";
 import Schedulebtn from "../Appoiment/Schedulebtn";
-import { GetDepartments,GetAppointments } from "../../../Services/apiService";
+import { getDepartments,getAppointments } from "../../../Services/apiService";
 
 const Datadpt = ({ limit =null}) => {
   const [departments, setDepartments] = useState([]);
@@ -37,7 +37,7 @@ const Datadpt = ({ limit =null}) => {
 
 const loadDepartments = async () => {
   try {
-    const departments = await GetDepartments();
+    const departments = await getDepartments();
     setDepartments(departments);
   } catch (error) {
     console.error('Error loading departments:', error);
@@ -49,7 +49,7 @@ loadDepartments();
 
 
     try {
-      const data = await GetAppointments(department.Departmentname);
+      const data = await getAppointments(department.Departmentname);
       console.log("data", data);
       navigate('/bookings',{state: { data: data }})
     } catch (error) {

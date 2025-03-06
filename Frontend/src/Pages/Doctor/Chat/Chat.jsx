@@ -6,7 +6,7 @@ import { FiSend } from 'react-icons/fi';
 import { format } from 'date-fns';
 import axios from 'axios';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
-import { UserInfo,ChatHistory } from '../../../Services/apiService';
+import { userInfo,chatHistory } from '../../../Services/apiService';
 
 const Chat = () => {
   const location = useLocation();
@@ -45,7 +45,7 @@ const Chat = () => {
 
     const fetchUser = async () => {
       try {
-        const data = await UserInfo(userId);
+        const data = await userInfo(userId);
         setUser(data);
       } catch (error) {
         console.error('Error fetching doctor:', error);
@@ -60,7 +60,7 @@ const Chat = () => {
     const chatData = async () => {
       try {
       
-        const chatDatas = await ChatHistory(doctorId, userId);
+        const chatDatas = await chatHistory(doctorId, userId);
         console.log("chatDatas",chatDatas);
         setChat(chatDatas);
       } catch (error) {

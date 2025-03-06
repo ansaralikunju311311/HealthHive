@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { VerifyOtp, ResendOtp, GetOtpRemainingTime } from '../../Services/apiService';
+import { verifyOtp, resendOtp, getOtpRemainingTime } from '../../Services/apiService';
 import { toast } from 'react-toastify';
 
 const GenerateOtp = () => {
@@ -20,7 +20,7 @@ const GenerateOtp = () => {
     }
     const fetchRemainingTime = async () => {
       try {
-        const response = await GetOtpRemainingTime(email);
+        const response = await getOtpRemainingTime(email);
         setRemainingTime(response.remainingTime);
       } catch (error) {
         console.error('Error fetching remaining time:', error);
@@ -54,7 +54,7 @@ const GenerateOtp = () => {
 
     try {
       toast.info('Verifying your email...');
-      const response = await VerifyOtp(email, otp);
+      const response = await verifyOtp(email, otp);
       setSuccess(response.message);
       
       if (response) {
@@ -83,7 +83,7 @@ const GenerateOtp = () => {
       await ResendOtp(email);
       toast.success('New verification code sent to your email.');
       
-      const timeResponse = await GetOtpRemainingTime(email);
+      const timeResponse = await getOtpRemainingTime(email);
       setRemainingTime(timeResponse.remainingTime);
     } catch (error) {
       toast.error(error.message || 'Failed to send verification code. Please try again.');

@@ -25,7 +25,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { GetDoctorPayment } from '../../Services/apiService';
+import { getDoctorPayment } from '../../Services/apiService';
 
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
@@ -38,7 +38,7 @@ const DoctorPayment = () => {
   useEffect(() => {
     const fetchDoctorPayments = async () => {
       try {
-        const response = await GetDoctorPayment(currentPage, limit);
+        const response = await getDoctorPayment(currentPage, limit);
         console.log("this is the response", response);
         setPayments(response?.doctorWiseTotals);
         setTotalAmount(response?.totalAmount);

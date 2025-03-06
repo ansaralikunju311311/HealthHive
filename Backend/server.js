@@ -2,13 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import user from './Routes/UserRoutes.js';
-import doctor from './Routes/DoctorRoutes.js';
-import admin from './Routes/AdminRoutes.js';
+import user from './Routes/userRoutes.js';
+import doctor from './Routes/doctorRoutes.js';
+import admin from './Routes/adminRoutes.js';
 import Razorpay from 'razorpay';
 import { Server } from 'socket.io';
 import http from 'http';
-import Chat from './Model/chat.js';
+import Chat from './Model/chatModel.js';
 
 
 import cookieParser from 'cookie-parser';

@@ -25,7 +25,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
-import { AppoimentDetails, VerifyDoctorToken } from '../../../Services/apiService';
+import { appoimentDetails, verifyDoctorToken } from '../../../Services/apiService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const reponse = await VerifyDoctorToken();
+        const reponse = await verifyDoctorToken();
         console.log('doctorccccc=======',reponse);  
         
        const doctors = reponse?.doctor;
@@ -46,7 +46,7 @@ const DoctorDash = () => {
         setDoctor(doctors);
 
        
-        const responses  = await AppoimentDetails(doctors._id);
+        const responses  = await appoimentDetails(doctors._id);
 
 
 

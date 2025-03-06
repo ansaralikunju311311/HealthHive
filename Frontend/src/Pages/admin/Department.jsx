@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { Departments, UpdateDepartment ,AddDepartment} from '../../Services/apiService';
+import { departments, updateDepartment ,addDepartment} from '../../Services/apiService';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +22,7 @@ const Department = () => {
     const fetchDepartments = async () => {
       try {
        
-        const response = await Departments(currentPage,limit);
+        const response = await departments(currentPage,limit);
 
         // console.log("===============================",response?.data);
         setDepartments(response?.departments);
@@ -46,10 +46,10 @@ const Department = () => {
   const handleListing = async (id) => {
     try {
       
-      const response = await UpdateDepartment(id);
+      const response = await updateDepartment(id);
       
       
-      const updatedResponse = await Departments(currentPage,limit);
+      const updatedResponse = await departments(currentPage,limit);
 
       setDepartments(updatedResponse?.departments);
       setTotalPages(updatedResponse?.totalpage);

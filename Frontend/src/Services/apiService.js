@@ -39,7 +39,7 @@ apiuser.interceptors.response.use(
   }
 );
 
-export const VerifyUserToken = async () => {
+export const verifyUserToken = async () => {
   try {
     const token = getUserToken();
     if (!token) return { user: null };
@@ -54,14 +54,14 @@ export const VerifyUserToken = async () => {
   }
 };
 
-export const LoginUser = async (credentials) => {
+export const loginUser = async (credentials) => {
   
     const response = await apiuser.post('/user/login', credentials);
     return response.data;
   
 };
 
-export const LogoutUser = async () => {
+export const logoutUser = async () => {
   
     await apiuser.post('/user/logout');
   
@@ -70,49 +70,49 @@ export const LogoutUser = async () => {
 
 };
 
-export const RegisterUser = async (userData) => {
+export const registerUser = async (userData) => {
   
     const response = await apiuser.post('/user/signup', userData);
     return response.data;
 
 };
 
-export const GetDepartments = async () => {
+export const getDepartments = async () => {
   
     const response = await apiuser.get('/user/departments');
     return response.data;
  
 };
 
-export const GetSpecialties = async () => {
+export const getSpecialties = async () => {
   
     const response = await apiuser.get('/user/specialties');//
     return response.data;
   
 };
 
-export const GetAboutDoctors = async () => {
+export const getAboutDoctors = async () => {
   
     const response = await apiuser.get('/user/Aboutdoctors');
     return response.data;
  
 };
 
-export const GetDoctorsDetails = async () => {
+export const getDoctorsDetails = async () => {
   
     const response = await apiuser.get('/user/doctorsdetails');
     return response.data;
 
 };
 
-export const GetPublicDoctors = async () => {
+export const getPublicDoctors = async () => {
   
     const response = await apiuser.get('/user/publicdoctors');
     return response.data;
   
 };
 
-export const VerifyPayment = async (paymentData) => {
+export const verifyPayment = async (paymentData) => {
   
     const response = await apiuser.post('/user/verify-payment', {
       razorpay_order_id: paymentData.razorpay_order_id,
@@ -123,7 +123,7 @@ export const VerifyPayment = async (paymentData) => {
   
 };
 
-export const InitiatePayment = async (amount) => {
+export const initiatePayment = async (amount) => {
   
     const response = await apiuser.post('/user/pay', { 
       amount: parseInt(amount), 
@@ -133,7 +133,7 @@ export const InitiatePayment = async (amount) => {
   
 };  
 
-export const GetDoctorSlots = async (doctorId, date) => {
+export const getDoctorSlots = async (doctorId, date) => {
   
     const response = await apiuser.get(`/doctor/slots/${doctorId}`, {//
       params: { date }
@@ -142,14 +142,14 @@ export const GetDoctorSlots = async (doctorId, date) => {
  
 };
 
-export const GetAppointments = async (departments) => {
+export const getAppointments = async (departments) => {
   
     const response = await apiuser.get(`/user/appointments/${departments}`);  // Changed from '/doctor/appointments'
     return response.data;
  
 };
 
-export const GetUserAppointments = async (userId, pageNumber, limit) => {
+export const getUserAppointments = async (userId, pageNumber, limit) => {
   
     const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { page:pageNumber, limit } });  // Changed from '/doctor/appointments/:userId'
     console.log("debugiing ========",response.data);
@@ -157,7 +157,7 @@ export const GetUserAppointments = async (userId, pageNumber, limit) => {
   
 };
 
-export const BookAppointment = async (doctorId, userId, appointmentData) => {
+export const bookAppointment = async (doctorId, userId, appointmentData) => {
   
     const response = await apiuser.post(`/user/book-appointments/${doctorId}/${userId}`, {
       slots: {
@@ -172,14 +172,14 @@ export const BookAppointment = async (doctorId, userId, appointmentData) => {
 };
 
 
-export const GetDoctorInfo = async (doctorId) => {
+export const getDoctorInfo = async (doctorId) => {
   
     const response = await apiuser.get(`/user/doctorinfo/${doctorId}`);
     return response.data;
  
 };
 
-export const GetChatHistory = async (doctorId, userId) => {
+export const getChatHistory = async (doctorId, userId) => {
   
     const response = await apiuser.get(`/user/Chats/${doctorId}/${userId}`);
     return response.data;
@@ -187,21 +187,21 @@ export const GetChatHistory = async (doctorId, userId) => {
 };
 
 
-export const VerifyOtp = async (email, otp) => {
+export const verifyOtp = async (email, otp) => {
   
     const response = await apiuser.post('/user/verify-otp', { email, otp: otp.trim() });
     return response.data;
 
 };
 
-export const ResendOtp = async (email) => {
+export const resendOtp = async (email) => {
   
     const response = await apiuser.post('/user/resend-otp', { email });
     return response.data;
  
 };
 
-export const GetOtpRemainingTime = async (email) => {
+export const getOtpRemainingTime = async (email) => {
   
     const response = await apiuser.get('/user/otp-remaining-time', {   
       params: { email }
@@ -291,7 +291,7 @@ apidoctor.interceptors.response.use(
   }
 );
 
-export const VerifyDoctorToken = async () => {
+export const verifyDoctorToken = async () => {
   try {
     const token = getDoctorToken();
     if (!token) {
@@ -315,7 +315,7 @@ export const VerifyDoctorToken = async () => {
 }
 
 
-export const DoctorSignUp = async (doctorData) => {
+export const doctorSignUp = async (doctorData) => {
   
     const response = await apidoctor.post('/doctor/signup', doctorData, {
       withCredentials: true
@@ -324,7 +324,7 @@ export const DoctorSignUp = async (doctorData) => {
  
 }
 
-export const DoctorLogin = async(data,withCredentials=true)=>{
+export const doctorLogin = async(data,withCredentials=true)=>{
   
     const response = await apidoctor.post('/doctor/login', data, {
       withCredentials
@@ -332,25 +332,25 @@ export const DoctorLogin = async(data,withCredentials=true)=>{
     return response.data;
 
   }
-export const LogoutDoctor = async () => {
+export const logoutDoctor = async () => {
   
     await apidoctor.post('/doctor/logout');
  
 
 }
-export const UserInfo = async (userId) => {
+export const userInfo = async (userId) => {
    
     const response = await apidoctor.get(`/doctor/userinfo/${userId}`);
     return response.data;
   
 }
-export const ChatHistory = async (doctorId,userId) => {
+export const chatHistory = async (doctorId,userId) => {
   
     const response = await apidoctor.get(`/doctor/chats/${doctorId}/${userId}`);
     return response.data;
  
 }
-export const Schedule = async (doctorId,appointmentData) => {
+export const schedule = async (doctorId,appointmentData) => {
   console.log("appointmentData",appointmentData)
   
        const response = await apidoctor.post(`/doctor/schedule/${doctorId}`,{
@@ -360,7 +360,7 @@ export const Schedule = async (doctorId,appointmentData) => {
  
 }
 
-export const ExstingSchedules = async(doctorId)=>{
+export const exstingSchedules = async(doctorId)=>{
   
     const response = await apidoctor.get(`/doctor/existing-schedules/${doctorId}`);
     return response.data;
@@ -368,12 +368,12 @@ export const ExstingSchedules = async(doctorId)=>{
 }
 
 
-export const DrAppoinments = async (doctorId) => {
+export const drAppoinments = async (doctorId) => {
   console.log("working properly")
   const response = await apidoctor.get(`/doctor/appointments/${doctorId}`);
   return response.data;
 }
-export const AppoimentDetails = async (doctorId)=>
+export const appoimentDetails = async (doctorId)=>
 {
   
     const response = await apidoctor.get(`/doctor/appoimentdetails/${doctorId}`);
@@ -383,7 +383,7 @@ export const AppoimentDetails = async (doctorId)=>
 
 
 
-export const DrupdateDoctorProfile = async (id, consultFee, about) => {
+export const drupdateDoctorProfile = async (id, consultFee, about) => {
   const response = await apidoctor.put(`/doctor/profile/${id}`, {
     consultFee,
     about
@@ -393,21 +393,21 @@ export const DrupdateDoctorProfile = async (id, consultFee, about) => {
 
 
 
-export const DoctorVerification = async(doctoremail)=>
+export const doctorVerification = async(doctoremail)=>
 {
   
     const response = await apidoctor.get(`/doctor/get-doctor?email=${doctoremail}`);
     return response.data;
  
 }
-export const DrProfile = async(doctorId)=>{
+export const drProfile = async(doctorId)=>{
   
     const response = await apidoctor.get(`/doctor/profile/${doctorId}`);
     return response.data;
   
 }
 
-export const GetwalletBalance = async(id,page,limit=10)=>{
+export const getwalletBalance = async(id,page,limit=10)=>{
   
     const response = await apidoctor.get(`/doctor/doctor-wallet-balance/${id}`,{
       params:{
@@ -473,7 +473,7 @@ apiadmin.interceptors.response.use(
 
 
 
-export const VerifyAdminToken = async () => {
+export const verifyAdminToken = async () => {
   try {
     const token = getadminToken();
     if (!token) return { user: null };
@@ -487,7 +487,7 @@ export const VerifyAdminToken = async () => {
     handleApiError(error, 'Token verification failed');
   }
 };
-export const AdminLogin = async (data) => {
+export const adminLogin = async (data) => {
   
     const response = await apiadmin.post('/admin/login', data, {
       withCredentials: true
@@ -495,7 +495,7 @@ export const AdminLogin = async (data) => {
     return response.data;
  
 };
-export const AdminDash = async () => {
+export const adminDash = async () => {
   
     const token = getadminToken();
     if (!token) ({path:'/admin'});
@@ -503,7 +503,7 @@ export const AdminDash = async () => {
     return response.data;
   
 }
-export const Departments = async (currentPage, limit = 10) => {
+export const departments = async (currentPage, limit = 10) => {
   
     const response = await apiadmin.get('/admin/department', {
       params: {
@@ -514,7 +514,7 @@ export const Departments = async (currentPage, limit = 10) => {
     return response.data;
  
 }
-export const UpdateDepartment = async (id) => {
+export const updateDepartment = async (id) => {
   
     const response = await apiadmin.put(`/admin/department/${id}`, {}, {
       withCredentials: true
@@ -522,7 +522,7 @@ export const UpdateDepartment = async (id) => {
     return response.data;
  
 }
-export const AddDepartment = async (Departmentname,Description) => {
+export const addDepartment = async (Departmentname,Description) => {
   
     const response = await apiadmin.post('/admin/department', {Departmentname,Description}, {
       withCredentials: true
@@ -530,7 +530,7 @@ export const AddDepartment = async (Departmentname,Description) => {
     return response.data;
  
 }
-export const DoctorList = async(currentPage, limit = 10) => {
+export const doctorList = async(currentPage, limit = 10) => {
     const token = getadminToken();
     if (!token) ({path:'/admin'});
     const response = await apiadmin.get('/admin/doctors', {
@@ -553,7 +553,7 @@ export const DoctorList = async(currentPage, limit = 10) => {
     };
  
 }
-export const HandleAction = async(id)=>
+export const handleAction = async(id)=>
 {
  
     const token = getadminToken();
@@ -564,7 +564,7 @@ export const HandleAction = async(id)=>
     return response.data;
  
 }
-export const GetDoctorPayment = async(currentPage, limit = 10)=>{
+export const getDoctorPayment = async(currentPage, limit = 10)=>{
   
     const token = getadminToken();
     if (!token) ({path:'/admin'});
@@ -577,7 +577,7 @@ export const GetDoctorPayment = async(currentPage, limit = 10)=>{
     return response.data;
    
 }
-export const PendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>{
+export const pendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>{
   
     const token = getadminToken();
     if (!token) ({path:'/admin'});
@@ -591,7 +591,7 @@ export const PendingDoctors = async(currentPage, limit = 10,search=searchTerm)=>
     return response.data;
  
 }
-export const PatientAction= async(id)=>
+export const patientAction= async(id)=>
 {
   
     const token = getadminToken();

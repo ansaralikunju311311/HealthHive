@@ -1,15 +1,15 @@
-import User from '../Model/UserModel.js'
+import User from '../Model/userModel.js'
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { sendOtp } from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';
-import Doctor from '../Model/DoctorModel.js';
-import Department from '../Model/DepartmentModel.js';
-import Appointment from '../Model/Appoiment.js';
-import appointmentSchedule from '../Model/AppoimentSchedule.js';
+import Doctor from '../Model/doctorModel.js';
+import Department from '../Model/departmentModel.js';
+import Appointment from '../Model/appoimentModel.js';
+import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
-import Transaction from '../Model/Transaction.js';
-import Chat from '../Model/chat.js';
+import Transaction from '../Model/transactionModel.js';
+import Chat from '../Model/chatModel.js';
 import { timeStamp } from 'console';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 const cookieOptions = {
@@ -18,7 +18,7 @@ const cookieOptions = {
     sameSite: 'None',
     maxAge: 9 * 60 * 60 * 1000, 
 };
-const GenerateAndSendOTP = async (user, email) => {
+const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
     
@@ -32,7 +32,7 @@ const GenerateAndSendOTP = async (user, email) => {
     
     return true;
 };
-const RegisterUser = async (req, res) => {
+const registerUser = async (req, res) => {
     try {
         const { name, email, password, dateOfBirth, phone, age, gender, image,bloodGroup,address } = req.body;
         const existingUser = await User.findOne({ email });
@@ -81,7 +81,7 @@ const RegisterUser = async (req, res) => {
             });
         }
 
-        await GenerateAndSendOTP(user, email);
+        await generateAndSendOTP(user, email);
 
         res.status(STATUS_CODE.CREATED).json({
             message: "Verification code sent to your email",
@@ -94,7 +94,7 @@ const RegisterUser = async (req, res) => {
 };
 
 
-export const GoogleSignUp = async(req,res)=>{
+export const googleSignUp = async(req,res)=>{
     try{
         const { email, name, uid } = req.body;
 
@@ -127,7 +127,7 @@ export const GoogleSignUp = async(req,res)=>{
         console.log(error)
     }
 }
-export const GoogleSignIn = async(req,res)=>{
+export const googleSignIn = async(req,res)=>{
     try{
         const { email, name, uid } = req.body;
         const user = await User.findOne({ email});
@@ -172,7 +172,7 @@ export const GoogleSignIn = async(req,res)=>{
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const VerifyOtp = async(req,res)=>{
+const verifyOtp = async(req,res)=>{
     try {
         const {email, otp} = req.body;
         const user = await User.findOne({email});
@@ -210,7 +210,7 @@ const VerifyOtp = async(req,res)=>{
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({error:error.message});
     }
 }
-const LoginUser = async(req,res)=>{
+const loginUser = async(req,res)=>{
     try {
         const {email,password} = req.body;
         const user = await User.findOne({email});
@@ -247,7 +247,7 @@ const LoginUser = async(req,res)=>{
     }
 };
 
-const GetOtpRemainingTime = async(req, res) => {
+const getOtpRemainingTime = async(req, res) => {
     try {
         const { email } = req.query;
         
@@ -263,7 +263,7 @@ const GetOtpRemainingTime = async(req, res) => {
     }
 };
 
-const ResendOtp = async(req, res) => {
+const resendOtp = async(req, res) => {
     try {
         const { email } = req.body;
         console.log("Resend OTP request for email:", email);
@@ -305,7 +305,7 @@ const ResendOtp = async(req, res) => {
         });
     }
 };
- const ForgotPassword = async(req, res) => {
+ const forgotPassword = async(req, res) => {
     try {
         const { email } = req.body;
         
@@ -328,7 +328,7 @@ const ResendOtp = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const ResetPassword = async(req, res) => {
+const resetPassword = async(req, res) => {
     try {
         
         const { email, otp, new_password } = req.body;
@@ -355,7 +355,7 @@ const ResetPassword = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-const VerifyToken = async (req, res) => {
+const verifyToken = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) {
@@ -367,7 +367,7 @@ const VerifyToken = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const GetDoctorsData = async (req, res) => {
+export const getDoctorsData = async (req, res) => {
     try {
         const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
 
@@ -377,7 +377,7 @@ export const GetDoctorsData = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const GetDepartments = async (req, res) => {
+export const getDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
         res.status(STATUS_CODE.OK).json(departments);
@@ -385,7 +385,7 @@ export const GetDepartments = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const Logout = async (req, res) => {
+export const logout = async (req, res) => {
     try {
         req.user = null;
         res.cookie('usertoken', null, {
@@ -400,7 +400,7 @@ export const Logout = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const Dptdoctor = async (req, res) => {
+export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
         
@@ -419,7 +419,7 @@ export const Dptdoctor = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const BookAppointment = async (req, res) => {
+export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
         const { slots,transactionData} = req.body;
@@ -494,7 +494,7 @@ export const BookAppointment = async (req, res) => {
         });
     }
 };
-export const FetchAppoiments = async(req, res) => {
+export const fetchAppoiments = async(req, res) => {
     
        const {page,limit} = req.query;
        const { userid } = req.params;
@@ -527,7 +527,7 @@ export const FetchAppoiments = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export  const HandlePayment = async(req, res) => {
+export  const handlePayment = async(req, res) => {
     console.log("req.body",req.body)
     const { amount } = req.body;
     try {
@@ -557,7 +557,7 @@ export  const HandlePayment = async(req, res) => {
         });
     }
 }
-export const VerifyPayment = async (req, res) => {
+export const verifyPayment = async (req, res) => {
     try {
         const {
             razorpay_order_id,
@@ -589,7 +589,7 @@ export const VerifyPayment = async (req, res) => {
     }
 };
 
-export const FetchDoctor = async(req, res) => {
+export const fetchDoctor = async(req, res) => {
     const { doctorId } = req.params;
 
     try {
@@ -600,7 +600,7 @@ export const FetchDoctor = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 }
-export const ChatDetails = async (req,res) => {
+export const chatDetails = async (req,res) => {
     try {
         
         const { doctorId, userId } = req.params;
@@ -614,7 +614,7 @@ export const ChatDetails = async (req,res) => {
 }
 
 
-export const ProfileSetup = async (req, res) => {
+export const profileSetup = async (req, res) => {
     try {
         const { email, profileImage, bloodGroup, address, dob, phone, gender,age } = req.body;
 
@@ -655,4 +655,4 @@ export const ProfileSetup = async (req, res) => {
 };
 
 
-export { RegisterUser, LoginUser, VerifyOtp, GetOtpRemainingTime, ResendOtp, ForgotPassword, ResetPassword, VerifyToken};
+export { registerUser, loginUser, verifyOtp, getOtpRemainingTime, resendOtp, forgotPassword, resetPassword, verifyToken};

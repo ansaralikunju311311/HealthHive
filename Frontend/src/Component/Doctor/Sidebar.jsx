@@ -11,7 +11,7 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
-import { LogoutDoctor } from '../../Services/apiService';
+import { logoutDoctor } from '../../Services/apiService';
 
 const Sidebar = ({activePage, doctorid}) => {
   const id = doctorid;
@@ -21,7 +21,7 @@ const Sidebar = ({activePage, doctorid}) => {
   const handleLogout = async () => {
     try {
      
-      await LogoutDoctor();
+      await logoutDoctor();
       
       toast.info('You have been logged out', {
         icon: '👋'

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DrProfile ,DrupdateDoctorProfile} from '../../Services/apiService';
+import { drProfile ,drupdateDoctorProfile} from '../../Services/apiService';
 import axios from 'axios';
 
 const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
@@ -54,7 +54,7 @@ const Profile = () => {
     const updateDoctorProfile = async () => {
         try {
            
-            const response = await DrupdateDoctorProfile(id,doctor.consultFee,doctor.about)
+            const response = await drupdateDoctorProfile(id,doctor.consultFee,doctor.about)
             console.log("Profile updated successfully:", response.data);
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -73,7 +73,7 @@ const Profile = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await DrProfile(id);
+                const response = await drProfile(id);
                 
                 setDoctor(response.doctorData);
             } catch (error) {

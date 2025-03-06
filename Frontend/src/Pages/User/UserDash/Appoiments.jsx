@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GetUserAppointments } from '../../../Services/apiService';
+import { getUserAppointments } from '../../../Services/apiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import Homebutton from '../../../Component/User/HomeButton/Homebutton';
 import cookies from 'js-cookie';
@@ -49,7 +49,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await GetUserAppointments(userId, currentPage, limit);
+      const response = await getUserAppointments(userId, currentPage, limit);
       setAppointments(response.appointments);
       setTotalPages(response.pagination.totalPages);
 

@@ -42,7 +42,7 @@ import Wallet from './Pages/admin/Wallet'
 import DrWallet from './Pages/Doctor/Wallet/DrWallet'
 import Chat from './Pages/User/UserDash/Chat'
 import DrChat from './Pages/Doctor/Chat/Chat'
-import { VerifyUserToken } from './Services/apiService.js';
+import { verifyUserToken } from './Services/apiService.js';
 // import Demo from './Pages/admin/Demo.jsx';
 import ProfileCompletion from './Pages/User/ProfileCompletion.jsx';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
@@ -61,7 +61,7 @@ const App = () => {
 
 
       try {
-        const {user} = await VerifyUserToken();
+        const {user} = await verifyUserToken();
         setUserData(user);
         setLoading(false);
       } catch (error) {

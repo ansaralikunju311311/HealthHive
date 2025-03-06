@@ -1,19 +1,19 @@
-import doctor from "../Model/DoctorModel.js";
+import doctor from "../Model/doctorModel.js";
 import mongoose from 'mongoose';
-import RejectedDoctor from "../Model/RejectedDoctors.js";
+import RejectedDoctor from "../Model/rejectedDoctors.js";
 import moment from 'moment-timezone';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import {sendOtp} from '../utils/sendMail.js';
 import {setToken} from '../utils/auth.js';    
-import Department from '../Model/DepartmentModel.js';
-import appoimentSchedule from '../Model/AppoimentSchedule.js';
-import Appointment from '../Model/Appoiment.js';
+import Department from '../Model/departmentModel.js';
+import appoimentSchedule from '../Model/appoimentSchedule.js';
+import Appointment from '../Model/appoimentModel.js';
 import DoctorWallet from '../Model/DrWallet.js';
-import User from '../Model/UserModel.js';
-import Transaction from "../Model/Transaction.js";
+import User from '../Model/userModel.js';
+import Transaction from "../Model/transactionModel.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
-import Chat from '../Model/chat.js';    
+import Chat from '../Model/chatModel.js';    
  import cookies from 'js-cookie';
 
 
@@ -28,7 +28,7 @@ import Chat from '../Model/chat.js';
 
 
 
- const GenerateAndSendOTP = async (doctor, email) => {
+ const generateAndSendOTP = async (doctor, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
     
@@ -42,7 +42,7 @@ import Chat from '../Model/chat.js';
     
     return true;
 };
- const RegisterDoctor = async(req,res)=>{
+ const registerDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
        
@@ -109,7 +109,7 @@ import Chat from '../Model/chat.js';
     }
 }
 
- const LoginDoctor = async(req,res)=>{
+ const loginDoctor = async(req,res)=>{
     try {
         const {email,password} = req.body;
         
@@ -164,7 +164,7 @@ import Chat from '../Model/chat.js';
     }
 }
 
- const VerifyDoctorToken = async (req, res) => {
+ const verifyDoctorToken = async (req, res) => {
     try {
         res.status(STATUS_CODE.OK).json({ doctor: req.doctor });
     } catch (error) {
@@ -173,7 +173,7 @@ import Chat from '../Model/chat.js';
     }
 };
 
-const FetchDoctors = async (req, res) => {
+const fetchDoctors = async (req, res) => {
     try {
         const { email } = req.query;
         if (!email) {
@@ -215,7 +215,7 @@ const FetchDoctors = async (req, res) => {
     }
 };
 
-    async function ForgotPassword(req, res) {
+    async function forgotPassword(req, res) {
         try {
             const { email } = req.body;
 
@@ -261,7 +261,7 @@ const FetchDoctors = async (req, res) => {
 
 
 
-const ResetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
     try {
        
 
@@ -330,7 +330,7 @@ const ResetPassword = async (req, res) => {
     }
 };
 
-const DoctorProfile = async (req, res) => {
+const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;
 
@@ -348,7 +348,7 @@ const DoctorProfile = async (req, res) => {
     }
 };
 
-export const FetchDepartments = async (req, res) => {
+export const fetchDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
         res.status(STATUS_CODE.OK).json(departments);
@@ -356,7 +356,7 @@ export const FetchDepartments = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const Logout = async (req, res) => {
+export const logout = async (req, res) => {
     try {
         req.user = null;
         res.cookie('doctortoken', null, {
@@ -373,7 +373,7 @@ export const Logout = async (req, res) => {
 }
 
 
-export const Schedule = async (req, res) => {
+export const schedule = async (req, res) => {
     const { id: doctorId } = req.params;
     const { appointments } = req.body;
 
@@ -460,9 +460,9 @@ export const Schedule = async (req, res) => {
         });
     }
 };
-import AppointmentSchedule from '../Model/AppoimentSchedule.js';
+import AppointmentSchedule from '../Model/appoimentSchedule.js';
 
-export const GetSchedules = async (req, res) => {
+export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
 
     try {
@@ -500,7 +500,7 @@ export const GetSchedules = async (req, res) => {
 };
 
 
-export const Slots = async (req, res) => {
+export const slots = async (req, res) => {
      console.log(" happen after middlware verify token=====");
     const { id: doctorId } = req.params;
     try {
@@ -533,7 +533,7 @@ export const Slots = async (req, res) => {
         });
     }
 }
-export const FetchAppointments = async (req, res) => {
+export const fetchAppointments = async (req, res) => {
     const {doctor_Id} = req.params;
     console.log("=============",doctor_Id)
     const appoiments = await Appointment.find({doctor:doctor_Id})
@@ -544,7 +544,7 @@ export const FetchAppointments = async (req, res) => {
     
     res.status(STATUS_CODE.OK).json(appoiments)
 }
-export const FullAppoiments = async (req, res) => {
+export const fullAppoiments = async (req, res) => {
     try {
         const {id} = req.params;
         
@@ -567,7 +567,7 @@ export const FullAppoiments = async (req, res) => {
     }
 }
 
-export const FetchWalletBalance = async (req, res) => {
+export const fetchWalletBalance = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
@@ -622,7 +622,7 @@ export const FetchWalletBalance = async (req, res) => {
 
 
 
-export const UserDetails = async(req,res)=>
+export const userDetails = async(req,res)=>
 {
 
     try {
@@ -638,7 +638,7 @@ export const UserDetails = async(req,res)=>
 
 
 
-export const ChatDetails = async(req,res)=>
+export const chatDetails = async(req,res)=>
 {
     try {
         const {userId,doctorId} = req.params;
@@ -652,7 +652,7 @@ export const ChatDetails = async(req,res)=>
     }
 }
 
-export const UpdateDoctorProfile = async (req, res) => {
+export const updateDoctorProfile = async (req, res) => {
     try {
         const { id } = req.params;
         const { consultFee, about } = req.body;
@@ -670,4 +670,4 @@ export const UpdateDoctorProfile = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Error updating profile' });
     }
 }
-export { RegisterDoctor, LoginDoctor, VerifyDoctorToken,FetchDoctors,ForgotPassword,ResetPassword ,DoctorProfile};
+export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

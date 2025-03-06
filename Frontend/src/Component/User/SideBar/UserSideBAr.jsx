@@ -6,7 +6,7 @@ import {
   MdEventAvailable,
   MdExitToApp 
 } from 'react-icons/md';
-import { LogoutUser } from '../../../Services/apiService';
+import { logoutUser } from '../../../Services/apiService';
 
 const Sidebar = ({activePage}) => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Sidebar = ({activePage}) => {
 
   const handleLogout = async () => {
     try {
-      await LogoutUser();
+      await logoutUser();
       toast.info('You have been logged out', {
         icon: '👋'
       });

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie';
 import { 
-  VerifyUserToken, 
-  GetDoctorsDetails, 
-  GetPublicDoctors 
+  verifyUserToken, 
+  getDoctorsDetails, 
+  getPublicDoctors 
 } from '../../../Services/apiService';
 import Footer from '../../../Common/Footer';
 import StayConnected from '../../../Component/User/UserCommons/StayConnected.jsx';
@@ -34,11 +34,11 @@ const HomePageUser = () => {
         
         if (token) {
           try {
-            const { user } = await VerifyUserToken();
+            const { user } = await verifyUserToken();
             setUserData(user);
 
             if (user) {
-              const doctorsResponse = await GetDoctorsDetails();
+              const doctorsResponse = await getDoctorsDetails();
               setDoctorsData(doctorsResponse.doctors || []);
               localStorage.setItem('userId', JSON.stringify(user));
             }
@@ -63,7 +63,7 @@ const HomePageUser = () => {
   useEffect(() => {
     const fetchPublicDoctors = async () => {
       try {
-        const response = await GetPublicDoctors();
+        const response = await getPublicDoctors();
         setDoctorsDataW(response.doctors || []);
       } catch (error) {
         console.error("Error fetching public doctors:", error);

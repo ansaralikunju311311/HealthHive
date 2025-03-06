@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { Schedule,ExstingSchedules } from '../../../Services/apiService';
+import { schedule,exstingSchedules } from '../../../Services/apiService';
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
     let doctorId;
@@ -69,7 +69,7 @@ const Schedules = () => {
             );
             console.log("Prepared Appointments Data:", appointmentsData);
            
-            const response = await Schedule(doctorId, appointmentsData);
+            const response = await schedule(doctorId, appointmentsData);
 
             console.log("Schedule Response:", response.data);
             
@@ -162,7 +162,7 @@ const Schedules = () => {
     const fetchExistingSchedules = async () => {
         try {
           
-            const response = await ExstingSchedules(doctorId);
+            const response = await exstingSchedules(doctorId);
             
             setExistingSchedules(response.schedules || []);
 

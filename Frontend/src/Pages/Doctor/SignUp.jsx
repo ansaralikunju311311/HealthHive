@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { DoctorSignUp } from '../../Services/apiService';
+import { doctorSignUp } from '../../Services/apiService';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
@@ -122,7 +122,7 @@ const SignUp = () => {
                 availability: data.availability
             };
 
-            const response = await DoctorSignUp(doctorData);
+            const response = await doctorSignUp(doctorData);
 
             if (response?.user?.isActive === false) {
                 toast.success('Account created! Please wait for admin verification.');

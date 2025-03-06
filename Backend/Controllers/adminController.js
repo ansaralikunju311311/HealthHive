@@ -1,14 +1,14 @@
-import Admin from '../Model/AdminModel/AdminModel.js';
-import User from '../Model/UserModel.js';
-import Doctor from '../Model/DoctorModel.js';
+import Admin from '../Model/AdminModel/adminModel.js';
+import User from '../Model/userModel.js';
+import Doctor from '../Model/doctorModel.js';
 import bcrypt from 'bcrypt';
-import RejectedDoctor from '../Model/RejectedDoctors.js';
-import Transaction from '../Model/Transaction.js';
+import RejectedDoctor from '../Model/rejectedDoctors.js';
+import Transaction from '../Model/transactionModel.js';
 import cookies from 'js-cookie';
 import {setToken} from '../utils/auth.js';
-import Department from '../Model/DepartmentModel.js';
+import Department from '../Model/departmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
-import appointment from '../Model/Appoiment.js';
+import appointment from '../Model/appoimentModel.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 
 const cookieOptions = {
@@ -20,7 +20,7 @@ const cookieOptions = {
 };
 
 
- const LoginAdmin = async (req, res) => {
+ const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const existingAdmin = await Admin.findOne({ email });
@@ -48,7 +48,7 @@ const cookieOptions = {
     }
 };
 
-export const Patients = async (req,res)=>
+export const patients = async (req,res)=>
 {
     const {page,limit} = req.params;
     try {
@@ -68,7 +68,7 @@ export const Patients = async (req,res)=>
     }
    
 }
-export const PendingDoctors = async (req,res)=>
+export const pendingDoctors = async (req,res)=>
 {
     const {page,limit} = req.params;
     try {
@@ -86,7 +86,7 @@ export const PendingDoctors = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const ApproveDoctor = async (req,res)=>
+export const approveDoctor = async (req,res)=>
 {
     try {
         const {doctorid} = req.params;
@@ -123,7 +123,7 @@ export const ApproveDoctor = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const RejectDoctor = async(req,res)=>
+export const rejectDoctor = async(req,res)=>
 {
     try{
         const {doctorid} = req.params;
@@ -166,7 +166,7 @@ export const RejectDoctor = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
-export const Doctors = async (req,res)=>
+export const doctors = async (req,res)=>
 {
     const {page,limit} = req.query;
     try {
@@ -186,7 +186,7 @@ export const Doctors = async (req,res)=>
     }
 }
 
- const VerifyAdminToken = async (req, res) => {
+ const verifyAdminToken = async (req, res) => {
     try {
     
         res.status(STATUS_CODE.OK).json({ admin: req.admin });
@@ -195,7 +195,7 @@ export const Doctors = async (req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const AddDepartment = async (req, res) => {
+export const addDepartment = async (req, res) => {
     try {
         const { Departmentname,Description } = req.body;
         
@@ -223,7 +223,7 @@ export const AddDepartment = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const GetDepartments = async (req, res) => 
+export const getDepartments = async (req, res) => 
 
 {
     const {page,limit} = req.query;
@@ -252,7 +252,7 @@ export const GetDepartments = async (req, res) =>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const UpdateDepartment = async (req, res) => {
+export const updateDepartment = async (req, res) => {
        const {id} = req.params;
        console.log("id=====",id);
 
@@ -276,7 +276,7 @@ export const UpdateDepartment = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const HandleBlock = async (req, res) => {
+export const handleBlock = async (req, res) => {
     try {
         const { doctorid } = req.params;
         const doctor = await Doctor.findById(doctorid);
@@ -301,7 +301,7 @@ export const HandleBlock = async (req, res) => {
         }
     }
 }
-export const PatientBlock = async (req, res) => {
+export const patientBlock = async (req, res) => {
     try {
         const { patientid } = req.params;
         console.log("patientid=====",patientid);
@@ -321,7 +321,7 @@ export const PatientBlock = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-export const UserCount = async (req, res) => {
+export const userCount = async (req, res) => {
     try {
     
         const count = await User.countDocuments({ isActive: true });
@@ -342,7 +342,7 @@ export const UserCount = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const Earnings = async (req, res) => {
+export const earnings = async (req, res) => {
      const {page,limit} = req.query;
     console.log(req.query)
     try {
@@ -369,7 +369,7 @@ export const Earnings = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const FetchDoctorPayments = async (req, res) => {
+export const fetchDoctorPayments = async (req, res) => {
     console.log("fetchDoctorPayments=====");
     try {
         const Drtransaction = await Transaction.find().populate('doctor', 'name email specialization profileImage');
@@ -418,7 +418,7 @@ export const FetchDoctorPayments = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export const GetDoctorPayments = async (req, res) => {
+export const getDoctorPayments = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -481,4 +481,4 @@ export const GetDoctorPayments = async (req, res) => {
   }
 };
 
-export { LoginAdmin, VerifyAdminToken };
+export { loginAdmin, verifyAdminToken };

@@ -14,7 +14,7 @@ import {
   FaChevronLeft, 
   FaChevronRight 
 } from 'react-icons/fa';
-import { DrAppoinments } from '../../../Services/apiService';
+import { drAppoinments } from '../../../Services/apiService';
 
 const groupAppointmentsByCategory = (appointments) => {
   const today = new Date();
@@ -307,7 +307,7 @@ const DrAppoiments = () => {
 
     const fetchAppoiments = async () => {
       try {
-        const response = await DrAppoinments(doctor_Id);
+        const response = await drAppoinments(doctor_Id);
         setAppointments(response);
         setFilteredAppointments(response);
         setLoading(false);

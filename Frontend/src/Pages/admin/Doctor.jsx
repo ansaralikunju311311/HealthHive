@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { DoctorList, HandleAction } from '../../Services/apiService';
+import { doctorList, handleAction } from '../../Services/apiService';
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,7 +29,7 @@ const limit = 10;
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await DoctorList(currentPage, limit);
+        const response = await doctorList(currentPage, limit);
         
         if (response) {
           // The serial numbers are now correctly set in the API service
@@ -57,7 +57,7 @@ const limit = 10;
   const handleBlockUnblock = async (doctorid) => {
     try {
       
-      const response = await HandleAction(doctorid);
+      const response = await handleAction(doctorid);
 
       const updatedDoctors = doctors.map(doctor => {
         if (doctor._id === doctorid) {

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { FaSpinner, FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 import axios from 'axios';
-import { DoctorVerification } from '../../Services/apiService';
+import { doctorVerification } from '../../Services/apiService';
 
 const BeforeVerification = () => {
   const location = useLocation();
@@ -25,7 +25,7 @@ const BeforeVerification = () => {
         }
 
         
-        const response = await DoctorVerification(doctorEmail);
+        const response = await doctorVerification(doctorEmail);
         console.log('Verification response:', response);
 
         if (response.isRejected) {

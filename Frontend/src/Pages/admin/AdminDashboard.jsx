@@ -15,7 +15,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
-import { AdminDash } from '../../Services/apiService';
+import { adminDash } from '../../Services/apiService';
 
 // Sample data for charts
 const userGrowthData = [
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
       
-        const response = await AdminDash();
+        const response = await adminDash();
         console.log("usercount=====", response.data);
         setUserCount(response?.userCount + response?.doctorCount);
         setDoctorCount(response?.doctorCount);

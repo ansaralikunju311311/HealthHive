@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie';
-import { VerifyAdminToken } from '../../../Services/apiService';
+import { verifyAdminToken } from '../../../Services/apiService';
 
 const AdminProtected = ({ children }) => {
     const navigate = useNavigate();
@@ -10,7 +10,7 @@ const AdminProtected = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await VerifyAdminToken();
+                const response = await verifyAdminToken();
                 
                 if (response?.admin) {
                     setLoading(false);

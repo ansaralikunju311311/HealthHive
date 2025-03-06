@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaCalendarAlt, FaInfoCircle, FaEnvelope, FaChevronDown, FaUserCircle, FaUser, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
-import { VerifyUserToken, LogoutUser } from '../Services/apiService';
+import { verifyUserToken, logoutUser } from '../Services/apiService';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const NavBar = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const { user } = await VerifyUserToken();
+        const { user } = await verifyUserToken();
         setUserData(user);
       } catch (error) {
         if (!error.response || error.response.status !== 401) {
@@ -27,7 +27,7 @@ const NavBar = () => {
 
   const handleLogout = async () => {
     try {
-      await LogoutUser();
+      await logoutUser();
       setUserData(null);
       navigate('/');
     } catch (error) {

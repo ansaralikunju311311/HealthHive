@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../../Common/Footer';
-import { GetDoctorSlots } from '../../../Services/apiService';
+import { getDoctorSlots } from '../../../Services/apiService';
 
 const Slot = () => {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ const Slot = () => {
 
         try {
             setLoading(true);
-            const data = await GetDoctorSlots(doctorData._id);
+            const data = await getDoctorSlots(doctorData._id);
             if (data && Array.isArray(data.schedules)) {
                 setSchedules(data.schedules);
                 if (data.schedules.length === 0) {

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify';
 
 import { setDoctor, setToken } from '../../redux/Features/DoctorSlice';
-import { DoctorLogin } from '../../Services/apiService';
+import { doctorLogin } from '../../Services/apiService';
 
 const Login = () => {
     const navigate = useNavigate()
@@ -15,7 +15,7 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            const { doctor } = await DoctorLogin(data, { withCredentials: true });
+            const { doctor } = await doctorLogin(data, { withCredentials: true });
  
             if (doctor.isActive === false) {
                 toast.error('Your account is pending verification');

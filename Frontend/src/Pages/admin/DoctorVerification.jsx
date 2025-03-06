@@ -20,7 +20,7 @@ import {
 import DetailsModel from '../Doctor/DetailsModel';
 import { toast } from 'react-toastify';
 import DataTable from '../../Components/Common/DataTable';
-import { PendingDoctors } from '../../Services/apiService';
+import { pendingDoctors } from '../../Services/apiService';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
@@ -37,7 +37,7 @@ const limit =10;
   const fetchDoctors = async (page) => {
     try {
     
-      const response = await PendingDoctors(page, searchTerm,limit);
+      const response = await pendingDoctors(page, searchTerm,limit);
       
       const { doctorsWithIndex, totalPages } = response;
       
