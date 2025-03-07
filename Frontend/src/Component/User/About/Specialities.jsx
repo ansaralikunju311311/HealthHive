@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAboutDoctors } from "../../../Services/apiService";
+import { getAboutDoctors } from "../../../Services/userServices/userApiService";
 
 const Specialities = () => {
     const [doctorsData, setDoctorsData] = useState([]);

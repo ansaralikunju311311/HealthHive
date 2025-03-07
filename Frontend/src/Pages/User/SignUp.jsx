@@ -9,7 +9,7 @@ import Google from '../../Component/User/Google/Google.jsx';
 import {auth} from '../../Firebase/config.js'
 import {GoogleAuthProvider,signInWithPopup} from 'firebase/auth'
 // Import the API service
-import { registerUser } from '../../Services/apiService';
+import { registerUser } from '../../Services/userServices/userApiService.js';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {

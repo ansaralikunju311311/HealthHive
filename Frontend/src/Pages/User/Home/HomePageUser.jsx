@@ -5,7 +5,7 @@ import {
   verifyUserToken, 
   getDoctorsDetails, 
   getPublicDoctors 
-} from '../../../Services/apiService';
+} from '../../../Services/userServices/userApiService.js';
 import Footer from '../../../Common/Footer';
 import StayConnected from '../../../Component/User/UserCommons/StayConnected.jsx';
 import NavBar from '../../../Common/NavBar';

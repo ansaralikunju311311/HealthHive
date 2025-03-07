@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { verifyUserToken } from '../../../Services/apiService';
+import { verifyUserToken } from '../../../Services/userServices/userApiService';
 
 const Service = () => {
     const [userData, setUserData] = useState(null);

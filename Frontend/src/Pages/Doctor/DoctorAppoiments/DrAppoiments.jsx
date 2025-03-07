@@ -14,7 +14,7 @@ import {
   FaChevronLeft, 
   FaChevronRight 
 } from 'react-icons/fa';
-import { drAppoinments } from '../../../Services/apiService';
+import { drAppoinments } from '../../../Services/doctorService/doctorService';
 
 const groupAppointmentsByCategory = (appointments) => {
   const today = new Date();

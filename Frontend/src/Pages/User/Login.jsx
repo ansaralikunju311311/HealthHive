@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { loginUser } from '../../Services/apiService';
+import { loginUser } from '../../Services/userServices/userApiService.js';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';

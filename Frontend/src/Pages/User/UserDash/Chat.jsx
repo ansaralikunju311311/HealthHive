@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getDoctorInfo, getChatHistory } from '../../../Services/apiService';
+import { getDoctorInfo, getChatHistory } from '../../../Services/userServices/userApiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
 import { FiSend } from 'react-icons/fi';

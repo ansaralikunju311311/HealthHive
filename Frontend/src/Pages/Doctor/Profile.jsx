@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { drProfile ,drupdateDoctorProfile} from '../../Services/apiService';
+import { drProfile ,drupdateDoctorProfile} from '../../Services/doctorService/doctorService';
 import axios from 'axios';
 
 const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {

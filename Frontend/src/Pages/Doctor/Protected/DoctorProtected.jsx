@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import cookies from 'js-cookie';
-import { verifyDoctorToken } from '../../../Services/apiService';
+import { verifyDoctorToken } from '../../../Services/doctorService/doctorService';
 const DoctorProtected = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [verified, setVerified] = useState(false);

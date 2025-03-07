@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../../../Common/NavBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Footer from '../../../Common/Footer';
-import { getDoctorSlots } from '../../../Services/apiService';
+import { getDoctorSlots } from '../../../Services/userServices/userApiService';
 
 const Slot = () => {
     const navigate = useNavigate();

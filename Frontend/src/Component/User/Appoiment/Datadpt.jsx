@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import cookies from 'js-cookie';
 import Heading from "../Appoiment/Heading";
 import Schedulebtn from "../Appoiment/Schedulebtn";
-import { getDepartments,getAppointments } from "../../../Services/apiService";
+import { getDepartments,getAppointments } from "../../../Services/userServices/userApiService";
 
 const Datadpt = ({ limit =null}) => {
   const [departments, setDepartments] = useState([]);

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify';
 
 import { setDoctor, setToken } from '../../redux/Features/DoctorSlice';
-import { doctorLogin } from '../../Services/apiService';
+import { doctorLogin } from '../../Services/doctorService/doctorService';
 
 const Login = () => {
     const navigate = useNavigate()

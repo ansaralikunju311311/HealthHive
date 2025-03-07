@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { doctorSignUp } from '../../Services/apiService';
+import { doctorSignUp } from '../../Services/doctorService/doctorService';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {

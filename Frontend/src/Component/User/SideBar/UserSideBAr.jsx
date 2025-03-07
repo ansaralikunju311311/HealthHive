@@ -6,7 +6,7 @@ import {
   MdEventAvailable,
   MdExitToApp 
 } from 'react-icons/md';
-import { logoutUser } from '../../../Services/apiService';
+import { logoutUser } from '../../../Services/userServices/userApiService';
 
 const Sidebar = ({activePage}) => {
   const navigate = useNavigate();

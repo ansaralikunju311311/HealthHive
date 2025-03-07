@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { FaSpinner, FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 import axios from 'axios';
-import { doctorVerification } from '../../Services/apiService';
+import { doctorVerification } from '../../Services/doctorService/doctorService';
 
 const BeforeVerification = () => {
   const location = useLocation();

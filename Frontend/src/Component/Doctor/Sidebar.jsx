@@ -11,7 +11,7 @@ import {
   MdAccountBalanceWallet,
   MdExitToApp 
 } from 'react-icons/md';
-import { logoutDoctor } from '../../Services/apiService';
+import { logoutDoctor } from '../../Services/doctorService/doctorService';
 
 const Sidebar = ({activePage, doctorid}) => {
   const id = doctorid;

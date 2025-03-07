@@ -6,7 +6,7 @@ import { FiSend } from 'react-icons/fi';
 import { format } from 'date-fns';
 import axios from 'axios';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
-import { userInfo,chatHistory } from '../../../Services/apiService';
+import { userInfo,chatHistory } from '../../../Services/doctorService/doctorService';
 
 const Chat = () => {
   const location = useLocation();

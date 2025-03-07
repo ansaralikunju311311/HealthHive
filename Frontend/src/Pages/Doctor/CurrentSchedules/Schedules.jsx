@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { schedule,exstingSchedules } from '../../../Services/apiService';
+import { schedule,exstingSchedules } from '../../../Services/doctorService/doctorService';
 const Schedules = () => {
     const storedDoctorId = localStorage.getItem('doctorId');
     let doctorId;

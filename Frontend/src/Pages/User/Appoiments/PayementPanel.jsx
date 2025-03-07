@@ -25,7 +25,7 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import SecurityIcon from '@mui/icons-material/Security';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LockIcon from '@mui/icons-material/Lock';
-import { initiatePayment, verifyPayment, bookAppointment } from '../../../Services/apiService';
+import { initiatePayment, verifyPayment, bookAppointment } from '../../../Services/userServices/userApiService';
 
 const shine = keyframes`
   to {

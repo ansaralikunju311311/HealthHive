@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaCalendarAlt, FaInfoCircle, FaEnvelope, FaChevronDown, FaUserCircle, FaUser, FaFileAlt, FaSignOutAlt } from 'react-icons/fa';
-import { verifyUserToken, logoutUser } from '../Services/apiService';
+import { verifyUserToken, logoutUser } from '../Services/userServices/userApiService';
 
 const NavBar = () => {
   const navigate = useNavigate();

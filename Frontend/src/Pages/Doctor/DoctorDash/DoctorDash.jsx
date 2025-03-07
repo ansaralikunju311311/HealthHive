@@ -25,7 +25,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
-import { appoimentDetails, verifyDoctorToken } from '../../../Services/apiService';
+import { appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ const DoctorDash = () => {
         console.log('doctorccccc=======',reponse);  
         
        const doctors = reponse?.doctor;
-        console.log('doctorccddddddddddddccc=======',doctors);
         setDoctor(doctors);
 
        

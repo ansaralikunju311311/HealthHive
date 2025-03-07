@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { verifyOtp, resendOtp, getOtpRemainingTime } from '../../Services/apiService';
+import { verifyOtp, resendOtp, getOtpRemainingTime } from '../../Services/userServices/userApiService';
 import { toast } from 'react-toastify';
 
 const GenerateOtp = () => {

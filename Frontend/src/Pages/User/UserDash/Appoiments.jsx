@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserAppointments } from '../../../Services/apiService';
+import { getUserAppointments } from '../../../Services/userServices/userApiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import Homebutton from '../../../Component/User/HomeButton/Homebutton';
 import cookies from 'js-cookie';
