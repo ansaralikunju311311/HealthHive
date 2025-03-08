@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { loginUser } from '../../Services/userServices/userApiService.js';
+import { googleLogin, loginUser } from '../../Services/userServices/userApiService.js';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -21,21 +21,13 @@ const Login = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       
-      const response = await axios.post(
-        'http://localhost:5000/api/user/google-login',
-        {
-          email: result.user.email,
-          uid: result.user.uid
-        },
-        {
-          withCredentials: true, 
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
+     
+      const email=result.user.email;
+      const uid =result.user.uid;
 
-      const userData = response.data;
+      const response = await googleLogin(email,uid)
+
+      const userData = response;
       console.log('Response:', response);
       console.log('Cookies:', document.cookie);
 

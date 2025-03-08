@@ -4,6 +4,7 @@ import cloudinaryUpload from '../../utils/cloudinary';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { profileCompletion } from '../../Services/userServices/userApiService';
 
 const ProfileCompletion = () => {
   const navigate = useNavigate();
@@ -30,13 +31,12 @@ const ProfileCompletion = () => {
         profileImage: imageUrl
       };
 
-      const response = await axios.post(
-        'http://localhost:5000/api/user/profile-completion', 
-        submitData,
-        { withCredentials: true } 
-      );
+     
+      const response =await profileCompletion(submitData,{
+        withCredentials:true
+      })
 
-      if (response.data.success || response.data.profileCompletion) {
+      if (response.success || response.profileCompletion) {
         toast.success('Profile completed successfully!');
         localStorage.setItem('profileCompleted', 'true'); 
         
@@ -46,11 +46,11 @@ const ProfileCompletion = () => {
       
         navigate('/home', { replace: true });
       } else {
-        toast.error(response.data.message || 'Failed to complete profile');
+        toast.error(response.message || 'Failed to complete profile');
       }
     } catch (error) {
       console.error('Submission error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.message || 'Something went wrong');
     } finally {
       setIsUploading(false);
     }

@@ -62,7 +62,7 @@ export const adminDash = async () => {
     return response.data;
   
 }
-export const departments = async (currentPage, limit = 10) => {
+export const getDepartments = async (currentPage, limit = 10) => {
   
     const response = await apiadmin.get('/admin/department', {
       params: {
@@ -159,4 +159,50 @@ export const patientAction= async(id)=>
       withCredentials: true
     });
     return response.data;
+}
+export const approveDoctor = async(id)=>{
+  
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.put(`/admin/approve-doctor/${id}`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+ 
+}
+export const rejectedDoctor = async(id)=>{
+  
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.put(`/admin/reject-doctor/${id}`, {}, {
+      withCredentials: true
+    });
+    return response.data;
+ 
+} 
+export const getPatients = async(currentPage,limit=10)=>{
+  
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/patients', {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    return response.data;
+ 
+}
+export const adminEarnings = async(currentPage,limit=10)=>{
+  
+    const token = getadminToken();
+    if (!token) ({path:'/admin'});
+    const response = await apiadmin.get('/admin/admin-earnings', {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    return response.data;
+ 
 }

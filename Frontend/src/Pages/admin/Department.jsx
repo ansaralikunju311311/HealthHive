@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { departments, updateDepartment ,addDepartment} from '../../Services/adminService/adminService';
+import { getDepartments, updateDepartment, addDepartment } from '../../Services/adminService/adminService';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,10 +21,10 @@ const Department = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-       
-        const response = await departments(currentPage,limit);
+       console.log("dnfjnjj")
+        const response = await getDepartments(currentPage,limit);
 
-        // console.log("===============================",response?.data);
+        console.log("===============================",response);
         setDepartments(response?.departments);
         console.log("jfdfj========",response.departments)
         setTotalPages(response?.totalpage);
@@ -49,7 +49,7 @@ const Department = () => {
       const response = await updateDepartment(id);
       
       
-      const updatedResponse = await departments(currentPage,limit);
+      const updatedResponse = await getDepartments(currentPage,limit);
 
       setDepartments(updatedResponse?.departments);
       setTotalPages(updatedResponse?.totalpage);
@@ -108,8 +108,8 @@ const Department = () => {
     try {
       console.log("Adding department:", trimmedDepartmentName);
       
-      const response = await AddDepartment(trimmedDepartmentName,description);
-      const updatedResponse = await Departments(currentPage,limit);
+      const response = await addDepartment(trimmedDepartmentName,description);
+      const updatedResponse = await getDepartments(currentPage,limit);
       
       setDepartments(updatedResponse?.departments);
       setTotalPages(updatedResponse?.totalpage);

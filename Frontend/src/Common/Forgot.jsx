@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const For = () => {
+  const BASE_URL = import.meta.env.VITE_API_URL
   const navigate = useNavigate();
   const location = useLocation();
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -36,11 +37,11 @@ const For = () => {
 
       switch(userType) {
         case 'doctor':
-          endpoint = 'http://localhost:5000/api/doctor/forgot-password';
+          endpoint = `${BASE_URL}/doctor/forgot-password`;
           break;
         
         default:
-          endpoint = 'http://localhost:5000/api/user/forgot-password';
+          endpoint = `${BASE_URL}/user/forgot-password`;
       }
       const response = await axios.post(endpoint, data);
       toast.success('OTP sent successfully!');

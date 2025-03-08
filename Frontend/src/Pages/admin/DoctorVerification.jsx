@@ -20,7 +20,7 @@ import {
 import DetailsModel from '../Doctor/DetailsModel';
 import { toast } from 'react-toastify';
 import DataTable from '../../Components/Common/DataTable';
-import { pendingDoctors } from '../../Services/adminService/adminService';
+import { approveDoctor, pendingDoctors, rejectedDoctor } from '../../Services/adminService/adminService';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);
@@ -65,18 +65,9 @@ const limit =10;
 
   const handleApprove = async (doctorid) => {
     try {
-      const token = cookies.get('admintoken');
-      if(!token) {
-        navigate('/admin');
-        return;
-      }
-      const response = await axios.put(`http://localhost:5000/api/admin/approve-doctor/${doctorid}`,{},{
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true
-      });
-      if (response.data.doctor) {
+
+      const response = await approveDoctor(doctorid)
+      if (response.doctor) {
         toast.success('Doctor approved successfully', {
           position: "top-right",
           autoClose: 3000,
@@ -102,17 +93,7 @@ const limit =10;
 
   const handleReject = async (doctorid) => {
     try {
-      const token = cookies.get('admintoken');
-      if(!token) {
-        navigate('/admin');
-        return;
-      }
-      const response = await axios.put(`http://localhost:5000/api/admin/reject-doctor/${doctorid}`,{},{
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        withCredentials: true
-      });
+      const response = await rejectedDoctor(doctorid)
       toast.error('Doctor application rejected', {
         position: "top-right",
         autoClose: 3000,

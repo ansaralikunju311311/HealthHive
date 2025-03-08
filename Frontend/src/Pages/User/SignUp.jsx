@@ -9,7 +9,7 @@ import Google from '../../Component/User/Google/Google.jsx';
 import {auth} from '../../Firebase/config.js'
 import {GoogleAuthProvider,signInWithPopup} from 'firebase/auth'
 // Import the API service
-import { registerUser } from '../../Services/userServices/userApiService.js';
+import { googleSignup, registerUser } from '../../Services/userServices/userApiService.js';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
@@ -23,13 +23,10 @@ const SignUp = () => {
 
     console.log(result.user.email, result.user.displayName, result.user.uid)
 
-
-   
-      const response = await axios.post('http://localhost:5000/api/user/google-signup', {
-        email: result.user.email,
-        name: result.user.displayName,
-        uid: result.user.uid
-      });
+    const email = result.user.email;
+    const name = result.user.displayName;
+    const uid = result.user.uid;
+      const response = await googleSignup(email,uid,name)
       navigate('/profilecompletion', { state: { email: result.user.email } });
       console.log(result)
     })

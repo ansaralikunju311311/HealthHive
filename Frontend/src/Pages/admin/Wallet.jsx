@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie'
 import DataTable from '../../Components/Common/DataTable';
 import Pagination from '../../Components/Common/Pagination';
-
+import { adminEarnings } from '../../Services/adminService/adminService';
 const Wallet = () => {
   const navigate = useNavigate();
   const [adminEarning, setAdminEarnings] = useState(0);
@@ -32,33 +32,21 @@ const Wallet = () => {
   };
 
   useEffect(() => {
-    const token = cookies.get('admintoken');
-    if(!token) {
-      navigate('/admin');
-      return;
-    }
+   
     const fetchDetails = async () => {
       try {
-        const commition = await axios.get('http://localhost:5000/api/admin/admin-earnings', {
-          params: {
-            page: currentPage,
-            limit: 10
-          },
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials: true
-        });
+       
+        const commition =await adminEarnings(currentPage,limit)
         
-        console.log("this is the respXXXXXonse", commition.data.totalEarnings);
-        setHistory(commition.data.transaction);
-        console.log("this is the response", commition.data.transaction);
-        setAdminEarnings(commition.data.totalEarnings);
+        console.log("this is the respXXXXXonse", commition?.totalEarnings);
+        setHistory(commition?.transaction);
+        console.log("this is the response", commition?.transaction);
+        setAdminEarnings(commition?.totalEarnings);
       
 
-        setTotalPages(commition.data.totalpage);
+        setTotalPages(commition?.totalpage);
         setCount(commition.data.count);
-        console.log("this is the responselvnfjvj", commition.data.count);
+        console.log("this is the responselvnfjvj", commition?.count);
       } catch (error) {
         console.error('Error fetching earnings:', error);
       }

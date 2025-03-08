@@ -8,7 +8,7 @@ import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { patientAction } from '../../Services/adminService/adminService';
+import { getPatients, patientAction } from '../../Services/adminService/adminService';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -25,26 +25,13 @@ const limit = 10;
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const token = cookies.get('admintoken');
-        console.log("this is the token", token);
-        if(!token) {
-          navigate('/admin');
-          return;
-        }
-        const response = await axios.get('http://localhost:5000/api/admin/patients', {
-          params:{
-            page:currentPage,
-            limit,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          withCredentials:true,
-        });
-        setPatients(response.data.patientsWithIndex);
-        setTotalPages(response.data.totalpage);
-        setFilteredPatients(response.data.patientsWithIndex);
-        console.log(response.data);
+        const response = await getPatients(currentPage,limit)
+
+
+        setPatients(response?.patientsWithIndex);
+        setTotalPages(response?.totalpage);
+        setFilteredPatients(response?.patientsWithIndex);
+        console.log(response);
       } catch (error) {
         console.log(error);
       }

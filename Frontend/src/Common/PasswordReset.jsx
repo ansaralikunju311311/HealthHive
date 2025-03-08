@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const ResetPassword = () => {
+  const BASE_URL = import.meta.env.VITE_API_URL
   const { register, handleSubmit, formState: { errors }, getValues } = useForm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,8 +33,8 @@ const ResetPassword = () => {
   const onSubmit = async (data) => {
     try {
       const endpointMap = {
-        'user': 'http://localhost:5000/api/user/reset-password',
-        'doctor': 'http://localhost:5000/api/doctor/reset-password',
+        'user': `${BASE_URL}/user/reset-password`,
+        'doctor': `${BASE_URL}/doctor/reset-password`,
       };
 
       const endpoint = endpointMap[userType] || endpointMap.user;

@@ -207,3 +207,21 @@ export const getOtpRemainingTime = async (email) => {
   
 };
 
+export const googleLogin = async (email,uid)=>{
+  
+    const response = await apiuser.post('/user/google-login', { email, uid });
+    return response.data;
+  
+};
+export const profileCompletion = async (data) => {
+  
+    const response = await apiuser.post('/user/profile-completion', data,{
+      withCredentials: true
+    });
+    return response.data;
+  
+};
+export const googleSignup = async (email,uid,name)=>{
+  const response = await apiuser.post('/user/google-signup', { email, uid,name });
+  return response.data;
+};

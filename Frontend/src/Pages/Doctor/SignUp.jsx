@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { doctorSignUp } from '../../Services/doctorService/doctorService';
+import { doctorSignUp, getDepartments } from '../../Services/doctorService/doctorService';
 import cloudinaryUpload from '../../utils/cloudinary';
 
 const SignUp = () => {
@@ -23,9 +23,10 @@ const SignUp = () => {
     useEffect(() => {
         const fetchDepartments = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/doctor/departments');
-                setDepartments(response.data);
-                console.log(response.data);
+    
+                const response = await getDepartments()
+                setDepartments(response);
+                console.log(response);
             } catch (error) {
                 console.error('Error fetching departments:', error);
             }

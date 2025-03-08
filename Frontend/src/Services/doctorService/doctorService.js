@@ -158,4 +158,10 @@ export const getwalletBalance = async(id,page,limit=10)=>{
     return response.data;
  
 }
+export const getDepartments = async()=>{
+  
+    const response = await apidoctor.get('/doctor/departments');
+    return response.data;
+ 
+}
 
