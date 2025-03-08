@@ -15,7 +15,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
-import { adminDash } from '../../Services/apiService';
+import { adminDash } from '../../Services/adminService/adminService';
 
 // Sample data for charts
 const userGrowthData = [

@@ -13,7 +13,7 @@ import {
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { doctorList, handleAction } from '../../Services/apiService';
+import { doctorList, handleAction } from '../../Services/adminService/adminService';
 const Doctor = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

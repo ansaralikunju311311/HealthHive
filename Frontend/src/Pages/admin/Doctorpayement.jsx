@@ -25,8 +25,8 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { getDoctorPayment } from '../../Services/apiService';
-
+// import { getDoctorPayment } from '../../Services/doctorService/doctorService';
+import { getDoctorPayment } from '../../Services/adminService/adminService';
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);

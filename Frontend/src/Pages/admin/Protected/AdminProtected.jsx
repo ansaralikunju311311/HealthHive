@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cookies from 'js-cookie';
-import { verifyAdminToken } from '../../../Services/apiService';
+import { verifyAdminToken } from '../../../Services/adminService/adminService';
 
 const AdminProtected = ({ children }) => {
     const navigate = useNavigate();

@@ -8,7 +8,7 @@ import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { patientAction } from '../../Services/apiService';
+import { patientAction } from '../../Services/adminService/adminService';
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);

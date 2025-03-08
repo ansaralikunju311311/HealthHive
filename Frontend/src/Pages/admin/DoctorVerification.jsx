@@ -20,7 +20,7 @@ import {
 import DetailsModel from '../Doctor/DetailsModel';
 import { toast } from 'react-toastify';
 import DataTable from '../../Components/Common/DataTable';
-import { pendingDoctors } from '../../Services/apiService';
+import { pendingDoctors } from '../../Services/adminService/adminService';
 
 const DoctorVerification = () => {
   const [doctors, setDoctors] = useState([]);

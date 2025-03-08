@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-import { departments, updateDepartment ,addDepartment} from '../../Services/apiService';
+import { departments, updateDepartment ,addDepartment} from '../../Services/adminService/adminService';
 
 const Department = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

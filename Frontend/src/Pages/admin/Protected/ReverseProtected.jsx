@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
-import { verifyAdminToken } from '../../../Services/apiService';
+import { verifyAdminToken } from '../../../Services/adminService/adminService';
 
 const ReverseProtected = ({ children }) => {
     const navigate = useNavigate();
