@@ -36,14 +36,14 @@ const Services = () => {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-4 py-8 sm:py-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {services.map((service, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6">
-              <img src={DocPati} alt={service.title} className="w-full h-48 object-cover mb-4 rounded-md" />
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-600 mb-4">{service.description}</p>
+          <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div className="p-4 sm:p-6">
+              <img src={DocPati} alt={service.title} className="w-full h-40 sm:h-48 object-cover mb-4 rounded-md" />
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">{service.title}</h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-4">{service.description}</p>
               <a href={service.link} className="text-blue-500 hover:text-blue-600 inline-flex items-center">
                 Learn More
                 <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

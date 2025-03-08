@@ -62,7 +62,7 @@ loadDepartments();
   return (
     <>
     
-        <div className="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
            
@@ -74,7 +74,7 @@ loadDepartments();
             <div className="relative">
                 
 
-              <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-6 sm:mt-8 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {(limit ? departments.slice(0, limit) : departments).map((department) => (
                
 
@@ -85,11 +85,11 @@ loadDepartments();
                     <div className={`h-full bg-gradient-to-br ${departmentColors[department._id]} 
                                   rounded-xl shadow-md overflow-hidden transform transition-all duration-300 
                                   group-hover:shadow-2xl group-hover:-translate-y-1`}>
-                      <div className="p-6">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                      <div className="p-4 sm:p-6">
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors">
                           {department.Departmentname}
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-sm sm:text-base text-gray-600">
                           {department.Description}
                         </p>
                       </div>

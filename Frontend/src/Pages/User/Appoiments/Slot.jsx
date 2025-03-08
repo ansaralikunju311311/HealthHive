@@ -114,21 +114,18 @@ const Slot = () => {
                                 day: 'numeric'
                             })}
                         </h3>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-4">
                             {groupedSchedules[date].map((slot, slotIndex) => (
                                 <button   
                                     key={slotIndex}
-                                    // onClick={() => handleSlotSelection(slot, {
-                                    //     appointmentDate: slot.appointmentDate,
-                                    //     slotTime: slot.slotTime,
-                                    // })}
-
                                     onClick={() => {
-                                        console.log("===== clcked", slot);
                                         navigate('/booking', { state: { slot, doctorData } })
                                     }}
                                     disabled={slot.isBooked || isSlotExpired(slot, slot.appointmentDate)}
-                                    className={`p-3 rounded-lg ${slot.isBooked ? 'bg-green-500 cursor-not-allowed' : isSlotExpired(slot, slot.appointmentDate) ? 'bg-red-500 cursor-not-allowed' : 'bg-blue-100'}`}>
+                                    className={`p-2 sm:p-3 text-sm sm:text-base rounded-lg w-full
+                                        ${slot.isBooked ? 'bg-green-500 cursor-not-allowed' : 
+                                        isSlotExpired(slot, slot.appointmentDate) ? 'bg-red-500 cursor-not-allowed' : 
+                                        'bg-blue-100 hover:bg-blue-200'}`}>
                                     {slot.slotTime}
                                 </button>
                             ))}

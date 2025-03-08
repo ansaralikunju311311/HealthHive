@@ -2,11 +2,11 @@ import React from 'react';
 
 const StayConnected = () => {
     return (
-        <div className="py-16 bg-blue-600 text-white">
+        <div className="py-8 md:py-16 bg-blue-600 text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md mx-auto text-center">
-                    <h2 className="text-3xl font-bold mb-8">Stay connected with us</h2>
-                    <form className="space-y-4">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Stay connected with us</h2>
+                    <form className="space-y-3 md:space-y-4">
                         <input
                             type="email"
                             placeholder="Email Address"

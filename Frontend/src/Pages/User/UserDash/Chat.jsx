@@ -130,12 +130,14 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 ml-72 p-6">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
+      <div className="md:block">
+        <Sidebar />
+      </div>
+      <div className="flex-1 p-2 md:p-6 md:ml-72">
         <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
           {/* Chat Header */}
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
             <div className="flex items-center space-x-4">
               <img 
                 src={doctor.profileImage || 'https://via.placeholder.com/40'} 
@@ -161,9 +163,9 @@ const Chat = () => {
           {/* Messages Container */}
           <div 
             ref={chatContainerRef}
-            className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+            className="flex-1 p-3 md:p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
           >
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {chat.map((msg, index) => (
                 <div
                   key={index}
@@ -193,8 +195,8 @@ const Chat = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="px-6 py-4 border-t border-gray-200 bg-white">
-            <div className="flex items-end space-x-4">
+          <div className="px-3 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
+            <div className="flex items-end space-x-2 md:space-x-4">
               <textarea
                 value={message}
                 onChange={(e) => {setMessage(e.target.value);

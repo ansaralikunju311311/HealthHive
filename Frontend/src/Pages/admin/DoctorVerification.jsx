@@ -223,13 +223,13 @@ const limit =10;
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
       <Sidebar activePage="/doctor/verification" />
-      <div className="flex-1 ml-64 p-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Doctor Verification</h1>
-            <div className="relative w-64">
+      <div className="flex-1 lg:ml-64 p-4 lg:p-8">
+        <div className="bg-white rounded-lg shadow-lg p-4 lg:p-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-800">Doctor Verification</h1>
+            <div className="relative w-full lg:w-64">
               <input
                 type="text"
                 placeholder="Search by name or department"
@@ -240,14 +240,16 @@ const limit =10;
               <FaSearch className="absolute left-3 top-3 text-gray-400" />
             </div>
           </div>
-
-          <DataTable 
-            columns={columns}
-            data={filteredDoctors}
-            emptyMessage="No pending doctors found"
-            headerClassName="bg-gray-100"
-            rowClassName="hover:bg-gray-50 transition-colors"
-          />
+          
+          <div className="overflow-x-auto">
+            <DataTable 
+              columns={columns}
+              data={filteredDoctors}
+              emptyMessage="No pending doctors found"
+              headerClassName="bg-gray-100"
+              rowClassName="hover:bg-gray-50 transition-colors"
+            />
+          </div>
 
           {filteredDoctors.length > 0 && (
             <Pagination

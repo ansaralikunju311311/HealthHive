@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { 
@@ -9,6 +9,7 @@ import {
 import { logoutUser } from '../../../Services/userServices/userApiService';
 
 const Sidebar = ({activePage}) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const id = localStorage.getItem('userId');
@@ -42,46 +43,71 @@ const Sidebar = ({activePage}) => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen">
-      <div className="p-6 space-y-4">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold text-gray-800">HealthHive</h1>
-        </div>
-        
-        <div className="space-y-2">
-          {sidebarItems.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => navigate(item.path)}
-              className={`flex items-center space-x-3 rounded-lg py-3 px-4 cursor-pointer transition-all duration-200 ${
-                location.pathname === item.path
-                  ? 'bg-blue-500 text-white shadow-md transform scale-105'
-                  : 'text-gray-700 hover:bg-gray-100 hover:scale-102'
-              }`}
-            >
-              <div className={`${
-                location.pathname === item.path 
-                  ? 'transform scale-110' 
-                  : ''
-              }`}>
-                {item.icon}
+    <>
+      {/* Mobile Menu Button */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 rounded-md bg-white shadow-md"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+          </svg>
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <div className={`${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } md:translate-x-0 transform transition-transform duration-200 ease-in-out w-64 bg-white shadow-xl fixed left-0 top-0 h-screen z-40`}>
+        <div className="p-6 space-y-4">
+          <div className="mb-8">
+            <h1 className="text-xl font-bold text-gray-800">HealthHive</h1>
+          </div>
+          
+          <div className="space-y-2">
+            {sidebarItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                className={`flex items-center space-x-3 rounded-lg py-3 px-4 cursor-pointer transition-all duration-200 ${
+                  location.pathname === item.path
+                    ? 'bg-blue-500 text-white shadow-md transform scale-105'
+                    : 'text-gray-700 hover:bg-gray-100 hover:scale-102'
+                }`}
+              >
+                <div className={`${
+                  location.pathname === item.path 
+                    ? 'transform scale-110' 
+                    : ''
+                }`}>
+                  {item.icon}
+                </div>
+                <span className="font-medium">{item.text}</span>
               </div>
-              <span className="font-medium">{item.text}</span>
-            </div>
-          ))}
-        </div>
-        
-        <div className="pt-6 mt-6 border-t border-gray-200">
-          <button 
-            onClick={handleLogout}
-            className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-all duration-200"
-          >
-            <MdExitToApp className="w-6 h-6" />
-            <span className="font-medium">Logout</span>
-          </button>
+            ))}
+          </div>
+          
+          <div className="pt-6 mt-6 border-t border-gray-200">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-all duration-200"
+            >
+              <MdExitToApp className="w-6 h-6" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+    </>
   );
 };
 

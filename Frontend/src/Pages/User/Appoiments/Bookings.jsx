@@ -35,21 +35,21 @@ const Bookings = () => {
                                 <p className="text-2xl">No doctors available in this department</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6">
                                 {doctors.map((doctor) => (
                                     <div 
                                         key={doctor._id} 
                                         className="bg-white rounded-xl shadow-md overflow-hidden transform transition-all hover:scale-105 hover:shadow-lg"
                                     >
-                                        <div className="p-6">
-                                            <div className="flex items-center mb-4">
+                                        <div className="p-4 sm:p-6">
+                                            <div className="flex flex-col sm:flex-row items-center mb-4">
                                                 <img 
                                                     src={doctor.profileImage} 
                                                     alt={doctor.name} 
-                                                    className="w-20 h-20 rounded-full object-cover mr-4"
+                                                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover mb-2 sm:mb-0 sm:mr-4"
                                                 />
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-gray-800">{doctor.name}</h3>
+                                                <div className="text-center sm:text-left">
+                                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">{doctor.name}</h3>
                                                     <p className="text-sky-600 font-medium">{doctor.specialization}</p>
                                                 </div>
                                             </div>

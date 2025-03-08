@@ -106,7 +106,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col lg:flex-row">
       
       <div className="hidden lg:block lg:w-1/2 relative">
         <img
@@ -149,14 +149,14 @@ const SignUp = () => {
       </div>
 
      
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="max-w-md w-full space-y-6 sm:space-y-8">
           <div className="text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h2>
             <p className="text-gray-600">Join us for better healthcare management</p>
           </div>
 
-          <form className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
+          <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6 bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg" onSubmit={handleSubmit(onSubmit)}>
             
             <div className="text-center mb-6">
               <div className="relative w-32 h-32 mx-auto mb-4">
@@ -197,7 +197,7 @@ const SignUp = () => {
                   type="text"
                   id="name"
                   placeholder="Enter your username"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="appearance-none rounded-xl relative block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 
                   {...register("name", {
                     required: "Name is required",
@@ -220,7 +220,7 @@ const SignUp = () => {
                   type="email"
                   id="email"
                   placeholder="Enter your email"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="appearance-none rounded-xl relative block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 
                   {...register("email", {
                     required: "Email is required",
@@ -237,7 +237,7 @@ const SignUp = () => {
                 <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
                 <select
                   id="bloodGroup"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="appearance-none rounded-xl relative block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   {...register("bloodGroup", {
                     required: "Blood group is required"
                   })}
@@ -267,7 +267,7 @@ const SignUp = () => {
                       message: "Please enter a valid 10-digit phone number"
                     }
                   })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
               </div>
@@ -279,7 +279,7 @@ const SignUp = () => {
                   id="age"
                   readOnly
                   value={calculatedAge}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-md shadow-sm"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 bg-gray-50 rounded-md shadow-sm"
                 />
                 {errors.age && <p className="text-red-500">{errors.age.message}</p>}
               </div>
@@ -290,7 +290,7 @@ const SignUp = () => {
                   id="address"
                   placeholder="Enter your full address"
                   rows="3"
-                  className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="appearance-none rounded-xl relative block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   {...register("address", {
                     required: "Address is required",
                     minLength: {
@@ -309,7 +309,7 @@ const SignUp = () => {
                   {...register("gender", {
                     required: "Gender is required"
                   })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -329,7 +329,7 @@ const SignUp = () => {
                     required: "Date of birth is required",
                     onChange: (e) => calculateAge(e.target.value)
                   })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.dateOfBirth && <p className="text-red-500">{errors.dateOfBirth.message}</p>}
               </div>
@@ -347,7 +347,7 @@ const SignUp = () => {
                       message: "Password should be at least 8 characters"
                     }
                   })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               </div>
@@ -362,7 +362,7 @@ const SignUp = () => {
                     required: "Confirm password is required",
                     validate: (value) => value === getValues("password")
                   })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
               </div>

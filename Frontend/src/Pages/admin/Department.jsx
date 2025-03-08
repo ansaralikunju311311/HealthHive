@@ -167,11 +167,11 @@ const Department = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/departments" />
-      <div className="flex-1 ml-64 p-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex gap-4 items-center">
-              <div className="relative w-96">
+      <div className="flex-1 ml-0 md:ml-64 p-4 md:p-8"> {/* Updated padding and margin */}
+        <div className="bg-white rounded-lg shadow-lg p-4 md:p-6"> {/* Updated padding */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full md:w-auto">
+              <div className="relative w-full md:w-96">
                 <input
                   type="text"
                   placeholder="Search by Department"
@@ -188,7 +188,7 @@ const Department = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full md:w-auto px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="All">All Status</option>
                 <option value="Listed">Listed</option>
@@ -197,7 +197,7 @@ const Department = () => {
             </div>
             <button 
               onClick={handleAddDepartment}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+              className="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />

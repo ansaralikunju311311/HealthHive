@@ -142,20 +142,25 @@ const Wallet = () => {
   ];
 
   return (
-    <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
-      <div style={{ width: '240px', flexShrink: 0 }}>
+    <div className="flex flex-col md:flex-row w-full min-h-screen overflow-hidden">
+      <div className="w-full md:w-60 flex-shrink-0">
         <Sidebar />
       </div>
       <Box sx={{ 
         flexGrow: 1, 
-        p: 2, 
+        p: { xs: 1, sm: 2 }, 
         backgroundColor: '#f8f9fa', 
         height: '100vh',
         overflow: 'auto',
-        width: 'calc(100% - 240px)' 
+        width: { xs: '100%', md: 'calc(100% - 240px)' }
       }}>
         <Container maxWidth="xl" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ mb: 4, color: '#2c3e50', fontWeight: 500 }}>
+          <Typography variant="h4" sx={{ 
+            mb: 4, 
+            color: '#2c3e50', 
+            fontWeight: 500,
+            fontSize: { xs: '1.5rem', sm: '2rem' }
+          }}>
             Admin Commission Wallet
           </Typography>
 
@@ -180,7 +185,7 @@ const Wallet = () => {
           </Card>
 
           {/* Statistics Grid */}
-          <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={4}>
               <Paper sx={{ 
                 p: 3, 
@@ -228,19 +233,29 @@ const Wallet = () => {
             </Grid>
           </Grid>
 
-          <Card sx={{ borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>
+          <Card sx={{ 
+            borderRadius: '10px', 
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+            overflow: 'auto'
+          }}>
+            <CardContent sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+              <Typography variant="h6" sx={{ 
+                mb: 3, 
+                color: '#2c3e50',
+                fontSize: { xs: '1rem', sm: '1.25rem' }
+              }}>
                 Commission Earnings History
               </Typography>
-              <div className="max-h-[60vh] overflow-auto">
-                <DataTable 
-                  columns={columns}
-                  data={history}
-                  emptyMessage="No commission earnings found"
-                  headerClassName="bg-gray-50 sticky top-0 z-10"
-                  rowClassName="hover:bg-gray-50 transition-colors border-b border-gray-200"
-                />
+              <div className="overflow-auto">
+                <div className="min-w-[800px]"> {/* Minimum width to prevent table squishing */}
+                  <DataTable 
+                    columns={columns}
+                    data={history}
+                    emptyMessage="No commission earnings found"
+                    headerClassName="bg-gray-50 sticky top-0 z-10"
+                    rowClassName="hover:bg-gray-50 transition-colors border-b border-gray-200"
+                  />
+                </div>
               </div>
               {history.length > 0 && (
                 <Box sx={{ mt: 3, borderTop: 1, borderColor: 'divider' }}>

@@ -137,7 +137,7 @@ const SignUp = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Floating Shapes */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -147,21 +147,21 @@ const SignUp = () => {
                 </div>
 
                 {/* Header */}
-                <div className="text-center relative z-10 mb-16">
-                    <h1 className="text-5xl font-black text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+                <div className="text-center relative z-10 mb-8 sm:mb-16">
+                    <h1 className="text-3xl sm:text-5xl font-black text-white mb-2 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
                         Join Our Medical Network
                     </h1>
-                    <p className="text-xl text-purple-200">Empowering Healthcare Professionals</p>
+                    <p className="text-lg sm:text-xl text-purple-200">Empowering Healthcare Professionals</p>
                 </div>
 
                 {/* Main Form */}
                 <div className="relative z-10">
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-8">
                         {/* Profile Section */}
-                        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
-                            <div className="flex flex-col md:flex-row items-center gap-8">
+                        <div className="bg-white/10 backdrop-blur-lg rounded-xl sm:rounded-3xl p-4 sm:p-8 shadow-xl sm:shadow-2xl">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
                                 {/* Profile Picture Upload */}
-                                <div className="relative group">
+                                <div className="relative group w-32 sm:w-40">
                                     <div className="w-40 h-40 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-1">
                                         <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
                                             {profilePreview ? (
@@ -186,7 +186,7 @@ const SignUp = () => {
                                 </div>
 
                                 {/* Basic Info */}
-                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="flex-1 grid grid-cols-1 gap-4 sm:gap-6 w-full">
                                     <div>
                                         <label className="block text-sm font-medium text-purple-300 mb-2">Full Name</label>
                                         <input

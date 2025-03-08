@@ -3,15 +3,15 @@ import Bannerdoctor from '../../../assets/Bannerdoctor.png'
 
 const Banner = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-100 to-blue-50 min-h-[500px]">
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex flex-col md:flex-row items-center justify-between">
+    <div className="bg-gradient-to-r from-blue-100 to-blue-50 min-h-[400px] sm:min-h-[500px]">
+      <div className="container mx-auto px-4 py-8 sm:py-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
         
-          <div className="md:w-1/2 mb-8 md:mb-0">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+          <div className="w-full md:w-1/2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-4 sm:mb-6">
               Contact Us
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
               Kindly reach us to get the fastest response and treatment.
             </p>
             

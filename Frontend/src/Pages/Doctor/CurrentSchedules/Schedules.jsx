@@ -180,15 +180,15 @@ const Schedules = () => {
     return (
         <div className="flex min-h-screen bg-gray-50">
             <Sidebar activePage="Schedules" />
-            <div className="ml-64 flex-1 p-8 mt-4">
-                <h1 className="text-2xl font-bold mb-5">Current Schedules</h1>
+            <div className="w-full p-4 md:p-8 md:ml-64">
+                <h1 className="text-xl md:text-2xl font-bold mb-5">Current Schedules</h1>
 
                 <div className="mb-6">
-                    <h2 className="text-xl font-semibold mb-3">Existing Schedules</h2>
+                    <h2 className="text-lg md:text-xl font-semibold mb-3">Existing Schedules</h2>
                     {existingSchedules.length === 0 ? (
                         <p className="text-gray-500">No schedules found</p>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {(() => {
                                 const schedulesByDate = existingSchedules.reduce((acc, schedule) => {
                                     const dateKey = schedule.appointmentDate; 
@@ -257,7 +257,7 @@ const Schedules = () => {
                 </div>
 
                 <button
-                    className="absolute top-5 right-5 z-10 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    className="fixed top-2 right-2 md:top-5 md:right-5 z-10 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm md:text-base"
                     onClick={() => setIsOpen(true)}
                 >
                     Schedule Appointment
@@ -271,8 +271,8 @@ const Schedules = () => {
                 </div>
 
                 {isOpen && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+                        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg w-full max-w-md">
                             <h2 className="text-lg font-semibold mb-4">Select Date & Time</h2>
 
                             <DatePicker

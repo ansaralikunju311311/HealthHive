@@ -108,17 +108,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col lg:flex-row">
     
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="max-w-md w-full space-y-6 sm:space-y-8">
           <div className="text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h2>
             <p className="text-gray-600">Please login to your account</p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 sm:mt-8 space-y-4 sm:space-y-6 bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg">
             <div className="space-y-5">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
@@ -134,7 +134,7 @@ const Login = () => {
                     type="email"
                     id="email"
                     placeholder="Enter your email"
-                    className="appearance-none rounded-xl relative block w-full pl-10 px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none rounded-xl relative block w-full pl-10 px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('email', { required: true })}
                   />
                   {errors.email && <span className="text-red-500">This field is required</span>}
@@ -155,7 +155,7 @@ const Login = () => {
                     type="password"
                     id="password"
                     placeholder="Enter your password"
-                    className="appearance-none rounded-xl relative block w-full pl-10 px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="appearance-none rounded-xl relative block w-full pl-10 px-3 sm:px-4 py-3 sm:py-3.5 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('password', { required: true })}
                   />
                   {errors.password && <span className="text-red-500">This field is required</span>}

@@ -107,24 +107,21 @@ const DoctorPayment = () => {
   ];
 
   return (
-    <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
-      <div style={{ width: '240px', flexShrink: 0 }}>
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
+      <div className="lg:w-64 lg:fixed lg:inset-y-0">
         <Sidebar />
       </div>
-      <Box sx={{ 
-        flexGrow: 1, 
-        p: 2, 
-        backgroundColor: '#f8f9fa', 
-        height: '100vh',
-        overflow: 'auto',
-        width: 'calc(100% - 240px)' 
-      }}>
+      <div className="lg:ml-64 w-full p-4 lg:p-8">
         <Container maxWidth="xl" sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ mb: 4, color: '#2c3e50', fontWeight: 500 }}>
+          <Typography variant="h4" sx={{ 
+            mb: 4, 
+            color: '#2c3e50', 
+            fontWeight: 500,
+            fontSize: { xs: '1.5rem', md: '2rem' }
+          }}>
             Doctor Payments
           </Typography>
 
-          {/* Summary Cards */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} md={4}>
               <Card sx={{ 
@@ -146,7 +143,10 @@ const DoctorPayment = () => {
             </Grid>
           </Grid>
 
-          <Card sx={{ mb: 4 }}>
+          <Card sx={{ 
+            mb: 4,
+            overflowX: 'auto'
+          }}>
             <CardContent>
               <Typography variant="h6" sx={{ mb: 3, color: '#2c3e50' }}>
                 Doctor Payment Details
@@ -168,7 +168,7 @@ const DoctorPayment = () => {
             </CardContent>
           </Card>
         </Container>
-      </Box>
+      </div>
     </div>
   );
 };

@@ -64,15 +64,14 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/admin/dashboard" />
 
-      <div className="flex-1 ml-64"> 
+      <div className="flex-1 ml-0 md:ml-64"> {/* Updated margin */}
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="p-4">
-            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+            <h1 className="text-xl md:text-2xl font-semibold">Admin Dashboard</h1>
           </div>
         </header>
 
-      
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
               <FaUsers className="text-3xl text-blue-500" />
@@ -102,12 +101,10 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-       
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        
-          <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 p-4 md:p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
             <h3 className="text-lg font-semibold mb-4">User Growth</h3>
-            <div className="h-80">
+            <div className="h-60 md:h-80"> {/* Updated height */}
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowthData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -127,10 +124,9 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-         
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
             <h3 className="text-lg font-semibold mb-4">Revenue Growth</h3>
-            <div className="h-80">
+            <div className="h-60 md:h-80"> {/* Updated height */}
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />

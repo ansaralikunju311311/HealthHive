@@ -142,12 +142,12 @@ const Chat = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
-      <div className="flex-1 ml-72 p-6">
+      <div className="flex-1 p-2 md:p-6 w-full md:ml-72">
         <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center space-x-4">
-            <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full" />
+          <div className="px-3 md:px-6 py-3 md:py-4 border-b border-gray-200 flex items-center space-x-2 md:space-x-4">
+            <img src={user.image} alt={user.name} className="w-8 h-8 md:w-12 md:h-12 rounded-full" />
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
+              <h3 className="text-base md:text-lg font-semibold text-gray-800">{user.name}</h3>
               <p className="text-sm">
                 <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
                   isUserOnline ? 'bg-green-500' : 'bg-gray-400'
@@ -157,8 +157,8 @@ const Chat = () => {
             </div>
           </div>
 
-          <div ref={chatContainerRef} className="flex-1 p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <div className="space-y-4">
+          <div ref={chatContainerRef} className="flex-1 p-3 md:p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className="space-y-3 md:space-y-4">
               {chat.map((msg, index) => (
                 <div key={index} className={`flex ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[70%] ${
@@ -183,8 +183,8 @@ const Chat = () => {
             </div>
           </div>
 
-          <div className="px-6 py-4 border-t border-gray-200 bg-white">
-            <div className="flex items-end space-x-4">
+          <div className="px-3 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
+            <div className="flex items-end space-x-2 md:space-x-4">
               <textarea
                 value={message}
                 onChange={(e) => {setMessage(e.target.value);

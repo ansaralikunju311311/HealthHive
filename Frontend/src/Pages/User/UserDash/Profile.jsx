@@ -15,19 +15,21 @@ const Profile = () => {
   }, [userData, navigate]);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <Sidebar activePage="Profile" />
+    <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="md:block">
+        <Sidebar activePage="Profile" />
+      </div>
       
-      <div className="flex-1 overflow-y-auto p-8 ml-64">
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 md:ml-64">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <HomeButton className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg" />
+          <div className="mb-4 md:mb-6">
+            <HomeButton className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg" />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="relative">
-                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-blue-500">
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8 mb-4 md:mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+              <div className="relative w-32 h-32 md:w-40 md:h-40">
+                <div className="w-full h-full rounded-full overflow-hidden border-4 border-blue-500">
                   <img
                     src={userData.image}
                     alt="Profile"
@@ -46,9 +48,9 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Personal Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-2xl shadow-lg p-4 md:p-8">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">Personal Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>

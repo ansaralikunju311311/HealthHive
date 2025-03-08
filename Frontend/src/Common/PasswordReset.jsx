@@ -1,5 +1,4 @@
 import React from 'react';
-// import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import Bannerdoctor from '../assets/Bannerdoctor.png'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -13,7 +12,6 @@ const ResetPassword = () => {
   const email = location.state?.email;
   const userType = location.state?.userType || 'user';
 
-  // Theme configurations for different user types
   const themeConfig = {
     user: {
       background: "bg-gradient-to-br from-blue-50 to-blue-100",
@@ -60,18 +58,17 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme.background} flex`}>
-      
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="max-w-md w-full space-y-8">
+    <div className={`min-h-screen ${theme.background} flex flex-col lg:flex-row`}>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8">
+        <div className="max-w-md w-full space-y-6">
           <div className="text-center">
-            <h2 className={`text-4xl font-bold ${theme.heading} mb-2`}>
+            <h2 className={`text-3xl sm:text-4xl font-bold ${theme.heading} mb-2`}>
               {userType.charAt(0).toUpperCase() + userType.slice(1)} Reset Password
             </h2>
             <p className={`${theme.textColor}`}>Enter your OTP and new password</p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className={`mt-8 space-y-6 bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl`}>
+          <form onSubmit={handleSubmit(onSubmit)} className={`mt-6 sm:mt-8 space-y-4 sm:space-y-6 bg-white/10 backdrop-blur-lg p-4 sm:p-8 rounded-2xl shadow-2xl`}>
             <div className="space-y-5">
               <div>
                 <label htmlFor="otp" className={`block text-sm font-medium ${theme.textColor} mb-1`}>
@@ -128,7 +125,7 @@ const ResetPassword = () => {
           </form>
         </div>
       </div>
-      <div className="hidden lg:block lg:w-1/2">
+      <div className="hidden lg:block lg:w-1/2 h-screen overflow-hidden">
         <img
           className="object-cover w-full h-full"
           src={Bannerdoctor}

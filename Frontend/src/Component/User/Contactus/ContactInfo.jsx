@@ -46,23 +46,23 @@ const ContactInfo = () => {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2">GET IN TOUCH</h2>
-        <h3 className="text-4xl font-bold text-blue-600">Contact</h3>
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2">GET IN TOUCH</h2>
+        <h3 className="text-3xl sm:text-4xl font-bold text-blue-600">Contact</h3>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {contactDetails.map((item, index) => (
           <div 
             key={index} 
-            className={`${item.bgColor} p-6 rounded-lg text-${item.bgColor === 'bg-blue-500' ? 'white' : 'gray-800'}`}
+            className={`${item.bgColor} p-4 sm:p-6 rounded-lg text-${item.bgColor === 'bg-blue-500' ? 'white' : 'gray-800'}`}
           >
-            <div className={`w-12 h-12 rounded-full bg-${item.bgColor === 'bg-blue-500' ? 'white/20' : 'white'} flex items-center justify-center mb-4`}>
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-${item.bgColor === 'bg-blue-500' ? 'white/20' : 'white'} flex items-center justify-center mb-3 sm:mb-4`}>
               {item.icon}
             </div>
-            <h3 className="font-semibold mb-2">{item.title}</h3>
+            <h3 className="text-sm sm:text-base font-semibold mb-2">{item.title}</h3>
             {item.content.map((line, i) => (
-              <p key={i} className="text-sm">{line}</p>
+              <p key={i} className="text-xs sm:text-sm">{line}</p>
             ))}
           </div>
         ))}

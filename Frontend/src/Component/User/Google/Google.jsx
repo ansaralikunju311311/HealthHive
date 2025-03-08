@@ -9,19 +9,21 @@ const Google = ({onClick}) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '12px',
+        gap: '8px',
         cursor: 'pointer',
-        padding: '12px 24px',
+        padding: '10px 20px',
         border: '1px solid #ddd',
         borderRadius: '4px',
         backgroundColor: '#fff',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         transition: 'all 0.3s ease',
-        maxWidth: '250px',
+        maxWidth: '100%',
+        width: '280px',
         margin: '0 auto',
-        ':hover': {
-          backgroundColor: '#f8f9fa',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+        '@media (max-width: 480px)': {
+          padding: '8px 16px',
+          gap: '6px',
+          width: '100%'
         }
       }}
     >   

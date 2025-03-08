@@ -39,14 +39,14 @@ const Login = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-            <div className="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-lg rounded-3xl p-8 shadow-2xl">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 py-6 sm:py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+            <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-white/10 backdrop-blur-lg rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl sm:shadow-2xl">
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+                    <h2 className="text-2xl sm:text-3xl text-center font-extrabold text-white">
                         Doctor Login
                     </h2>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+                <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium text-purple-300 mb-2">
@@ -95,8 +95,8 @@ const Login = () => {
 
                    
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-sm w-full sm:w-auto">
                             <button
                                 type="button"
                                 onClick={() => navigate('/doctor/signup')}
@@ -104,14 +104,14 @@ const Login = () => {
                             >
                                 Don't have an account? Sign up
                             </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/doctor/forgotpassword')}
-                                className="font-medium text-purple-300 hover:text-purple-400 transition-colors ml-9"
-                            >
-                                Forgot password?
-                            </button>
                         </div>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/doctor/forgotpassword')}
+                            className="font-medium text-purple-300 hover:text-purple-400 transition-colors w-full sm:w-auto"
+                        >
+                            Forgot password?
+                        </button>
                     </div>
 
                     <div>

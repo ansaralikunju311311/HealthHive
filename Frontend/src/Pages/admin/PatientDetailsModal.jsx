@@ -3,12 +3,12 @@ import React from 'react';
 const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
   if (!isOpen || !patient) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-2xl p-6 relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg w-full max-w-2xl p-4 lg:p-6 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-   >
+        >
           <svg
             className="h-6 w-6"
             fill="none"
@@ -21,8 +21,8 @@ const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
             <path d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
-        <div className="flex items-center mb-6">
-          <div className="mr-4">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center mb-6 gap-4">
+          <div className="w-full lg:w-auto">
             {patient.image ? (
               <img
                 src={patient.image}
@@ -37,13 +37,13 @@ const PatientDetailsModal = ({ isOpen, onClose, patient }) => {
               </div>
             )}
           </div>
-          <div>
-            <h2 className="text-2xl font-bold">{patient.name}</h2>
+          <div className="w-full lg:w-auto">
+            <h2 className="text-xl lg:text-2xl font-bold">{patient.name}</h2>
             <p className="text-gray-600">Patient ID: {patient.serialNumber}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <div className="mb-4">
               <label className="block text-gray-600 text-sm font-medium mb-1">Email</label>

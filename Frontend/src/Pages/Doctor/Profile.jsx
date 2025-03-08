@@ -7,9 +7,9 @@ const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
     if (!isOpen) return null;
     
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-3xl">
-                <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto">
+                <div className="p-3 sm:p-4 border-b border-gray-100 flex justify-between items-center">
                     <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
                     <button
                         onClick={onClose}
@@ -20,7 +20,7 @@ const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
                         </svg>
                     </button>
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                     <img
                         src={imageUrl}
                         alt={title}
@@ -140,7 +140,7 @@ const Profile = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
             <div className="max-w-4xl mx-auto px-4">
                 <div className="mb-6 flex items-center justify-between">
                     <button
@@ -161,7 +161,7 @@ const Profile = () => {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-lg">
-]                    <div className="flex flex-col items-center bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-t-2xl">
+                    <div className="flex flex-col items-center bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-t-2xl">
                         <div className="relative mb-6">
                             <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white shadow-xl">
                                 <img
@@ -196,7 +196,7 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="p-8 space-y-8">
+                    <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
                         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                             <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +211,7 @@ const Profile = () => {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                                 <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                     <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,7 +260,7 @@ const Profile = () => {
                                 Verification Documents
                             </h4>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                 <DocumentCard
                                     title="Medical License"
                                     imageUrl={doctor.medicalLicense}

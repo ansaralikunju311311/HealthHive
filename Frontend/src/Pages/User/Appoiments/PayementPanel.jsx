@@ -60,9 +60,15 @@ const pulseAnimation = keyframes`
 `;
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  maxWidth: 500,
-  margin: '40px auto',
+  padding: theme.spacing(2),
+  maxWidth: {
+    xs: '95%',
+    sm: 500
+  },
+  margin: {
+    xs: '20px auto',
+    sm: '40px auto'
+  },
   borderRadius: '24px',
   boxShadow: '0 12px 40px rgba(0, 0, 0, 0.12)',
   position: 'relative',
@@ -95,8 +101,18 @@ const GradientText = styled(Typography)`
 
 const InfoRow = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(2),
+  flexDirection: {
+    xs: 'column',
+    sm: 'row'
+  },
+  alignItems: {
+    xs: 'flex-start',
+    sm: 'center'
+  },
+  gap: {
+    xs: theme.spacing(1),
+    sm: theme.spacing(2)
+  },
   marginBottom: theme.spacing(2),
   padding: theme.spacing(2),
   borderRadius: '16px',

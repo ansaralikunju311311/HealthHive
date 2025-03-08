@@ -1,10 +1,10 @@
 const QuickAction = () => {
     return (
         <>
-             <div className="bg-gray-50 py-16">
+             <div className="bg-gray-50 py-8 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {[
               { 
                 title: 'Book Appointment',
@@ -25,10 +25,10 @@ const QuickAction = () => {
               <div 
                 key={index}
                 onClick={action.action}
-                className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
               >
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{action.title}</h3>
-                <p className="text-gray-600">{action.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">{action.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600">{action.description}</p>
               </div>
             ))}
           </div>

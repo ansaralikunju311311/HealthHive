@@ -192,13 +192,13 @@ const limit = 10;
   ];
   const startSerial = (currentPage - 1) * limit + 1;
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <Sidebar activePage="/patients" />
-      <div className="flex-1 ml-64">
-        <div className="p-8">
-          <h1 className="text-2xl font-bold mb-8">Patient Management</h1>
+      <div className="flex-1 md:ml-64 w-full">
+        <div className="p-4 md:p-8">
+          <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-8">Patient Management</h1>
 
-          <div className="mb-6 relative">
+          <div className="mb-4 md:mb-6 relative">
             <input
               type="text"
               placeholder="Search by Patient Name or Serial Number"
@@ -210,16 +210,20 @@ const limit = 10;
           </div>
 
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <DataTable 
-              columns={columns}
-              data={filteredPatients.map((patient, index) => ({
-                ...patient,
-                serialNumber: startSerial + index
-              }))}
-              emptyMessage="No patients found"
-              headerClassName="bg-gray-50"
-              rowClassName="hover:bg-gray-50 transition-colors"
-            />
+            <div className="overflow-x-auto">
+              <div className="min-w-[800px]"> {/* Minimum width to prevent table squishing */}
+                <DataTable 
+                  columns={columns}
+                  data={filteredPatients.map((patient, index) => ({
+                    ...patient,
+                    serialNumber: startSerial + index
+                  }))}
+                  emptyMessage="No patients found"
+                  headerClassName="bg-gray-50"
+                  rowClassName="hover:bg-gray-50 transition-colors"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="mt-6">

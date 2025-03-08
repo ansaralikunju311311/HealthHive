@@ -173,14 +173,13 @@ const limit = 10;
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
       <Sidebar activePage="/doctors" />
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 lg:ml-64 p-4 lg:p-8">
         <div className="bg-white rounded-lg shadow-sm">
-          {/* Header with Search */}
-          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800">Doctors Management</h2>
-            <div className="relative w-64">
+          <div className="p-4 lg:p-6 border-b border-gray-200 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <h2 className="text-xl lg:text-2xl font-semibold text-gray-800">Doctors Management</h2>
+            <div className="relative w-full lg:w-64">
               <input
                 type="text"
                 placeholder="Search by name or specialization"
@@ -192,15 +191,16 @@ const limit = 10;
             </div>
           </div>
 
-          <DataTable 
-            columns={columns}
-            data={filteredDoctors}
-            emptyMessage="No doctors found"
-            headerClassName="bg-gray-50"
-            rowClassName="hover:bg-gray-50 transition-colors"
-          />
-
-         
+          <div className="overflow-x-auto">
+            <DataTable 
+              columns={columns}
+              data={filteredDoctors}
+              emptyMessage="No doctors found"
+              headerClassName="bg-gray-50"
+              rowClassName="hover:bg-gray-50 transition-colors"
+            />
+          </div>
+          
           <Pagination 
             currentPage={currentPage}
             totalPages={totalPages}

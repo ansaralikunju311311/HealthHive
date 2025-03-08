@@ -46,10 +46,10 @@ const ViewDetailsModal = ({ appointment, isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl p-8 max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-start mb-6">
-          <h3 className="text-2xl font-bold text-gray-900">Appointment Details</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 py-6 overflow-y-auto">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl mx-4 my-auto max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-start mb-4 sm:mb-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Appointment Details</h3>
           <button 
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -142,90 +142,88 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
   };
 
   return (
-    <div className="mb-8 animate-fadeIn">
-      <h3 className="text-xl font-semibold text-gray-800 mb-6 border-b pb-3 flex items-center">
-        {Icon && <Icon className="mr-3 text-blue-600" size={24} />}
+    <div className="mb-6 sm:mb-8 animate-fadeIn w-full">
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6 border-b pb-3 flex flex-wrap items-center gap-2">
+        {Icon && <Icon className="text-blue-600" size={20} />}
         <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
           {title}
         </span>
-        <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+        <span className="ml-auto px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
           {appointments.length}
         </span>
       </h3>
-      <div className="grid gap-6">
+
+      <div className="grid gap-4 sm:gap-6">
         {currentAppointments.map((appointment) => (
-          <div 
-            key={appointment._id} 
-            className={`transform transition-all duration-300 hover:scale-[1.02] rounded-xl shadow-sm hover:shadow-xl ${
-              title === 'Today' 
-                ? 'bg-gradient-to-r from-green-50 to-blue-50 border border-green-100' 
-                : title === 'Upcoming'
-                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100'
-                : 'bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-100'
-            }`}
-          >
-            <div className="p-6 flex items-start space-x-6">
-              <div className="flex-shrink-0">
-                {appointment.user.image ? (
-                  <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
-                    <img 
-                      src={appointment.user.image} 
-                      alt={appointment.user.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center ring-4 ring-white shadow-lg">
-                    <FaUserCircle className="text-4xl text-white" />
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex-grow">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-xl font-bold text-gray-900">
-                    {appointment.user.name}
-                  </h4>
-                  <span className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium flex items-center">
-                    <FaClock className="mr-2" />
-                    {appointment.slot}
-                  </span>
-                </div>
-
-                <div className="mt-4 grid grid-cols-3 gap-4">
-                  {[
-                    { icon: FaVenusMars, text: appointment.user.gender },
-                    { icon: FaUserMd, text: `${appointment.user.age} years` },
-                    { icon: FaCalendarAlt, text: new Date(appointment.date).toLocaleDateString() }
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-gray-600">
-                      <item.icon className="text-blue-600" />
-                      <span className="font-medium">{item.text}</span>
+          <div key={appointment._id} className="transform transition-all duration-300 hover:scale-[1.01] rounded-xl shadow-sm hover:shadow-lg">
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                {/* Patient Image/Avatar Section */}
+                <div className="flex justify-center sm:justify-start">
+                  {appointment.user.image ? (
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
+                      <img src={appointment.user.image} alt={appointment.user.name} 
+                           className="w-full h-full object-cover" />
                     </div>
-                  ))}
+                  ) : (
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center ring-4 ring-white shadow-lg">
+                      <FaUserCircle className="text-4xl sm:text-5xl text-white" />
+                    </div>
+                  )}
                 </div>
 
-                <div className="mt-6 flex space-x-4">
-                  <button 
-                    onClick={() => handleChat(appointment.user._id, doctor_Id)}
-                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:-translate-y-0.5"
-                  >
-                    <FaComments className="mr-2" />
-                    Chat with Patient
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setSelectedAppointment(appointment);
-                      setIsModalOpen(true);
-                    }}
-                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 font-semibold rounded-lg shadow-md hover:from-gray-100 hover:to-gray-200 transition-all duration-300 transform hover:-translate-y-0.5 border border-gray-200"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    View Details
-                  </button>
+                {/* Content Section */}
+                <div className="flex-grow space-y-4">
+                  {/* Header */}
+                  <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
+                    <h4 className="text-xl font-bold text-gray-900 text-center sm:text-left">
+                      {appointment.user.name}
+                    </h4>
+                    <span className="px-3 py-1.5 rounded-full bg-blue-600 text-white text-sm font-medium flex items-center whitespace-nowrap">
+                      <FaClock className="mr-1.5" size={14} />
+                      {appointment.slot}
+                    </span>
+                  </div>
+
+                  {/* Patient Info Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      { icon: FaVenusMars, text: appointment.user.gender },
+                      { icon: FaUserMd, text: `${appointment.user.age} years` },
+                      { icon: FaCalendarAlt, text: new Date(appointment.date).toLocaleDateString() }
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-center gap-2 text-gray-600">
+                        <item.icon className="text-blue-600 flex-shrink-0" size={16} />
+                        <span className="font-medium text-sm sm:text-base truncate">
+                          {item.text}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-2">
+                    <button 
+                      onClick={() => handleChat(appointment.user._id, doctor_Id)}
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 transition-all duration-300 text-sm"
+                    >
+                      <FaComments className="mr-2" size={16} />
+                      Chat with Patient
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setSelectedAppointment(appointment);
+                        setIsModalOpen(true);
+                      }}
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-gray-50 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 border border-gray-200 text-sm"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -233,7 +231,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
         ))}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-6 space-x-2">
           <button
@@ -350,24 +348,26 @@ const DrAppoiments = () => {
   const { today, upcoming, past } = groupAppointmentsByCategory(filteredAppointments);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex flex-col sm:flex-row min-h-screen bg-gray-50">
       <Sidebar activePage="Appointments" />
-      <div className="flex-grow p-8">
+      <div className="flex-grow p-4 sm:p-6 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Appointments Dashboard
             </h2>
             
-            <div className="flex items-center space-x-4 bg-white p-2 rounded-lg shadow-sm">
-              <FaCalendarAlt className="text-blue-600" />
-              <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                className="form-input w-48 px-4 py-2 border-none focus:ring-2 focus:ring-blue-500 rounded-md"
-                placeholderText="Filter by date"
-                isClearable
-              />
+            <div className="w-full sm:w-auto bg-white p-3 rounded-lg shadow-sm">
+              <div className="flex items-center gap-3">
+                <FaCalendarAlt className="text-blue-600 flex-shrink-0" />
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                  className="w-full sm:w-48 px-3 py-2 text-sm border-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                  placeholderText="Filter by date"
+                  isClearable
+                />
+              </div>
             </div>
           </div>
 

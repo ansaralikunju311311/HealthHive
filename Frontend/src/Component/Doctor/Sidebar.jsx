@@ -66,13 +66,19 @@ const Sidebar = ({activePage, doctorid}) => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen">
-      <div className="p-6 space-y-4">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold text-gray-800">HealthHive</h1>
+    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen transform transition-transform duration-300 ease-in-out md:translate-x-0 
+      max-md:w-full max-md:z-50 max-md:-translate-x-full">
+      <div className="p-4 sm:p-6 space-y-4">
+        <div className="mb-6 sm:mb-8 flex items-center justify-between">
+          <h1 className="text-lg sm:text-xl font-bold text-gray-800">HealthHive</h1>
+          <button className="md:hidden text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           {sidebarItems.map((item) => (
             <div
               key={item.id}
@@ -95,7 +101,7 @@ const Sidebar = ({activePage, doctorid}) => {
           ))}
         </div>
         
-        <div className="pt-6 mt-6 border-t border-gray-200">
+        <div className="pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-gray-200">
           <button 
             onClick={handleLogout}
             className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-all duration-200"

@@ -175,17 +175,17 @@ const HomePageUser = () => {
       <Hero />
       <QuickAction />
      <Department/>
-      <div className="py-16">
+      <div className="py-8 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Available Doctors</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8 md:mb-12">Available Doctors</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {doctorsData && doctorsData.length > 0 ? doctorsData.map((doctor, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300">
                 <div className="relative">
                   <img 
                     src={doctor.profileImage} 
                     alt={doctor.name} 
-                    className="w-full h-80 object-cover object-center"
+                    className="w-full h-48 sm:h-64 md:h-80 object-cover object-center"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = DoctorOne;
@@ -200,7 +200,7 @@ const HomePageUser = () => {
                   </div>
                 </div>
 
-                <div className="p-6">
+                <div className="p-4 md:p-6">
                   <div className="text-center mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
                     <p className="text-blue-600 font-medium">{doctor.specialization}</p>
@@ -230,7 +230,7 @@ const HomePageUser = () => {
                 </div>
               </div>
             )) : (
-              <div className="col-span-3 text-center text-gray-500">
+              <div className="col-span-full text-center text-gray-500">
                 No doctors available at the moment.
               </div>
             )}
