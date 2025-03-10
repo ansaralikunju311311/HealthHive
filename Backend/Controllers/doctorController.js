@@ -10,6 +10,7 @@ import Department from '../Model/departmentModel.js';
 import appoimentSchedule from '../Model/appoimentSchedule.js';
 import Appointment from '../Model/appoimentModel.js';
 import DoctorWallet from '../Model/DrWallet.js';
+// import Transaction from '../Model/transactionModel.js'
 import User from '../Model/userModel.js';
 import Transaction from "../Model/transactionModel.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
@@ -668,6 +669,35 @@ export const updateDoctorProfile = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Error updating profile' });
+    }
+}
+export const salesData = async(req, res) => {
+    try {
+        const { id } = req.params; 
+        
+        // if (!mongoose.Types.ObjectId.isValid(id)) {
+        //     return res.status(STATUS_CODE.BAD_REQUEST).json({
+        //         message: 'Invalid doctor ID format'
+        //     });
+        // }
+
+        const salesData = await Transaction.find({ doctor: id });
+        
+        // if (!salesData.length) {
+        //     return res.status(STATUS_CODE.OK).json({
+        //         message: 'No sales data found',
+        //         salesData: []
+        //     });
+        // }
+
+        res.status(STATUS_CODE.OK).json({ salesData });
+
+    } catch (error) {
+        console.error('Error in salesData:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+            message: 'Error fetching sales data',
+            error: error.message
+        });
     }
 }
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

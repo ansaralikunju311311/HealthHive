@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
+import { salesData } from '../../../Services/doctorService/doctorService';
 // import { 
 //   MdDashboard, 
 //   MdEventAvailable,
@@ -46,6 +47,8 @@ const DoctorDash = () => {
 
        
         const responses  = await appoimentDetails(doctors._id);
+
+        const fulldata = await salesData(doctors._id);
 
 
 

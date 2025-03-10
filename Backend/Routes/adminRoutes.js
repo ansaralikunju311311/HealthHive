@@ -19,5 +19,6 @@ admin.get("/department", getDepartments)
 admin.put("/department/:id", updateDepartment)
 admin.get("/usercount", userCount);
 admin.get("/admin-earnings",earnings)
-admin.get("/getdoctorpayments",fetchDoctorPayments)
+admin.get("/getdoctorpayments",fetchDoctorPayments);
+// admin.get("/salesdata",salesData)
 export default admin;

@@ -164,4 +164,8 @@ export const getDepartments = async()=>{
     return response.data;
  
 }
+export const salesData = async(id)=>{
+  const response = await apidoctor.get(`/doctor/salesdata/${id}`);
+  return response.data;
+}
 

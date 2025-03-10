@@ -206,3 +206,4 @@ export const adminEarnings = async(currentPage,limit=10)=>{
     return response.data;
  
 }
+// export const salesData
