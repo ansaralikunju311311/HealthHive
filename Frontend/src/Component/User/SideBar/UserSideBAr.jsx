@@ -44,54 +44,55 @@ const Sidebar = ({activePage}) => {
 
   return (
     <>
-      {/* Mobile Menu Button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-md bg-white shadow-md"
+          className="p-2 rounded-lg bg-white shadow-lg hover:bg-gray-50 transition-colors"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
           </svg>
         </button>
       </div>
 
-      {/* Sidebar */}
-      <div className={`${
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0 transform transition-transform duration-200 ease-in-out w-64 bg-white shadow-xl fixed left-0 top-0 h-screen z-40`}>
-        <div className="p-6 space-y-4">
-          <div className="mb-8">
-            <h1 className="text-xl font-bold text-gray-800">HealthHive</h1>
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        
+        <div className="flex flex-col h-full">
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-800">HealthHive</h1>
           </div>
-          
-          <div className="space-y-2">
+
+       
+          <nav className="flex-1 px-4 pb-4 space-y-2">
             {sidebarItems.map((item) => (
               <div
                 key={item.id}
-                onClick={() => navigate(item.path)}
-                className={`flex items-center space-x-3 rounded-lg py-3 px-4 cursor-pointer transition-all duration-200 ${
-                  location.pathname === item.path
-                    ? 'bg-blue-500 text-white shadow-md transform scale-105'
-                    : 'text-gray-700 hover:bg-gray-100 hover:scale-102'
-                }`}
+                onClick={() => {
+                  navigate(item.path);
+                  setIsMobileMenuOpen(false); 
+                }}
+                className={`flex items-center space-x-3 rounded-lg py-3 px-4 cursor-pointer transition-all duration-200 
+                  ${location.pathname === item.path
+                    ? 'bg-blue-500 text-white shadow-md transform scale-102'
+                    : 'text-gray-700 hover:bg-gray-100'
+                  }`}
               >
-                <div className={`${
-                  location.pathname === item.path 
-                    ? 'transform scale-110' 
-                    : ''
+                <div className={`transition-transform duration-200 ${
+                  location.pathname === item.path ? 'transform scale-110' : ''
                 }`}>
                   {item.icon}
                 </div>
                 <span className="font-medium">{item.text}</span>
               </div>
             ))}
-          </div>
-          
-          <div className="pt-6 mt-6 border-t border-gray-200">
+          </nav>
+
+          {/* Logout Button */}
+          <div className="p-4 border-t border-gray-200">
             <button 
               onClick={handleLogout}
-              className="flex items-center space-x-3 w-full text-left text-gray-700 hover:bg-red-50 hover:text-red-600 px-4 py-3 rounded-lg transition-all duration-200"
+              className="flex items-center w-full space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
             >
               <MdExitToApp className="w-6 h-6" />
               <span className="font-medium">Logout</span>
@@ -100,10 +101,10 @@ const Sidebar = ({activePage}) => {
         </div>
       </div>
 
-      {/* Overlay */}
+      {/* Overlay - Improved opacity transition */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity duration-300"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

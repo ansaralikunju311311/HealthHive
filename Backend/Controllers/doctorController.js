@@ -10,7 +10,6 @@ import Department from '../Model/departmentModel.js';
 import appoimentSchedule from '../Model/appoimentSchedule.js';
 import Appointment from '../Model/appoimentModel.js';
 import DoctorWallet from '../Model/DrWallet.js';
-// import Transaction from '../Model/transactionModel.js'
 import User from '../Model/userModel.js';
 import Transaction from "../Model/transactionModel.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
@@ -109,12 +108,9 @@ import Chat from '../Model/chatModel.js';
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
-
  const loginDoctor = async(req,res)=>{
     try {
         const {email,password} = req.body;
-        
-    
         const existingDoctor = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email});
         if(!existingDoctor){
@@ -164,7 +160,6 @@ import Chat from '../Model/chatModel.js';
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
-
  const verifyDoctorToken = async (req, res) => {
     try {
         res.status(STATUS_CODE.OK).json({ doctor: req.doctor });
@@ -220,7 +215,7 @@ const fetchDoctors = async (req, res) => {
         try {
             const { email } = req.body;
 
-            // Find user
+           
             const doctorData = await doctor.findOne({ email });
             const rejectedDoctor = await RejectedDoctor.findOne({ email });
             if (!doctorData) {
@@ -236,7 +231,7 @@ const fetchDoctors = async (req, res) => {
                 return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is blocked. Please contact the admin.' });
             }
             // Generate and send OTP
-            await GenerateAndSendOTP(doctorData, email);
+            await generateAndSendOTP(doctorData, email);
 
             res.status(STATUS_CODE.OK).json({
                 message: "Verification code sent to your email",
@@ -247,19 +242,6 @@ const fetchDoctors = async (req, res) => {
             res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
         }
     }
-
-
-
-
-
-
-
-
-
-
-            
-
-
 
 
 const resetPassword = async (req, res) => {
@@ -674,22 +656,7 @@ export const updateDoctorProfile = async (req, res) => {
 export const salesData = async(req, res) => {
     try {
         const { id } = req.params; 
-        
-        // if (!mongoose.Types.ObjectId.isValid(id)) {
-        //     return res.status(STATUS_CODE.BAD_REQUEST).json({
-        //         message: 'Invalid doctor ID format'
-        //     });
-        // }
-
         const salesData = await Transaction.find({ doctor: id });
-        
-        // if (!salesData.length) {
-        //     return res.status(STATUS_CODE.OK).json({
-        //         message: 'No sales data found',
-        //         salesData: []
-        //     });
-        // }
-
         res.status(STATUS_CODE.OK).json({ salesData });
 
     } catch (error) {
