@@ -50,14 +50,14 @@ const Bookings = () => {
                                                 />
                                                 <div className="text-center sm:text-left">
                                                     <h3 className="text-lg sm:text-xl font-bold text-gray-800">{doctor.name}</h3>
-                                                    <p className="text-sky-600 font-medium">{doctor.specialization}</p>
+                                                    <p className="text-sky-600 font-medium">{doctor.specialization?.Departmentname}</p>
                                                 </div>
                                             </div>
 
                                             <div className="space-y-3 mb-4 text-gray-600">
                                                 <div className="flex items-center">
                                                     <FaStethoscope className="mr-2 text-sky-500" />
-                                                    <span>{doctor.specialization}</span>
+                                                    <span>{doctor.specialization?.Departmentname}</span>
                                                 </div>
                                                 <div className="flex items-center">
                                                     <FaClock className="mr-2 text-sky-500" />

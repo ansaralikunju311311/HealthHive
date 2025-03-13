@@ -96,11 +96,11 @@ const DrWallet = () => {
         component="main" 
         sx={{ 
           flexGrow: 1, 
-          p: { xs: 2, sm: 4 }, // Responsive padding
+          p: { xs: 2, sm: 4 }, 
           bgcolor: '#f8fafc',
           minHeight: '100vh',
-          marginLeft: { xs: 0, md: '256px' }, // Responsive margin
-          width: { xs: '100%', md: 'calc(100% - 256px)' } // Responsive width
+          marginLeft: { xs: 0, md: '256px' }, 
+          width: { xs: '100%', md: 'calc(100% - 256px)' } 
         }}
       >
         <Container maxWidth="lg" sx={{ mt: { xs: 1, sm: 2 }, mb: { xs: 2, sm: 4 } }}>
@@ -108,7 +108,7 @@ const DrWallet = () => {
             variant="h4"
             sx={{
               mb: { xs: 2, sm: 4 },
-              fontSize: { xs: '1.5rem', sm: '2rem' }, // Responsive font size
+              fontSize: { xs: '1.5rem', sm: '2rem' }, 
               fontWeight: 700,
               background: 'linear-gradient(45deg, #1e40af 30%, #3b82f6 90%)',
               backgroundClip: 'text',

@@ -50,7 +50,7 @@ const limit = 10;
   useEffect(() => {
     const result = doctors.filter((doctor) =>
       doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+      doctor.specialization?.Departmentname.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredDoctors(result);
   }, [searchTerm, doctors]);
@@ -137,7 +137,9 @@ const limit = 10;
     },
     {
       header: 'Specialization',
-      accessor: 'specialization'
+      accessor: 'specialization',
+      render: (row) => row.specialization?.Departmentname || 'N/A'
+
     },
     {
       header: 'Details',

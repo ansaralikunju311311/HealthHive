@@ -45,11 +45,21 @@ import Chat from '../Model/chatModel.js';
  const registerDoctor = async(req,res)=>{
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
-       
-        const existingUser = await doctor.findOne({email});
-        const rejectedDoctor = await RejectedDoctor.findOne({email})
-         
+        
+        // Find department by name to get its ID
+        // const department = await Department.findOne({ name: specialization });
+        // if (!department) {
+        //     return res.status(STATUS_CODE.BAD_REQUEST).json({
+        //         message: "Invalid specialization. Department not found."
+        //     });
+        // }
 
+
+
+        const department = await Department.findOne({ Departmentname: specialization });
+        const existingUser = await doctor.findOne({email});
+        const rejectedDoctor = await RejectedDoctor.findOne({email});
+        
         if(rejectedDoctor)
         {
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"this is rejeced user please contact admin"});
@@ -71,7 +81,7 @@ import Chat from '../Model/chatModel.js';
             existingUser.name = name;
             existingUser.password = hashedPassword;
             existingUser.yearsOfExperience = yearsOfExperience;
-            existingUser.specialization = specialization;
+            existingUser.specialization = department._id; // Use department ID instead of name
             existingUser.phone = phone;
             existingUser.profileImage = profileImage;
             existingUser.medicalLicense = medicalLicense;
@@ -90,7 +100,7 @@ import Chat from '../Model/chatModel.js';
                 email,
                 password: hashedPassword,
                 yearsOfExperience,
-                specialization,
+                specialization: department._id, // Use department ID instead of name
                 phone,
                 profileImage,
                 medicalLicense,
@@ -105,6 +115,7 @@ import Chat from '../Model/chatModel.js';
         await user.save();
         res.status(STATUS_CODE.OK).json({message:"User registered successfully",user});
     } catch (error) {
+        console.error('Registration error:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
@@ -319,7 +330,10 @@ const doctorProfile = async (req, res) => {
 
        
 
-        const doctorData = await doctor.findById(doctorId).select('-password');
+        const doctorData = await doctor.findById(doctorId).select('-password').populate({
+            path: 'specialization',
+            select: 'Departmentname'
+        });
         if (!doctorData) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found' });
         }
@@ -388,7 +402,7 @@ export const schedule = async (req, res) => {
 
             await newSchedule.save();
 
-            return res.status(STATUS_CODE.POST).json({ 
+            return res.status(STATUS_CODE.CREATED).json({ 
                 message: 'Schedules created successfully',
                 schedule: newSchedule.appointments.map(appt => ({
                     appointmentDate: appt.appointmentDate,

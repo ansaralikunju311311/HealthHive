@@ -5,7 +5,7 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true,
         set: function(value) {
-            return value.charAt(0).toUpperCase() + value.slice(1);
+            return value.charAt(0).toUpperCase() + value.slice(1); // Capitalizes first letter
         }
     },
     status: {
@@ -16,17 +16,14 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    doctor: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor'  
-    }]
+   
 }, {
     timestamps: true
 });
 
 departmentSchema.index({ Departmentname: 1 }, { 
     unique: true,
-    collation: { locale: 'en', strength: 2 }
+    collation: { locale: 'en', strength: 2 } // Case-insensitive uniqueness
 });
 
 const Department = mongoose.model('Department', departmentSchema);

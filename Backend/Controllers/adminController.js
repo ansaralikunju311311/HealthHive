@@ -10,6 +10,7 @@ import Department from '../Model/departmentModel.js';
 import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 import appointment from '../Model/appoimentModel.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
+import { populate } from 'dotenv';
 
 const cookieOptions = {
     
@@ -75,7 +76,11 @@ export const pendingDoctors = async (req,res)=>
         const page =  +(req.query.page || 1);
         const limit =  +(req.query.limit || 10);
         const skip = (page - 1) * limit;
-        const doctors = await Doctor.find({isActive:false}).skip(skip).limit(limit);
+        const doctors = await Doctor.find({isActive:false}).skip(skip).limit(limit).populate({
+            path:'specialization',
+            select:'Departmentname'
+        });
+        console.log(doctors)
         const totalpage = Math.ceil(await Doctor.countDocuments({isActive:false}) / limit);
         const doctorsWithIndex = doctors.map((doctor, index) => ({
             ...doctor.toObject(),
@@ -166,21 +171,31 @@ export const rejectDoctor = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
     }
 }
-export const doctors = async (req,res)=>
-{
-    const {page,limit} = req.query;
+export const doctors = async (req, res) => {
+    const { page, limit } = req.query;
     try {
-           const page =  +(req.query.page || 1);
-           const limit =  +(req.query.limit || 10);
-           const skip = (page - 1) * limit;
-          const doctors = await Doctor.find({isActive:true}).skip(skip).limit(limit);
-          const totalpage = Math.ceil(await Doctor.countDocuments({isActive:true}) / limit);
-          const doctorsWithIndex = doctors.map((doctor, index) => ({
+        const currentPage = +(req.query.page || 1);
+        const currentLimit = +(req.query.limit || 10);
+        const skip = (currentPage - 1) * currentLimit;
+
+        const doctors = await Doctor.find({ isActive: true })
+            .skip(skip)
+            .limit(currentLimit)
+            .populate({
+                path: 'specialization',
+                select: 'Departmentname'
+            });
+
+        // Log the fetched doctors to verify data
+        console.log("Fetched Doctors:", doctors);
+
+        const totalpage = Math.ceil(await Doctor.countDocuments({ isActive: true }) / currentLimit);
+        const doctorsWithIndex = doctors.map((doctor, index) => ({
             ...doctor.toObject(),
             serialNumber: index + 1
-          }));
-          
-          res.status(STATUS_CODE.OK).json({doctorsWithIndex,totalpage});
+        }));
+
+        res.status(STATUS_CODE.OK).json({ doctorsWithIndex, totalpage });
     } catch (error) {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -372,7 +387,20 @@ export const earnings = async (req, res) => {
 export const fetchDoctorPayments = async (req, res) => {
     console.log("fetchDoctorPayments=====");
     try {
-        const Drtransaction = await Transaction.find().populate('doctor', 'name email specialization profileImage');
+    //     const Drtransaction = await Transaction.find().populate({'doctor', 'name email specialization profileImage',
+    //         populate(
+    //             path:'specialization',
+    //             select:'Departmentname'
+    //         )
+    //  } );
+    const Drtransaction = await Transaction.find().populate({
+        path: 'doctor',
+        select: 'name email specialization profileImage',
+        populate: {
+            path: 'specialization',
+            select: 'Departmentname'
+        }
+    });
         
         const appointmentCounts = await appointment.aggregate([
             {

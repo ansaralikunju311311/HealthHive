@@ -129,8 +129,6 @@ const limit =10;
   };
 
   const navigate = useNavigate();
-
-  // Define columns for DataTable
   const columns = [
     {
       header: 'SL. NO',
@@ -155,7 +153,8 @@ const limit =10;
     },
     {
       header: 'SPECIALIZATION',
-      accessor: 'specialization'
+      accessor: 'specialization',
+      render: (row) => row.specialization?.Departmentname || 'N/A'
     },
     {
       header: 'STATUS',
@@ -202,7 +201,6 @@ const limit =10;
       )
     }
   ];
-
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-100">
       <Sidebar activePage="/doctor/verification" />
@@ -231,7 +229,6 @@ const limit =10;
               rowClassName="hover:bg-gray-50 transition-colors"
             />
           </div>
-
           {filteredDoctors.length > 0 && (
             <Pagination
               currentPage={currentPage}

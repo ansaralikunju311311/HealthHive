@@ -568,7 +568,7 @@ const Appointments = () => {
       accessor: 'doctor.specialization',
       render: (row) => (
         <Chip 
-          label={row.doctor.specialization} 
+          label={row.doctor.specialization.Departmentname} 
           size={isMobile ? 'small' : 'medium'}
           sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}
         />
@@ -710,7 +710,7 @@ const Appointments = () => {
                         Dr. {selectedAppointment.doctor.name}
                       </Typography>
                       <Typography sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                        {selectedAppointment.doctor.specialization}
+                        {selectedAppointment.doctor.specialization?.Departmentname}
                       </Typography>
                     </Box>
                   </Box>
@@ -747,7 +747,7 @@ const Appointments = () => {
                     Department
                   </Typography>
                   <Chip 
-                    label={selectedAppointment.doctor.specialization}
+                    label={selectedAppointment.doctor.specialization?.Departmentname}
                     size="small"
                   />
                 </Grid>

@@ -369,7 +369,10 @@ const verifyToken = async (req, res) => {
 };
 export const getDoctorsData = async (req, res) => {
     try {
-        const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4);
+        const doctors = await Doctor.find({ isActive: true, isBlocked: false }).sort({ _id: -1 }).limit(4).populate({
+            path: 'specialization',
+            select: 'Departmentname'
+        });
 
         res.status(STATUS_CODE.OK).json({ doctors: doctors }); 
     } catch (error) {
@@ -403,16 +406,28 @@ export const logout = async (req, res) => {
 export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
+        console.log("Department Name:", departmentname);
         
-        const doctors = await Doctor.find({ specialization:departmentname, isActive: true, isBlocked: false });
+        
+        const department = await Department.findOne({ Departmentname: departmentname });
+        
+        if (!department) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ 
+                message: "Department not found",
+                doctors: []
+            });
+        }
 
+        const doctors = await Doctor.find({ 
+            specialization: department._id, 
+            isActive: true, 
+            isBlocked: false 
+        }).populate({
+            path: 'specialization',
+            select: 'Departmentname'
+        });
 
-        const doctorsssssss  = await Department.find({Departmentname:departmentname}).populate({
-            path:'doctor',
-            match:{isActive:true},
-            select:'name'
-        })
-        console.log("sdmcndj===",doctorsssssss)
+        console.log("Found doctors:", doctors);
         res.status(STATUS_CODE.OK).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
@@ -511,6 +526,10 @@ export const fetchAppoiments = async(req, res) => {
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization consultFee profileImage',
+            populate:{
+                path:'specialization',
+                select:'Departmentname'
+            }
         }).sort({createdAt:-1}).skip(skip).limit(limit);
         
         const totalPages = Math.ceil(await Appointment.countDocuments({ user: userid })/limit);

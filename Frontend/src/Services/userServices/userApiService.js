@@ -140,10 +140,14 @@ export const getDoctorSlots = async (doctorId, date) => {
 };
 
 export const getAppointments = async (departments) => {
+
+
+  console.log("departments",departments)  
   
-    const response = await apiuser.get(`/user/appointments/${departments}`);  // Changed from '/doctor/appointments'
+    const response = await apiuser.get(`/user/appointments/${departments}`);  
+    console.log(response)
     return response.data;
- 
+  
 };
 
 export const getUserAppointments = async (userId, pageNumber, limit) => {

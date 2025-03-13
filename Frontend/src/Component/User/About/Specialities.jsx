@@ -37,7 +37,7 @@ const Specialities = () => {
                             </div>
                             <div className="p-3 sm:p-4">
                                 <h3 className="text-lg font-semibold mb-2">{doctor.name}</h3>
-                                <p className="text-blue-600 text-sm mb-3">{doctor.specialization}</p>
+                                <p className="text-blue-600 text-sm mb-3">{doctor.specialization?.Departmentname}</p>
                                 <p className="text-gray-500 text-sm">
                                     {doctor.description || 'Experienced healthcare professional dedicated to patient care.'}
                                 </p>

@@ -23,6 +23,7 @@ const Wallet = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [count, setCount] = useState(0);
+  const limit = 10;
   
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -45,7 +46,7 @@ const Wallet = () => {
       
 
         setTotalPages(commition?.totalpage);
-        setCount(commition.data.count);
+        setCount(commition?.count);
         console.log("this is the responselvnfjvj", commition?.count);
       } catch (error) {
         console.error('Error fetching earnings:', error);
@@ -55,26 +56,26 @@ const Wallet = () => {
   }, [currentPage]);
 
  
-  const [adminEarnings] = useState([
-    {
-      id: 1,
-      userId: "USR001",
-      userName: "John Doe",
-      userPayment: 1000,
-      adminCommission: 100,
-      date: '2025-02-18',
-      service: 'Consultation',
-    },
-    {
-      id: 2,
-      userId: "USR002",
-      userName: "Jane Smith",
-      userPayment: 2000,
-      adminCommission: 200,
-      date: '2025-02-17',
-      service: 'Lab Test',
-    },
-  ]);
+  // const [adminEarnings] = useState([
+  //   {
+  //     id: 1,
+  //     userId: "USR001",
+  //     userName: "John Doe",
+  //     userPayment: 1000,
+  //     adminCommission: 100,
+  //     date: '2025-02-18',
+  //     service: 'Consultation',
+  //   },
+  //   {
+  //     id: 2,
+  //     userId: "USR002",
+  //     userName: "Jane Smith",
+  //     userPayment: 2000,
+  //     adminCommission: 200,
+  //     date: '2025-02-17',
+  //     service: 'Lab Test',
+  //   },
+  // ]);
   const columns = [
     {
       header: 'User',

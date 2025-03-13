@@ -25,14 +25,13 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import CustomPagination from '../../Components/Common/Pagination';
 import DataTable from '../../Components/Common/DataTable';
-// import { getDoctorPayment } from '../../Services/doctorService/doctorService';
 import { getDoctorPayment } from '../../Services/adminService/adminService';
 const DoctorPayment = () => {
   const [payments, setPayments] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [limit] = useState(5); // Items per page
+  const [limit] = useState(5); 
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -53,9 +52,6 @@ const DoctorPayment = () => {
   
   console.log("payments",payments);
   console.log("totalAmount",totalAmount);
- 
- 
-
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -77,7 +73,7 @@ const DoctorPayment = () => {
       accessor: 'specialization',
       render: (row) => (
         <Chip 
-          label={row.specialization}
+          label={row.specialization.Departmentname}
           size="small"
           sx={{ bgcolor: '#E3F2FD', color: '#1976D2' }}
         />
@@ -142,7 +138,6 @@ const DoctorPayment = () => {
               </Card>
             </Grid>
           </Grid>
-
           <Card sx={{ 
             mb: 4,
             overflowX: 'auto'
@@ -172,5 +167,4 @@ const DoctorPayment = () => {
     </div>
   );
 };
-
 export default DoctorPayment;

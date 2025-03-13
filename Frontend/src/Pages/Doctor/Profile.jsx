@@ -177,7 +177,7 @@ const Profile = () => {
                         <div className="text-center space-y-3">
                             <div>
                                 <h3 className="text-3xl font-bold text-gray-800">{doctor.name}</h3>
-                                <p className="text-xl text-blue-600 font-semibold mt-1">{doctor.specialization}</p>
+                                <p className="text-xl text-blue-600 font-semibold mt-1">{doctor.specialization?.Departmentname}</p>
                             </div>
                             <div className="flex flex-wrap justify-center gap-4 mt-4">
                                 <div className="bg-blue-50 px-6 py-3 rounded-xl">
@@ -245,13 +245,13 @@ const Profile = () => {
                                     </div>
                                     <div className="bg-gray-50 p-4 rounded-xl">
                                         <p className="text-sm font-medium text-gray-500">Specialization</p>
-                                        <p className="text-gray-800 font-medium mt-1">{doctor.specialization}</p>
+                                        <p className="text-gray-800 font-medium mt-1">{doctor.specialization?.Departmentname}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Documents Section */}
+                     
                         <div className="space-y-6">
                             <h4 className="text-lg font-semibold text-gray-800 flex items-center">
                                 <svg className="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

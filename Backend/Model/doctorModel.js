@@ -19,8 +19,9 @@ const doctorSchema = new mongoose.Schema({
         required: true,
     },
     specialization: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department',
+        required: true
     },
     password: {
         type: String,
@@ -72,5 +73,5 @@ const doctorSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-const doctor = mongoose.model('Doctor', doctorSchema);
-export default doctor;
+const Doctor = mongoose.model('Doctor', doctorSchema);
+export default Doctor;

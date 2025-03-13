@@ -69,7 +69,7 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-xl sm:rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
+      
         <div className="sticky top-0 bg-white px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100 flex justify-between items-center z-10">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Doctor Profile
@@ -85,7 +85,7 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
         </div>
 
         <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
-          {/* Profile Header */}
+         
           <div className="flex flex-col items-center bg-gradient-to-r from-blue-50 to-purple-50 p-4 sm:p-8 rounded-xl sm:rounded-2xl">
             <div className="relative mb-6">
               <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white shadow-xl">
@@ -99,7 +99,7 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
             <div className="text-center space-y-3">
               <div>
                 <h3 className="text-3xl font-bold text-gray-800">{doctor.name}</h3>
-                <p className="text-xl text-blue-600 font-semibold mt-1">{doctor.specialization}</p>
+                <p className="text-xl text-blue-600 font-semibold mt-1">{doctor.specialization?.Departmentname}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
                 <div className="bg-blue-50 px-6 py-3 rounded-xl">
@@ -114,7 +114,6 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
             </div>
           </div>
 
-          {/* About Section */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,7 +159,7 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
                 </div>
                 <div className="bg-gray-50 p-4 rounded-xl">
                   <p className="text-sm font-medium text-gray-500">Specialization</p>
-                  <p className="text-gray-800 font-medium mt-1">{doctor.specialization}</p>
+                  <p className="text-gray-800 font-medium mt-1">{doctor.specialization.Departmentname}</p>
                 </div>
               </div>
             </div>
