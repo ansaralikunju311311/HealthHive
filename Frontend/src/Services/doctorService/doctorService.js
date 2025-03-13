@@ -74,20 +74,16 @@ export const doctorLogin = async(data,withCredentials=true)=>{
 export const logoutDoctor = async () => {
   
     await apidoctor.post('/doctor/logout');
- 
-
 }
 export const userInfo = async (userId) => {
    
     const response = await apidoctor.get(`/doctor/userinfo/${userId}`);
     return response.data;
-  
 }
 export const chatHistory = async (doctorId,userId) => {
   
     const response = await apidoctor.get(`/doctor/chats/${doctorId}/${userId}`);
     return response.data;
- 
 }
 export const schedule = async (doctorId,appointmentData) => {
   console.log("appointmentData",appointmentData)
@@ -96,7 +92,6 @@ export const schedule = async (doctorId,appointmentData) => {
          appointments:appointmentData
        });
        return response.data;
- 
 }
 
 export const exstingSchedules = async(doctorId)=>{
@@ -169,3 +164,7 @@ export const salesData = async(id)=>{
   return response.data;
 }
 
+export const AppoimentsFull = async()=>{
+  const response = await apidoctor.get(`/doctor/appoimentdetails`);
+  return response.data;
+}

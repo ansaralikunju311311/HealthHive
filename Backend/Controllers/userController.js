@@ -377,14 +377,150 @@ export const getDoctorsData = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
+
+// export const getDepartments = async (req, res) => {
+//     try {
+//         const departments = await Department.aggregate([
+//             {
+//                 $match: { status: 'Listed' }
+                
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'doctors',
+//                     localField:'Departmentname',
+//                     foreignField:'specialization',
+//                     as:'doctorlist'
+//                 }
+//             },
+//             {
+//                 $project:{
+//                     _id:0,
+//                     Departmentname:1,
+//                     doctorlist:{
+//                         $map:{
+//                             input:'$doctorlist',
+//                             as:'doctor',
+//                             in:{
+//                                 name:'$$doctor.name'
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         ])
+//         console.log("===",departments)
+//         res.status(STATUS_CODE.OK).json({ departments });
+//     } catch (error) {
+        
+//     }
+// }
+
+
+// export const getDepartments = async (req, res) => {
+//     try {
+//         const departments = await Department.aggregate([
+//             {
+//                 $match: { status: 'Listed' }
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'doctors',
+//                     localField: 'Departmentname',
+//                     foreignField: 'specialization',
+//                     as: 'doctorlist'
+//                 }
+//             },
+//             {
+//                 $project: {
+//                     _id: 0,
+//                     Departmentname: 1,
+//                     doctorlist: {
+//                         $map: {
+//                             input: '$doctorlist',
+//                             as: 'doctor',
+//                             in: {
+//                                 name: '$$doctor.name'
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         ]);
+//         console.log("===", JSON.stringify(departments, null, 2));
+//         res.status(STATUS_CODE.OK).json({ departments });
+//     } catch (error) {
+//         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+//     }
+// };
+
+
+// export const getDepartments = async (req, res) => {
+//     try {
+//         // const departments = await Department.find({status:'Listed'});
+
+
+
+//         const departments = await Department.aggregate([
+//             {
+//                 $match:{status:'Listed'}
+//             },
+//             {
+//                 $lookup:{
+//                     from:'doctors',
+//                     localField:'doctor',
+//                     foreignField:'_id',
+//                     as:'doctorlist'
+
+//                 }
+//             }
+//         ])
+//         console.log(departments)
+//         res.status(STATUS_CODE.OK).json(departments);
+//     } catch (error) {
+//         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+//     }
+// }
+
+
 export const getDepartments = async (req, res) => {
-    try {
-        const departments = await Department.find({status:'Listed'});
-        res.status(STATUS_CODE.OK).json(departments);
-    } catch (error) {
+    try { 
+        const departments = await Appointment.find({status:'Listed'});
+        res.status(STATUS_CODE.CREATED).json(departments)
+    }
+    catch(error)
+    {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
+
 }
+
+
+
+
+
+
+// export const getDepartments = async (req, res) => {
+//     try {
+//         const dept = await Department.aggregate([
+//             {
+//                 $match: { status: 'Listed' }, // Ensure we only get listed departments
+//             },
+//             {
+//                 $lookup: {
+//                     from: 'doctors',
+//                     localField: 'doctor',
+//                     foreignField: '_id',
+//                     as: 'doctorlist'
+//                 }
+//             }
+//         ]);
+//         console.log(dept);
+//         res.status(STATUS_CODE.OK).json(dept); // Return the aggregated data
+//     } catch (error) {
+//         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+//     }
+// }
 export const logout = async (req, res) => {
     try {
         req.user = null;

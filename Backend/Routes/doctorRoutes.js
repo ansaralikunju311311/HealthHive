@@ -4,6 +4,7 @@ import { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassw
     chatDetails,
     updateDoctorProfile,
     salesData
+    ,data
 } from '../Controllers/doctorController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
 
@@ -29,5 +30,5 @@ doctor.put('/profile/:id',updateDoctorProfile)
 doctor.get('/salesdata/:id',salesData)
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 
-
+doctor.get('/appoimentdetails',data)
 export default doctor;

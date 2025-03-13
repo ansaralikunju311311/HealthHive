@@ -141,14 +141,14 @@ export const getDoctorSlots = async (doctorId, date) => {
 
 export const getAppointments = async (departments) => {
   
-    const response = await apiuser.get(`/user/appointments/${departments}`);  // Changed from '/doctor/appointments'
+    const response = await apiuser.get(`/user/appointments/${departments}`);  
     return response.data;
  
 };
 
 export const getUserAppointments = async (userId, pageNumber, limit) => {
   
-    const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { page:pageNumber, limit } });  // Changed from '/doctor/appointments/:userId'
+    const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { page:pageNumber, limit } });  
     console.log("debugiing ========",response.data);
     return response.data;
   

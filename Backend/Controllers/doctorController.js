@@ -674,22 +674,7 @@ export const updateDoctorProfile = async (req, res) => {
 export const salesData = async(req, res) => {
     try {
         const { id } = req.params; 
-        
-        // if (!mongoose.Types.ObjectId.isValid(id)) {
-        //     return res.status(STATUS_CODE.BAD_REQUEST).json({
-        //         message: 'Invalid doctor ID format'
-        //     });
-        // }
-
         const salesData = await Transaction.find({ doctor: id });
-        
-        // if (!salesData.length) {
-        //     return res.status(STATUS_CODE.OK).json({
-        //         message: 'No sales data found',
-        //         salesData: []
-        //     });
-        // }
-
         res.status(STATUS_CODE.OK).json({ salesData });
 
     } catch (error) {
@@ -700,4 +685,54 @@ export const salesData = async(req, res) => {
         });
     }
 }
+export const data = async(req,res)=>
+{
+    try {
+        const appoiments = await Appointment.aggregate([
+            {
+             $group:{
+                _id:'$date',
+                user:{$push:'$user'},
+                timeSlots:{$push:'$time'}
+
+             }
+            },
+            {
+                $lookup:{
+                    from:'users',
+                    localField:'user',
+                    foreignField:'_id',
+                    as:'user'
+                }
+            },
+           
+            {
+                $project:{
+                    _id:0,
+                    date:'$_id',
+                    
+                    user:'$user.name',
+                    user:'$user.email',
+                    timeSlots:1
+
+                }
+            }
+           
+            
+        ])
+        
+
+        console.log("======appoiments",appoiments)
+        res.status(STATUS_CODE.OK).json(appoiments)
+    } catch (error) {   
+        console.log(error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+}
+
+
+
+
+
+
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

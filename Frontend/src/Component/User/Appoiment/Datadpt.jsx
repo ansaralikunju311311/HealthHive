@@ -38,6 +38,7 @@ const Datadpt = ({ limit =null}) => {
 const loadDepartments = async () => {
   try {
     const departments = await getDepartments();
+    
     setDepartments(departments);
   } catch (error) {
     console.error('Error loading departments:', error);

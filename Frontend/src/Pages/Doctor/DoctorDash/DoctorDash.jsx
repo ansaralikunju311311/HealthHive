@@ -26,7 +26,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
-import { appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
+import { appoimentDetails, verifyDoctorToken ,AppoimentsFull} from '../../../Services/doctorService/doctorService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -48,9 +48,9 @@ const DoctorDash = () => {
        
         const responses  = await appoimentDetails(doctors._id);
 
-        const fulldata = await salesData(doctors._id);
+        // const fulldata = await salesData(doctors._id);
 
-
+           const fulldata = await AppoimentsFull();
 
         setAppoiment(responses);
         localStorage.setItem('doctorId', JSON.stringify(doctors));
@@ -78,6 +78,8 @@ const DoctorDash = () => {
   }, [navigate]);
 
  
+
+
 
 
   const profileClick = (id) => {
