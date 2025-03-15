@@ -170,20 +170,21 @@ const DoctorDash = () => {
               <h3 className="text-lg font-semibold mb-4">Appointment Trends</h3>
               <div className="h-60 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={appointmentData}>
+                  <BarChart data={appointmentData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line 
-                      type="monotone" 
+                    <Bar
+                      // type="monotone" 
                       dataKey="appointments" 
-                      stroke="#4f46e5" 
-                      strokeWidth={2}
-                      dot={{ fill: '#4f46e5' }}
+                      // stroke="#4f46e5" 
+                      fill='#052852'
+                      // strokeWidth={2}
+                      // dot={{ fill: '#4f46e5' }}
                     />
-                  </LineChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
