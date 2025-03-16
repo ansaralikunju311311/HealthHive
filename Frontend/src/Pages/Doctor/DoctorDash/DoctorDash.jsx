@@ -194,11 +194,10 @@ const DoctorDash = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <h3 className="text-lg font-semibold mb-4">Appointment Trends</h3>
+            <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">Appointment Trends</h2>
-                <select 
+                <select
                   className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handlefilter}
                   value={filter === 'today' ? '1' : filter === 'weekly' ? '2' : filter === 'monthly' ? '3' : '4'}
@@ -285,9 +284,9 @@ const DoctorDash = () => {
               )}
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+            <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold">Earnings Overview</h3>
+                <h2 className="text-xl font-semibold text-gray-800">Earnings Overview</h2>
                 <select 
                   className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => setRevenueFilter(e.target.value)}
@@ -299,7 +298,7 @@ const DoctorDash = () => {
                   <option value="yearly">Yearly</option>
                 </select>
               </div>
-              <div className="h-60 md:h-80">
+              <div className="w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   {revenueFilter === 'today' ? (
                     <LineChart data={revenueData?.labels.map((label, index) => ({
@@ -356,7 +355,7 @@ const DoctorDash = () => {
                           border: '1px solid #e0e0e0',
                           borderRadius: '8px'
                         }}
-                        formatter={(value) => [`₹${value}`, 'Earnings']}
+                        formatter={(value) => [`₹${value * 0.9}`, 'Earnings']}
                       />
                       <Legend />
                       <Bar 
