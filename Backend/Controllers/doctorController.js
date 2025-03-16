@@ -669,10 +669,111 @@ export const updateDoctorProfile = async (req, res) => {
 }
 export const salesData = async(req, res) => {
     try {
-        const { id } = req.params; 
-        const salesData = await Transaction.find({ doctor: id });
-        res.status(STATUS_CODE.OK).json({ salesData });
+        const { id } = req.params;
+        const { filter } = req.query;
 
+        const now = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+        let groupByFormat;
+
+        switch (filter) {
+            case 'today':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                groupByFormat = '%H';
+                break;
+            case 'weekly':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 5);
+                startDate.setHours(0, 0, 0, 0);
+                endDate = new Date(now);
+                endDate.setHours(23, 59, 59, 999);
+                groupByFormat = '%Y-%m-%d';
+                break;
+            case 'monthly':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+                groupByFormat = '%Y-%m-%d';
+                break;
+            case 'yearly':
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%Y-%m';
+                break;
+            default:
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%Y-%m';
+        }
+
+        const pipeline = [
+            {
+                $match: {
+                    doctor: new mongoose.Types.ObjectId(id),
+                    createdAt: { $gte: startDate, $lte: endDate }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' }
+                    },
+                    earnings: { $sum: '$amount' }
+                }
+            },
+            {
+                $sort: { '_id': 1 }
+            }
+        ];
+
+        const salesData = await Transaction.aggregate(pipeline);
+
+        // Format response similar to graph data
+        let formattedData = {
+            labels: [],
+            data: [],
+            filter: filter || 'yearly',
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        if (filter === 'today') {
+            for (let hour = 0; hour < 24; hour++) {
+                const hourStr = hour.toString().padStart(2, '0');
+                const found = salesData.find(item => item._id === hourStr);
+                formattedData.labels.push(hourStr + ':00');
+                formattedData.data.push(found ? found.earnings : 0);
+            }
+        } else if (filter === 'weekly') {
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const found = salesData.find(item => item._id === dateStr);
+                formattedData.labels.push(dateStr);
+                formattedData.data.push(found ? found.earnings : 0);
+            }
+        } else if (filter === 'monthly') {
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(now.getFullYear(), now.getMonth(), day);
+                const dateStr = date.toISOString().split('T')[0];
+                const found = salesData.find(item => item._id === dateStr);
+                formattedData.labels.push(dateStr);
+                formattedData.data.push(found ? found.earnings : 0);
+            }
+        } else {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            for (let month = 0; month < 12; month++) {
+                const monthStr = `${now.getFullYear()}-${(month + 1).toString().padStart(2, '0')}`;
+                const found = salesData.find(item => item._id === monthStr);
+                formattedData.labels.push(months[month]);
+                formattedData.data.push(found ? found.earnings : 0);
+            }
+        }
+
+        res.status(STATUS_CODE.OK).json(formattedData);
     } catch (error) {
         console.error('Error in salesData:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
@@ -680,7 +781,7 @@ export const salesData = async(req, res) => {
             error: error.message
         });
     }
-}
+};
 
 export const graphDetails = async (req, res) => {
     try {
@@ -799,22 +900,6 @@ export const graphDetails = async (req, res) => {
                 formattedData.data.push(found ? found.count : 0);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
         console.log('formatted data', formattedData);
 
         res.status(STATUS_CODE.OK).json(formattedData);

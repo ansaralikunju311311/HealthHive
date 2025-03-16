@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 import cookie from 'js-cookie'
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -164,8 +163,8 @@ export const getDepartments = async()=>{
     return response.data;
  
 }
-export const salesData = async(id)=>{
-  const response = await apidoctor.get(`/doctor/salesdata/${id}`);
+export const salesData = async(id, filter = 'yearly') => {
+  const response = await apidoctor.get(`/doctor/salesdata/${id}?filter=${filter}`);
   return response.data;
 }
 
@@ -174,4 +173,3 @@ export const graphDetails = async (doctorId, filter) => {
   console.log("graphdata",responses.data);
   return responses.data;
 };
-

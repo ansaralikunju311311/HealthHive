@@ -29,6 +29,8 @@ const DoctorDash = () => {
   const [graph, setGraph] = useState(null);
   const [appoiment, setAppoiment] = useState(null);
   const [filter, setFilter] = useState('today');
+  const [revenueData, setRevenueData] = useState(null);
+  const [revenueFilter, setRevenueFilter] = useState('yearly');
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -88,6 +90,19 @@ const DoctorDash = () => {
     };
     fetchAppoiment();
   }, [filter, doctor]);
+
+  useEffect(() => {
+    if (!doctor?._id) return;
+    const fetchRevenueData = async () => {
+      try {
+        const response = await salesData(doctor._id, revenueFilter);
+        setRevenueData(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchRevenueData();
+  }, [revenueFilter, doctor]);
  
 
   const handlefilter = (e) => {
@@ -271,28 +286,87 @@ const DoctorDash = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-              <h3 className="text-lg font-semibold mb-4">Earnings Overview</h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold">Earnings Overview</h3>
+                <select 
+                  className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => setRevenueFilter(e.target.value)}
+                  value={revenueFilter}
+                >
+                  <option value="today">Today</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
               <div className="h-60 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={[
-                    { month: 'Jan', earnings: 3000 },
-                    { month: 'Feb', earnings: 4000 },
-                    { month: 'Mar', earnings: 5000 },
-                    { month: 'Apr', earnings: 3600 },
-                    { month: 'May', earnings: 4400 },
-                    { month: 'Jun', earnings: 6000 },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar 
-                      dataKey="earnings" 
-                      fill="#059669"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
+                  {revenueFilter === 'today' ? (
+                    <LineChart data={revenueData?.labels.map((label, index) => ({
+                      time: label,
+                      earnings: revenueData.data[index]
+                    })) || []}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="time" 
+                        tick={{ fill: '#666' }}
+                        interval={2}
+                      />
+                      <YAxis tick={{ fill: '#666' }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: '#fff',
+                          border: '1px solid #e0e0e0',
+                          borderRadius: '8px'
+                        }}
+                        formatter={(value) => [`₹${value}`, 'Earnings']}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="earnings" 
+                        stroke="#059669" 
+                        strokeWidth={2}
+                        dot={{ fill: '#059669', r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="Earnings"
+                      />
+                    </LineChart>
+                  ) : (
+                    <BarChart data={revenueData?.labels.map((label, index) => ({
+                      period: label,
+                      earnings: revenueData.data[index]
+                    })) || []}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="period" 
+                        tick={{ fill: '#666' }}
+                        interval={revenueFilter === 'monthly' ? 2 : 0}
+                        angle={revenueFilter === 'monthly' ? -45 : 0}
+                        textAnchor={revenueFilter === 'monthly' ? 'end' : 'middle'}
+                        height={revenueFilter === 'monthly' ? 60 : 30}
+                      />
+                      <YAxis 
+                        tick={{ fill: '#666' }}
+                        tickFormatter={(value) => `₹${value}`}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: '#fff',
+                          border: '1px solid #e0e0e0',
+                          borderRadius: '8px'
+                        }}
+                        formatter={(value) => [`₹${value}`, 'Earnings']}
+                      />
+                      <Legend />
+                      <Bar 
+                        dataKey="earnings" 
+                        fill="#059669"
+                        radius={[4, 4, 0, 0]}
+                        name="Earnings"
+                      />
+                    </BarChart>
+                  )}
                 </ResponsiveContainer>
               </div>
             </div>
