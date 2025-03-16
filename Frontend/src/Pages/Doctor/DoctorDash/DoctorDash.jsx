@@ -4,14 +4,6 @@ import axios from 'axios';
 import cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { salesData } from '../../../Services/doctorService/doctorService';
-// import { 
-//   MdDashboard, 
-//   MdEventAvailable,
-//   MdSchedule,
-//   MdChat,
-//   MdAccountBalanceWallet,
-//   MdExitToApp 
-// } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Sidebar from '../../../Component/Doctor/Sidebar';
 import { 
@@ -26,7 +18,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
-import { appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
+import { appoimentDetails, verifyDoctorToken, graphDetails } from '../../../Services/doctorService/doctorService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -34,7 +26,9 @@ const DoctorDash = () => {
   const { isBlocked } = useSelector((state) => state.doctor);
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [graph, setGraph] = useState(null);
   const [appoiment, setAppoiment] = useState(null);
+  const [filter, setFilter] = useState('today');
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -77,8 +71,44 @@ const DoctorDash = () => {
     verifyToken();
   }, [navigate]);
 
+
+
+  useEffect(() => {
+    if (!doctor?._id) return;
+    const fetchAppoiment = async () => {
+      console.log("doctor");
+      try {
+        console.log("doctorddd");
+        const responses = await graphDetails(doctor._id, filter);
+        console.log("graphdataxx", responses);
+        setGraph(responses);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAppoiment();
+  }, [filter, doctor]);
  
 
+  const handlefilter = (e) => {
+    const selectedFilter = e.target.value;
+    switch(selectedFilter) {
+      case '1':
+        setFilter('today');
+        break;
+      case '2':
+        setFilter('weekly');
+        break;
+      case '3':
+        setFilter('monthly');
+        break;
+      case '4':
+        setFilter('yearly');
+        break;
+      default:
+        setFilter('today');
+    }
+  };
 
   const profileClick = (id) => {
     console.log(id);
@@ -90,23 +120,6 @@ const DoctorDash = () => {
       <div className="text-xl">Loading...</div>
     </div>;
   }
-  const appointmentData = [
-    { month: 'Jan', appointments: 15 },
-    { month: 'Feb', appointments: 20 },
-    { month: 'Mar', appointments: 25 },
-    { month: 'Apr', appointments: 18 },
-    { month: 'May', appointments: 22 },
-    { month: 'Jun', appointments: 30 },
-  ];
-
-  const earningsData = [
-    { month: 'Jan', earnings: 3000 },
-    { month: 'Feb', earnings: 4000 },
-    { month: 'Mar', earnings: 5000 },
-    { month: 'Apr', earnings: 3600 },
-    { month: 'May', earnings: 4400 },
-    { month: 'Jun', earnings: 6000 },
-  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -126,7 +139,7 @@ const DoctorDash = () => {
               )}
             </div>
           </div>
-
+         
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
             <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
               <div className="bg-blue-100 p-3 rounded-lg">
@@ -160,7 +173,7 @@ const DoctorDash = () => {
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Payment Due</p>
-                <p className="text-2xl font-bold text-gray-800">₹{appoiment.totalAppointments * appoiment.fee.consultFee - (appoiment.totalAppointments * appoiment.fee.consultFee)*0.1}</p>
+                <p className="text-2xl font-bold text-gray-800">₹{appoiment?.totalAppointments * appoiment?.fee?.consultFee - (appoiment?.totalAppointments * appoiment?.fee?.consultFee)*0.1}</p>
               </div>
             </div>
           </div>
@@ -168,32 +181,107 @@ const DoctorDash = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
               <h3 className="text-lg font-semibold mb-4">Appointment Trends</h3>
-              <div className="h-60 md:h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={appointmentData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      // type="monotone" 
-                      dataKey="appointments" 
-                      // stroke="#4f46e5" 
-                      fill='#052852'
-                      // strokeWidth={2}
-                      // dot={{ fill: '#4f46e5' }}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">Appointment Trends</h2>
+                <select 
+                  className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handlefilter}
+                  value={filter === 'today' ? '1' : filter === 'weekly' ? '2' : filter === 'monthly' ? '3' : '4'}
+                >
+                  <option value="1">Today</option>
+                  <option value="2">Weekly</option>
+                  <option value="3">Monthly</option>
+                  <option value="4">Yearly</option>
+                </select>
               </div>
+              {graph && (
+                <div className="w-full h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    {filter === 'today' ? (
+                      // Line chart for hourly data
+                      <LineChart data={graph.labels.map((label, index) => ({
+                        time: label,
+                        appointments: graph.data[index]
+                      }))}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="time" 
+                          tick={{ fill: '#666' }}
+                          interval={2}
+                        />
+                        <YAxis tick={{ fill: '#666' }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#fff',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend />
+                        <Line 
+                          type="monotone" 
+                          dataKey="appointments" 
+                          stroke="#3b82f6" 
+                          strokeWidth={2}
+                          dot={{ fill: '#3b82f6', r: 4 }}
+                          activeDot={{ r: 6 }}
+                          name="Appointments"
+                        />
+                      </LineChart>
+                    ) : (
+                      // Bar chart for weekly, monthly, and yearly data
+                      <BarChart data={graph.labels.map((label, index) => ({
+                        period: label,
+                        appointments: graph.data[index]
+                      }))}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis 
+                          dataKey="period" 
+                          tick={{ fill: '#666' }}
+                          interval={filter === 'monthly' ? 2 : 0}
+                          angle={filter === 'monthly' ? -45 : 0}
+                          textAnchor={filter === 'monthly' ? 'end' : 'middle'}
+                          height={filter === 'monthly' ? 60 : 30}
+                        />
+                        <YAxis tick={{ fill: '#666' }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#fff',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend />
+                        <Bar 
+                          dataKey="appointments" 
+                          fill="#3b82f6"
+                          radius={[4, 4, 0, 0]}
+                          name="Appointments"
+                        />
+                      </BarChart>
+                    )}
+                  </ResponsiveContainer>
+                </div>
+              )}
+              {!graph && (
+                <div className="flex justify-center items-center h-[400px]">
+                  <div className="text-gray-500">Loading graph data...</div>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
               <h3 className="text-lg font-semibold mb-4">Earnings Overview</h3>
               <div className="h-60 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={earningsData}>
+                  <BarChart data={[
+                    { month: 'Jan', earnings: 3000 },
+                    { month: 'Feb', earnings: 4000 },
+                    { month: 'Mar', earnings: 5000 },
+                    { month: 'Apr', earnings: 3600 },
+                    { month: 'May', earnings: 4400 },
+                    { month: 'Jun', earnings: 6000 },
+                  ]}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />

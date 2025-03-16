@@ -3,7 +3,8 @@ import { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassw
     userDetails,
     chatDetails,
     updateDoctorProfile,
-    salesData
+    salesData,
+    graphDetails
 } from '../Controllers/doctorController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
 
@@ -28,6 +29,6 @@ doctor.get('/Chats/:doctorId/:userId',chatDetails)
 doctor.put('/profile/:id',updateDoctorProfile)
 doctor.get('/salesdata/:id',salesData)
 doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
-
+doctor.get('/graphdetails/:doctorId/:filter', graphDetails);
 
 export default doctor;

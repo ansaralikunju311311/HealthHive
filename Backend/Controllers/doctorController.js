@@ -14,10 +14,10 @@ import User from '../Model/userModel.js';
 import Transaction from "../Model/transactionModel.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
 import Chat from '../Model/chatModel.js';    
- import cookies from 'js-cookie';
+import cookies from 'js-cookie';
+import AppointmentSchedule from '../Model/appoimentSchedule.js';
 
-
- const cookieOptions = {
+const cookieOptions = {
      
     httpOnly: false,
     secure: true,
@@ -457,7 +457,7 @@ export const schedule = async (req, res) => {
         });
     }
 };
-import AppointmentSchedule from '../Model/appoimentSchedule.js';
+
 
 export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
@@ -681,4 +681,150 @@ export const salesData = async(req, res) => {
         });
     }
 }
+
+export const graphDetails = async (req, res) => {
+    try {
+        const { doctorId, filter } = req.params;
+
+        if (!doctorId) {
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Doctor ID is required' });
+        }
+
+        if (!filter) {
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Filter is required' });
+        }
+
+        // Validate doctorId format
+        if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid doctor ID format' });
+        }
+
+        const now = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+        let groupByFormat;
+
+        switch (filter) {
+            case 'today':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                groupByFormat = '%H'; // Group by hour
+                break;
+            case 'weekly':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 5); // Last 7 days including today
+                startDate.setHours(0, 0, 0, 0);
+                endDate = new Date(now);
+                endDate.setHours(23, 59, 59, 999);
+                groupByFormat = '%Y-%m-%d'; // Group by day
+                break;
+            case 'monthly':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+                groupByFormat = '%Y-%m-%d'; // Group by day
+                break;
+            case 'yearly':
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%Y-%m'; // Group by month
+                break;
+            default:
+                return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid filter type. Must be one of: today, weekly, monthly, yearly' });
+        }
+
+        const pipeline = [
+            {
+                $match: {
+                    doctor: new mongoose.Types.ObjectId(doctorId),
+                    createdAt: { $gte: startDate, $lte: endDate }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { '_id': 1 }
+            }
+        ];
+
+        const graphData = await Appointment.aggregate(pipeline);
+
+        // Format the response based on filter type
+        let formattedData = {
+            labels: [],
+            data: [],
+            filter: filter,
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        if (filter === 'today') {
+            for (let hour = 0; hour < 24; hour++) {
+                const hourStr = hour.toString().padStart(2, '0');
+                const found = graphData.find(item => item._id === hourStr);
+                formattedData.labels.push(hourStr + ':00');
+                formattedData.data.push(found ? found.count : 0);
+            }
+        } else if (filter === 'weekly') {
+           
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const found = graphData.find(item => item._id === dateStr);
+                formattedData.labels.push(dateStr);
+                formattedData.data.push(found ? found.count : 0);
+            }
+        } else if (filter === 'monthly') {
+           
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(now.getFullYear(), now.getMonth(), day);
+                const dateStr = date.toISOString().split('T')[0];
+                const found = graphData.find(item => item._id === dateStr);
+                formattedData.labels.push(dateStr);
+                formattedData.data.push(found ? found.count : 0);
+            }
+        } else if (filter === 'yearly') {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            for (let month = 0; month < 12; month++) {
+                const monthStr = `${now.getFullYear()}-${(month + 1).toString().padStart(2, '0')}`;
+                const found = graphData.find(item => item._id === monthStr);
+                formattedData.labels.push(months[month]);
+                formattedData.data.push(found ? found.count : 0);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+        console.log('formatted data', formattedData);
+
+        res.status(STATUS_CODE.OK).json(formattedData);
+    } catch (error) {
+        console.error('Error in graphDetails:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+            message: 'Error fetching graph data',
+            error: error.message
+        });
+    }
+};
+
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

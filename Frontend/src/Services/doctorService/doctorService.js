@@ -169,3 +169,9 @@ export const salesData = async(id)=>{
   return response.data;
 }
 
+export const graphDetails = async (doctorId, filter) => {
+  const responses = await apidoctor.get(`/doctor/graphdetails/${doctorId}/${filter}`);
+  console.log("graphdata",responses.data);
+  return responses.data;
+};
+
