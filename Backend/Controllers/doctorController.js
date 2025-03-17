@@ -16,7 +16,6 @@ import STATUS_CODE from "../StatusCode/StatusCode.js";
 import Chat from '../Model/chatModel.js';    
 import cookies from 'js-cookie';
 import AppointmentSchedule from '../Model/appoimentSchedule.js';
-
 const cookieOptions = {
      
     httpOnly: false,
@@ -24,10 +23,6 @@ const cookieOptions = {
     sameSite: 'none',
     maxAge: 10 * 60 * 1000,
 };
-
-
-
-
  const generateAndSendOTP = async (doctor, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
@@ -46,16 +41,6 @@ const cookieOptions = {
     try {
         const {name,email,password,yearsOfExperience,specialization,phone,profileImage,medicalLicense,idProof,about,consultFee,gender,availability} = req.body;
         
-        // Find department by name to get its ID
-        // const department = await Department.findOne({ name: specialization });
-        // if (!department) {
-        //     return res.status(STATUS_CODE.BAD_REQUEST).json({
-        //         message: "Invalid specialization. Department not found."
-        //     });
-        // }
-
-
-
         const department = await Department.findOne({ Departmentname: specialization });
         const existingUser = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email});
@@ -179,7 +164,6 @@ const cookieOptions = {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-
 const fetchDoctors = async (req, res) => {
     try {
         const { email } = req.query;
@@ -221,7 +205,6 @@ const fetchDoctors = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
     }
 };
-
     async function forgotPassword(req, res) {
         try {
             const { email } = req.body;
@@ -253,8 +236,6 @@ const fetchDoctors = async (req, res) => {
             res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
         }
     }
-
-
 const resetPassword = async (req, res) => {
     try {
        
@@ -323,7 +304,6 @@ const resetPassword = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-
 const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;
@@ -344,7 +324,6 @@ const doctorProfile = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-
 export const fetchDepartments = async (req, res) => {
     try {
         const departments = await Department.find({status:'Listed'});
@@ -368,8 +347,6 @@ export const logout = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-
-
 export const schedule = async (req, res) => {
     const { id: doctorId } = req.params;
     const { appointments } = req.body;
@@ -457,8 +434,6 @@ export const schedule = async (req, res) => {
         });
     }
 };
-
-
 export const getSchedules = async (req, res) => {
     const { id: doctorId } = req.params;
 
@@ -495,8 +470,6 @@ export const getSchedules = async (req, res) => {
         });
     }
 };
-
-
 export const slots = async (req, res) => {
      console.log(" happen after middlware verify token=====");
     const { id: doctorId } = req.params;
@@ -616,9 +589,6 @@ export const fetchWalletBalance = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-
-
-
 export const userDetails = async(req,res)=>
 {
 
@@ -631,10 +601,6 @@ export const userDetails = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-
-
-
-
 export const chatDetails = async(req,res)=>
 {
     try {
