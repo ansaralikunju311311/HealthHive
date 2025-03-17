@@ -15,12 +15,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
-import { adminDash } from '../../Services/adminService/adminService';
-
-
-
-
-
+import { adminDash, appoimentGraph } from '../../Services/adminService/adminService';
 
 // Sample data for charts
 const userGrowthData = [
@@ -32,25 +27,23 @@ const userGrowthData = [
   { month: 'Jun', users: 1500 },
 ];
 
-const revenueData = [
-  { month: 'Jan', revenue: 5000 },
-  { month: 'Feb', revenue: 7000 },
-  { month: 'Mar', revenue: 8500 },
-  { month: 'Apr', revenue: 10000 },
-  { month: 'May', revenue: 12000 },
-  { month: 'Jun', revenue: 15000 },
-];
-
 const AdminDashboard = () => {
+  const handleFilter = (e) => {
+    const selectedFilter = e.target.value;
+    console.log("selectedFilter", selectedFilter);
+    setFilter(selectedFilter); 
+  };
+  
   const navigate = useNavigate();
   const [userCount, setUserCount] = useState(0);
   const [doctorCount, setDoctorCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [filter, setFilter] = useState('today');
+  const [revenueData, setRevenueData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-      
         const response = await adminDash();
         console.log("usercount=====", response.data);
         setUserCount(response?.userCount + response?.doctorCount);
@@ -64,18 +57,47 @@ const AdminDashboard = () => {
     fetchData();
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await appoimentGraph(filter);
+        console.log("appoimentgraph====", response);
+        
+        // Transform the data for the chart
+        const chartData = response.result.labels.map((label, index) => ({
+          name: label,
+          revenue: response.result.data[index]
+        }));
+        
+        setRevenueData(chartData);
+      } catch (error) {
+        console.log(error);
+        toast.error('Failed to fetch revenue data');
+      }
+    };
+    fetchData();
+  }, [filter, navigate]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar activePage="/admin/dashboard" />
 
-      <div className="flex-1 ml-0 md:ml-64"> {/* Updated margin */}
+      <div className="flex-1 ml-0 md:ml-64">
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="p-4">
             <h1 className="text-xl md:text-2xl font-semibold">Admin Dashboard</h1>
           </div>
         </header>
-
+        <select 
+          className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onChange={handleFilter}
+          value={filter}
+        >
+          <option value="today">Today</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
@@ -105,11 +127,10 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
             <h3 className="text-lg font-semibold mb-4">User Growth</h3>
-            <div className="h-60 md:h-80"> {/* Updated height */}
+            <div className="h-60 md:h-80"> 
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowthData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -128,14 +149,13 @@ const AdminDashboard = () => {
               </ResponsiveContainer>
             </div>
           </div>
-
           <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
             <h3 className="text-lg font-semibold mb-4">Revenue Growth</h3>
-            <div className="h-60 md:h-80"> {/* Updated height */}
+            <div className="h-60 md:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
+                  <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
@@ -153,5 +173,4 @@ const AdminDashboard = () => {
     </div>
   );
 };
-
 export default AdminDashboard;

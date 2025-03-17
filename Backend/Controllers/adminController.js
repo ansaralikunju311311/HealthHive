@@ -11,6 +11,7 @@ import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 import appointment from '../Model/appoimentModel.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 import { populate } from 'dotenv';
+import { salesData } from './doctorController.js';
 
 const cookieOptions = {
     
@@ -387,12 +388,6 @@ export const earnings = async (req, res) => {
 export const fetchDoctorPayments = async (req, res) => {
     console.log("fetchDoctorPayments=====");
     try {
-    //     const Drtransaction = await Transaction.find().populate({'doctor', 'name email specialization profileImage',
-    //         populate(
-    //             path:'specialization',
-    //             select:'Departmentname'
-    //         )
-    //  } );
     const Drtransaction = await Transaction.find().populate({
         path: 'doctor',
         select: 'name email specialization profileImage',
@@ -508,5 +503,114 @@ export const getDoctorPayments = async (req, res) => {
     res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
   }
 };
+
+
+export const revenueAdmin = async(req,res)=>
+{ 
+    try {
+        const {filter} = req.params;
+        const now = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+        let groupByFormat;
+
+        switch (filter) {
+            case 'today':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                groupByFormat = '%H';
+                break;
+            case 'weekly':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 7); // Last 7 days
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+                groupByFormat = '%Y-%m-%d';
+                break;
+            case 'monthly':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+                groupByFormat = '%d';
+                break;
+            case 'yearly':
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%m';
+                break;
+            default:
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%m';
+        }
+
+        const pipeline = [
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: endDate }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: groupByFormat, date: '$createdAt' } },
+                    totalAmount: { $sum: '$amount' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ];
+
+        const result = await Transaction.aggregate(pipeline);
+        console.log('Aggregation result:', result);
+
+        let formattedData = {
+            labels: [],
+            data: [],
+            filter: filter || 'yearly',
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        if (filter === 'today') {
+            for (let hour = 0; hour < 24; hour++) {
+                const hourStr = hour.toString().padStart(2, '0');
+                const found = result.find(item => item._id === hourStr);
+                formattedData.labels.push(`${hourStr}:00`);
+                formattedData.data.push(found ? found.totalAmount*0.1 : 0);
+            }
+        } else if (filter === 'weekly') {
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const found = result.find(item => item._id === dateStr);
+                formattedData.labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                formattedData.data.push(found ? found.totalAmount*0.1 : 0);
+            }
+        } else if (filter === 'monthly') {
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayStr = day.toString().padStart(2, '0');
+                const found = result.find(item => item._id === dayStr);
+                formattedData.labels.push(day.toString());
+                formattedData.data.push(found ? found.totalAmount*0.1 : 0);
+            }
+        } else if (filter === 'yearly') {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            for (let month = 1; month <= 12; month++) {
+                const monthStr = month.toString().padStart(2, '0');
+                const found = result.find(item => item._id === monthStr);
+                formattedData.labels.push(months[month - 1]);
+                formattedData.data.push(found ? found.totalAmount*0.1 : 0);
+            }
+        }
+
+        console.log('Formatted data:', formattedData);
+        res.status(STATUS_CODE.OK).json({ result: formattedData });
+    } catch (error) {
+        console.error('Revenue calculation error:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
+}
 
 export { loginAdmin, verifyAdminToken };

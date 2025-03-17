@@ -205,5 +205,14 @@ export const adminEarnings = async(currentPage,limit=10)=>{
     });
     return response.data;
  
+
+}
+export const appoimentGraph = async(filter)=>
+{
+  console.log("filter",filter)
+  const token = getadminToken();
+  if (!token) ({path:'/admin'});
+  const response = await apiadmin.get(`/admin/revenue/${filter}`);
+  return response.data;
 }
 // export const salesData
