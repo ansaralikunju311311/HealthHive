@@ -53,7 +53,6 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
-
 });
 const RejectedDoctor = mongoose.model('rejectedDoctor', doctorSchema)
 export default RejectedDoctor;

@@ -32,16 +32,16 @@ router.post('/resend-otp', resendOtp);
 router.get('/otp-remaining-time', getOtpRemainingTime);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-router.get('/publicdoctors', getDoctorsData);//
-router.get('/Aboutdoctors', getDoctorsData);//
+router.get('/publicdoctors', getDoctorsData);
+router.get('/Aboutdoctors', getDoctorsData);
 router.post('/logout', logout);//
-router.get('/departments', getDepartments);//
+router.get('/departments', getDepartments);
 router.get('/appointments/:departmentname',dptdoctor)
 router.post('/book-appointments/:doctorid/:userid', bookAppointment);
 router.post('/pay',handlePayment)
-router.post('/verify-payment', verifyPayment)//
+router.post('/verify-payment', verifyPayment)
 router.get('/verify-token', protect, verifyToken);
-router.get('/doctorsdetails', protect,getDoctorsData);//
+router.get('/doctorsdetails', protect,getDoctorsData);
 router.get('/getappointments/:userid',fetchAppoiments);
 router.post('/google-signup',googleSignUp);
 router.get('/doctorinfo/:doctorId',fetchDoctor);

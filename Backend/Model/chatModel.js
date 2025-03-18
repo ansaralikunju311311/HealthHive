@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const chatSchema = new mongoose.Schema({
     roomId: {
         type: String,
@@ -30,6 +29,5 @@ const chatSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-
 const Chat = mongoose.model('Chat', chatSchema);
 export default Chat;

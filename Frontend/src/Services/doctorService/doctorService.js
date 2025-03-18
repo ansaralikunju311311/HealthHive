@@ -163,13 +163,18 @@ export const getDepartments = async()=>{
     return response.data;
  
 }
-export const salesData = async(id, filter = 'yearly') => {
-  const response = await apidoctor.get(`/doctor/salesdata/${id}?filter=${filter}`);
-  return response.data;
-}
+// export const salesData = async(id, filter = 'yearly') => {
+//   const response = await apidoctor.get(`/doctor/salesdata/${id}?filter=${filter}`);
+//   return response.data;
+// }
 
-export const graphDetails = async (doctorId, filter) => {
-  const responses = await apidoctor.get(`/doctor/graphdetails/${doctorId}/${filter}`);
-  console.log("graphdata",responses.data);
-  return responses.data;
+// export const graphDetails = async (doctorId, filter) => {
+//   const responses = await apidoctor.get(`/doctor/graphdetails/${doctorId}/${filter}`);
+//   console.log("graphdata",responses.data);
+//   return responses.data;
+// };
+
+export const getDashboardData = async (doctorId, filter) => {
+  const response = await apidoctor.get(`/doctor/dashboard/${doctorId}/${filter}`);
+  return response.data;
 };

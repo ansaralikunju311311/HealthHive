@@ -43,23 +43,16 @@ import DrWallet from './Pages/Doctor/Wallet/DrWallet'
 import Chat from './Pages/User/UserDash/Chat'
 import DrChat from './Pages/Doctor/Chat/Chat'
 import { verifyUserToken } from './Services/userServices/userApiService.js';
-// import Demo from './Pages/admin/Demo.jsx';
 import ProfileCompletion from './Pages/User/ProfileCompletion.jsx';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
-
 const App = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchUserData = async () => {
-
-
-
-
       try {
         const {user} = await verifyUserToken();
         setUserData(user);
@@ -72,7 +65,6 @@ const App = () => {
     };
     fetchUserData();
   }, []);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -80,7 +72,6 @@ const App = () => {
       </div>
     );
   }
-
   return (
     <>
       <ToastContainer
@@ -95,8 +86,8 @@ const App = () => {
         pauseOnHover
         theme="light"
       />
-
       <Routes>
+
         {/* Home Route - Uses HomePageUser for both states */}
         <Route path="/" element={<HomePageUser />} />
         <Route path="/home" element={<ProtectedRoute wrapper={Protected}><HomePageUser /></ProtectedRoute>} />
@@ -104,26 +95,24 @@ const App = () => {
         <Route path="/bookings" element={<ProtectedRoute wrapper={Protected}><Bookings /></ProtectedRoute>} />
         <Route path="/bookappointment" element={<ProtectedRoute wrapper={Protected}><Slot /></ProtectedRoute>} />
 
-     
-
-             {/*User Dash Pages  */}
+        {/*User Dash Pages  */}
         <Route path="/user/profile" element={<ProtectedRoute wrapper={Protected}><ProfileUser /></ProtectedRoute>} />
         <Route path="/user/appointments" element={<ProtectedRoute wrapper={Protected}><UserAppoiments /></ProtectedRoute>} />
         <Route path="/booking" element={<ProtectedRoute wrapper={Protected}><PayementPanel /></ProtectedRoute>} />
         <Route path="/user/chats" element={<ProtectedRoute wrapper={Protected}><Chat /></ProtectedRoute>} />
 
-
         {/* Auth Routes */}
+
         <Route path="/user/forgotpassword" element={<Forgot />} />
         <Route path="/doctor/forgotpassword" element={<Forgot />} />
         <Route path="/user/reset-password" element={<PasswordReset />} />
         <Route path="/doctor/reset-password" element={<PasswordReset />} />
-
         <Route path="/signup" element={<ProtectedRoute wrapper={ReverseProtected}><SignUp /></ProtectedRoute>} />
         <Route path="/login" element={<ProtectedRoute wrapper={ReverseProtected}><Login /></ProtectedRoute>} />
         <Route path="/generate-otp" element={<ProtectedRoute wrapper={ReverseProtected}><GenerateOtp /></ProtectedRoute>} />
 
         {/* Doctor Routes */}
+
         <Route path="/doctor/signup" element={<ProtectedRoute wrapper={DoctorReve}><DoctorSignUp /></ProtectedRoute>} />
         <Route path="/doctor/login" element={<ProtectedRoute wrapper={DoctorReve}><DoctorLogin /></ProtectedRoute>} />
         <Route path="/beforeverification" element={<ProtectedRoute wrapper={DoctorReve}><BeforeVerifcation /></ProtectedRoute>} />
@@ -132,9 +121,10 @@ const App = () => {
         <Route path="/doctor/appointment" element={<ProtectedRoute wrapper={DoctorProtected}><DrAppoiments /></ProtectedRoute>} />
         <Route path="/schedules" element={<ProtectedRoute wrapper={DoctorProtected}><Schedules /></ProtectedRoute>} />
         <Route path="/doctor/wallet" element={<ProtectedRoute wrapper={DoctorProtected}><DrWallet /></ProtectedRoute>} />
-        {/* <Route path="/appoiments" element={<ProtectedRoute wrapper={Protected}><Appoiments /></ProtectedRoute>} /> */}
         <Route path="/doctor/chats" element={<ProtectedRoute wrapper={DoctorProtected}><DrChat /></ProtectedRoute>} />
+        
         {/* Admin Routes */}
+
         <Route path="/admin" element={<ProtectedRoute wrapper={AdminReve}><Admin /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute wrapper={AdminProtected}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/doctorverification" element={<ProtectedRoute wrapper={AdminProtected}><DoctorVerification /></ProtectedRoute>} />
@@ -143,17 +133,9 @@ const App = () => {
         <Route path="/admin/patients" element={<ProtectedRoute wrapper={AdminProtected}><Patients /></ProtectedRoute>} />
         <Route path="/admin/wallet" element={<ProtectedRoute wrapper={AdminProtected}><Wallet /></ProtectedRoute>} />
         <Route path="/admin/doctorpayement" element={<ProtectedRoute wrapper={AdminProtected}><Doctorpayement /></ProtectedRoute>} />
-
-
-
-
-
-
-         
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/profilecompletion" element={<ProfileCompletion />} />
- 
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/profilecompletion" element={<ProfileCompletion />} />
       </Routes>
     </>
   );

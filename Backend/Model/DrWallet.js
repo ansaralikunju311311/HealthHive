@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const doctorWalletSchema = new mongoose.Schema({
     doctor: {
         type: mongoose.Schema.Types.ObjectId,
@@ -9,9 +8,7 @@ const doctorWalletSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         required: true
-    },
-    
+    },  
 }, { timestamps: true });
-
 const DoctorWallet = mongoose.model('DoctorWallet', doctorWalletSchema);
 export default DoctorWallet;

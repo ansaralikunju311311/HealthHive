@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-import { salesData } from '../../../Services/doctorService/doctorService';
+import { getDashboardData } from '../../../Services/doctorService/doctorService';
 import { toast } from 'react-toastify';
 import Sidebar from '../../../Component/Doctor/Sidebar';
 import { 
@@ -18,7 +18,7 @@ import {
   BarChart, 
   Bar 
 } from 'recharts';
-import { appoimentDetails, verifyDoctorToken, graphDetails } from '../../../Services/doctorService/doctorService';
+import { appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -26,34 +26,23 @@ const DoctorDash = () => {
   const { isBlocked } = useSelector((state) => state.doctor);
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [graph, setGraph] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   const [appoiment, setAppoiment] = useState(null);
   const [filter, setFilter] = useState('today');
-  const [revenueData, setRevenueData] = useState(null);
-  const [revenueFilter, setRevenueFilter] = useState('yearly');
 
   useEffect(() => {
     const verifyToken = async () => {
       try {
         const reponse = await verifyDoctorToken();
-        console.log('doctorccccc=======',reponse);  
-        
-       const doctors = reponse?.doctor;
+        const doctors = reponse?.doctor;
         setDoctor(doctors);
-
-       
-        const responses  = await appoimentDetails(doctors._id);
-
-        const fulldata = await salesData(doctors._id);
-
-
-
+        
+        const responses = await appoimentDetails(doctors._id);
         setAppoiment(responses);
         localStorage.setItem('doctorId', JSON.stringify(doctors));
          
         setLoading(false);
         if(doctors.isBlocked === true && doctors.isActive === true){
-         
           cookies.remove('doctortoken');
           toast.error('Your account has been blocked', {
             icon: '⛔',
@@ -64,7 +53,6 @@ const DoctorDash = () => {
       } catch (error) {
         console.log(error);
         cookies.remove('doctortoken');
-       console.log("error working",error);
         toast.error('Session expired. Please login again');
         navigate('/doctor/login');
       }
@@ -73,37 +61,18 @@ const DoctorDash = () => {
     verifyToken();
   }, [navigate]);
 
-
-
   useEffect(() => {
     if (!doctor?._id) return;
-    const fetchAppoiment = async () => {
-      console.log("doctor");
+    const fetchDashboardData = async () => {
       try {
-        console.log("doctorddd");
-        const responses = await graphDetails(doctor._id, filter);
-        console.log("graphdataxx", responses);
-        setGraph(responses);
+        const response = await getDashboardData(doctor._id, filter);
+        setDashboardData(response);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchAppoiment();
+    fetchDashboardData();
   }, [filter, doctor]);
-
-  useEffect(() => {
-    if (!doctor?._id) return;
-    const fetchRevenueData = async () => {
-      try {
-        const response = await salesData(doctor._id, revenueFilter);
-        setRevenueData(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchRevenueData();
-  }, [revenueFilter, doctor]);
- 
 
   const handlefilter = (e) => {
     const selectedFilter = e.target.value;
@@ -125,10 +94,10 @@ const DoctorDash = () => {
     }
   };
 
-  const profileClick = (id) => {
-    console.log(id);
-    navigate(`/profile`,{state:{userId:id}});
-  };
+  // const profileClick = (id) => {
+  //   console.log(id);
+  //   navigate(`/profile`,{state:{userId:id}});
+  // };
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
@@ -149,7 +118,7 @@ const DoctorDash = () => {
                   src={doctor.profileImage}
                   alt="Profile"
                   className="w-10 h-10 rounded-full object-cover"
-                  onClick={() => profileClick(doctor._id)}
+                  onClick={() => navigate(`/profile`,{state:{userId:doctor._id}})}
                 />
               )}
             </div>
@@ -208,14 +177,13 @@ const DoctorDash = () => {
                   <option value="4">Yearly</option>
                 </select>
               </div>
-              {graph && (
+              {dashboardData?.appointments && (
                 <div className="w-full h-[400px]">
                   <ResponsiveContainer width="100%" height="100%">
                     {filter === 'today' ? (
-                      // Line chart for hourly data
-                      <LineChart data={graph.labels.map((label, index) => ({
+                      <LineChart data={dashboardData.appointments.labels.map((label, index) => ({
                         time: label,
-                        appointments: graph.data[index]
+                        appointments: dashboardData.appointments.data[index]
                       }))}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis 
@@ -243,10 +211,9 @@ const DoctorDash = () => {
                         />
                       </LineChart>
                     ) : (
-                      // Bar chart for weekly, monthly, and yearly data
-                      <BarChart data={graph.labels.map((label, index) => ({
+                      <BarChart data={dashboardData.appointments.labels.map((label, index) => ({
                         period: label,
-                        appointments: graph.data[index]
+                        appointments: dashboardData.appointments.data[index]
                       }))}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis 
@@ -277,7 +244,7 @@ const DoctorDash = () => {
                   </ResponsiveContainer>
                 </div>
               )}
-              {!graph && (
+              {!dashboardData?.appointments && (
                 <div className="flex justify-center items-center h-[400px]">
                   <div className="text-gray-500">Loading graph data...</div>
                 </div>
@@ -287,23 +254,13 @@ const DoctorDash = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">Earnings Overview</h2>
-                <select 
-                  className="bg-white border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setRevenueFilter(e.target.value)}
-                  value={revenueFilter}
-                >
-                  <option value="today">Today</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="yearly">Yearly</option>
-                </select>
               </div>
               <div className="w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  {revenueFilter === 'today' ? (
-                    <LineChart data={revenueData?.labels.map((label, index) => ({
+                  {filter === 'today' ? (
+                    <LineChart data={dashboardData?.revenue?.labels.map((label, index) => ({
                       time: label,
-                      earnings: revenueData.data[index]
+                      earnings: dashboardData.revenue.data[index]
                     })) || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis 
@@ -311,7 +268,10 @@ const DoctorDash = () => {
                         tick={{ fill: '#666' }}
                         interval={2}
                       />
-                      <YAxis tick={{ fill: '#666' }} />
+                      <YAxis 
+                        tick={{ fill: '#666' }}
+                        tickFormatter={(value) => `₹${value}`}
+                      />
                       <Tooltip 
                         contentStyle={{ 
                           backgroundColor: '#fff',
@@ -332,18 +292,18 @@ const DoctorDash = () => {
                       />
                     </LineChart>
                   ) : (
-                    <BarChart data={revenueData?.labels.map((label, index) => ({
+                    <BarChart data={dashboardData?.revenue?.labels.map((label, index) => ({
                       period: label,
-                      earnings: revenueData.data[index]
+                      earnings: dashboardData.revenue.data[index]
                     })) || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis 
                         dataKey="period" 
                         tick={{ fill: '#666' }}
-                        interval={revenueFilter === 'monthly' ? 2 : 0}
-                        angle={revenueFilter === 'monthly' ? -45 : 0}
-                        textAnchor={revenueFilter === 'monthly' ? 'end' : 'middle'}
-                        height={revenueFilter === 'monthly' ? 60 : 30}
+                        interval={filter === 'monthly' ? 2 : 0}
+                        angle={filter === 'monthly' ? -45 : 0}
+                        textAnchor={filter === 'monthly' ? 'end' : 'middle'}
+                        height={filter === 'monthly' ? 60 : 30}
                       />
                       <YAxis 
                         tick={{ fill: '#666' }}
@@ -355,7 +315,7 @@ const DoctorDash = () => {
                           border: '1px solid #e0e0e0',
                           borderRadius: '8px'
                         }}
-                        formatter={(value) => [`₹${value * 0.9}`, 'Earnings']}
+                        formatter={(value) => [`₹${value}`, 'Earnings']}
                       />
                       <Legend />
                       <Bar 

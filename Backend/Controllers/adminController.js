@@ -11,7 +11,7 @@ import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 import appointment from '../Model/appoimentModel.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 import { populate } from 'dotenv';
-import { salesData } from './doctorController.js';
+// import { salesData } from './doctorController.js';
 
 const cookieOptions = {
     
@@ -613,6 +613,11 @@ export const revenueAdmin = async(req,res)=>
     }
 }
 
+
+
+// export const userReport = async (req, res) => {
+//     try {
+// }
 
 
 

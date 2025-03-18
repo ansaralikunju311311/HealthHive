@@ -23,7 +23,5 @@ const appointmentSchema = new mongoose.Schema({
         required: true
     },
 }, { timestamps: true });
-
 const Appointment = mongoose.model('Appointment', appointmentSchema);
-
 export default Appointment;

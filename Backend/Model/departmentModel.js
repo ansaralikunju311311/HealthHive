@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const departmentSchema = new mongoose.Schema({
     Departmentname: {
         type: String,
@@ -20,11 +19,9 @@ const departmentSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-
 departmentSchema.index({ Departmentname: 1 }, { 
     unique: true,
     collation: { locale: 'en', strength: 2 } // Case-insensitive uniqueness
 });
-
 const Department = mongoose.model('Department', departmentSchema);
 export default Department;
