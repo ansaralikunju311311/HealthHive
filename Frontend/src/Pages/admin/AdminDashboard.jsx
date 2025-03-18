@@ -15,11 +15,11 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
-import { adminDash, appoimentGraph, userReport } from '../../Services/adminService/adminService';
+import { adminDash, getDashboardData } from '../../Services/adminService/adminService';
+
 const AdminDashboard = () => {
   const handleFilter = (e) => {
     const selectedFilter = e.target.value;
-    console.log("selectedFilter", selectedFilter);
     setFilter(selectedFilter); 
   };
   
@@ -28,8 +28,12 @@ const AdminDashboard = () => {
   const [doctorCount, setDoctorCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [filter, setFilter] = useState('today');
-  const [revenueData, setRevenueData] = useState([]);
-  const [userGrowthData, setUserGrowthData] = useState([]);
+  const [dashboardData, setDashboardData] = useState({
+    labels: [],
+    revenueData: [],
+    userData: [],
+    doctorData: []
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,35 +52,17 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await appoimentGraph(filter);
-        const userReportData = await userReport(filter);
-        console.log("appoimentgraph====", response);
-        console.log("userreport====", userReportData);
-        
-        // Transform revenue data for the chart
-        const chartData = response.result.labels.map((label, index) => ({
-          name: label,
-          revenue: response.result.data[index]
-        }));
-        
-        // Transform user and doctor data for the growth chart
-        const growthData = userReportData.Datas.labels.map((label, index) => ({
-          name: label,
-          users: userReportData.Datas.data[index],
-          doctors: userReportData.Datas.doctorData[index]
-        }));
-        
-        setRevenueData(chartData);
-        setUserGrowthData(growthData);
+        const response = await getDashboardData(filter);
+        setDashboardData(response.data);
       } catch (error) {
         console.log(error);
-        toast.error('Failed to fetch data');
+        toast.error('Failed to fetch dashboard data');
       }
     };
-    fetchData();
-  }, [filter, navigate]);
+    fetchDashboardData();
+  }, [filter]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -135,7 +121,11 @@ const AdminDashboard = () => {
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 {filter === 'today' ? (
-                  <LineChart data={userGrowthData}>
+                  <LineChart data={dashboardData.labels.map((label, index) => ({
+                    name: label,
+                    users: dashboardData.userData[index],
+                    doctors: dashboardData.doctorData[index]
+                  }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis 
                       dataKey="name" 
@@ -173,7 +163,11 @@ const AdminDashboard = () => {
                     />
                   </LineChart>
                 ) : (
-                  <BarChart data={userGrowthData}>
+                  <BarChart data={dashboardData.labels.map((label, index) => ({
+                    name: label,
+                    users: dashboardData.userData[index],
+                    doctors: dashboardData.doctorData[index]
+                  }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis 
                       dataKey="name" 
@@ -219,7 +213,10 @@ const AdminDashboard = () => {
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 {filter === 'today' ? (
-                  <LineChart data={revenueData}>
+                  <LineChart data={dashboardData.labels.map((label, index) => ({
+                    name: label,
+                    revenue: dashboardData.revenueData[index]
+                  }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis 
                       dataKey="name"
@@ -254,7 +251,10 @@ const AdminDashboard = () => {
                     />
                   </LineChart>
                 ) : (
-                  <BarChart data={revenueData}>
+                  <BarChart data={dashboardData.labels.map((label, index) => ({
+                    name: label,
+                    revenue: dashboardData.revenueData[index]
+                  }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis 
                       dataKey="name"
@@ -296,4 +296,5 @@ const AdminDashboard = () => {
     </div>
   );
 };
+
 export default AdminDashboard;
