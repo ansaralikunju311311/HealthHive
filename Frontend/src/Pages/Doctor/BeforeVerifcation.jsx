@@ -23,8 +23,6 @@ const BeforeVerification = () => {
           setMessage('Please login again');
           return;
         }
-
-        
         const response = await doctorVerification(doctorEmail);
         console.log('Verification response:', response);
 
@@ -59,8 +57,6 @@ const BeforeVerification = () => {
 
     
     intervalId = setInterval(checkVerificationStatus, 5000);
-
-    
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
@@ -171,7 +167,6 @@ const BeforeVerification = () => {
         return null;
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full">
@@ -182,5 +177,4 @@ const BeforeVerification = () => {
     </div>
   );
 };
-
 export default BeforeVerification;

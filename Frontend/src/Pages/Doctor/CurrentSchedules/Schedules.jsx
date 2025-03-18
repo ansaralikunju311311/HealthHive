@@ -73,7 +73,6 @@ const Schedules = () => {
 
             console.log("Schedule Response:", response.data);
             
-            // Immediately update the existingSchedules state with the new appointments
             const newSchedules = appointmentsData.map(appointment => ({
                 appointmentDate: appointment.appointmentDate,
                 slotTime: appointment.slotTime,
@@ -82,7 +81,6 @@ const Schedules = () => {
             
             setExistingSchedules(prevSchedules => [...prevSchedules, ...newSchedules]);
             
-            // Reset selected date and time slots
             setSelectedDate(null);
             setSelectedTimeSlots({});
             toast.success('Schedule submitted successfully!');
@@ -106,18 +104,18 @@ const Schedules = () => {
 
     const format12Hour = (hour) => {
         const suffix = hour >= 12 ? "PM" : "AM";
-        const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+        const formattedHour = hour % 12 || 12; 
         return `${formattedHour} ${suffix}`;
     };
 
     const generateTimeSlots = () => {
         const slots = [];
-        let startHour = 12; // 5 PM
-        let endHour = 19; // 12 AM
+        let startHour = 12; 
+        let endHour = 19; 
 
         for (let hour = startHour; hour < endHour; hour++) {
             let startTime = new Date();
-            startTime.setHours(hour, 0, 0, 0); // Set hours & reset minutes
+            startTime.setHours(hour, 0, 0, 0); 
 
             const label = `${format12Hour(hour)} - ${format12Hour(hour + 1)}`;
             slots.push({ label, time: startTime });
@@ -153,7 +151,7 @@ const Schedules = () => {
     const isPastSlot = (slot) => {
         if (selectedDate && selectedDate.toDateString() === today.toDateString()) {
             const now = new Date();
-            now.setMinutes(0, 0, 0); // Ignore minutes and seconds
+            now.setMinutes(0, 0, 0); 
             return slot.time <= now;
         }
         return false;

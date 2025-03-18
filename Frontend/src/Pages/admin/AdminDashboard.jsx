@@ -15,18 +15,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import Sidebar from './Sidebar';
-import { adminDash, appoimentGraph } from '../../Services/adminService/adminService';
-
-// Sample data for charts
-const userGrowthData = [
-  { month: 'Jan', users: 400 },
-  { month: 'Feb', users: 600 },
-  { month: 'Mar', users: 800 },
-  { month: 'Apr', users: 1000 },
-  { month: 'May', users: 1200 },
-  { month: 'Jun', users: 1500 },
-];
-
+import { adminDash, appoimentGraph, userReport } from '../../Services/adminService/adminService';
 const AdminDashboard = () => {
   const handleFilter = (e) => {
     const selectedFilter = e.target.value;
@@ -40,6 +29,7 @@ const AdminDashboard = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [filter, setFilter] = useState('today');
   const [revenueData, setRevenueData] = useState([]);
+  const [userGrowthData, setUserGrowthData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,18 +51,28 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         const response = await appoimentGraph(filter);
+        const userReportData = await userReport(filter);
         console.log("appoimentgraph====", response);
+        console.log("userreport====", userReportData);
         
-        // Transform the data for the chart
+        // Transform revenue data for the chart
         const chartData = response.result.labels.map((label, index) => ({
           name: label,
           revenue: response.result.data[index]
         }));
         
+        // Transform user and doctor data for the growth chart
+        const growthData = userReportData.Datas.labels.map((label, index) => ({
+          name: label,
+          users: userReportData.Datas.data[index],
+          doctors: userReportData.Datas.doctorData[index]
+        }));
+        
         setRevenueData(chartData);
+        setUserGrowthData(growthData);
       } catch (error) {
         console.log(error);
-        toast.error('Failed to fetch revenue data');
+        toast.error('Failed to fetch data');
       }
     };
     fetchData();
@@ -128,43 +128,166 @@ const AdminDashboard = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 p-4 md:p-6">
-          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-            <h3 className="text-lg font-semibold mb-4">User Growth</h3>
-            <div className="h-60 md:h-80"> 
+          <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">User Growth</h2>
+            </div>
+            <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={userGrowthData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="users" 
-                    stroke="#2563eb" 
-                    strokeWidth={2}
-                    dot={{ fill: '#2563eb' }}
-                  />
-                </LineChart>
+                {filter === 'today' ? (
+                  <LineChart data={userGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fill: '#666' }}
+                      interval={2}
+                    />
+                    <YAxis tick={{ fill: '#666' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px'
+                      }}
+                      formatter={(value, name) => [value, name === 'users' ? 'Users' : 'Doctors']}
+                      labelFormatter={(label) => `Time: ${label}`}
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="users" 
+                      stroke="#3b82f6" 
+                      strokeWidth={2}
+                      dot={{ fill: '#3b82f6', r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Users"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="doctors" 
+                      stroke="#10b981" 
+                      strokeWidth={2}
+                      dot={{ fill: '#10b981', r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Doctors"
+                    />
+                  </LineChart>
+                ) : (
+                  <BarChart data={userGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fill: '#666' }}
+                      interval={filter === 'monthly' ? 2 : 0}
+                      angle={filter === 'monthly' ? -45 : 0}
+                      textAnchor={filter === 'monthly' ? 'end' : 'middle'}
+                      height={filter === 'monthly' ? 60 : 30}
+                    />
+                    <YAxis tick={{ fill: '#666' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px'
+                      }}
+                      formatter={(value, name) => [value, name === 'users' ? 'Users' : 'Doctors']}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="users" 
+                      fill="#3b82f6"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
+                      name="Users"
+                    />
+                    <Bar 
+                      dataKey="doctors" 
+                      fill="#10b981"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
+                      name="Doctors"
+                    />
+                  </BarChart>
+                )}
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
-            <h3 className="text-lg font-semibold mb-4">Revenue Growth</h3>
-            <div className="h-60 md:h-80">
+          <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800">Revenue Growth</h2>
+            </div>
+            <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar 
-                    dataKey="revenue" 
-                    fill="#10b981"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
+                {filter === 'today' ? (
+                  <LineChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="name"
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      interval={2}
+                      tickFormatter={(value) => value}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      tickFormatter={(value) => `₹${value}`}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px',
+                        padding: '10px'
+                      }}
+                      formatter={(value) => [`₹${value}`, 'Revenue']}
+                      labelFormatter={(label) => `Time: ${label}`}
+                      cursor={{ stroke: '#e0e0e0' }}
+                    />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      name="Revenue"
+                      stroke="#059669" 
+                      strokeWidth={2}
+                      dot={{ fill: '#059669', r: 4 }}
+                      activeDot={{ r: 6, stroke: '#059669', strokeWidth: 2 }}
+                    />
+                  </LineChart>
+                ) : (
+                  <BarChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="name"
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      interval={filter === 'monthly' ? 2 : 0}
+                      angle={filter === 'monthly' ? -45 : 0}
+                      textAnchor={filter === 'monthly' ? 'end' : 'middle'}
+                      height={filter === 'monthly' ? 60 : 30}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      tickFormatter={(value) => `₹${value}`}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px'
+                      }}
+                      formatter={(value) => [`₹${value}`, 'Revenue']}
+                      labelFormatter={(label) => `Time: ${label}`}
+                      cursor={{ fill: 'rgba(5, 150, 105, 0.1)' }}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="revenue" 
+                      name="Revenue"
+                      fill="#059669"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
+                    />
+                  </BarChart>
+                )}
               </ResponsiveContainer>
             </div>
           </div>

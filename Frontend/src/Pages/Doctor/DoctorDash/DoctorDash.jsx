@@ -19,7 +19,6 @@ import {
   Bar 
 } from 'recharts';
 import { appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
-
 const DoctorDash = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -93,12 +92,6 @@ const DoctorDash = () => {
         setFilter('today');
     }
   };
-
-  // const profileClick = (id) => {
-  //   console.log(id);
-  //   navigate(`/profile`,{state:{userId:id}});
-  // };
-
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
       <div className="text-xl">Loading...</div>
@@ -336,5 +329,4 @@ const DoctorDash = () => {
     </div>
   );
 };
-
 export default DoctorDash;

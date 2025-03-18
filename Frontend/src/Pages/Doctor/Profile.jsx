@@ -5,7 +5,6 @@ import axios from 'axios';
 
 const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
     if (!isOpen) return null;
-    
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
             <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-auto">
@@ -34,7 +33,6 @@ const DocumentModal = ({ isOpen, onClose, imageUrl, title }) => {
         </div>
     );
 };
-
 const Profile = () => {
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -250,8 +248,6 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
-
-                     
                         <div className="space-y-6">
                             <h4 className="text-lg font-semibold text-gray-800 flex items-center">
                                 <svg className="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +269,6 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="mt-6 flex justify-center gap-4">
                     <button
                         onClick={handleBack}
@@ -295,5 +290,4 @@ const Profile = () => {
         </div>
     );
 };
-
 export default Profile;

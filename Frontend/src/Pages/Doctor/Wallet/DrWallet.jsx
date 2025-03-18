@@ -52,7 +52,6 @@ const DrWallet = () => {
     verifyTokenAndFetchData();
   },[currentPage]);
 
-  // Define columns for DataTable
   const columns = [
     {
       header: 'Sl No',
@@ -81,7 +80,6 @@ const DrWallet = () => {
     }
   ];
 
-  // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -189,7 +187,6 @@ const DrWallet = () => {
                   </Typography>
                 </Box>
                 
-                {/* Replace Table with DataTable */}
                 <DataTable 
                   columns={columns}
                   data={history || []}
@@ -198,7 +195,6 @@ const DrWallet = () => {
                   rowClassName="hover:bg-gray-50 transition-colors"
                 />
 
-                {/* Replace custom pagination with Pagination component */}
                 {history && history.length > 0 && (
                   <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
                     <Pagination 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const DocumentViewModal = ({ isOpen, onClose, imageUrl, title }) => {
   if (!isOpen) return null;
-  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
       <div className="bg-white rounded-2xl w-full max-w-3xl">
@@ -32,7 +31,6 @@ const DocumentViewModal = ({ isOpen, onClose, imageUrl, title }) => {
     </div>
   );
 };
-
 const DetailsModel = ({ isOpen, onClose, doctor }) => {
   const [selectedDocument, setSelectedDocument] = useState(null);
 
@@ -65,7 +63,6 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
       </div>
     </div>
   );
-
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-xl sm:rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -164,8 +161,6 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
               </div>
             </div>
           </div>
-
-        
           <div className="space-y-4 sm:space-y-6">
             <h4 className="text-lg font-semibold text-gray-800 flex items-center">
               <svg className="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,7 +183,6 @@ const DetailsModel = ({ isOpen, onClose, doctor }) => {
         </div>
       </div>
 
-      {/* Document View Modal */}
       <DocumentViewModal
         isOpen={!!selectedDocument}
         onClose={() => setSelectedDocument(null)}

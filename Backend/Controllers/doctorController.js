@@ -17,7 +17,6 @@ import Chat from '../Model/chatModel.js';
 import cookies from 'js-cookie';
 import AppointmentSchedule from '../Model/appoimentSchedule.js';
 const cookieOptions = {
-     
     httpOnly: false,
     secure: true,
     sameSite: 'none',
@@ -26,15 +25,11 @@ const cookieOptions = {
  const generateAndSendOTP = async (doctor, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
     console.log("Generated OTP:", otp);
-    
     const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
-    
-    
     doctor.otp = otp;
     doctor.otpExpiresAt = otpExpiresAt;
     await doctor.save();
     await sendOtp(email, otp);
-    
     return true;
 };
  const registerDoctor = async(req,res)=>{
@@ -224,7 +219,6 @@ const fetchDoctors = async (req, res) => {
             if (doctorData.isBlocked === true) {
                 return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is blocked. Please contact the admin.' });
             }
-            // Generate and send OTP
             await generateAndSendOTP(doctorData, email);
 
             res.status(STATUS_CODE.OK).json({
@@ -307,9 +301,6 @@ const resetPassword = async (req, res) => {
 const doctorProfile = async (req, res) => {
     try {
         const doctorId = req.params.id;
-
-       
-
         const doctorData = await doctor.findById(doctorId).select('-password').populate({
             path: 'specialization',
             select: 'Departmentname'
@@ -456,8 +447,6 @@ export const getSchedules = async (req, res) => {
         
             return appointmentDate.isSameOrAfter(todayInIndia, 'day');
         });
-        
-        
         return res.status(STATUS_CODE.OK).json({
             message: 'Schedules retrieved successfully',
             schedules: upcomingAppointments 
@@ -614,7 +603,6 @@ export const chatDetails = async(req,res)=>
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-
 export const updateDoctorProfile = async (req, res) => {
     try {
         const { id } = req.params;
@@ -789,5 +777,4 @@ export const getDashboardData = async (req, res) => {
         });
     }
 };
-
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

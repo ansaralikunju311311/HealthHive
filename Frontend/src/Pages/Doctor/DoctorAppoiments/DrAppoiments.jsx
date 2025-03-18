@@ -61,7 +61,6 @@ const ViewDetailsModal = ({ appointment, isOpen, onClose }) => {
         </div>
 
         <div className="space-y-6">
-          {/* Patient Information */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Patient Information</h4>
             <div className="grid grid-cols-2 gap-4">
@@ -84,7 +83,6 @@ const ViewDetailsModal = ({ appointment, isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Appointment Details */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h4>
             <div className="grid grid-cols-2 gap-4">
@@ -137,7 +135,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
   };
 
   const handleChat = (patientId, doctor_Id) => {
-    console.log("patientId,doctor_Id==================  ",patientId,doctor_Id);
     navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id } });
   };
 
@@ -158,7 +155,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
           <div key={appointment._id} className="transform transition-all duration-300 hover:scale-[1.01] rounded-xl shadow-sm hover:shadow-lg">
             <div className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                {/* Patient Image/Avatar Section */}
                 <div className="flex justify-center sm:justify-start">
                   {appointment.user.image ? (
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
@@ -172,9 +168,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
                   )}
                 </div>
 
-                {/* Content Section */}
                 <div className="flex-grow space-y-4">
-                  {/* Header */}
                   <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
                     <h4 className="text-xl font-bold text-gray-900 text-center sm:text-left">
                       {appointment.user.name}
@@ -185,7 +179,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
                     </span>
                   </div>
 
-                  {/* Patient Info Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {[
                       { icon: FaVenusMars, text: appointment.user.gender },
@@ -201,7 +194,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
                     ))}
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-2">
                     <button 
                       onClick={() => handleChat(appointment.user._id, doctor_Id)}

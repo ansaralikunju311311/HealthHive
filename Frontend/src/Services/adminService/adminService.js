@@ -215,4 +215,10 @@ export const appoimentGraph = async(filter)=>
   const response = await apiadmin.get(`/admin/revenue/${filter}`);
   return response.data;
 }
+export const userReport = async (filter) => {
+  const token = getadminToken();
+  if (!token) ({path:'/admin'});
+  const response = await apiadmin.get(`/admin/userdoctor/${filter}`);
+  return response.data;
+};
 // export const salesData

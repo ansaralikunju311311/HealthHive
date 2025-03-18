@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Admin from '../Model/AdminModel/adminModel.js';
 import User from '../Model/userModel.js';
 import Doctor from '../Model/doctorModel.js';
@@ -11,17 +12,12 @@ import { sendDoctorVerificationEmail } from '../utils/sendMail.js';
 import appointment from '../Model/appoimentModel.js';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
 import { populate } from 'dotenv';
-// import { salesData } from './doctorController.js';
-
 const cookieOptions = {
-    
     httpOnly: false,
     secure: true,
     sameSite: 'None',
     maxAge: 9 * 60 * 60 * 1000, 
 };
-
-
  const loginAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -49,7 +45,6 @@ const cookieOptions = {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
-
 export const patients = async (req,res)=>
 {
     const {page,limit} = req.params;
@@ -68,7 +63,6 @@ export const patients = async (req,res)=>
     } catch (error) {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
-   
 }
 export const pendingDoctors = async (req,res)=>
 {
@@ -101,8 +95,6 @@ export const approveDoctor = async (req,res)=>
         if(!doctorData){
             return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor is not found"})
         }
-
-    
         console.log("Attempting to send approval email to:", doctorData.email);
         try {
             await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'approved');
@@ -147,7 +139,6 @@ export const rejectDoctor = async(req,res)=>
             console.error("Error sending rejection email:", emailError);
         
         }
-
         const rejectedDoctor = new RejectedDoctor({
             name: doctorData.name,
             email: doctorData.email,
@@ -186,10 +177,6 @@ export const doctors = async (req, res) => {
                 path: 'specialization',
                 select: 'Departmentname'
             });
-
-        // Log the fetched doctors to verify data
-        console.log("Fetched Doctors:", doctors);
-
         const totalpage = Math.ceil(await Doctor.countDocuments({ isActive: true }) / currentLimit);
         const doctorsWithIndex = doctors.map((doctor, index) => ({
             ...doctor.toObject(),
@@ -201,7 +188,6 @@ export const doctors = async (req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-
  const verifyAdminToken = async (req, res) => {
     try {
     
@@ -551,7 +537,7 @@ export const revenueAdmin = async(req,res)=>
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: groupByFormat, date: '$createdAt' } },
+                    _id: { $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' } },
                     totalAmount: { $sum: '$amount' }
                 }
             },
@@ -605,21 +591,149 @@ export const revenueAdmin = async(req,res)=>
             }
         }
 
-        console.log('Formatted data:', formattedData);
+        // console.log('Formatted data:', formattedData);
         res.status(STATUS_CODE.OK).json({ result: formattedData });
     } catch (error) {
         console.error('Revenue calculation error:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
 }
+export const userReport = async (req, res) => {
+    try {
+        const { filter } = req.params;
+        const now = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+        let groupByFormat;
 
+        switch (filter) {
+            case 'today':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                groupByFormat = '%H';
+                break;
+            case 'weekly':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 7);
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(23, 59, 59, 999);
+                groupByFormat = '%Y-%m-%d';
+                break;
+            case 'monthly':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+                groupByFormat = '%d';
+                break;
+            case 'yearly':
+            default:
+                startDate = new Date(now.getFullYear(), 0, 1);
+                endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+                groupByFormat = '%m';
+        }
 
+        // Pipeline for Users with timezone
+        const userPipeline = [
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: endDate }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' } },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ];
 
-// export const userReport = async (req, res) => {
-//     try {
-// }
+        // Pipeline for Doctors with timezone
+        const doctorPipeline = [
+            {
+                $match: {
+                    createdAt: { $gte: startDate, $lte: endDate },
+                    isActive: true
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' } },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ];
 
+        // Run aggregations in parallel
+        const [userResult, doctorResult] = await Promise.all([
+            User.aggregate(userPipeline),
+            Doctor.aggregate(doctorPipeline)
+        ]);
 
+        let formattedData = {
+            labels: [],
+            data: [],
+            filter: filter || 'yearly',
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        if (filter === 'today') {
+            for (let hour = 0; hour < 24; hour++) {
+                const hourStr = hour.toString().padStart(2, '0');
+                const userFound = userResult.find(item => item._id === hourStr);
+                const doctorFound = doctorResult.find(item => item._id === hourStr);
+                formattedData.labels.push(`${hourStr}:00`);
+                formattedData.data.push(userFound ? userFound.count : 0);
+                formattedData.doctorData = formattedData.doctorData || [];
+                formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
+            }
+        } else if (filter === 'weekly') {
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const userFound = userResult.find(item => item._id === dateStr);
+                const doctorFound = doctorResult.find(item => item._id === dateStr);
+                formattedData.labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                formattedData.data.push(userFound ? userFound.count : 0);
+                formattedData.doctorData = formattedData.doctorData || [];
+                formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
+            }
+        } else if (filter === 'monthly') {
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayStr = day.toString().padStart(2, '0');
+                const userFound = userResult.find(item => item._id === dayStr);
+                const doctorFound = doctorResult.find(item => item._id === dayStr);
+                formattedData.labels.push(day.toString());
+                formattedData.data.push(userFound ? userFound.count : 0);
+                formattedData.doctorData = formattedData.doctorData || [];
+                formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
+            }
+        } else if (filter === 'yearly') {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            for (let month = 1; month <= 12; month++) {
+                const monthStr = month.toString().padStart(2, '0');
+                const userFound = userResult.find(item => item._id === monthStr);
+                const doctorFound = doctorResult.find(item => item._id === monthStr);
+                formattedData.labels.push(months[month - 1]);
+                formattedData.data.push(userFound ? userFound.count : 0);
+                formattedData.doctorData = formattedData.doctorData || [];
+                formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
+            }
+        }
+
+        res.status(STATUS_CODE.OK).json({ Datas: formattedData });
+    } catch (error) {
+        console.log('User report error:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
+};
 
 
 
