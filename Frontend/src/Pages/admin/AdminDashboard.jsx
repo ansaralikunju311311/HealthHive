@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import cookies from 'js-cookie'
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
 import {
   FaUsers,
   FaUserMd,
@@ -34,6 +36,7 @@ const AdminDashboard = () => {
     userData: [],
     doctorData: []
   });
+  const [salesData, setSalesData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +66,27 @@ const AdminDashboard = () => {
     };
     fetchDashboardData();
   }, [filter]);
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Sales Report', 10, 10);
+    let y = 20;
+    doc.text('Time', 10, y);
+    doc.text('Sales', 70, y);
+    y += 10;
+    salesData.forEach(item => {
+      doc.text(item.name, 10, y);
+      doc.text(String(item.sales), 70, y);
+      y += 10;
+    });
+    doc.save('sales-report.pdf');
+  };
+
+  const exportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(salesData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'SalesReport');
+    XLSX.writeFile(workbook, 'sales-report.xlsx');
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -84,6 +108,18 @@ const AdminDashboard = () => {
           <option value="monthly">Monthly</option>
           <option value="yearly">Yearly</option>
         </select>
+        <button 
+                className="bg-blue-500 text-white rounded-md px-4 py-2"
+                onClick={exportPDF}
+              >
+                Export PDF
+              </button>
+              <button 
+                className="bg-green-500 text-white rounded-md px-4 py-2"
+                onClick={exportExcel}
+              >
+                Export Excel
+              </button>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
@@ -139,7 +175,10 @@ const AdminDashboard = () => {
                         border: '1px solid #e0e0e0',
                         borderRadius: '8px'
                       }}
-                      formatter={(value, name) => [value, name === 'users' ? 'Users' : 'Doctors']}
+                      formatter={(value, name) => {
+                        const key = name.toLowerCase();
+                        return key === 'users' ? [value, 'Users'] : key === 'doctors' ? [value, 'Doctors'] : [value, name];
+                      }}
                       labelFormatter={(label) => `Time: ${label}`}
                     />
                     <Legend />

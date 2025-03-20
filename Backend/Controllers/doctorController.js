@@ -14,7 +14,7 @@ import User from '../Model/userModel.js';
 import Transaction from "../Model/transactionModel.js";
 import STATUS_CODE from "../StatusCode/StatusCode.js";
 import Chat from '../Model/chatModel.js';    
-import cookies from 'js-cookie';
+// import cookies from 'js-cookie';
 import AppointmentSchedule from '../Model/appoimentSchedule.js';
 const cookieOptions = {
     httpOnly: false,
@@ -698,6 +698,39 @@ export const getDashboardData = async (req, res) => {
             { $sort: { '_id': 1 } }
         ];
 
+
+        const reports =[
+            {
+                $match:{
+                    doctor:new mongoose.Types.ObjectId(doctorId),
+                    createdAt:{
+                        $gte:startDate,$lte:endDate}
+                    }
+                
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' }
+                    },
+                    details:{
+                        $push:{
+                            PatientName :'$userName',
+                            Fee :'$amount',
+                            Date : '$createdAt',
+                            AppoimentDate:'$appoimentdate',
+                            Slot:'$slot'
+
+                        }
+                    }
+                }
+            },
+            { $sort: { '_id': 1 } }
+        ];
+       
+
+        const findReports = await Transaction.aggregate(reports);
+        console.log("reportsData",findReports);
         const [appointmentData, revenueData] = await Promise.all([
             Appointment.aggregate(appointmentPipeline),
             Transaction.aggregate(revenuePipeline)
@@ -768,7 +801,7 @@ export const getDashboardData = async (req, res) => {
             }
         }
 
-        res.status(STATUS_CODE.OK).json(formattedData);
+        res.status(STATUS_CODE.OK).json({formattedData,findReports});
     } catch (error) {
         console.error('Error in getDashboardData:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
