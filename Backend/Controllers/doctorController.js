@@ -699,7 +699,7 @@ export const getDashboardData = async (req, res) => {
         ];
 
 
-        const reports =[
+        const reports  = [
             {
                 $match:{
                     doctor:new mongoose.Types.ObjectId(doctorId),

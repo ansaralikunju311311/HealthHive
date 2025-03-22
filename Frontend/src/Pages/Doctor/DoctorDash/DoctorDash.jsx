@@ -29,7 +29,6 @@ const DoctorDash = () => {
   const [appointmentStats, setAppointmentStats] = useState(null);
   const [filter, setFilter] = useState('today');
 
-  // Initial token verification and data fetch
   useEffect(() => {
     const verifyToken = async () => {
       try {
@@ -57,7 +56,6 @@ const DoctorDash = () => {
     verifyToken();
   }, [navigate]);
 
-  // Fetch dashboard data when filter or doctor changes
   useEffect(() => {
     if (!doctor?._id) return;
 
@@ -74,7 +72,6 @@ const DoctorDash = () => {
     fetchDashboardData();
   }, [filter, doctor]);
 
-  // Filter handler
   const handleFilter = (e) => {
     const filterMap = {
       '1': 'today',
@@ -152,7 +149,6 @@ const DoctorDash = () => {
       doc.text(`Report Date: ${rep._id}`, 10, yPosition);
       yPosition += 8;
         
-      // Table headers
       doc.setFontSize(10);
       doc.text('Patient', 12, yPosition);
       doc.text('Fee', 50, yPosition);
@@ -180,7 +176,6 @@ const DoctorDash = () => {
     doc.save(`dashboard-${filter}-${Date.now()}.pdf`);
   };
 
-  // Export to Excel
   const exportExcel = () => {
     if (!report) return;
 
@@ -228,7 +223,6 @@ const DoctorDash = () => {
             </div>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
               <div className="bg-blue-100 p-3 rounded-lg">
@@ -267,7 +261,6 @@ const DoctorDash = () => {
             </div>
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex justify-between items-center mb-6">

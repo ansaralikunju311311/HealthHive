@@ -522,7 +522,6 @@ export const getDashboardData = async(req,res)=>{
                 groupByFormat = '%m';
         }
 
-        // Pipeline for Revenue
         const revenuePipeline = [
             {
                 $match: {
@@ -539,8 +538,6 @@ export const getDashboardData = async(req,res)=>{
                 $sort: { _id: 1 }
             }
         ];
-
-        // Pipeline for Users
         const userPipeline = [
             {
                 $match: {
@@ -557,8 +554,6 @@ export const getDashboardData = async(req,res)=>{
                 $sort: { _id: 1 }
             }
         ];
-
-        // Pipeline for Doctors
         const doctorPipeline = [
             {
                 $match: {
@@ -576,8 +571,34 @@ export const getDashboardData = async(req,res)=>{
                 $sort: { _id: 1 }
             }
         ];
+        const reports = [
+            {
+                $match:{
+                    createdAt:{
+                        $gte:startDate,$lte:endDate
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: groupByFormat, date: '$createdAt', timezone: 'Asia/Kolkata' }
+                    },
+                    details:{
+                        $push:{
+                            DoctorName :'$doctorName',
+                            Fee :'$amount',
+                            Date : '$createdAt',
+                        }
+                    }
+                }
+            },
 
-        // Run all aggregations in parallel
+
+        ]
+                const findReports = await Transaction.aggregate(reports);
+                console.log("find",findReports)
+        
         const [revenueResult, userResult, doctorResult] = await Promise.all([
             Transaction.aggregate(revenuePipeline),
             User.aggregate(userPipeline),
@@ -644,7 +665,7 @@ export const getDashboardData = async(req,res)=>{
             }
         }
 
-        res.status(STATUS_CODE.OK).json({ data: formattedData });
+        res.status(STATUS_CODE.OK).json({ data: formattedData,findReports });
     } catch (error) {
         console.error('Dashboard data error:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });

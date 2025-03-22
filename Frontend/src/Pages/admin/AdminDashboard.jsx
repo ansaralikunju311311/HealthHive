@@ -30,6 +30,7 @@ const AdminDashboard = () => {
   const [doctorCount, setDoctorCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [filter, setFilter] = useState('today');
+  const [report,setReport] =  useState(null)
   const [dashboardData, setDashboardData] = useState({
     labels: [],
     revenueData: [],
@@ -59,6 +60,8 @@ const AdminDashboard = () => {
       try {
         const response = await getDashboardData(filter);
         setDashboardData(response.data);
+        setReport(response.findReports);
+        console.log("report correctly", response.findReports);
       } catch (error) {
         console.log(error);
         toast.error('Failed to fetch dashboard data');
@@ -66,26 +69,101 @@ const AdminDashboard = () => {
     };
     fetchDashboardData();
   }, [filter]);
-  const exportPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Sales Report', 10, 10);
-    let y = 20;
-    doc.text('Time', 10, y);
-    doc.text('Sales', 70, y);
-    y += 10;
-    salesData.forEach(item => {
-      doc.text(item.name, 10, y);
-      doc.text(String(item.sales), 70, y);
-      y += 10;
-    });
-    doc.save('sales-report.pdf');
-  };
 
+  const exportPDF = async () => {
+    if (!report) return;
+    const doc = new jsPDF();
+  
+    const loadImageAsBase64 = (url) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = url;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+      });
+    };
+  
+    const logoBase64 = await loadImageAsBase64('/logo.png');
+  
+    doc.addImage(logoBase64, 'PNG', 10, 5, 30, 30);
+    doc.setFontSize(22);
+    doc.setTextColor(40);
+    doc.text('HealthHive', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+    doc.setFontSize(16);
+    doc.setTextColor(100);
+    doc.text('Admin Dashboard Report', doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+    
+    doc.setLineWidth(1);
+    doc.line(10, 35, doc.internal.pageSize.getWidth() - 10, 35);
+    
+    doc.setFontSize(12);
+    // Summary details
+    doc.text(`Total Users: ${userCount}`, 10, 45);
+    doc.text(`Total Doctors: ${doctorCount}`, 120, 45);
+    doc.text(`Total Revenue: ₹${totalAmount * 0.1}`, 10, 53);
+  
+    let yPosition = 61;
+    doc.setLineWidth(0.5);
+    doc.line(10, yPosition, doc.internal.pageSize.getWidth() - 10, yPosition);
+    yPosition += 6;
+  
+    report.forEach((rep) => {
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text(`Report Date: ${rep._id}`, 10, yPosition);
+      yPosition += 8;
+      
+      // Table headers – adjust field names as needed
+      doc.setFontSize(10);
+      doc.text('Doctor Name', 12, yPosition);
+      doc.text('Fee', 50, yPosition);
+      doc.text('Date', 70, yPosition);
+      doc.text('Commision (10%)', 90, yPosition);
+      yPosition += 6;
+      
+      rep.details.forEach((detail) => {
+        doc.text(detail.DoctorName || '-', 12, yPosition);
+        doc.text(`${detail.Fee || 0}`, 50, yPosition);
+        doc.text(detail.Date ? new Date(detail.Date).toLocaleDateString() : '-', 70, yPosition);
+        doc.text(`${detail.Fee * 0.1 || 0}`, 90, yPosition);
+        yPosition += 6;
+        
+        if (yPosition > doc.internal.pageSize.getHeight() - 20) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      });
+      yPosition += 4;
+    });
+    
+    doc.save(`admin-dashboard-${filter}-${Date.now()}.pdf`);
+  };
+  
   const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(salesData);
+    if (!report) return;
+    
+    const data = report.flatMap(rep =>
+      rep.details.map(detail => ({
+        "Report Date": rep._id,
+        "Name": detail.name || '-',
+        "Value": detail.value || 0,
+        "Date": detail.date ? new Date(detail.date).toLocaleString().slice(0, 10) : '-',
+        "Info": detail.info || '-'
+      }))
+    );
+    
+    const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'SalesReport');
-    XLSX.writeFile(workbook, 'sales-report.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'AdminReports');
+    XLSX.writeFile(workbook, `admin-dashboard-${filter}-${Date.now()}.xlsx`);
   };
 
   return (
@@ -109,17 +187,17 @@ const AdminDashboard = () => {
           <option value="yearly">Yearly</option>
         </select>
         <button 
-                className="bg-blue-500 text-white rounded-md px-4 py-2"
-                onClick={exportPDF}
-              >
-                Export PDF
-              </button>
-              <button 
-                className="bg-green-500 text-white rounded-md px-4 py-2"
-                onClick={exportExcel}
-              >
-                Export Excel
-              </button>
+          className="bg-blue-500 text-white rounded-md px-4 py-2"
+          onClick={exportPDF}
+        >
+          Export PDF
+        </button>
+        <button 
+          className="bg-green-500 text-white rounded-md px-4 py-2"
+          onClick={exportExcel}
+        >
+          Export Excel
+        </button>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 p-4 md:p-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
