@@ -3,6 +3,7 @@ import Sidebar from '../../../Component/Doctor/Sidebar';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import PrescriptionModal from '../../../Component/Doctor/Prescription';
 import { useNavigate } from 'react-router-dom';
 import { 
   FaUserCircle, 
@@ -12,7 +13,8 @@ import {
   FaVenusMars,
   FaComments,
   FaChevronLeft, 
-  FaChevronRight 
+  FaChevronRight ,
+  FaPrescriptionBottleAlt
 } from 'react-icons/fa';
 import { drAppoinments } from '../../../Services/doctorService/doctorService';
 
@@ -111,7 +113,9 @@ const ViewDetailsModal = ({ appointment, isOpen, onClose }) => {
   );
 };
 
-const AppointmentSection = ({ title, appointments, icon: Icon }) => {
+
+
+const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescriptionAppointment, setIsPrescriptionModalOpen }) => {
   const navigate = useNavigate();
   const doctorId = localStorage.getItem('doctorId');
   const DrdoctorId = JSON.parse(doctorId);
@@ -215,6 +219,16 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
                       </svg>
                       View Details
                     </button>
+                    <button
+                      onClick={() => {
+                        setSelectedPrescriptionAppointment(appointment);
+                        setIsPrescriptionModalOpen(true);
+                      }}
+                      className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition transform duration-300 ease-in-out active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                    >
+                      <FaPrescriptionBottleAlt className="mr-2" size={18} />
+                      Send Prescription
+                    </button>
                   </div>
                 </div>
               </div>
@@ -279,22 +293,19 @@ const AppointmentSection = ({ title, appointments, icon: Icon }) => {
 };
 
 const DrAppoiments = () => {
-  const navigate = useNavigate();
+  // Insert doctor data extraction at the top of the component
+  const doctorData = localStorage.getItem('doctorId');
+  const doctor = doctorData ? JSON.parse(doctorData) : {};
+  const doctor_Id = doctor._id;
 
-  
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
+  const [selectedPrescriptionAppointment, setSelectedPrescriptionAppointment] = useState(null);
   
   useEffect(() => {
-    const doctorId = localStorage.getItem('doctorId');
-    const DrdoctorId = JSON.parse(doctorId);
-    const doctor_Id = DrdoctorId._id;
-  
-
-    
-
     const fetchAppoiments = async () => {
       try {
         const response = await drAppoinments(doctor_Id);
@@ -308,7 +319,7 @@ const DrAppoiments = () => {
     }
 
     fetchAppoiments();
-  }, []);
+  }, [doctor_Id]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -375,13 +386,41 @@ const DrAppoiments = () => {
             </div>
           ) : (
             <>
-              <AppointmentSection title="Today" appointments={today} icon={FaCalendarAlt} />
-              <AppointmentSection title="Upcoming" appointments={upcoming} icon={FaClock} />
-              <AppointmentSection title="Past" appointments={past} />
+              <AppointmentSection 
+                title="Today" 
+                appointments={today} 
+                icon={FaCalendarAlt}
+                setSelectedPrescriptionAppointment={setSelectedPrescriptionAppointment}
+                setIsPrescriptionModalOpen={setIsPrescriptionModalOpen}
+              />
+              <AppointmentSection 
+                title="Upcoming" 
+                appointments={upcoming} 
+                icon={FaClock}
+                setSelectedPrescriptionAppointment={setSelectedPrescriptionAppointment}
+                setIsPrescriptionModalOpen={setIsPrescriptionModalOpen}
+              />
+              <AppointmentSection 
+                title="Past" 
+                appointments={past}
+                setSelectedPrescriptionAppointment={setSelectedPrescriptionAppointment}
+                setIsPrescriptionModalOpen={setIsPrescriptionModalOpen}
+              />
             </>
           )}
         </div>
       </div>
+      <PrescriptionModal 
+        doctorId={doctor_Id}
+        // appointments={selectedAppointment}
+        appointment={selectedPrescriptionAppointment}
+        isOpen={isPrescriptionModalOpen}
+        onClose={() => {
+          setIsPrescriptionModalOpen(false);
+          setSelectedPrescriptionAppointment(null);
+        }}
+
+      />
     </div>
   );
 }

@@ -20,7 +20,8 @@ import {
     updateDoctorProfile,
     // salesData,
     // graphDetails,
-    getDashboardData
+    getDashboardData,
+    sendPrescription
 } from '../Controllers/doctorController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
 
@@ -48,4 +49,5 @@ doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 // doctor.get('/graphdetails/:doctorId/:filter', graphDetails);
 // doctor.get('/salesdata/:id',salesData)
 doctor.get('/dashboard/:doctorId/:filter', getDashboardData);
+doctor.post('/prescription/:doctorId/:userId/:uniquePre', sendPrescription);
 export default doctor;

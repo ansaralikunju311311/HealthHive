@@ -9,6 +9,7 @@ import Appointment from '../Model/appoimentModel.js';
 import appointmentSchedule from '../Model/appoimentSchedule.js';
 import { razorpay } from '../server.js';
 import Transaction from '../Model/transactionModel.js';
+import Prescription from '../Model/prescriptions.js';
 import Chat from '../Model/chatModel.js';
 import { timeStamp } from 'console';
 import STATUS_CODE from '../StatusCode/StatusCode.js';
@@ -669,6 +670,20 @@ export const profileSetup = async (req, res) => {
     } 
     catch (error) {
         console.error('Error setting up profile:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+};
+export const getPrescription = async (req, res) => {
+    try {
+        const { unique } = req.params;
+        const prescription = await Prescription.findOne({ uniquePre:unique }); 
+        console.log("Prescription:", prescription);   
+        const doctorDetails = await Doctor.findById(prescription.doctorId).populate('specialization');
+        console.log("Doctor Details:", doctorDetails);
+        const user = await User.findById(prescription.userId);  
+        res.status(STATUS_CODE.OK).json({prescription,doctorDetails,user});
+    } catch (error) {
+        console.error('Error fetching prescription:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };

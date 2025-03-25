@@ -22,7 +22,8 @@ import {
        chatDetails,
          googleSignUp,
          profileSetup,
-         googleSignIn
+         googleSignIn,
+         getPrescription
     } from '../Controllers/userController.js';
 const router = express.Router();
 router.post('/signup', registerUser);//
@@ -48,5 +49,6 @@ router.get('/doctorinfo/:doctorId',fetchDoctor);
 router.get('/Chats/:doctorId/:userId',chatDetails);
 router.post('/profile-completion',profileSetup);
 router.post('/google-login',googleSignIn);
+router.get('/prescription/:unique',getPrescription);
 
 export default router;

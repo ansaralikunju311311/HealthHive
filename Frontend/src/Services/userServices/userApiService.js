@@ -229,3 +229,7 @@ export const googleSignup = async (email,uid,name)=>{
   const response = await apiuser.post('/user/google-signup', { email, uid,name });
   return response.data;
 };
+export const getPrescription = async (unique) => {
+  const response = await apiuser.get(`/user/prescription/${unique}`);
+  return response.data;
+};

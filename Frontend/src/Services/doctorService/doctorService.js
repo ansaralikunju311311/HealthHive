@@ -169,7 +169,9 @@ export const getDashboardData = async (doctorId, filter) => {
   const response = await apidoctor.get(`/doctor/dashboard/${doctorId}/${filter}`);
   return response.data;
 };
-// export const userReport = async (filter) => {
-//   const response = await apidoctor.get(`/doctor/user-report/${filter}`);
-//   return response.data;
-// };
+
+export const sendPrescription = async (doctorId, userId, data,uniquePre) => {
+  console.log("docrto",data)
+  const response = await apidoctor.post(`/doctor/prescription/${doctorId}/${userId}/${uniquePre}`, data);
+  return response.data;
+};
