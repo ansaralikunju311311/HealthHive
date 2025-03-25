@@ -5,6 +5,7 @@ import cookies from 'js-cookie'
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
+import { autoTable } from 'jspdf-autotable';
 import {
   FaUsers,
   FaUserMd,
@@ -73,78 +74,122 @@ const AdminDashboard = () => {
   const exportPDF = async () => {
     if (!report) return;
     const doc = new jsPDF();
-  
-    const loadImageAsBase64 = (url) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.src = url;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          resolve(canvas.toDataURL('image/png'));
-        };
-        img.onerror = reject;
-      });
-    };
-  
-    const logoBase64 = await loadImageAsBase64('/logo.png');
-  
-    doc.addImage(logoBase64, 'PNG', 10, 5, 30, 30);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // Add header background
+    doc.setFillColor(79, 70, 229);
+    doc.rect(0, 0, pageWidth, 45, "F");
+
+    try {
+      doc.addImage("/logo.png", "PNG", 15, 8, 30, 30);
+    } catch (error) {
+      console.warn("Could not load logo:", error);
+    }
+
+    // Header text
     doc.setFontSize(22);
-    doc.setTextColor(40);
-    doc.text('HealthHive', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-    doc.setFontSize(16);
-    doc.setTextColor(100);
-    doc.text('Admin Dashboard Report', doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-    
-    doc.setLineWidth(1);
-    doc.line(10, 35, doc.internal.pageSize.getWidth() - 10, 35);
-    
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text("HealthHive Admin Report", 55, 25);
     doc.setFontSize(12);
-    // Summary details
-    doc.text(`Total Users: ${userCount}`, 10, 45);
-    doc.text(`Total Doctors: ${doctorCount}`, 120, 45);
-    doc.text(`Total Revenue: ₹${totalAmount * 0.1}`, 10, 53);
-  
-    let yPosition = 61;
+    doc.text(`${filter.toUpperCase()} SUMMARY`, 55, 35);
+
+    // Info section
+    doc.setDrawColor(79, 70, 229);
     doc.setLineWidth(0.5);
-    doc.line(10, yPosition, doc.internal.pageSize.getWidth() - 10, yPosition);
-    yPosition += 6;
-  
-    report.forEach((rep) => {
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text(`Report Date: ${rep._id}`, 10, yPosition);
-      yPosition += 8;
+    doc.line(15, 60, pageWidth - 15, 60);
+
+    doc.setTextColor(79, 70, 229);
+    doc.setFontSize(14);
+    doc.text("Admin Dashboard Report", 15, 55);
+
+    // Summary boxes
+    const boxWidth = (pageWidth - 45) / 3;
+    const boxes = [
+      { title: 'Total Users', value: userCount },
+      { title: 'Total Doctors', value: doctorCount },
+      { title: 'Total Revenue', value: `Rs. ${totalAmount * 0.1}` }
+    ];
+
+    boxes.forEach((box, index) => {
+      const x = 15 + (index * (boxWidth + 7.5));
+      doc.setFillColor(243, 244, 246);
+      doc.roundedRect(x, 70, boxWidth, 40, 3, 3, 'F');
       
-      // Table headers – adjust field names as needed
       doc.setFontSize(10);
-      doc.text('Doctor Name', 12, yPosition);
-      doc.text('Fee', 50, yPosition);
-      doc.text('Date', 70, yPosition);
-      doc.text('Commision (10%)', 90, yPosition);
-      yPosition += 6;
+      doc.setTextColor(107, 114, 128);
+      doc.text(box.title, x + 10, 85);
       
-      rep.details.forEach((detail) => {
-        doc.text(detail.DoctorName || '-', 12, yPosition);
-        doc.text(`${detail.Fee || 0}`, 50, yPosition);
-        doc.text(detail.Date ? new Date(detail.Date).toLocaleDateString() : '-', 70, yPosition);
-        doc.text(`${detail.Fee * 0.1 || 0}`, 90, yPosition);
-        yPosition += 6;
-        
-        if (yPosition > doc.internal.pageSize.getHeight() - 20) {
-          doc.addPage();
-          yPosition = 20;
+      doc.setFontSize(16);
+      doc.setTextColor(79, 70, 229);
+      doc.text(box.value.toString(), x + 10, 100);
+    });
+
+    // Report details
+    let yPos = 130;
+    report.forEach((rep) => {
+      // Date section
+      doc.setFillColor(79, 70, 229);
+      doc.setTextColor(255, 255, 255);
+      doc.rect(15, yPos, pageWidth - 30, 12, "F");
+      doc.setFontSize(11);
+      doc.text(rep._id, 25, yPos + 8);
+
+      // Table for this date
+      autoTable(doc, {
+        startY: yPos + 12,
+        margin: { left: 15, right: 15 },
+        head: [['Doctor Name', 'Fee', 'Date', 'Commission (10%)']],
+        body: rep.details.map(detail => [
+          detail.DoctorName || '-',
+          `Rs. ${detail.Fee || 0}`,
+          new Date(detail.Date).toLocaleDateString() || '-',
+          `Rs. ${detail.Fee * 0.1 || 0}`
+        ]),
+        theme: 'plain',
+        styles: {
+          fontSize: 10,
+          cellPadding: 5,
+          lineColor: [243, 244, 246],
+          lineWidth: 0.5
+        },
+        headStyles: {
+          fillColor: [249, 250, 251],
+          textColor: [79, 70, 229],
+          fontStyle: 'bold',
+          lineWidth: 0
+        },
+        columnStyles: {
+          0: { cellWidth: 60 },
+          1: { cellWidth: 30, halign: 'right' },
+          2: { cellWidth: 40 },
+          3: { cellWidth: 40 }
+        },
+        alternateRowStyles: {
+          fillColor: [249, 250, 251]
         }
       });
-      yPosition += 4;
+
+      yPos = doc.lastAutoTable.finalY + 20;
+
+      // Add new page if needed
+      if (yPos > pageHeight - 40) {
+        doc.addPage();
+        yPos = 20;
+      }
     });
+
+    // Footer
+    doc.setDrawColor(79, 70, 229);
+    doc.setLineWidth(0.5);
+    doc.line(15, pageHeight - 20, pageWidth - 15, pageHeight - 20);
     
-    doc.save(`admin-dashboard-${filter}-${Date.now()}.pdf`);
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128);
+    doc.text("Generated by HealthHive", pageWidth / 2, pageHeight - 10, { align: "center" });
+
+    doc.save(`HealthHive-Admin-${filter}-Report-${Date.now()}.pdf`);
   };
   
   const exportExcel = () => {
@@ -222,7 +267,7 @@ const AdminDashboard = () => {
               <FaMoneyBillWave className="text-3xl text-yellow-500" />
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Total Revenue</h3>
-                <p className="text-2xl font-bold">₹{totalAmount*0.1}</p>
+                <p className="text-2xl font-bold"> Rs. {totalAmount*0.1}</p>
               </div>
             </div>
           </div>
@@ -343,7 +388,7 @@ const AdminDashboard = () => {
                     />
                     <YAxis 
                       tick={{ fontSize: 12, fill: '#666' }}
-                      tickFormatter={(value) => `₹${value}`}
+                      tickFormatter={(value) => ` Rs. ${value}`}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -352,7 +397,7 @@ const AdminDashboard = () => {
                         borderRadius: '8px',
                         padding: '10px'
                       }}
-                      formatter={(value) => [`₹${value}`, 'Revenue']}
+                      formatter={(value) => [` Rs. ${value}`, 'Revenue']}
                       labelFormatter={(label) => `Time: ${label}`}
                       cursor={{ stroke: '#e0e0e0' }}
                     />
@@ -383,7 +428,7 @@ const AdminDashboard = () => {
                     />
                     <YAxis 
                       tick={{ fontSize: 12, fill: '#666' }}
-                      tickFormatter={(value) => `₹${value}`}
+                      tickFormatter={(value) => ` Rs. ${value}`}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -391,7 +436,7 @@ const AdminDashboard = () => {
                         border: '1px solid #e0e0e0',
                         borderRadius: '8px'
                       }}
-                      formatter={(value) => [`₹${value}`, 'Revenue']}
+                      formatter={(value) => [` Rs. ${value}`, 'Revenue']}
                       labelFormatter={(label) => `Time: ${label}`}
                       cursor={{ fill: 'rgba(5, 150, 105, 0.1)' }}
                     />

@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import {sendPrescription} from "../../Services/doctorService/doctorService.js"
 
 const PrescriptionModal = ({ isOpen, onClose, appointment, doctorId }) => {
-    // Guard clause to prevent errors when appointment or its user property is null
     if (!appointment || !appointment.user) return null;
     
     const userID = appointment.user._id;

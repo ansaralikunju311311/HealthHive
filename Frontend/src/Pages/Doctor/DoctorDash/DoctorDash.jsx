@@ -19,6 +19,9 @@ import {
   Bar 
 } from 'recharts';
 import { getDashboardData, appoimentDetails, verifyDoctorToken } from '../../../Services/doctorService/doctorService';
+import autoTable from 'jspdf-autotable';
+
+const notoSansNormalBase64 = '...'; // Replace with actual base64 encoded font data
 
 const DoctorDash = () => {
   const navigate = useNavigate();
@@ -72,6 +75,8 @@ const DoctorDash = () => {
     fetchDashboardData();
   }, [filter, doctor]);
 
+
+
   const handleFilter = (e) => {
     const filterMap = {
       '1': 'today',
@@ -85,95 +90,127 @@ const DoctorDash = () => {
   const exportPDF = async () => {
     if (!report) return;
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    const loadImageAsBase64 = (url) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.src = url;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          resolve(canvas.toDataURL('image/png'));
-        };
-        img.onerror = reject;
-      });
-    };
-
+  
    
-    const logoBase64 = await loadImageAsBase64('/logo.png');
+    
+    doc.setFillColor(79, 70, 229); 
+    doc.rect(0, 0, pageWidth, 45, "F");
 
-    doc.addImage(logoBase64, 'PNG', 10, 5, 30, 30);
+    try {
+      doc.addImage("/logo.png", "PNG", 15, 8, 30, 30);
+    } catch (error) {
+      console.warn("Could not load logo:", error);
+    }
 
+    // Header text
     doc.setFontSize(22);
-    doc.setTextColor(40);
-    doc.text('HealthHive', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-    
-    doc.setFontSize(16);
-    doc.setTextColor(100);
-    doc.text('Doctor Dashboard Report', doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-    
-  
-    doc.setLineWidth(1);
-    doc.line(10, 35, doc.internal.pageSize.getWidth() - 10, 35);
-    
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text("HealthHive Report", 55, 25);
     doc.setFontSize(12);
-    doc.text(`Doctor: Dr. ${doctor?.name}`, 10, 45);
-    doc.text(`Filter: ${filter} Report`, 10, 53);
-    
-  
-    const totalAppointments = appointmentStats ? appointmentStats.totalAppointments : 0;
-    const totalRevenue = dashboardData && dashboardData.revenue && dashboardData.revenue.data 
-      ? dashboardData.revenue.data.reduce((sum, curr) => sum + curr, 0)
-      : 0;
-      
-    doc.text(`Total Appointments: ${totalAppointments}`, 10, 61);
-    doc.text(`Total Revenue: ${totalRevenue}`, 120, 61);
-    
+    doc.text(`${filter.toUpperCase()} SUMMARY`, 55, 35);
 
-    let yPosition = 69;
-      
+    // Doctor info section
+    doc.setDrawColor(79, 70, 229);
     doc.setLineWidth(0.5);
-    doc.line(10, yPosition, doc.internal.pageSize.getWidth() - 10, yPosition);
-    yPosition += 6;
+    doc.line(15, 60, pageWidth - 15, 60);
+
+    doc.setTextColor(79, 70, 229);
+    doc.setFontSize(14);
+    doc.text(`Dr. ${doctor?.name}`, 15, 55);
+
+
+
+
+    
+    const boxWidth = (pageWidth - 45) / 3;
+    const boxes = [
+      { title: 'Total Appointments', value: appointmentStats?.totalAppointments || 0 },
+      { title: 'Total Revenue', value: `Rs. ${appointmentStats?.totalAppointments * appointmentStats?.fee?.consultFee || 0}` },
+      { title: 'Average Revenue', value: `Rs. ${appointmentStats?.fee?.consultFee || 0}` }
+    ];
+
+    boxes.forEach((box, index) => {
+      const x = 15 + (index * (boxWidth + 7.5));
+      doc.setFillColor(243, 244, 246);
+      doc.roundedRect(x, 70, boxWidth, 40, 3, 3, 'F');
       
-    doc.text('Appointment Reports:', 10, yPosition);
-    yPosition += 8;
-      
-    report.forEach((rep) => {
-      doc.setFontSize(12);
-      doc.setTextColor(0);
-      doc.text(`Report Date: ${rep._id}`, 10, yPosition);
-      yPosition += 8;
-        
       doc.setFontSize(10);
-      doc.text('Patient', 12, yPosition);
-      doc.text('Fee', 50, yPosition);
-      doc.text('Date', 70, yPosition, { maxWidth: 35 });
-      doc.text('Appt. Date', 110, yPosition);
-      doc.text('Slot', 150, yPosition);
-      yPosition += 6;
-        
-      rep.details.forEach((detail) => {
-        doc.text(detail.PatientName || '-', 12, yPosition);
-        doc.text(`${detail.Fee || 0}`, 50, yPosition);
-        doc.text(new Date(detail.Date).toLocaleString().slice(0,10) || '-', 70, yPosition, { maxWidth: 35 });
-        doc.text(detail.AppoimentDate || '-', 110, yPosition);
-        doc.text(detail.Slot || '-', 150, yPosition);
-        yPosition += 6;
-        
-        if (yPosition > doc.internal.pageSize.getHeight() - 20) {
-          doc.addPage();
-          yPosition = 20;
+      doc.setTextColor(107, 114, 128);
+      doc.text(box.title, x + 10, 85);
+      
+      doc.setFontSize(16);
+      doc.setTextColor(79, 70, 229);
+      doc.text(box.value.toString(), x + 10, 100);
+    });
+
+    // Appointment details
+    let yPos = 130;
+    report.forEach((rep, index) => {
+      // Date section
+      doc.setFillColor(79, 70, 229);
+      doc.setTextColor(255, 255, 255);
+      doc.rect(15, yPos, pageWidth - 30, 12, "F");
+      doc.setFontSize(11);
+      doc.text(rep._id, 25, yPos + 8);
+
+      // Table for this date
+      autoTable(doc, {
+        startY: yPos + 12,
+        margin: { left: 15, right: 15 },
+        head: [['Patient', 'Fee', 'Date', 'Time Slot']],
+        body: rep.details.map(detail => [
+          detail.PatientName || '-',
+          `Rs. ${detail.Fee || 0}`,
+          new Date(detail.Date).toLocaleDateString() || '-',
+          detail.Slot || '-'
+        ]),
+        theme: 'plain',
+        styles: {
+          fontSize: 10,
+          cellPadding: 5,
+          lineColor: [243, 244, 246],
+          lineWidth: 0.5
+        },
+        headStyles: {
+          fillColor: [249, 250, 251],
+          textColor: [79, 70, 229],
+          fontStyle: 'bold',
+          lineWidth: 0
+        },
+        columnStyles: {
+          0: { cellWidth: 60 },
+          1: { cellWidth: 30, halign: 'right' },
+          2: { cellWidth: 40 },
+          3: { cellWidth: 40 }
+        },
+        alternateRowStyles: {
+          fillColor: [249, 250, 251]
         }
       });
-      yPosition += 4;
+
+      yPos = doc.lastAutoTable.finalY + 20;
+
+      // Add new page if needed
+      if (yPos > pageHeight - 40) {
+        doc.addPage();
+        yPos = 20;
+      }
     });
+
+    // Footer
+    doc.setDrawColor(79, 70, 229);
+    doc.setLineWidth(0.5);
+    doc.line(15, pageHeight - 20, pageWidth - 15, pageHeight - 20);
     
-    doc.save(`dashboard-${filter}-${Date.now()}.pdf`);
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128);
+    doc.text("Generated by HealthHive", pageWidth / 2, pageHeight - 10, { align: "center" });
+
+    doc.save(`HealthHive-${filter}-Report-${Date.now()}.pdf`);
   };
 
   const exportExcel = () => {
@@ -255,7 +292,7 @@ const DoctorDash = () => {
               <div>
                 <p className="text-gray-500 text-sm">Payment Due</p>
                 <p className="text-2xl font-bold">
-                  ₹{(appointmentStats?.totalAppointments * appointmentStats?.fee?.consultFee * 0.9) || 0}
+                ₹{(appointmentStats?.totalAppointments * appointmentStats?.fee?.consultFee * 0.9) || 0}
                 </p>
               </div>
             </div>
