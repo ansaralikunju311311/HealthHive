@@ -292,7 +292,7 @@ const AdminDashboard = () => {
                       interval={2}
                     />
                     <YAxis tick={{ fill: '#666' }} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ 
                         backgroundColor: '#fff',
                         border: '1px solid #e0e0e0',
