@@ -61,7 +61,11 @@ const Appointments = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const userId = JSON.parse(localStorage.getItem('userId'))?._id;
+  const userDataFromStorage = JSON.parse(localStorage.getItem('userId'));
+  console.log("Complete user data from storage:", userDataFromStorage);
+  const userId = userDataFromStorage?._id;
+  const userName = userDataFromStorage?.name;
+  console.log("userName value:", userName);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const limit = 10;
@@ -115,8 +119,9 @@ const Appointments = () => {
     }
   };
 
-  const handleChat = (doctorId, userId) => {
-    navigate('/user/chats', { state: { doctorId, userId } });
+  const handleChat = (doctorId,userId) => {
+    console.log("userName will happen", userName);
+    navigate('/user/chats', { state: { doctorId, userId, userName } });
   };
 
   const handleViewDetails = (appointment) => {
@@ -472,7 +477,7 @@ const Appointments = () => {
           <DialogActions>
             <Button onClick={handleCloseModal}>Close</Button>
             <Button
-              onClick={() => handleChat(selectedAppointment?.doctor._id, selectedAppointment?.user)}
+              onClick={() => handleChat(selectedAppointment?.doctor._id, selectedAppointment?.user,userName)}
               startIcon={<ChatIcon />}
             >
               Chat

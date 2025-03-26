@@ -11,7 +11,7 @@ import VideoRoom from '../../../Component/VideoCall/VideoRoom';
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { doctorId, userId } = location.state || {};
+  const { doctorId, userId,userName } = location.state || {};
   const chatContainerRef = useRef(null);
 
   const [chat, setChat] = useState([]);
@@ -232,7 +232,7 @@ const Chat = () => {
             <VideoRoom
               roomId={roomId}
               role="user"
-              userName={"User"}
+              userName={userName}
               onCallEnd={endVideoCall}
             />
           )}

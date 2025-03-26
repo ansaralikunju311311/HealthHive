@@ -2,9 +2,11 @@ import React from 'react';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 
 const VideoRoom = ({ roomId, role, userName, onCallEnd }) => {
+  console.log("dnjcnjdncdj",userName)
+  // if (!userName) {
+  //   userName = role === 'doctor' ? 'Doctor' : 'User';
+  // }
   const myMeeting = async (element) => {
-    // const appID = 1904829906;
-    // const serverSecret = "382e0dcbe2cc8d1a29ff4bc00ef4c1a7";
     const appID = parseInt(import.meta.env.VITE_appID);
     const serverSecret = import.meta.env.VITE_serverSecret;
     

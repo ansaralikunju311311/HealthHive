@@ -120,6 +120,8 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
   const doctorId = localStorage.getItem('doctorId');
   const DrdoctorId = JSON.parse(doctorId);
   const doctor_Id = DrdoctorId._id;
+  const doctorName = DrdoctorId.name;
+  console.log("doctor name is  ",doctorName)
 
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -139,8 +141,9 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
     setCurrentPage(pageNumber);
   };
 
-  const handleChat = (patientId, doctor_Id) => {
-    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id} });
+  const handleChat = (patientId, doctor_Id,doctorName) => {
+    console.log("doctorNamendndndndndndnnd",doctorName)
+    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id,doctorName:doctorName} });
   };
 
   return (
@@ -201,7 +204,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
 
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-2">
                     <button 
-                      onClick={() => handleChat(appointment.user._id, doctor_Id)}
+                      onClick={() => handleChat(appointment.user._id, doctor_Id,doctorName)}
                       className="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 transition-all duration-300 text-sm"
                     >
                       <FaComments className="mr-2" size={16} />
@@ -238,7 +241,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-6 space-x-2">
           <button
@@ -294,7 +296,6 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
 };
 
 const DrAppoiments = () => {
-  // Insert doctor data extraction at the top of the component
   const doctorData = localStorage.getItem('doctorId');
   const doctor = doctorData ? JSON.parse(doctorData) : {};
   const doctor_Id = doctor._id;
