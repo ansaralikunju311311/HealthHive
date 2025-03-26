@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.4",
     "@reduxjs/toolkit": "^2.5.0",
     "@types/react-datepicker": "^7.0.0",
+    "@zegocloud/zego-uikit-prebuilt": "^2.14.2",
     "axios": "^1.7.9",
     "firebase": "^11.4.0",
     "framer-motion": "^12.4.7",

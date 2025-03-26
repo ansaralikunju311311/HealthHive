@@ -6,21 +6,26 @@ import { FiSend } from 'react-icons/fi';
 import { format } from 'date-fns';
 import axios from 'axios';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
-import { userInfo,chatHistory } from '../../../Services/doctorService/doctorService';
+import { userInfo, chatHistory } from '../../../Services/doctorService/doctorService';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import VideoRoom from '../../../Component/VideoCall/VideoRoom';
 
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userId, doctorId } = location.state || {};
+  const { userId, doctorId} = location.state || {};
   const chatContainerRef = useRef(null);
 
+  console.log(location)
   const [chat, setChat] = useState([]);
   const [message, setMessage] = useState('');
   const [user, setUser] = useState({});
   const socketRef = useRef(null);
-  const [indication,setIndication] = useState(false);
+  const [indication, setIndication] = useState(false);
   const [userIsTyping, setUserIsTyping] = useState(false);
   const [isUserOnline, setIsUserOnline] = useState(false);
+  const [isInCall, setIsInCall] = useState(false);
+  const [roomId, setRoomId] = useState(null);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -40,9 +45,20 @@ const Chat = () => {
     setMessage('');
   };
 
+  const initiateVideoCall = () => {
+    const newRoomId = `${doctorId}-${userId}-${Date.now()}`;
+    setRoomId(newRoomId);
+    setIsInCall(true);
+    socketRef.current.emit('initiateVideoCall', { doctorId, userId, roomId: newRoomId });
+  };
+
+  const endVideoCall = () => {
+    setIsInCall(false);
+    setRoomId(null);
+    socketRef.current.emit('endVideoCall', { doctorId, userId });
+  };
+
   useEffect(() => {
-
-
     const fetchUser = async () => {
       try {
         const data = await userInfo(userId);
@@ -54,23 +70,16 @@ const Chat = () => {
 
     fetchUser();
 
-
-
-
     const chatData = async () => {
       try {
-      
         const chatDatas = await chatHistory(doctorId, userId);
-        console.log("chatDatas",chatDatas);
+        console.log("chatDatas", chatDatas);
         setChat(chatDatas);
       } catch (error) {
         console.error('Error fetching chat:', error);
       }
     }
     chatData();
-
-
-
 
     if (!socketRef.current) {
       socketRef.current = io('http://localhost:5000', {
@@ -89,8 +98,8 @@ const Chat = () => {
       });
 
       socketRef.current.on('usermessage', (data) => {
-        console.log("doctor receving message",data);
-        console.log("doctor receving datamessage",data);
+        console.log("doctor receving message", data);
+        console.log("doctor receving datamessage", data);
         const newMessage = {
           sender: 'user',
           message: data,
@@ -115,6 +124,21 @@ const Chat = () => {
 
       socketRef.current.on('connect_error', (err) => {
         console.error('Connection error:', err.message);
+      });
+
+      socketRef.current.on('videoCallAccepted', ({ roomId: acceptedRoomId }) => {
+        console.log('Video call accepted:', acceptedRoomId);
+      });
+
+      socketRef.current.on('videoCallRejected', () => {
+        setIsInCall(false);
+        setRoomId(null);
+        alert('Video call was rejected');
+      });
+
+      socketRef.current.on('videoCallEnded', () => {
+        setIsInCall(false);
+        setRoomId(null);
       });
     }
 
@@ -148,14 +172,30 @@ const Chat = () => {
             <img src={user.image} alt={user.name} className="w-8 h-8 md:w-12 md:h-12 rounded-full" />
             <div>
               <h3 className="text-base md:text-lg font-semibold text-gray-800">{user.name}</h3>
-              <p className="text-sm">
+              <p className="text-sm flex items-center">
                 <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
                   isUserOnline ? 'bg-green-500' : 'bg-gray-400'
                 }`}></span>
                 {isUserOnline ? 'Online' : 'Offline'}
+                <button
+                  onClick={initiateVideoCall}
+                  className="ml-4 text-blue-600 hover:text-blue-800 transition-colors"
+                  disabled={!isUserOnline}
+                >
+                  <VideoCallIcon />
+                </button>
               </p>
             </div>
           </div>
+
+          {isInCall && roomId && (
+            <VideoRoom
+              roomId={roomId}
+              role="doctor"
+              userName={"doctor"}
+              onCallEnd={endVideoCall}
+            />
+          )}
 
           <div ref={chatContainerRef} className="flex-1 p-3 md:p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="space-y-3 md:space-y-4">
@@ -187,10 +227,7 @@ const Chat = () => {
             <div className="flex items-end space-x-2 md:space-x-4">
               <textarea
                 value={message}
-                onChange={(e) => {setMessage(e.target.value);
-                  handleTyping();
-                }
-              }
+                onChange={(e) => { setMessage(e.target.value); handleTyping(); }}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -201,7 +238,7 @@ const Chat = () => {
                 rows="1"
                 className="flex-1 resize-none rounded-lg border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-4 py-3 text-sm"
               />
-              <button 
+              <button
                 onClick={onSend}
                 disabled={!message.trim()}
                 className={`p-3 rounded-lg ${

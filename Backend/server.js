@@ -10,9 +10,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 import Chat from './Model/chatModel.js';
 
-
 import cookieParser from 'cookie-parser';
-
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +22,7 @@ const io = new Server(server, {
 });
 
 const onlineUsers = new Map();
+const activeVideoRooms = new Map();
 
 io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} connected`);
@@ -129,6 +128,41 @@ io.on('connection', (socket) => {
     socket.on('usertyping', ({ doctorId, userId, isTyping }) => {
         const roomId = `${doctorId}_${userId}`;
         io.to(roomId).emit('usertyping', { isTyping });
+    });
+
+    // Video call events
+    socket.on('initiateVideoCall', ({ doctorId, userId, roomId }) => {
+        const userSocket = onlineUsers.get(userId);
+        if (userSocket && userSocket.socketId) {
+            io.to(userSocket.socketId).emit('incomingVideoCall', { roomId });
+            activeVideoRooms.set(roomId, { doctorId, userId });
+        }
+    });
+
+    socket.on('acceptVideoCall', ({ doctorId, userId, roomId }) => {
+        const doctorSocket = onlineUsers.get(doctorId);
+        if (doctorSocket && doctorSocket.socketId) {
+            io.to(doctorSocket.socketId).emit('videoCallAccepted', { roomId });
+        }
+    });
+
+    socket.on('rejectVideoCall', ({ doctorId, userId }) => {
+        const doctorSocket = onlineUsers.get(doctorId);
+        if (doctorSocket && doctorSocket.socketId) {
+            io.to(doctorSocket.socketId).emit('videoCallRejected');
+        }
+    });
+
+    socket.on('endVideoCall', ({ doctorId, userId }) => {
+        const doctorSocket = onlineUsers.get(doctorId);
+        const userSocket = onlineUsers.get(userId);
+        
+        if (doctorSocket && doctorSocket.socketId) {
+            io.to(doctorSocket.socketId).emit('videoCallEnded');
+        }
+        if (userSocket && userSocket.socketId) {
+            io.to(userSocket.socketId).emit('videoCallEnded');
+        }
     });
 
     socket.on('disconnect', () => {

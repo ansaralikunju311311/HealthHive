@@ -4,7 +4,9 @@ import { getDoctorInfo, getChatHistory } from '../../../Services/userServices/us
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
 import { FiSend } from 'react-icons/fi';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
+import VideoRoom from '../../../Component/VideoCall/VideoRoom';
 
 const Chat = () => {
   const location = useLocation();
@@ -20,6 +22,10 @@ const Chat = () => {
   const [indication,setIndication] = useState(false); 
   const [doctorIsTyping, setDoctorIsTyping] = useState(false);
   const [isDoctorOnline, setIsDoctorOnline] = useState(false);
+  const [isInCall, setIsInCall] = useState(false);
+  const [roomId, setRoomId] = useState(null);
+  const [showCallDialog, setShowCallDialog] = useState(false);
+  const [incomingCallInfo, setIncomingCallInfo] = useState(null);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -44,6 +50,44 @@ const Chat = () => {
       e.preventDefault();
       onSend();
     }
+  };
+
+  const acceptVideoCall = () => {
+    if (incomingCallInfo) {
+      setRoomId(incomingCallInfo.roomId);
+      setIsInCall(true);
+      socketRef.current.emit('acceptVideoCall', { 
+        doctorId, 
+        userId, 
+        roomId: incomingCallInfo.roomId 
+      });
+      setShowCallDialog(false);
+      setIncomingCallInfo(null);
+    }
+  };
+
+  const rejectVideoCall = () => {
+    if (incomingCallInfo) {
+      socketRef.current.emit('rejectVideoCall', { doctorId, userId });
+      setShowCallDialog(false);
+      setIncomingCallInfo(null);
+    }
+  };
+
+  const endVideoCall = () => {
+    setIsInCall(false);
+    setRoomId(null);
+    socketRef.current.emit('endVideoCall', { doctorId, userId });
+  };
+
+  const handleTyping = () => {
+    socketRef.current.emit("usertyping", { doctorId, userId, isTyping: true });
+
+    const timeoutId = setTimeout(() => {
+      socketRef.current.emit("usertyping", { doctorId, userId, isTyping: false });
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
   };
 
   useEffect(() => {
@@ -105,6 +149,16 @@ const Chat = () => {
       socketRef.current.on('connect_error', (err) => {
         console.error('Connection error:', err.message);
       });
+
+      socketRef.current.on('incomingVideoCall', ({ roomId: incomingRoomId }) => {
+        setIncomingCallInfo({ roomId: incomingRoomId });
+        setShowCallDialog(true);
+      });
+
+      socketRef.current.on('videoCallEnded', () => {
+        setIsInCall(false);
+        setRoomId(null);
+      });
     }
 
     return () => {
@@ -118,16 +172,6 @@ const Chat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [chat]);
-
-  const handleTyping = () => {
-    socketRef.current.emit("usertyping", { doctorId, userId, isTyping: true });
-
-    const timeoutId = setTimeout(() => {
-      socketRef.current.emit("usertyping", { doctorId, userId, isTyping: false });
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
@@ -144,6 +188,7 @@ const Chat = () => {
                 alt="Doctor" 
                 className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
               />
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
                   {doctor.name || 'Dr. Name'}
@@ -159,6 +204,38 @@ const Chat = () => {
               </div>
             </div>
           </div>
+
+          {showCallDialog && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-xl">
+                <h3 className="text-xl font-semibold mb-4">Incoming Video Call</h3>
+                <p className="mb-6">Dr. {doctor.name} is calling you</p>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    onClick={rejectVideoCall}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Decline
+                  </button>
+                  <button
+                    onClick={acceptVideoCall}
+                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    Accept
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isInCall && roomId && (
+            <VideoRoom
+              roomId={roomId}
+              role="user"
+              userName={"User"}
+              onCallEnd={endVideoCall}
+            />
+          )}
 
           {/* Messages Container */}
           <div 

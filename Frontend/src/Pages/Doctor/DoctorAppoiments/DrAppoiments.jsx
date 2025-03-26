@@ -120,6 +120,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
   const doctorId = localStorage.getItem('doctorId');
   const DrdoctorId = JSON.parse(doctorId);
   const doctor_Id = DrdoctorId._id;
+
   
   const [currentPage, setCurrentPage] = useState(1);
   const appointmentsPerPage = 5;
@@ -139,7 +140,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
   };
 
   const handleChat = (patientId, doctor_Id) => {
-    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id } });
+    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id} });
   };
 
   return (
@@ -412,7 +413,7 @@ const DrAppoiments = () => {
       </div>
       <PrescriptionModal 
         doctorId={doctor_Id}
-        // appointments={selectedAppointment}
+      
         appointment={selectedPrescriptionAppointment}
         isOpen={isPrescriptionModalOpen}
         onClose={() => {
