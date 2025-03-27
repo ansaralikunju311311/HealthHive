@@ -174,30 +174,28 @@ const Chat = () => {
   }, [chat]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
-      <div className="md:block">
-        <Sidebar />
-      </div>
-      <div className="flex-1 p-2 md:p-6 md:ml-72">
-        <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
+    <div className="flex min-h-screen bg-gray-50">
+      <Sidebar />
+      <div className="flex-1 flex flex-col md:ml-64">
+        <div className="flex-1 flex flex-col h-screen max-h-screen">
           {/* Chat Header */}
-          <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-200">
+          <div className="bg-white border-b border-gray-200 px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center sticky top-0 z-10 shadow-sm">
             <div className="flex items-center space-x-4">
               <img 
                 src={doctor.profileImage || 'https://via.placeholder.com/40'} 
                 alt="Doctor" 
-                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-blue-500"
               />
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                   {doctor.name || 'Dr. Name'}
                 </h3>
                 <div className="flex items-center">
                   <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
                     isDoctorOnline ? 'bg-green-500' : 'bg-gray-400'
                   }`}></span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-xs sm:text-sm text-gray-600">
                     {isDoctorOnline ? 'Online' : 'Offline'}
                   </span>
                 </div>

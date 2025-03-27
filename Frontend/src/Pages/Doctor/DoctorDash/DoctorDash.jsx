@@ -244,32 +244,38 @@ const DoctorDash = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar doctorid={doctor._id} />
-      <div className="flex-1 p-4 md:p-8 md:ml-64 w-full">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-            <h1 className="text-xl md:text-2xl font-semibold">Welcome, Dr. {doctor?.name}</h1>
-            <div className="flex items-center space-x-4">
+      <div className="flex-1 md:ml-64 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+            <div className="flex items-center gap-4 mb-4 sm:mb-0">
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Welcome, Dr. {doctor?.name}</h1>
+                <p className="mt-1 text-sm sm:text-base text-gray-600">Here's what's happening with your practice</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
               {doctor?.profileImage && (
                 <img
                   src={doctor.profileImage}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                  className="w-12 h-12 rounded-full object-cover cursor-pointer border-2 border-white shadow-md hover:border-blue-500 transition-all duration-200"
                   onClick={() => navigate('/profile', { state: { userId: doctor._id } })}
                 />
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-6 flex items-center gap-4 transform hover:scale-[1.02]">
               <div className="bg-blue-100 p-3 rounded-lg">
-                <svg className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <p className="text-gray-500 text-sm">Total Appointments</p>
-                <p className="text-2xl font-bold">{appointmentStats?.totalAppointments || 0}</p>
+                <p className="text-gray-600 text-sm font-medium">Total Appointments</p>
+                <p className="text-2xl font-bold text-gray-900">{appointmentStats?.totalAppointments || 0}</p>
+                <p className="text-sm text-gray-500 mt-1">All time appointments</p>
               </div>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6 flex items-center space-x-4">
@@ -298,13 +304,18 @@ const DoctorDash = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Appointment Trends</h2>
-                <div className="flex space-x-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Appointment Trends
+                </h2>
+                <div className="flex flex-wrap gap-2">
                   <select
-                    className="border rounded-md px-4 py-2"
+                    className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     onChange={handleFilter}
                     value={filter === 'today' ? '1' : filter === 'weekly' ? '2' : filter === 'monthly' ? '3' : '4'}
                   >
@@ -313,10 +324,22 @@ const DoctorDash = () => {
                     <option value="3">Monthly</option>
                     <option value="4">Yearly</option>
                   </select>
-                  <button className="bg-blue-500 text-white rounded-md px-4 py-2 hover:bg-blue-600" onClick={exportPDF}>
+                  <button 
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200" 
+                    onClick={exportPDF}
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
                     PDF
                   </button>
-                  <button className="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-600" onClick={exportExcel}>
+                  <button 
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200" 
+                    onClick={exportExcel}
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    </svg>
                     Excel
                   </button>
                 </div>

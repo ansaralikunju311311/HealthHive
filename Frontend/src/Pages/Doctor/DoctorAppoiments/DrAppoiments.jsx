@@ -121,9 +121,7 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
   const DrdoctorId = JSON.parse(doctorId);
   const doctor_Id = DrdoctorId._id;
   const doctorName = DrdoctorId.name;
-  console.log("doctor name is  ",doctorName)
 
-  
   const [currentPage, setCurrentPage] = useState(1);
   const appointmentsPerPage = 5;
   
@@ -141,9 +139,8 @@ const AppointmentSection = ({ title, appointments, icon: Icon, setSelectedPrescr
     setCurrentPage(pageNumber);
   };
 
-  const handleChat = (patientId, doctor_Id,doctorName) => {
-    console.log("doctorNamendndndndndndnnd",doctorName)
-    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id,doctorName:doctorName} });
+  const handleChat = (patientId, doctor_Id, doctorName) => {
+    navigate('/doctor/chats', { state: { userId: patientId, doctorId: doctor_Id, doctorName: doctorName } });
   };
 
   return (
@@ -353,10 +350,10 @@ const DrAppoiments = () => {
   const { today, upcoming, past } = groupAppointmentsByCategory(filteredAppointments);
 
   return (
-    <div className="flex flex-col sm:flex-row min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar activePage="Appointments" />
-      <div className="flex-grow p-4 sm:p-6 md:p-8">
-        <div className="max-w-5xl mx-auto">
+      <div className="md:ml-64 min-h-screen transition-all duration-300 p-4 sm:p-6 md:p-8">
+        <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6 sm:mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Appointments Dashboard

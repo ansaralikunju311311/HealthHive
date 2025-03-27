@@ -62,14 +62,15 @@ const Appointments = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const userDataFromStorage = JSON.parse(localStorage.getItem('userId'));
-  console.log("Complete user data from storage:", userDataFromStorage);
   const userId = userDataFromStorage?._id;
   const userName = userDataFromStorage?.name;
-  console.log("userName value:", userName);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const limit = 10;
+  
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     fetchAppointments(currentPage);

@@ -66,8 +66,9 @@ const Sidebar = ({activePage, doctorid}) => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen transform transition-transform duration-300 ease-in-out md:translate-x-0 
-      max-md:w-full max-md:z-50 max-md:-translate-x-full">
+    <div className="w-64 bg-white shadow-xl fixed left-0 top-0 h-screen transform transition-transform duration-300 ease-in-out z-40 md:translate-x-0 md:z-30
+      max-md:w-[250px] max-md:-translate-x-full">
+      <div className="h-full overflow-y-auto scrollbar-hide">
       <div className="p-4 sm:p-6 space-y-4">
         <div className="mb-6 sm:mb-8 flex items-center justify-between">
           <h1 className="text-lg sm:text-xl font-bold text-gray-800">HealthHive</h1>
@@ -110,6 +111,7 @@ const Sidebar = ({activePage, doctorid}) => {
             <span className="font-medium">Logout</span>
           </button>
         </div>
+      </div>
       </div>
     </div>
   );
