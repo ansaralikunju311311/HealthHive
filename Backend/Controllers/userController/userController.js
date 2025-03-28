@@ -1,18 +1,17 @@
-import User from '../Model/userModel.js'
+import User from '../../Model/userModel.js'
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import { sendOtp } from '../utils/sendMail.js';
-import {setToken} from '../utils/auth.js';
-import Doctor from '../Model/doctorModel.js';
-import Department from '../Model/departmentModel.js';
-import Appointment from '../Model/appoimentModel.js';
-import appointmentSchedule from '../Model/appoimentSchedule.js';
-import { razorpay } from '../server.js';
-import Transaction from '../Model/transactionModel.js';
-import Prescription from '../Model/prescriptions.js';
-import Chat from '../Model/chatModel.js';
+import { sendOtp } from '../../utils/sendMail.js';
+import {setToken} from '../../utils/auth.js';
+import Doctor from '../../Model/doctorModel.js';
+import Department from '../../Model/departmentModel.js';
+import Appointment from '../../Model/appoimentModel.js';
+import appointmentSchedule from '../../Model/appoimentSchedule.js';
+import Transaction from '../../Model/transactionModel.js';
+import Prescription from '../../Model/prescriptions.js';
+import Chat from '../../Model/chatModel.js';
 import { timeStamp } from 'console';
-import STATUS_CODE from '../StatusCode/StatusCode.js';
+import STATUS_CODE from '../../StatusCode/StatusCode.js';
 const cookieOptions = {
     httpOnly: false,
     secure: true,
@@ -547,67 +546,7 @@ export const fetchAppoiments = async(req, res) => {
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
-export  const handlePayment = async(req, res) => {
-    console.log("req.body",req.body)
-    const { amount } = req.body;
-    try {
-        const options = {
-            amount: Number(amount * 100), 
-            currency: "INR",
-            receipt: `rcpt_${Date.now()}`,
-            payment_capture: 1,
-            notes: {
-                description: "Consultation Payment"
-            }
-        };
-        
-        const order = await razorpay.orders.create(options);
-        
-        res.status(STATUS_CODE.OK).json({
-            id: order.id,
-            amount: order.amount,
-            currency: order.currency,
-            receipt: order.receipt
-        });
-    } catch (error) {
-        console.error('Payment error:', error);
-        res.status(STATUS_CODE.BAD_REQUEST).json({ 
-            message: 'Error processing payment',
-            error: error.message 
-        });
-    }
-}
-export const verifyPayment = async (req, res) => {
-    try {
-        const {
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature
-        } = req.body;
-        const sign = razorpay_order_id + "|" + razorpay_payment_id;
-        const expectedSign = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-            .update(sign)
-            .digest("hex");
-        if (razorpay_signature === expectedSign) {
-            return res.status(STATUS_CODE.OK).json({
-                message: "Payment verified successfully",
-                orderId: razorpay_order_id,
-                paymentId: razorpay_payment_id
-            });
-        } else {
-            return res.status(STATUS_CODE.BAD_REQUEST).json({
-                message: "Invalid signature sent!"
-            });
-        }
-    } catch (error) {
-        console.error('Payment verification error:', error);
-        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-            message: "Internal Server Error!",
-            error: error.message
-        });
-    }
-};
+
 
 export const fetchDoctor = async(req, res) => {
     const { doctorId } = req.params;

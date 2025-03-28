@@ -1,21 +1,21 @@
-import doctor from "../Model/doctorModel.js";
+import doctor from "../../Model/doctorModel.js";
 import mongoose from 'mongoose';
-import RejectedDoctor from "../Model/rejectedDoctors.js";
+import RejectedDoctor from "../../Model/rejectedDoctors.js";
 import moment from 'moment-timezone';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import {sendOtp} from '../utils/sendMail.js';
-import {setToken} from '../utils/auth.js';    
-import Department from '../Model/departmentModel.js';
-import appoimentSchedule from '../Model/appoimentSchedule.js';
-import Appointment from '../Model/appoimentModel.js';
-import DoctorWallet from '../Model/DrWallet.js';
-import User from '../Model/userModel.js';
-import Transaction from "../Model/transactionModel.js";
-import STATUS_CODE from "../StatusCode/StatusCode.js";
-import Chat from '../Model/chatModel.js';    
-import Prescription from '../Model/prescriptions.js';
-import AppointmentSchedule from '../Model/appoimentSchedule.js';
+import {sendOtp} from '../../utils/sendMail.js';
+import {setToken} from '../../utils/auth.js';    
+import Department from '../../Model/departmentModel.js';
+import appoimentSchedule from '../../Model/appoimentSchedule.js';
+import Appointment from '../../Model/appoimentModel.js';
+import DoctorWallet from '../../Model/DrWallet.js';
+import User from '../../Model/userModel.js';
+import Transaction from "../../Model/transactionModel.js";
+import STATUS_CODE from "../../StatusCode/StatusCode.js";
+import Chat from '../../Model/chatModel.js';    
+import Prescription from '../../Model/prescriptions.js';
+import AppointmentSchedule from '../../Model/appoimentSchedule.js';
 const cookieOptions = {
     httpOnly: false,
     secure: true,
@@ -811,29 +811,5 @@ export const getDashboardData = async (req, res) => {
     }
 
 };
-export const sendPrescription = async (req, res) => { 
-  try {
-    const { doctorId, userId, uniquePre } = req.params;
-    const data = req.body;  
-    console.log("doctorId", uniquePre);
-    console.log("userId", userId);
-    console.log("data", data);
-    const prescription = new Prescription({
-      doctorId,
-      userId,
-      prescriptions: data.prescriptions,
-      diagnosis: data.diagnosis,
-      uniquePre,
-      description:data.description
-    });
-    await prescription.save();
-    res.status(STATUS_CODE.OK).json({ message: 'Prescription sent successfully' });
-  } catch (error) {
-    console.error('Error in sendPrescription:', error);
-    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
-      message: 'Error sending prescription',
-      error: error.message
-    });
-  }
-}
+
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

@@ -21,8 +21,9 @@ import {
     // salesData,
     // graphDetails,
     getDashboardData,
-    sendPrescription
-} from '../Controllers/doctorController.js';
+   
+} from '../Controllers/doctorController/doctorController.js';
+import { sendPrescription } from '../Controllers/doctorController/prescriptionController.js';
 import { protectDoctor } from '../Middleware/authMiddleware.js';
 
 const doctor = express.Router();

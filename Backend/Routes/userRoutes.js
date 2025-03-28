@@ -14,17 +14,16 @@ import {
        logout,
        getDepartments,
        dptdoctor,
-       handlePayment,
        bookAppointment,
        fetchAppoiments,
-       verifyPayment,
        fetchDoctor,
        chatDetails,
          googleSignUp,
          profileSetup,
          googleSignIn,
          getPrescription
-    } from '../Controllers/userController.js';
+    } from '../Controllers/userController/userController.js';
+    import { handlePayment,verifyPayment } from '../Controllers/userController/paymentController.js';
 const router = express.Router();
 router.post('/signup', registerUser);//
 router.post('/login', loginUser);//
