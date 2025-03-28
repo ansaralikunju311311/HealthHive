@@ -14,25 +14,28 @@ export const getDashboardData = async(req,res)=>{
             case 'today':
                 startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
                 endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-                groupByFormat = '%H';
+                groupByFormat = '%H:00';
                 break;
             case 'weekly':
                 startDate = new Date(now);
-                startDate.setDate(startDate.getDate() - 7);
+                startDate.setDate(startDate.getDate() - 6);
                 startDate.setHours(0, 0, 0, 0);
+                endDate = new Date(now);
                 endDate.setHours(23, 59, 59, 999);
                 groupByFormat = '%Y-%m-%d';
                 break;
             case 'monthly':
                 startDate = new Date(now.getFullYear(), now.getMonth(), 1);
                 endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-                groupByFormat = '%d';
+                groupByFormat = '%Y-%m-%d';
                 break;
             case 'yearly':
-            default:
                 startDate = new Date(now.getFullYear(), 0, 1);
                 endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
-                groupByFormat = '%m';
+                groupByFormat = '%Y-%m';
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid filter type' });
         }
 
         const revenuePipeline = [
@@ -106,8 +109,9 @@ export const getDashboardData = async(req,res)=>{
                     }
                 }
             },
-
-
+            {
+                $sort: { _id: 1 }
+            }
         ]
                 const findReports = await Transaction.aggregate(reports);
                 console.log("find",findReports)
@@ -130,24 +134,26 @@ export const getDashboardData = async(req,res)=>{
 
         if (filter === 'today') {
             for (let hour = 0; hour < 24; hour++) {
-                const hourStr = hour.toString().padStart(2, '0');
-                const revenueFound = revenueResult.find(item => item._id === hourStr);
-                const userFound = userResult.find(item => item._id === hourStr);
-                const doctorFound = doctorResult.find(item => item._id === hourStr);
-                formattedData.labels.push(`${hourStr}:00`);
+                const hourLabel = hour.toString().padStart(2, '0') + ':00';
+                const revenueFound = revenueResult.find(item => item._id === hourLabel);
+                const userFound = userResult.find(item => item._id === hourLabel);
+                const doctorFound = doctorResult.find(item => item._id === hourLabel);
+                formattedData.labels.push(hourLabel);
                 formattedData.revenueData.push(revenueFound ? revenueFound.totalAmount * 0.1 : 0);
                 formattedData.userData.push(userFound ? userFound.count : 0);
                 formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
             }
         } else if (filter === 'weekly') {
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(now);
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                // Use locale format 'en-CA' to match the aggregation (YYYY-MM-DD)
+                const dateStr = date.toLocaleDateString('en-CA');
+                const dayLabel = date.toLocaleDateString('en-US', { weekday: 'short' });
                 const revenueFound = revenueResult.find(item => item._id === dateStr);
                 const userFound = userResult.find(item => item._id === dateStr);
                 const doctorFound = doctorResult.find(item => item._id === dateStr);
-                formattedData.labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                formattedData.labels.push(dayLabel);
                 formattedData.revenueData.push(revenueFound ? revenueFound.totalAmount * 0.1 : 0);
                 formattedData.userData.push(userFound ? userFound.count : 0);
                 formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
@@ -155,10 +161,11 @@ export const getDashboardData = async(req,res)=>{
         } else if (filter === 'monthly') {
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             for (let day = 1; day <= daysInMonth; day++) {
-                const dayStr = day.toString().padStart(2, '0');
-                const revenueFound = revenueResult.find(item => item._id === dayStr);
-                const userFound = userResult.find(item => item._id === dayStr);
-                const doctorFound = doctorResult.find(item => item._id === dayStr);
+                const date = new Date(now.getFullYear(), now.getMonth(), day);
+                const dateStr = date.toISOString().split('T')[0];
+                const revenueFound = revenueResult.find(item => item._id === dateStr);
+                const userFound = userResult.find(item => item._id === dateStr);
+                const doctorFound = doctorResult.find(item => item._id === dateStr);
                 formattedData.labels.push(day.toString());
                 formattedData.revenueData.push(revenueFound ? revenueFound.totalAmount * 0.1 : 0);
                 formattedData.userData.push(userFound ? userFound.count : 0);
@@ -166,12 +173,12 @@ export const getDashboardData = async(req,res)=>{
             }
         } else if (filter === 'yearly') {
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            for (let month = 1; month <= 12; month++) {
-                const monthStr = month.toString().padStart(2, '0');
+            for (let month = 0; month < 12; month++) {
+                const monthStr = `${now.getFullYear()}-${(month + 1).toString().padStart(2, '0')}`;
                 const revenueFound = revenueResult.find(item => item._id === monthStr);
                 const userFound = userResult.find(item => item._id === monthStr);
                 const doctorFound = doctorResult.find(item => item._id === monthStr);
-                formattedData.labels.push(months[month - 1]);
+                formattedData.labels.push(months[month]);
                 formattedData.revenueData.push(revenueFound ? revenueFound.totalAmount * 0.1 : 0);
                 formattedData.userData.push(userFound ? userFound.count : 0);
                 formattedData.doctorData.push(doctorFound ? doctorFound.count : 0);
