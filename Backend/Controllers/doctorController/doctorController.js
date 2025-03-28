@@ -638,7 +638,7 @@ export const getDashboardData = async (req, res) => {
             case 'today':
                 startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
                 endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-                groupByFormat = '%H';
+                groupByFormat = '%H:00'; // updated format to include minutes
                 break;
             case 'weekly':
                 startDate = new Date(now);
@@ -746,33 +746,34 @@ export const getDashboardData = async (req, res) => {
 
         if (filter === 'today') {
             for (let hour = 0; hour < 24; hour++) {
-                const hourStr = hour.toString().padStart(2, '0');
-                const timeLabel = `${hourStr}:00`;
-                
-                const appointmentFound = appointmentData.find(item => item._id === hourStr);
-                const revenueFound = revenueData.find(item => item._id === hourStr);
-
-                formattedData.appointments.labels.push(timeLabel);
-                formattedData.revenue.labels.push(timeLabel);
+                const hourLabel = hour.toString().padStart(2, '0') + ':00';
+                const appointmentFound = appointmentData.find(item => item._id === hourLabel);
+                const revenueFound = revenueData.find(item => item._id === hourLabel);
+                formattedData.appointments.labels.push(hourLabel);
+                formattedData.revenue.labels.push(hourLabel);
                 formattedData.appointments.data.push(appointmentFound ? appointmentFound.count : 0);
                 formattedData.revenue.data.push(revenueFound ? revenueFound.earnings * 0.9 : 0);
             }
-        } else if (filter === 'weekly') {
+        } 
+        
+        else if (filter === 'weekly') {
             for (let i = 0; i < 7; i++) {
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + i);
-                const dateStr = date.toISOString().split('T')[0];
+                // Use locale format 'en-CA' to get YYYY-MM-DD format matching aggregation
+                const dateStr = date.toLocaleDateString('en-CA');
                 const dayLabel = date.toLocaleDateString('en-US', { weekday: 'short' });
-
+    
                 const appointmentFound = appointmentData.find(item => item._id === dateStr);
                 const revenueFound = revenueData.find(item => item._id === dateStr);
-
+    
                 formattedData.appointments.labels.push(dayLabel);
                 formattedData.revenue.labels.push(dayLabel);
                 formattedData.appointments.data.push(appointmentFound ? appointmentFound.count : 0);
                 formattedData.revenue.data.push(revenueFound ? revenueFound.earnings * 0.9 : 0);
             }
-        } else if (filter === 'monthly') {
+        }
+        else if (filter === 'monthly') {
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(now.getFullYear(), now.getMonth(), day);
