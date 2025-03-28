@@ -202,7 +202,7 @@ const Appointments = () => {
     const tableRows = prescription.prescriptions.map((med) => [
       med.medicines,
       med.dosage,
-      med.duration,
+      `${med.duration} days`
     ]);
 
     autoTable(doc, {
@@ -587,7 +587,7 @@ const Appointments = () => {
                                 Dosage: {med.dosage}
                               </Typography>
                               <Typography variant="body2" color="text.secondary">
-                                Duration: {med.duration}
+                                Duration: {`${med.duration} days`}
                               </Typography>
                             </Box>
                           </Paper>
