@@ -233,3 +233,16 @@ export const getPrescription = async (unique) => {
   const response = await apiuser.get(`/user/prescription/${unique}`);
   return response.data;
 };
+export const feedBack = async ({ userId, doctorId, feedbackRating, feedbackComment }) => {
+  try {
+    const response = await apiuser.post('/user/feedback', {
+      userId,
+      doctorId,
+      feedbackRating,
+      feedbackComment
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

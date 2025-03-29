@@ -56,26 +56,7 @@ const Wallet = () => {
   }, [currentPage]);
 
  
-  // const [adminEarnings] = useState([
-  //   {
-  //     id: 1,
-  //     userId: "USR001",
-  //     userName: "John Doe",
-  //     userPayment: 1000,
-  //     adminCommission: 100,
-  //     date: '2025-02-18',
-  //     service: 'Consultation',
-  //   },
-  //   {
-  //     id: 2,
-  //     userId: "USR002",
-  //     userName: "Jane Smith",
-  //     userPayment: 2000,
-  //     adminCommission: 200,
-  //     date: '2025-02-17',
-  //     service: 'Lab Test',
-  //   },
-  // ]);
+  
   const columns = [
     {
       header: 'User',
@@ -216,7 +197,7 @@ const Wallet = () => {
                   Average Commission/Transaction
                 </Typography>
                 <Typography variant="h4" sx={{ color: '#9C27B0', fontWeight: 'bold' }}>
-                   ₹{adminEarning/count}
+                   ₹{(adminEarning/count).toFixed(2)}
                 </Typography>
               </Paper>
             </Grid>

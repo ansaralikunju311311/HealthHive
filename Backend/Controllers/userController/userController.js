@@ -11,6 +11,7 @@ import Transaction from '../../Model/transactionModel.js';
 import Prescription from '../../Model/prescriptions.js';
 import Chat from '../../Model/chatModel.js';
 import { timeStamp } from 'console';
+import FeedBack from '../../Model/feedBackModel.js';
 import STATUS_CODE from '../../StatusCode/StatusCode.js';
 const cookieOptions = {
     httpOnly: false,
@@ -623,6 +624,27 @@ export const getPrescription = async (req, res) => {
         res.status(STATUS_CODE.OK).json({prescription,doctorDetails,user});
     } catch (error) {
         console.error('Error fetching prescription:', error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+};
+export const feedBack = async (req, res) => {
+    try {
+        const { userId, doctorId,feedbackRating, feedbackComment } = req.body;
+         console.log("Feedback data:", { userId, doctorId, feedbackRating, feedbackComment });
+        const user = await User.findById(userId);
+        const doctor = await Doctor.findById(doctorId);
+        const feedbackData = new FeedBack({
+            user: userId,
+            doctor: doctorId,
+            feedback: feedbackComment,
+            rating: feedbackRating,
+            // userImage: user.image,
+            // doctorImage: doctor.image
+        });
+        await feedbackData.save();
+        res.status(STATUS_CODE.OK).json({ message: 'Feedback submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };

@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getDoctorInfo, getChatHistory } from '../../../Services/userServices/userApiService';
+import { getDoctorInfo, getChatHistory,feedBack } from '../../../Services/userServices/userApiService';
 import Sidebar from '../../../Component/User/SideBar/UserSideBAr';
 import { io } from 'socket.io-client';
 import { FiSend } from 'react-icons/fi';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
 import VideoRoom from '../../../Component/VideoCall/VideoRoom';
+import { FaStar, FaStarHalfAlt } from 'react-icons/fa'; 
+// import { feedBack } from '../../../Services/userServices/userApiService';
+// import { Feedback } from '@mui/icons-material';
 
 const Chat = () => {
   const location = useLocation();
@@ -26,6 +29,10 @@ const Chat = () => {
   const [roomId, setRoomId] = useState(null);
   const [showCallDialog, setShowCallDialog] = useState(false);
   const [incomingCallInfo, setIncomingCallInfo] = useState(null);
+  // New states for feedback modal
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [feedbackComment, setFeedbackComment] = useState('');
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -78,6 +85,7 @@ const Chat = () => {
     setIsInCall(false);
     setRoomId(null);
     socketRef.current.emit('endVideoCall', { doctorId, userId });
+    setShowFeedback(true); 
   };
 
   const handleTyping = () => {
@@ -88,6 +96,33 @@ const Chat = () => {
     }, 2000);
 
     return () => clearTimeout(timeoutId);
+  };
+
+  const handleFeedbackSubmit = async () => {
+    try {
+      // Use a default value if feedbackComment is empty
+      console.log('Feedback submitted:', { userId, doctorId, feedbackRating, feedbackComment });
+
+      const response = await feedBack({
+        userId,
+        doctorId,
+        feedbackRating,
+        feedbackComment
+      });
+      setShowFeedback(false);
+      setFeedbackRating(0);
+      setFeedbackComment('');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
+  };
+
+  // Add a helper function for handling half-star click
+  const handleFeedbackStarClick = (e, star) => {
+    const { left, width } = e.currentTarget.getBoundingClientRect();
+    const clickPos = e.clientX - left;
+    const newRating = clickPos < width / 2 ? star - 0.5 : star;
+    setFeedbackRating(newRating);
   };
 
   useEffect(() => {
@@ -233,6 +268,58 @@ const Chat = () => {
               userName={userName}
               onCallEnd={endVideoCall}
             />
+          )}
+
+          {/* Feedback Modal */}
+          {showFeedback && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+                <h3 className="text-xl font-semibold mb-4">Rate Your Call</h3>
+                <div className="mb-4">
+                  <p className="mb-2">Rating:</p>
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        onClick={(e) => handleFeedbackStarClick(e, star)}
+                        className="cursor-pointer"
+                      >
+                        {feedbackRating >= star ? (
+                          <FaStar className="text-yellow-400" />
+                        ) : feedbackRating >= star - 0.5 ? (
+                          <FaStarHalfAlt className="text-yellow-400" />
+                        ) : (
+                          <FaStar className="text-gray-300" />
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <textarea
+                    value={feedbackComment}
+                    onChange={(e) => setFeedbackComment(e.target.value)}
+                    placeholder="Leave a comment..."
+                    className="w-full border border-gray-300 rounded p-2"
+                    rows="3"
+                  />
+                </div>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    onClick={() => setShowFeedback(false)}
+                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleFeedbackSubmit}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Messages Container */}
