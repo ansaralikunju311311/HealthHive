@@ -16,6 +16,7 @@ import STATUS_CODE from "../../StatusCode/StatusCode.js";
 import Chat from '../../Model/chatModel.js';    
 import Prescription from '../../Model/prescriptions.js';
 import AppointmentSchedule from '../../Model/appoimentSchedule.js';
+import Feedback from '../../Model/feedBackModel.js'
 const cookieOptions = {
     httpOnly: false,
     secure: true,
@@ -811,6 +812,16 @@ export const getDashboardData = async (req, res) => {
         });
     }
 
+};
+export const getFeedBack = async (req, res) => {
+  const { doctorId } = req.params;
+  try {
+    const feedback = await Feedback.find({ doctor: doctorId }).populate('user', 'name image');
+    res.status(STATUS_CODE.OK).json(feedback);
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+  }
 };
 
 export { registerDoctor, loginDoctor, verifyDoctorToken,fetchDoctors,forgotPassword,resetPassword ,doctorProfile};

@@ -18,6 +18,7 @@ import {
     userDetails,
     chatDetails,
     updateDoctorProfile,
+    getFeedBack,
     // salesData,
     // graphDetails,
     getDashboardData,
@@ -51,4 +52,5 @@ doctor.get('/verify-token', protectDoctor, verifyDoctorToken);
 // doctor.get('/salesdata/:id',salesData)
 doctor.get('/dashboard/:doctorId/:filter', getDashboardData);
 doctor.post('/prescription/:doctorId/:userId/:uniquePre', sendPrescription);
+doctor.get('/feedback/:doctorId', getFeedBack);
 export default doctor;

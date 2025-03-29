@@ -374,6 +374,8 @@ export const getDoctorsData = async (req, res) => {
             path: 'specialization',
             select: 'Departmentname'
         });
+        // const feedbacks = await Feedback.find({ doctorId: doctors._id });
+        // console.log("Found doctors:", feedbacks)
 
         res.status(STATUS_CODE.OK).json({ doctors: doctors }); 
     } catch (error) {

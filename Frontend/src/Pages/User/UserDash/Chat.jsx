@@ -7,7 +7,7 @@ import { FiSend } from 'react-icons/fi';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import TypingIndicator from '../../../Component/Chat/TypingIndicator';
 import VideoRoom from '../../../Component/VideoCall/VideoRoom';
-import { FaStar, FaStarHalfAlt } from 'react-icons/fa'; 
+import { FaStar } from 'react-icons/fa'; 
 // import { feedBack } from '../../../Services/userServices/userApiService';
 // import { Feedback } from '@mui/icons-material';
 
@@ -117,12 +117,8 @@ const Chat = () => {
     }
   };
 
-  // Add a helper function for handling half-star click
-  const handleFeedbackStarClick = (e, star) => {
-    const { left, width } = e.currentTarget.getBoundingClientRect();
-    const clickPos = e.clientX - left;
-    const newRating = clickPos < width / 2 ? star - 0.5 : star;
-    setFeedbackRating(newRating);
+  const handleFeedbackStarClick = (star) => {
+    setFeedbackRating(star);
   };
 
   useEffect(() => {
@@ -281,16 +277,12 @@ const Chat = () => {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
                         key={star}
-                        onClick={(e) => handleFeedbackStarClick(e, star)}
+                        onClick={() => handleFeedbackStarClick(star)}
                         className="cursor-pointer"
                       >
-                        {feedbackRating >= star ? (
-                          <FaStar className="text-yellow-400" />
-                        ) : feedbackRating >= star - 0.5 ? (
-                          <FaStarHalfAlt className="text-yellow-400" />
-                        ) : (
-                          <FaStar className="text-gray-300" />
-                        )}
+                        <FaStar 
+                          className={`w-6 h-6 ${feedbackRating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                        />
                       </span>
                     ))}
                   </div>

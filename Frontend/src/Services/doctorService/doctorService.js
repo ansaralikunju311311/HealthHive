@@ -175,3 +175,7 @@ export const sendPrescription = async (doctorId, userId, data,uniquePre) => {
   const response = await apidoctor.post(`/doctor/prescription/${doctorId}/${userId}/${uniquePre}`, data);
   return response.data;
 };
+export const feedBack = async (doctorId) => {
+  const response = await apidoctor.get(`/doctor/feedback/${doctorId}`);
+  return response.data;
+};
