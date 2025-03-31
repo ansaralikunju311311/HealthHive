@@ -55,7 +55,7 @@ const Chat = () => {
   const endVideoCall = () => {
     setIsInCall(false);
     setRoomId(null);
-    socketRef.current.emit('endVideoCall', { doctorId, userId });
+    socketRef.current.emit('endVideoCall', { doctorId, userId, endedBy: 'doctor' });
   };
 
   useEffect(() => {

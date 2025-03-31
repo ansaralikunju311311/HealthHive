@@ -84,7 +84,7 @@ const Chat = () => {
   const endVideoCall = () => {
     setIsInCall(false);
     setRoomId(null);
-    socketRef.current.emit('endVideoCall', { doctorId, userId });
+    socketRef.current.emit('endVideoCall', { doctorId, userId, endedBy: 'user' });
     setShowFeedback(true); 
   };
 
@@ -186,9 +186,12 @@ const Chat = () => {
         setShowCallDialog(true);
       });
 
-      socketRef.current.on('videoCallEnded', () => {
+      socketRef.current.on('videoCallEnded', ({ endedBy }) => {
         setIsInCall(false);
         setRoomId(null);
+        if (endedBy === 'doctor') {
+          setShowFeedback(true);
+        }
       });
     }
 

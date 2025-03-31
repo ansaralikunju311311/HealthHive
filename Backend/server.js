@@ -153,15 +153,15 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('endVideoCall', ({ doctorId, userId }) => {
+    socket.on('endVideoCall', ({ doctorId, userId, endedBy }) => {
         const doctorSocket = onlineUsers.get(doctorId);
         const userSocket = onlineUsers.get(userId);
         
         if (doctorSocket && doctorSocket.socketId) {
-            io.to(doctorSocket.socketId).emit('videoCallEnded');
+            io.to(doctorSocket.socketId).emit('videoCallEnded', { endedBy });
         }
         if (userSocket && userSocket.socketId) {
-            io.to(userSocket.socketId).emit('videoCallEnded');
+            io.to(userSocket.socketId).emit('videoCallEnded', { endedBy });
         }
     });
 
@@ -209,12 +209,16 @@ app.use(express.urlencoded({ extended: true}));
 
 const ConnectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO,{  
+        await mongoose.connect(process.env.MONGO + 'HealthHive', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000
         });
 
         console.log('Connected to MongoDB');
     } catch (error) {
         console.log('Error connecting to MongoDB:', error.message);
+        process.exit(1); 
     }
 };
 app.use('/api/user', user);
