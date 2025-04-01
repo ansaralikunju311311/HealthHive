@@ -4,7 +4,7 @@ const departmentSchema = new mongoose.Schema({
         type: String,
         required: true,
         set: function(value) {
-            return value.charAt(0).toUpperCase() + value.slice(1); // Capitalizes first letter
+            return value.charAt(0).toUpperCase() + value.slice(1); 
         }
     },
     status: {
@@ -20,7 +20,7 @@ const departmentSchema = new mongoose.Schema({
 });
 departmentSchema.index({ Departmentname: 1 }, { 
     unique: true,
-    collation: { locale: 'en', strength: 2 } // Case-insensitive uniqueness
+    collation: { locale: 'en', strength: 2 } 
 });
 const Department = mongoose.model('Department', departmentSchema);
 export default Department;
