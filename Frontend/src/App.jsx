@@ -44,6 +44,7 @@ import Chat from './Pages/User/UserDash/Chat'
 import DrChat from './Pages/Doctor/Chat/Chat'
 import { verifyUserToken } from './Services/userServices/userApiService.js';
 import ProfileCompletion from './Pages/User/ProfileCompletion.jsx';
+import FeedBack from './Pages/Doctor/FeedBack/FeedBack';
 const ProtectedRoute = ({ children, wrapper: Wrapper }) => (
   <Wrapper>{children}</Wrapper>
 );
@@ -122,6 +123,7 @@ const App = () => {
         <Route path="/schedules" element={<ProtectedRoute wrapper={DoctorProtected}><Schedules /></ProtectedRoute>} />
         <Route path="/doctor/wallet" element={<ProtectedRoute wrapper={DoctorProtected}><DrWallet /></ProtectedRoute>} />
         <Route path="/doctor/chats" element={<ProtectedRoute wrapper={DoctorProtected}><DrChat /></ProtectedRoute>} />
+        <Route path="/doctor/feedback" element={<ProtectedRoute wrapper={DoctorProtected}><FeedBack /></ProtectedRoute>} />
         
         {/* Admin Routes */}
 

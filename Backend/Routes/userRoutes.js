@@ -21,7 +21,8 @@ import {
          googleSignUp,
          profileSetup,
          googleSignIn,
-         getPrescription
+         getPrescription,
+         feedBack
     } from '../Controllers/userController/userController.js';
     import { handlePayment,verifyPayment } from '../Controllers/userController/paymentController.js';
 const router = express.Router();
@@ -49,5 +50,6 @@ router.get('/Chats/:doctorId/:userId',chatDetails);
 router.post('/profile-completion',profileSetup);
 router.post('/google-login',googleSignIn);
 router.get('/prescription/:unique',getPrescription);
+router.post('/feedback',feedBack);
 
 export default router;

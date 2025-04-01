@@ -9,7 +9,8 @@ import {
   MdSchedule,
   MdChat,
   MdAccountBalanceWallet,
-  MdExitToApp 
+  MdExitToApp,
+  MdFeedback 
 } from 'react-icons/md';
 import { logoutDoctor } from '../../Services/doctorService/doctorService';
 
@@ -62,6 +63,13 @@ const Sidebar = ({activePage, doctorid}) => {
       text: 'Wallet',
       path: '/doctor/wallet',
       id: 'wallet'
+    },
+    {
+      icon:<MdFeedback className="w-6 h-6"/>,
+      text: 'Feedback',
+      path: '/doctor/feedback',
+      id: 'feedback',
+      state:{doctorid:id}
     }
   ];
 

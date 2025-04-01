@@ -16,6 +16,30 @@ import Specialties from '../../../Component/User/UserCommons/Specialties.jsx';
 import QuickAction from '../../../Component/User/UserCommons/QuickAction.jsx';
 import HealthTips from '../../../Component/User/UserCommons/HealthTips.jsx';
 import Department from '../../../Component/User/UserCommons/Department.jsx';
+import { FaStar } from 'react-icons/fa';
+
+// Star Rating Component
+const StarRating = ({ rating }) => {
+  const stars = [];
+  const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
+
+  for (let i = 1; i <= 5; i++) {
+    if (i <= roundedRating) {
+      stars.push(<FaStar key={i} className="text-yellow-400" />);
+    } else if (i - 0.5 === roundedRating) {
+      stars.push(<FaStar key={i} className="text-yellow-400 opacity-50" />);
+    } else {
+      stars.push(<FaStar key={i} className="text-gray-300" />);
+    }
+  }
+
+  return (
+    <div className="flex items-center space-x-1">
+      {stars}
+      <span className="ml-2 text-sm text-gray-600">({rating.toFixed(1)})</span>
+    </div>
+  );
+};
 
 const HomePageUser = () => {
   const navigate = useNavigate();
@@ -129,6 +153,12 @@ const HomePageUser = () => {
                   <div className="text-center mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
                     <p className="text-blue-600 font-medium">{doctor.specialization?.Departmentname}</p>
+                    <div className="flex justify-center mt-2">
+                      <StarRating rating={doctor.averageRating || 0} />
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {doctor.feedbacks?.length || 0} reviews
+                    </p>
                   </div>
                   <div className="flex items-center justify-center text-gray-600 text-sm mb-4">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,6 +234,12 @@ const HomePageUser = () => {
                   <div className="text-center mb-4">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
                     <p className="text-blue-600 font-medium">{doctor.specialization?.Departmentname}</p>
+                    <div className="flex justify-center mt-2">
+                      <StarRating rating={doctor.averageRating || 0} />
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {doctor.feedbacks?.length || 0} reviews
+                    </p>
                   </div>
                   <div className="flex items-center justify-center text-gray-600 text-sm mb-4">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
