@@ -35,14 +35,17 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
+        console.log('vandjjdffbifdbsjvbfsdvbfjbvsz')
         const response = await verifyDoctorToken();
+        console.log("Doctor data verify token",response)
         const doctorData = response?.doctor;
         setDoctor(doctorData);
+        console.log("Doctor data",doctorData)
 
         const appointmentResponse = await appoimentDetails(doctorData._id);
         setAppointmentStats(appointmentResponse);
 
-        localStorage.setItem('doctorId', JSON.stringify(doctorData));
+       localStorage.setItem('doctorId', JSON.stringify(doctorData));
         setLoading(false);
 
         if (doctorData.isBlocked && doctorData.isActive) {
@@ -63,6 +66,7 @@ const DoctorDash = () => {
     if (!doctor?._id) return;
 
     const fetchDashboardData = async () => {
+      console.log('vandjjdffbifdbsjvbfsdvbfjbvsz2222222222222222222222222')
       try {
         const response = await getDashboardData(doctor._id, filter);
         setDashboardData(response.formattedData);

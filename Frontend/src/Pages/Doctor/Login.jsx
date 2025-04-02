@@ -31,6 +31,7 @@ const Login = () => {
                     icon: '👋',
                     backgroundColor: '#22c55e'
                 });
+                console.log("Doctor data  fnvjfnvfnfnfnfnfnnfn")
                 navigate('/doctor/dashboard');
             }
         } catch (error) {

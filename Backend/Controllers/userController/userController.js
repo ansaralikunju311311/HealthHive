@@ -378,9 +378,9 @@ export const getDoctorsData = async (req, res) => {
 
         // Get all feedbacks for the retrieved doctors
         const doctorIds = doctors.map(doctor => doctor._id);
-        console.log("Doctor IDs:", doctorIds);      
+        // console.log("Doctor IDs:", doctorIds);      
         const feedbacks = await FeedBack.find({ doctor: { $in: doctorIds } });
-        console.log("Feedbacks:", feedbacks);
+        // console.log("Feedbacks:", feedbacks);
         // Create a map of feedbacks by doctor ID
         const feedbacksByDoctor = {};
         feedbacks.forEach(feedback => {
@@ -438,7 +438,7 @@ export const logout = async (req, res) => {
 export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
-        console.log("Department Name:", departmentname);
+        // console.log("Department Name:", departmentname);
         
         
         const department = await Department.findOne({ Departmentname: departmentname });
@@ -459,7 +459,7 @@ export const dptdoctor = async (req, res) => {
             select: 'Departmentname'
         });
 
-        console.log("Found doctors:", doctors);
+        // console.log("Found doctors:", doctors);
         res.status(STATUS_CODE.OK).json({ doctors });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);

@@ -32,6 +32,7 @@ apidoctor.interceptors.response.use(
 export const verifyDoctorToken = async () => {
   try {
     const token = getDoctorToken();
+    console.log("this is the token get", token)
     if (!token) {
       throw new Error('No token found');
     }

@@ -103,6 +103,7 @@ const cookieOptions = {
  const loginDoctor = async(req,res)=>{
     try {
         const {email,password} = req.body;
+        console.log("body",req.body)
         const existingDoctor = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email});
         if(!existingDoctor){
