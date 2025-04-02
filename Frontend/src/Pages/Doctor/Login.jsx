@@ -17,6 +17,9 @@ const Login = () => {
         try {
             const { doctor } = await doctorLogin(data, { withCredentials: true });
  
+
+
+            console.log("Doctor data  fnvjfnvfnfnfnfncnc ncbcbvnkcxvkcnzkbvkjbzvbszbhcfnnfn",doctor)
             if (doctor.isActive === false) {
                 toast.error('Your account is pending verification');
                 navigate('/beforeverification');
