@@ -20,7 +20,6 @@ const ProfileCompletion = () => {
       setIsUploading(true);
       let imageUrl = null;
 
-      
       if (data.profileImage[0]) {
         imageUrl = await cloudinaryUpload(data.profileImage[0]);
       }
@@ -31,26 +30,32 @@ const ProfileCompletion = () => {
         profileImage: imageUrl
       };
 
-     
-      const response =await profileCompletion(submitData,{
-        withCredentials:true
-      })
+      const response = await profileCompletion(submitData, {
+        withCredentials: true
+      });
 
       if (response.success || response.profileCompletion) {
+        // Store authentication data
+        if (response.userToken) {
+          Cookies.set('usertoken', response.userToken, { path: '/' });
+        }
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
+        
+        localStorage.setItem('profileCompleted', 'true');
         toast.success('Profile completed successfully!');
-        localStorage.setItem('profileCompleted', 'true'); 
         
-      
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Small delay to ensure cookies are set
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-      
         navigate('/home', { replace: true });
       } else {
         toast.error(response.message || 'Failed to complete profile');
       }
     } catch (error) {
       console.error('Submission error:', error);
-      toast.error(error.response?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || 'Something went wrong');
     } finally {
       setIsUploading(false);
     }

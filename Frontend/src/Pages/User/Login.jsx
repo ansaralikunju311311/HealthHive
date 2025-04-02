@@ -52,7 +52,13 @@ const Login = () => {
         return;
       }
 
+      // Handle profile completion case
       if (response?.profileCompletion === false) {
+        // Clear any existing tokens before redirecting
+        Cookies.remove('usertoken', { path: '/' });
+        localStorage.removeItem('userId');
+        localStorage.removeItem('profileCompleted');
+        
         toast.warning('Please complete your profile first');
         navigate('/profilecompletion', { 
           state: { email: result.user.email }
@@ -60,17 +66,30 @@ const Login = () => {
         return;
       }
 
+      // Handle successful login
       if (response?.userToken) {
+        // Set authentication data
         Cookies.set('usertoken', response.userToken, { path: '/' });
         if (response.userId) {
           localStorage.setItem('userId', response.userId);
         }
+        localStorage.setItem('profileCompleted', 'true');
+        
         toast.success('Welcome back!');
+        // Small delay to ensure cookies are set
+        await new Promise(resolve => setTimeout(resolve, 500));
         await verifyAndNavigate();
+      } else {
+        throw new Error('No authentication token received');
       }
 
     } catch (error) {
       console.error('Google login error:', error);
+      // Clear any partial authentication data
+      Cookies.remove('usertoken', { path: '/' });
+      localStorage.removeItem('userId');
+      localStorage.removeItem('profileCompleted');
+      
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setIsLoading(false);
