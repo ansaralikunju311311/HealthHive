@@ -57,10 +57,12 @@ export const verifyUserToken = async () => {
 
 export const loginUser = async (credentials) => {
   try {
+      console.log("login user",credentials)
     const response = await apiuser.post('/user/login', credentials);
     
     // Set the token in cookie if login successful
     if (response.data?.token) {
+      console.log("token set",response.data.token)
       cookie.set('usertoken', response.data.token, { path: '/' });
     }
     
