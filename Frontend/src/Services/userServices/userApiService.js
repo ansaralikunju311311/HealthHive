@@ -238,14 +238,36 @@ export const getOtpRemainingTime = async (email) => {
 };
 
 export const googleLogin = async (email, uid) => {
-  const response = await apiuser.post('/user/google-login', { email, uid });
-  if (response.data?.userToken) {
-    cookie.set('usertoken', response.data.userToken, { path: '/' });
+  try {
+    const response = await apiuser.post('/user/google-login', { email, uid });
+    
+    if (!response.data?.userToken) {
+      throw new Error('No authentication token received');
+    }
+
+    // Set the token in cookie
+    cookie.set('usertoken', response.data.userToken, { 
+      path: '/',
+      secure: true,
+      sameSite: 'Lax'
+    });
+
+    // Store user ID if available
     if (response.data.userId) {
       localStorage.setItem('userId', response.data.userId);
     }
+
+    // Verify the token was set
+    const storedToken = cookie.get('usertoken');
+    if (!storedToken) {
+      throw new Error('Failed to store authentication token');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Google login error:', error);
+    throw error;
   }
-  return response.data;
 };
 
 export const profileCompletion = async (data) => {
