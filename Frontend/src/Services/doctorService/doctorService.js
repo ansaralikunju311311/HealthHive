@@ -4,6 +4,9 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const getDoctorToken = () => cookie.get('doctortoken');
 
+console.log("token for the checking processs",getDoctorToken())
+const token = cookie.get('doctortoken');
+console.log("token for the checking processs token",token)
 const apidoctor = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -33,7 +36,7 @@ export const verifyDoctorToken = async () => {
   try {
 
     const token = getDoctorToken();
-    
+
     console.log("this is the token get", token)
     if (!token) {
       throw new Error('No token found');
