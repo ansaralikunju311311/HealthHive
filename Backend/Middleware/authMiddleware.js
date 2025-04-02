@@ -9,6 +9,7 @@ import STATUS_CODE from '../StatusCode/StatusCode.js'
 export const protect = async (req, res, next) => {
     try {
         const token = req.cookies.usertoken;
+        console.log("token user protect",token)
         console.log(token)
         if (!token || token.trim() === '') {
             return res.status(STATUS_CODE.Unauthorized).json({ message: 'Not authorized, no valid token' });

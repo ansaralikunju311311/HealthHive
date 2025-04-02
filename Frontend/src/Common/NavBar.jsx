@@ -14,6 +14,7 @@ const NavBar = () => {
     const fetchUserData = async () => {
       try {
         const { user } = await verifyUserToken();
+        console.log("user data navbar",user)
         setUserData(user);
       } catch (error) {
         if (!error.response || error.response.status !== 401) {

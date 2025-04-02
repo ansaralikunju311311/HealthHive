@@ -359,6 +359,7 @@ const resetPassword = async(req, res) => {
 const verifyToken = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
+        console.log("user data verify token",user)
         if (!user) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'User not found' });
         }

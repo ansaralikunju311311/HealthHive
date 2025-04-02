@@ -18,6 +18,7 @@ const apiuser = axios.create({
 
 apiuser.interceptors.request.use(config => {
   const token = getUserToken();
+  console.log("token dddddddddddddddddddddddddjddjdj",token)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -39,6 +40,8 @@ apiuser.interceptors.response.use(
 export const verifyUserToken = async () => {
   try {
     const token = getUserToken();
+    console.log("token jddjdj",token)
+
     if (!token) return { user: null };
     const response = await apiuser.get('/user/verify-token');
     return response.data;
