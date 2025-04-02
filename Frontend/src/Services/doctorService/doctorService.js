@@ -16,6 +16,7 @@ const apidoctor = axios.create({
 apidoctor.interceptors.request.use(config => {
   const token = getDoctorToken();
   if (token) {
+    console.log("token for the checking processs tokennfnfnffnfnff",token)
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -69,14 +70,23 @@ export const doctorSignUp = async (doctorData) => {
  
 }
 
-export const doctorLogin = async(data,withCredentials=true)=>{
-  
+export const doctorLogin = async(data)=>{
+  try {
     const response = await apidoctor.post('/doctor/login', data, {
-      withCredentials
+      withCredentials: true
     });
+    
+    // Set the token in cookie if login successful
+    if (response.data?.token) {
+      cookie.set('doctortoken', response.data.token, { path: '/' });
+    }
+    
     return response.data;
-
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
   }
+}
 export const logoutDoctor = async () => {
   
     await apidoctor.post('/doctor/logout');

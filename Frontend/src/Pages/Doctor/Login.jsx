@@ -15,15 +15,17 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            const { doctor } = await doctorLogin(data, { withCredentials: true });
- 
+            const response = await doctorLogin(data);
+            const { doctor, token } = response;
 
+            if (!doctor || !token) {
+                throw new Error('Invalid response from server');
+            }
 
-            console.log("Doctor data  fnvjfnvfnfnfnfncnc ncbcbvnkcxvkcnzkbvkjbzvbszbhcfnnfn",doctor)
             if (doctor.isActive === false) {
                 toast.error('Your account is pending verification');
                 navigate('/beforeverification');
-            } else if (doctor.isBlocked===true) {
+            } else if (doctor.isBlocked === true) {
                 toast.error('Your account has been blocked. Please contact support.', {
                     icon: '⛔',
                     backgroundColor: '#ef4444'
@@ -34,7 +36,6 @@ const Login = () => {
                     icon: '👋',
                     backgroundColor: '#22c55e'
                 });
-                console.log("Doctor data  fnvjfnvfnfnfnfnfnnfn")
                 navigate('/doctor/dashboard');
             }
         } catch (error) {
