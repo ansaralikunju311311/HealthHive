@@ -62,13 +62,14 @@ export const loginUser = async (credentials) => {
     
     console.log("login response",response)
     // Set the token in cookie if login successful
-    if (response.data?.token) {
-      console.log("token set",response.data.token)
-      cookie.set('usertoken', response.data.token, { path: '/' });
+    if (response.data?.userToken) {
+      console.log("token set",response.data.userToken)
+      cookie.set('usertoken', response.data.userToken, { path: '/' });
     }
     
     return response.data;
   } catch (error) {
+    console.error('Login error:', error);
     handleApiError(error, 'Login failed');
   }
 };
