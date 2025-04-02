@@ -207,8 +207,14 @@ export const getChatHistory = async (doctorId, userId) => {
 export const verifyOtp = async (email, otp) => {
   
     const response = await apiuser.post('/user/verify-otp', { email, otp: otp.trim() });
+    if (response.data?.userToken) {
+      cookie.set('usertoken', response.data.userToken, { path: '/' });
+      if (response.data.userId) {
+        localStorage.setItem('userId', response.data.userId);
+      }
+    }
     return response.data;
-
+  
 };
 
 export const resendOtp = async (email) => {

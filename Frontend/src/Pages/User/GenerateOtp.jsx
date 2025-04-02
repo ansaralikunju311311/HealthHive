@@ -57,9 +57,14 @@ const GenerateOtp = () => {
       const response = await verifyOtp(email, otp);
       setSuccess(response.message);
       
-      if (response) {
+      if (response.userToken) {
         toast.success('Email verified successfully! Welcome to HealthHive.');
-        navigate('/home');
+        // Ensure token is set before navigation
+        setTimeout(() => {
+          navigate('/home');
+        }, 100);
+      } else {
+        toast.error('Verification failed. Please try again.');
       }
     } catch (error) {
       toast.error(error.message || 'Invalid verification code. Please try again.');
@@ -80,7 +85,7 @@ const GenerateOtp = () => {
     
     try {
       toast.info('Sending new verification code...');
-      await ResendOtp(email);
+      await resendOtp(email);
       toast.success('New verification code sent to your email.');
       
       const timeResponse = await getOtpRemainingTime(email);
