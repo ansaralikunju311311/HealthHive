@@ -60,6 +60,7 @@ export const loginUser = async (credentials) => {
       console.log("login user",credentials)
     const response = await apiuser.post('/user/login', credentials);
     
+    console.log("login response",response)
     // Set the token in cookie if login successful
     if (response.data?.token) {
       console.log("token set",response.data.token)
