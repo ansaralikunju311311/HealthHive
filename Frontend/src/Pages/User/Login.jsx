@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { googleLogin, loginUser } from '../../Services/userServices/userApiService.js';
+import { googleLogin, loginUser, verifyUserToken } from '../../Services/userServices/userApiService.js';
 import { toast } from 'react-toastify';
 import Bannerdoctor from '../../assets/Bannerdoctor.png';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -15,6 +15,21 @@ const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isLoading, setIsLoading] = useState(false);
 
+  const verifyAndNavigate = async () => {
+    try {
+      const { user } = await verifyUserToken();
+      if (!user) {
+        throw new Error('User verification failed');
+      }
+      navigate('/home', { replace: true });
+    } catch (error) {
+      console.error('Verification error:', error);
+      Cookies.remove('usertoken', { path: '/' });
+      localStorage.removeItem('userId');
+      toast.error('Authentication failed. Please try again.');
+    }
+  };
+
   const glogin = async() => {
     try {
       setIsLoading(true);
@@ -26,13 +41,6 @@ const Login = () => {
 
       const response = await googleLogin(email, uid);
       console.log('Response:', response);
-
-      if (response?.userToken) {
-        Cookies.set('usertoken', response.userToken, { path: '/' });
-        if (response.userId) {
-          localStorage.setItem('userId', response.userId);
-        }
-      }
 
       if (response?.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
@@ -52,10 +60,14 @@ const Login = () => {
         return;
       }
 
-      // Add a small delay to ensure cookies are set
-      await new Promise(resolve => setTimeout(resolve, 100));
-      toast.success('Welcome back!');
-      navigate('/home', { replace: true });
+      if (response?.userToken) {
+        Cookies.set('usertoken', response.userToken, { path: '/' });
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
+        toast.success('Welcome back!');
+        await verifyAndNavigate();
+      }
 
     } catch (error) {
       console.error('Google login error:', error);
@@ -70,13 +82,6 @@ const Login = () => {
       setIsLoading(true);
       const response = await loginUser(data);
       
-      if (response?.userToken) {
-        Cookies.set('usertoken', response.userToken, { path: '/' });
-        if (response.userId) {
-          localStorage.setItem('userId', response.userId);
-        }
-      }
-
       if (response?.user?.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
@@ -95,10 +100,14 @@ const Login = () => {
         return;
       }
 
-      // Add a small delay to ensure cookies are set
-      await new Promise(resolve => setTimeout(resolve, 100));
-      toast.success('Welcome back!');
-      navigate('/home', { replace: true });
+      if (response?.userToken) {
+        Cookies.set('usertoken', response.userToken, { path: '/' });
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
+        toast.success('Welcome back!');
+        await verifyAndNavigate();
+      }
       
     } catch (error) {
       toast.error(error.message || 'Login failed');
