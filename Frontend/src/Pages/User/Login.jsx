@@ -39,26 +39,30 @@ const Login = () => {
       const email = result.user.email;
       const uid = result.user.uid;
 
+      // Clear any existing tokens before attempting login
+      Cookies.remove('usertoken', { path: '/' });
+      localStorage.removeItem('userId');
+      localStorage.removeItem('profileCompleted');
+
       const response = await googleLogin(email, uid);
       console.log('Response:', response);
 
-      if (response?.isBlocked) {
+      if (!response) {
+        throw new Error('No response from server');
+      }
+
+      if (response.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
       }
 
-      if (response?.isActive === false) {
+      if (response.isActive === false) {
         toast.error('Please verify your email first');
         return;
       }
 
       // Handle profile completion case
-      if (response?.profileCompletion === false) {
-        // Clear any existing tokens before redirecting
-        Cookies.remove('usertoken', { path: '/' });
-        localStorage.removeItem('userId');
-        localStorage.removeItem('profileCompleted');
-        
+      if (response.profileCompletion === false) {
         toast.warning('Please complete your profile first');
         navigate('/profilecompletion', { 
           state: { email: result.user.email }
@@ -67,21 +71,32 @@ const Login = () => {
       }
 
       // Handle successful login
-      if (response?.userToken) {
-        // Set authentication data
-        Cookies.set('usertoken', response.userToken, { path: '/' });
-        if (response.userId) {
-          localStorage.setItem('userId', response.userId);
-        }
-        localStorage.setItem('profileCompleted', 'true');
-        
-        toast.success('Welcome back!');
-        // Small delay to ensure cookies are set
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await verifyAndNavigate();
-      } else {
-        throw new Error('No authentication token received');
+      if (!response.userToken) {
+        throw new Error('No authentication token received from server');
       }
+
+      // Set authentication data with secure options
+      Cookies.set('usertoken', response.userToken, { 
+        path: '/', 
+        secure: true,
+        sameSite: 'Lax'
+      });
+
+      if (response.userId) {
+        localStorage.setItem('userId', response.userId);
+      }
+      localStorage.setItem('profileCompleted', 'true');
+      
+      // Verify token was set correctly
+      const storedToken = Cookies.get('usertoken');
+      if (!storedToken) {
+        throw new Error('Failed to store authentication token');
+      }
+
+      toast.success('Welcome back!');
+      
+      // Navigate after successful token verification
+      navigate('/home', { replace: true });
 
     } catch (error) {
       console.error('Google login error:', error);
@@ -90,7 +105,7 @@ const Login = () => {
       localStorage.removeItem('userId');
       localStorage.removeItem('profileCompleted');
       
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
