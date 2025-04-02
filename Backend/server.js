@@ -21,7 +21,7 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type", "Authorization"]
     },
-    path: '/socket.io'
+    path: '/api'
 });
 
 const onlineUsers = new Map();

@@ -12,6 +12,7 @@ import VideoRoom from '../../../Component/VideoCall/VideoRoom';
 
 const Chat = () => {
   const BASE_URL = import.meta.env.VITE_API_URL
+  const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -84,10 +85,10 @@ const Chat = () => {
     chatData();
 
     if (!socketRef.current) {
-      socketRef.current = io(BASE_URL, {
+      socketRef.current = io(SOCKET_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
-        path: '/socket.io',
+        path: '/api',
       });
 
       socketRef.current.emit('joinRoom', { doctorId, userId, type: 'doctor' });
