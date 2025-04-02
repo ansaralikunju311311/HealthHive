@@ -56,10 +56,18 @@ export const verifyUserToken = async () => {
 };
 
 export const loginUser = async (credentials) => {
-  
+  try {
     const response = await apiuser.post('/user/login', credentials);
+    
+    // Set the token in cookie if login successful
+    if (response.data?.token) {
+      cookie.set('usertoken', response.data.token, { path: '/' });
+    }
+    
     return response.data;
-  
+  } catch (error) {
+    handleApiError(error, 'Login failed');
+  }
 };
 
 export const logoutUser = async () => {

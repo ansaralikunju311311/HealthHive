@@ -71,6 +71,11 @@ const Login = () => {
       setIsLoading(true);
       const response = await loginUser(data);
       
+      // Store user data in localStorage
+      if (response.token) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+
       if (response.user.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
@@ -90,7 +95,7 @@ const Login = () => {
       }
 
       toast.success('Welcome back!');
-      navigate('/home');
+      navigate('/home', { replace: true });
       
     } catch (error) {
       toast.error(error.message || 'Login failed');
