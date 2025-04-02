@@ -84,9 +84,10 @@ const Chat = () => {
     chatData();
 
     if (!socketRef.current) {
-      socketRef.current = io(`${BASE_URL}/chat`, {
+      socketRef.current = io(BASE_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
+        path: '/socket.io',
       });
 
       socketRef.current.emit('joinRoom', { doctorId, userId, type: 'doctor' });
