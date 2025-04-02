@@ -13,6 +13,7 @@ import { FaStar } from 'react-icons/fa';
 
 const Chat = () => {
   const BASE_URL = import.meta.env.VITE_API_URL
+  const SOCKET_URL = import.meta.env.VITE_API_URI
   const location = useLocation();
   const navigate = useNavigate();
   const { doctorId, userId,userName } = location.state || {};
@@ -139,10 +140,10 @@ const Chat = () => {
     fetchData();
 
     if (!socketRef.current) {
-      socketRef.current = io(BASE_URL, {
+      socketRef.current = io(SOCKET_URL, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
-        path: '/socket.io',
+        // path: '/socket.io',
       });
 
       socketRef.current.emit('joinRoom', { doctorId, userId, type: 'user' });
