@@ -139,7 +139,7 @@ const Chat = () => {
     fetchData();
 
     if (!socketRef.current) {
-      socketRef.current = io(`${BASE_URL}`, {
+      socketRef.current = io(`${BASE_URL}/chat`, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
       });

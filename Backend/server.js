@@ -21,16 +21,19 @@ const io = new Server(server, {
     }
 });
 
+
+const chatNamespace = io.of('/chat');
+
 const onlineUsers = new Map();
 const activeVideoRooms = new Map();
 
-io.on('connection', (socket) => {
-    console.log(`Socket ${socket.id} connected`);
+chatNamespace.on('connection', (socket) => {
+    console.log(`Socket ${socket.id} connected to chat namespace`);
 
     socket.on('userConnected', ({ userId, type }) => {
         onlineUsers.set(userId, { socketId: socket.id, type });
         
-        io.emit('userStatus', { userId, online: true, type });
+        chatNamespace.emit('userStatus', { userId, online: true, type });
         onlineUsers.forEach((value, key) => {
             socket.emit('userStatus', {
                 userId: key,
@@ -45,23 +48,23 @@ io.on('connection', (socket) => {
         socket.join(roomId);
 
         if (type === 'user') {
-            io.to(roomId).emit('userStatus', { 
+            chatNamespace.to(roomId).emit('userStatus', { 
                 userId: userId, 
                 online: onlineUsers.has(userId), 
                 type: 'user' 
             });
-            io.to(roomId).emit('userStatus', { 
+            chatNamespace.to(roomId).emit('userStatus', { 
                 userId: doctorId, 
                 online: onlineUsers.has(doctorId), 
                 type: 'doctor' 
             });
         } else {
-            io.to(roomId).emit('userStatus', { 
+            chatNamespace.to(roomId).emit('userStatus', { 
                 userId: doctorId, 
                 online: onlineUsers.has(doctorId), 
                 type: 'doctor' 
             });
-            io.to(roomId).emit('userStatus', { 
+            chatNamespace.to(roomId).emit('userStatus', { 
                 userId: userId, 
                 online: onlineUsers.has(userId), 
                 type: 'user' 
@@ -84,7 +87,7 @@ io.on('connection', (socket) => {
                 date:new Date()
             })
             await newMessage.save();
-            io.to(roomId).emit('drmessage', message);
+            chatNamespace.to(roomId).emit('drmessage', message);
 
            } catch (error) {
             console.log(error);
@@ -96,7 +99,7 @@ io.on('connection', (socket) => {
       
     socket.on('doctortyping', ({ doctorId, userId, isTyping }) => {
         const roomId = `${doctorId}_${userId}`;
-        io.to(roomId).emit('doctortyping', { isTyping });
+        chatNamespace.to(roomId).emit('doctortyping', { isTyping });
     });
 
 
@@ -117,7 +120,7 @@ io.on('connection', (socket) => {
                 date:new Date()
             })
             await newMessage.save();
-            io.to(roomId).emit('usermessage', message);
+            chatNamespace.to(roomId).emit('usermessage', message);
 
         } catch (error) {
             console.log(error);
@@ -127,14 +130,14 @@ io.on('connection', (socket) => {
 
     socket.on('usertyping', ({ doctorId, userId, isTyping }) => {
         const roomId = `${doctorId}_${userId}`;
-        io.to(roomId).emit('usertyping', { isTyping });
+        chatNamespace.to(roomId).emit('usertyping', { isTyping });
     });
 
     // Video call events
     socket.on('initiateVideoCall', ({ doctorId, userId, roomId }) => {
         const userSocket = onlineUsers.get(userId);
         if (userSocket && userSocket.socketId) {
-            io.to(userSocket.socketId).emit('incomingVideoCall', { roomId });
+            chatNamespace.to(userSocket.socketId).emit('incomingVideoCall', { roomId });
             activeVideoRooms.set(roomId, { doctorId, userId });
         }
     });
@@ -142,14 +145,14 @@ io.on('connection', (socket) => {
     socket.on('acceptVideoCall', ({ doctorId, userId, roomId }) => {
         const doctorSocket = onlineUsers.get(doctorId);
         if (doctorSocket && doctorSocket.socketId) {
-            io.to(doctorSocket.socketId).emit('videoCallAccepted', { roomId });
+            chatNamespace.to(doctorSocket.socketId).emit('videoCallAccepted', { roomId });
         }
     });
 
     socket.on('rejectVideoCall', ({ doctorId, userId }) => {
         const doctorSocket = onlineUsers.get(doctorId);
         if (doctorSocket && doctorSocket.socketId) {
-            io.to(doctorSocket.socketId).emit('videoCallRejected');
+            chatNamespace.to(doctorSocket.socketId).emit('videoCallRejected');
         }
     });
 
@@ -158,10 +161,10 @@ io.on('connection', (socket) => {
         const userSocket = onlineUsers.get(userId);
         
         if (doctorSocket && doctorSocket.socketId) {
-            io.to(doctorSocket.socketId).emit('videoCallEnded', { endedBy });
+            chatNamespace.to(doctorSocket.socketId).emit('videoCallEnded', { endedBy });
         }
         if (userSocket && userSocket.socketId) {
-            io.to(userSocket.socketId).emit('videoCallEnded', { endedBy });
+            chatNamespace.to(userSocket.socketId).emit('videoCallEnded', { endedBy });
         }
     });
 
@@ -179,7 +182,7 @@ io.on('connection', (socket) => {
         }
 
         if (disconnectedUserId) {
-            io.emit('userStatus', { 
+            chatNamespace.emit('userStatus', { 
                 userId: disconnectedUserId, 
                 online: false, 
                 type: disconnectedUserType 
