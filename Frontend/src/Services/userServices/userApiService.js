@@ -14,17 +14,20 @@ const handleApiError = (error, defaultMessage) => {
 const apiuser = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 apiuser.interceptors.request.use(config => {
   const token = getUserToken();
-  console.log("token dddddddddddddddddddddddddjddjdj",token)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+}, error => {
+  return Promise.reject(error);
 });
-
 
 apiuser.interceptors.response.use(
   response => response,
@@ -32,6 +35,7 @@ apiuser.interceptors.response.use(
     if (error.response?.status === 401) {
       cookie.remove('usertoken', { path: '/' });
       localStorage.removeItem('userId');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -233,12 +237,17 @@ export const getOtpRemainingTime = async (email) => {
   
 };
 
-export const googleLogin = async (email,uid)=>{
-  
-    const response = await apiuser.post('/user/google-login', { email, uid });
-    return response.data;
-  
+export const googleLogin = async (email, uid) => {
+  const response = await apiuser.post('/user/google-login', { email, uid });
+  if (response.data?.userToken) {
+    cookie.set('usertoken', response.data.userToken, { path: '/' });
+    if (response.data.userId) {
+      localStorage.setItem('userId', response.data.userId);
+    }
+  }
+  return response.data;
 };
+
 export const profileCompletion = async (data) => {
   
     const response = await apiuser.post('/user/profile-completion', data,{

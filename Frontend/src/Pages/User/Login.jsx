@@ -21,32 +21,30 @@ const Login = () => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       
-     
-      const email=result.user.email;
-      const uid =result.user.uid;
+      const email = result.user.email;
+      const uid = result.user.uid;
 
-      const response = await googleLogin(email,uid)
-
-      const userData = response;
+      const response = await googleLogin(email, uid);
       console.log('Response:', response);
-      console.log('Cookies:', document.cookie);
 
-      if (userData?.token) {
-        Cookies.set('token', userData.token, { expires: 7 });
-        localStorage.setItem('user', JSON.stringify(userData.user));
+      if (response?.userToken) {
+        Cookies.set('usertoken', response.userToken, { path: '/' });
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
       }
 
-      if (userData?.isBlocked) {
+      if (response?.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
       }
 
-      if (userData?.isActive === false) {
+      if (response?.isActive === false) {
         toast.error('Please verify your email first');
         return;
       }
 
-      if (userData?.profileCompletion === false) {
+      if (response?.profileCompletion === false) {
         toast.warning('Please complete your profile first');
         navigate('/profilecompletion', { 
           state: { email: result.user.email }
@@ -54,6 +52,7 @@ const Login = () => {
         return;
       }
 
+      // Add a small delay to ensure cookies are set
       await new Promise(resolve => setTimeout(resolve, 100));
       toast.success('Welcome back!');
       navigate('/home', { replace: true });
@@ -71,22 +70,24 @@ const Login = () => {
       setIsLoading(true);
       const response = await loginUser(data);
       
-      // Store user data in localStorage
-      if (response.token) {
-        localStorage.setItem('user', JSON.stringify(response.user));
+      if (response?.userToken) {
+        Cookies.set('usertoken', response.userToken, { path: '/' });
+        if (response.userId) {
+          localStorage.setItem('userId', response.userId);
+        }
       }
 
-      if (response.user.isBlocked) {
+      if (response?.user?.isBlocked) {
         toast.error('Your account has been blocked. Please contact support.');
         return;
       }
 
-      if (!response.user.isActive) {
+      if (!response?.user?.isActive) {
         toast.error('Please verify your email first');
         return;
       }
 
-      if (response.user.profileCompletion === false) {
+      if (response?.user?.profileCompletion === false) {
         toast.warning('Please complete your profile first');
         navigate('/profilecompletion', { 
           state: { email: data.email }
@@ -94,6 +95,8 @@ const Login = () => {
         return;
       }
 
+      // Add a small delay to ensure cookies are set
+      await new Promise(resolve => setTimeout(resolve, 100));
       toast.success('Welcome back!');
       navigate('/home', { replace: true });
       
