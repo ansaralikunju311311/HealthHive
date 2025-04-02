@@ -32,7 +32,6 @@ const For = () => {
   const onSubmit = async (data) => {
     try {
       const userType = getUserType();
-      console.log(userType);
       let endpoint;
 
       switch(userType) {

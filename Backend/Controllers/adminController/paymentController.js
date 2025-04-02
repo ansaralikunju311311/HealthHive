@@ -5,7 +5,6 @@ import Doctor from '../../Model/doctorModel.js';
 import appointment from '../../Model/appoimentModel.js'
 export const earnings = async (req, res) => {
     const {page,limit} = req.query;
-   console.log(req.query)
    try {
        const page = +(req.query.page || 1);
        const limit = +(req.query.limit || 10);
@@ -31,7 +30,6 @@ export const earnings = async (req, res) => {
    }
 }
 export const fetchDoctorPayments = async (req, res) => {
-   console.log("fetchDoctorPayments=====");
    try {
    const Drtransaction = await Transaction.find().populate({
        path: 'doctor',

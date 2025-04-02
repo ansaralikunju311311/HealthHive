@@ -54,17 +54,14 @@ const HomePageUser = () => {
     const checkAuthAndFetchData = async () => {
       try {
         const token = cookies.get('usertoken');
-        console.log("throgh google lohivnvn",token)
         
         if (token) {
           try {
             const { user } = await verifyUserToken();
-            console.log("user data",user)
             setUserData(user);
 
             if (user) {
               const doctorsResponse = await getDoctorsDetails();
-              console.log("doctors data",doctorsResponse)
               setDoctorsData(doctorsResponse.doctors || []);
               localStorage.setItem('userId', JSON.stringify(user));
             }
@@ -99,7 +96,6 @@ const HomePageUser = () => {
     if (!userData) {
       fetchPublicDoctors();
     } else {
-      console.log("doctors datacmcnncnccccc")
       setDoctorsDataW(doctorsData);
     }
   }, [userData, doctorsData]);
@@ -121,7 +117,6 @@ const HomePageUser = () => {
   }
 
   if (!userData) {
-    console.log("doctors datacmcnncnccccc")
     return (
       <div className="min-h-screen bg-gray-50">
         <NavBar />

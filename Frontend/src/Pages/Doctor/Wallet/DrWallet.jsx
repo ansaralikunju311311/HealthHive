@@ -29,7 +29,6 @@ const DrWallet = () => {
        
         const response = await verifyDoctorToken();
         const doctorData = response.doctor;
-        console.log("Doctor data from response:", doctorData);
         setDoctor(doctorData);
 
         const id = doctorData._id;

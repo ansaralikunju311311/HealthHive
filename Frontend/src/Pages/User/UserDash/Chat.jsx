@@ -102,8 +102,6 @@ const Chat = () => {
 
   const handleFeedbackSubmit = async () => {
     try {
-      // Use a default value if feedbackComment is empty
-      console.log('Feedback submitted:', { userId, doctorId, feedbackRating, feedbackComment });
 
       const response = await feedBack({
         userId,
@@ -139,7 +137,6 @@ const Chat = () => {
 
     fetchData();
 
-    console.log('here is the user socket ref =>>>',socketRef.current)
     if (!socketRef.current) {
       socketRef.current = io(SOCKET_URL, {
         withCredentials: true,

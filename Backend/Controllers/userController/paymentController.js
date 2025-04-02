@@ -3,7 +3,6 @@ import STATUS_CODE from '../../StatusCode/StatusCode.js';
 import crypto from 'crypto';
 
 export  const handlePayment = async(req, res) => {
-    console.log("req.body",req.body)
     const { amount } = req.body;
     try {
         const options = {

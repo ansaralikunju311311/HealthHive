@@ -5,7 +5,6 @@ import HomeButton from '../../../Component/User/HomeButton/Homebutton'
 
 const Profile = () => {
   const userData = JSON.parse(localStorage.getItem('userId')) || {};
-  console.log("user====",userData)
   const navigate = useNavigate();
 
   useEffect(() => {

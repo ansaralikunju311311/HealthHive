@@ -24,7 +24,6 @@ const BeforeVerification = () => {
           return;
         }
         const response = await doctorVerification(doctorEmail);
-        console.log('Verification response:', response);
 
         if (response.isRejected) {
           setVerificationStatus('rejected');

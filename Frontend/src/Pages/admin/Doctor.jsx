@@ -32,9 +32,8 @@ const limit = 10;
         const response = await doctorList(currentPage, limit);
         
         if (response) {
-          // The serial numbers are now correctly set in the API service
+          
           setDoctors(response.doctorsWithIndex);
-          console.log("with index====== ",response.doctorsWithIndex)
           setFilteredDoctors(response.doctorsWithIndex);
           setTotalPages(response.totalpage);
         }

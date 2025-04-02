@@ -75,7 +75,6 @@ export const pendingDoctors = async (req,res)=>
             path:'specialization',
             select:'Departmentname'
         });
-        console.log(doctors)
         const totalpage = Math.ceil(await Doctor.countDocuments({isActive:false}) / limit);
         const doctorsWithIndex = doctors.map((doctor, index) => ({
             ...doctor.toObject(),
@@ -150,7 +149,6 @@ export const handleBlock = async (req, res) => {
 export const patientBlock = async (req, res) => {
     try {
         const { patientid } = req.params;
-        console.log("patientid=====",patientid);
         const patient = await User.findById(patientid);
         if (!patient) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Patient not found' });

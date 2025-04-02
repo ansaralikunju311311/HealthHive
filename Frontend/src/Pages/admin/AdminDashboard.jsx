@@ -44,7 +44,6 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         const response = await adminDash();
-        console.log("usercount=====", response.data);
         setUserCount(response?.userCount + response?.doctorCount);
         setDoctorCount(response?.doctorCount);
         setTotalAmount(response?.totalAmount);
@@ -62,7 +61,6 @@ const AdminDashboard = () => {
         const response = await getDashboardData(filter);
         setDashboardData(response.data);
         setReport(response.findReports);
-        console.log("report correctly", response.findReports);
       } catch (error) {
         console.log(error);
         toast.error('Failed to fetch dashboard data');
@@ -77,7 +75,6 @@ const AdminDashboard = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Add header background
     doc.setFillColor(79, 70, 229);
     doc.rect(0, 0, pageWidth, 45, "F");
 

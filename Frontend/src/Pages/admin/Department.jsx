@@ -21,12 +21,9 @@ const Department = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-       console.log("dnfjnjj")
         const response = await getDepartments(currentPage,limit);
 
-        console.log("===============================",response);
         setDepartments(response?.departments);
-        console.log("jfdfj========",response.departments)
         setTotalPages(response?.totalpage);
       } catch (error) {
         console.log(error);
@@ -106,7 +103,6 @@ const Department = () => {
     }
 
     try {
-      console.log("Adding department:", trimmedDepartmentName);
       
       const response = await addDepartment(trimmedDepartmentName,description);
       const updatedResponse = await getDepartments(currentPage,limit);
@@ -114,7 +110,6 @@ const Department = () => {
       setDepartments(updatedResponse?.departments);
       setTotalPages(updatedResponse?.totalpage);
       
-      console.log("Response from backend:", response.data);
       toast.success('Department added successfully');
       handleCloseModal();
     } catch (error) {

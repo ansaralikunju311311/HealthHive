@@ -102,8 +102,7 @@ const Chat = () => {
       });
 
       socketRef.current.on('usermessage', (data) => {
-        console.log("doctor receving message", data);
-        console.log("doctor receving datamessage", data);
+       
         const newMessage = {
           sender: 'user',
           message: data,
@@ -118,7 +117,6 @@ const Chat = () => {
       socketRef.current.on('userStatus', ({ userId: statusUserId, online, type }) => {
         if (statusUserId === userId && type === 'user') {
           setIsUserOnline(online);
-          console.log(`User ${userId} is ${online ? 'online' : 'offline'}`);
         }
       });
 

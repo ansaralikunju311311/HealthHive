@@ -11,10 +11,8 @@ export const approveDoctor = async (req,res)=>
             if(!doctorData){
                 return res.status(STATUS_CODE.NOT_FOUND).json({message:"Doctor is not found"})
             }
-            console.log("Attempting to send approval email to:", doctorData.email);
             try {
                 await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'approved');
-                console.log("Approval email sent successfully");
             } catch (emailError) {
                 console.error("Error sending approval email:", emailError);
             
@@ -47,10 +45,8 @@ export const approveDoctor = async (req,res)=>
             }
     
         
-            console.log("Attempting to send rejection email to:", doctorData.email);
             try {
                 await sendDoctorVerificationEmail(doctorData.email, doctorData.name, 'rejected');
-                console.log("Rejection email sent successfully");
             } catch (emailError) {
                 console.error("Error sending rejection email:", emailError);
             

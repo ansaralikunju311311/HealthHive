@@ -4,9 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const getDoctorToken = () => cookie.get('doctortoken');
 
-console.log("token for the checking processs",getDoctorToken())
 const token = cookie.get('doctortoken');
-console.log("token for the checking processs token",token)
 const apidoctor = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -16,7 +14,6 @@ const apidoctor = axios.create({
 apidoctor.interceptors.request.use(config => {
   const token = getDoctorToken();
   if (token) {
-    console.log("token for the checking processs tokennfnfnffnfnff",token)
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -38,7 +35,6 @@ export const verifyDoctorToken = async () => {
 
     const token = getDoctorToken();
 
-    console.log("this is the token get", token)
     if (!token) {
       throw new Error('No token found');
     }
@@ -106,7 +102,6 @@ export const chatHistory = async (doctorId,userId) => {
  
 }
 export const schedule = async (doctorId,appointmentData) => {
-  console.log("appointmentData",appointmentData)
   
        const response = await apidoctor.post(`/doctor/schedule/${doctorId}`,{
          appointments:appointmentData
@@ -124,7 +119,6 @@ export const exstingSchedules = async(doctorId)=>{
 
 
 export const drAppoinments = async (doctorId) => {
-  console.log("working properly")
   const response = await apidoctor.get(`/doctor/appointments/${doctorId}`);
   return response.data;
 }
@@ -188,7 +182,6 @@ export const getDashboardData = async (doctorId, filter) => {
 };
 
 export const sendPrescription = async (doctorId, userId, data,uniquePre) => {
-  console.log("docrto",data)
   const response = await apidoctor.post(`/doctor/prescription/${doctorId}/${userId}/${uniquePre}`, data);
   return response.data;
 };

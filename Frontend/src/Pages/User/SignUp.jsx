@@ -21,14 +21,12 @@ const SignUp = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async(result)=>{
 
-    console.log(result.user.email, result.user.displayName, result.user.uid)
 
     const email = result.user.email;
     const name = result.user.displayName;
     const uid = result.user.uid;
       const response = await googleSignup(email,uid,name)
       navigate('/profilecompletion', { state: { email: result.user.email } });
-      console.log(result)
     })
   }
 

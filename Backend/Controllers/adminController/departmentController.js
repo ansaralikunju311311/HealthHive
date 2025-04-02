@@ -32,10 +32,7 @@ export const getDepartments = async (req, res) =>
 
 {
     const {page,limit} = req.query;
-    console.log(req.query)
 
-    console.log("page=====",page);
-    console.log("limit=====",limit);
     try {
          
         
@@ -59,7 +56,6 @@ export const getDepartments = async (req, res) =>
 }
 export const updateDepartment = async (req, res) => {
        const {id} = req.params;
-       console.log("id=====",id);
 
 
 

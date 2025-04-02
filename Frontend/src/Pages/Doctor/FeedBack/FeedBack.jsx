@@ -15,7 +15,6 @@ const FeedBack = () => {
       try {
         const response = await feedBack(doctorid);
         setFeedbacks(response);
-        console.log(response)
         setLoading(false);
       } catch (error) {
         console.error('Error fetching feedback:', error);

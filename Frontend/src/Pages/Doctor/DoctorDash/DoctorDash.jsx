@@ -35,12 +35,9 @@ const DoctorDash = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        console.log('vandjjdffbifdbsjvbfsdvbfjbvsz')
         const response = await verifyDoctorToken();
-        console.log("Doctor data verify token",response)
         const doctorData = response?.doctor;
         setDoctor(doctorData);
-        console.log("Doctor data",doctorData)
 
         const appointmentResponse = await appoimentDetails(doctorData._id);
         setAppointmentStats(appointmentResponse);
@@ -66,12 +63,10 @@ const DoctorDash = () => {
     if (!doctor?._id) return;
 
     const fetchDashboardData = async () => {
-      console.log('vandjjdffbifdbsjvbfsdvbfjbvsz2222222222222222222222222')
       try {
         const response = await getDashboardData(doctor._id, filter);
         setDashboardData(response.formattedData);
         setReport(response.findReports);
-        console.log("report correctly", response.findReports);
       } catch (error) {
         toast.error('Error fetching dashboard data');
       }

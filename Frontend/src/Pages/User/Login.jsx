@@ -45,7 +45,6 @@ const Login = () => {
       localStorage.removeItem('profileCompleted');
 
       const response = await googleLogin(email, uid);
-      console.log('Response:', response);
 
       if (!response) {
         throw new Error('No response from server');
@@ -70,12 +69,10 @@ const Login = () => {
         return;
       }
 
-      // Handle successful login
       if (!response.userToken) {
         throw new Error('No authentication token received from server');
       }
 
-      // Set authentication data with secure options
       Cookies.set('usertoken', response.userToken, { 
         path: '/', 
         secure: true,
@@ -87,7 +84,6 @@ const Login = () => {
       }
       localStorage.setItem('profileCompleted', 'true');
       
-      // Verify token was set correctly
       const storedToken = Cookies.get('usertoken');
       if (!storedToken) {
         throw new Error('Failed to store authentication token');
@@ -95,12 +91,10 @@ const Login = () => {
 
       toast.success('Welcome back!');
       
-      // Navigate after successful token verification
       navigate('/home', { replace: true });
 
     } catch (error) {
       console.error('Google login error:', error);
-      // Clear any partial authentication data
       Cookies.remove('usertoken', { path: '/' });
       localStorage.removeItem('userId');
       localStorage.removeItem('profileCompleted');

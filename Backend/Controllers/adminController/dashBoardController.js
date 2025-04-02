@@ -114,7 +114,6 @@ export const getDashboardData = async(req,res)=>{
             }
         ]
                 const findReports = await Transaction.aggregate(reports);
-                console.log("find",findReports)
         
         const [revenueResult, userResult, doctorResult] = await Promise.all([
             Transaction.aggregate(revenuePipeline),

@@ -26,7 +26,6 @@ const SignUp = () => {
     
                 const response = await getDepartments()
                 setDepartments(response);
-                console.log(response);
             } catch (error) {
                 console.error('Error fetching departments:', error);
             }

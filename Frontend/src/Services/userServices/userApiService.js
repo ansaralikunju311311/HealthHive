@@ -43,9 +43,7 @@ apiuser.interceptors.response.use(
 
 export const verifyUserToken = async () => {
   try {
-    console.log("token jddjdj")
     const token = getUserToken();
-    console.log("token jddjdj",token)
 
     if (!token) return { user: null };
     const response = await apiuser.get('/user/verify-token');
@@ -61,13 +59,10 @@ export const verifyUserToken = async () => {
 
 export const loginUser = async (credentials) => {
   try {
-      console.log("login user",credentials)
     const response = await apiuser.post('/user/login', credentials);
     
-    console.log("login response",response)
     // Set the token in cookie if login successful
     if (response.data?.userToken) {
-      console.log("token set",response.data.userToken)
       cookie.set('usertoken', response.data.userToken, { path: '/' });
     }
     
@@ -162,10 +157,8 @@ export const getDoctorSlots = async (doctorId, date) => {
 export const getAppointments = async (departments) => {
 
 
-  console.log("departments",departments)  
   
     const response = await apiuser.get(`/user/appointments/${departments}`);  
-    console.log(response)
     return response.data;
   
 };
@@ -173,7 +166,6 @@ export const getAppointments = async (departments) => {
 export const getUserAppointments = async (userId, pageNumber, limit) => {
   
     const response = await apiuser.get(`/user/getappointments/${userId}`, { params: { page:pageNumber, limit } });  // Changed from '/doctor/appointments/:userId'
-    console.log("debugiing ========",response.data);
     return response.data;
   
 };

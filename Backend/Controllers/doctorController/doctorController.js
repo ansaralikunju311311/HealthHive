@@ -25,7 +25,6 @@ const cookieOptions = {
 };
  const generateAndSendOTP = async (doctor, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
-    console.log("Generated OTP:", otp);
     const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
     doctor.otp = otp;
     doctor.otpExpiresAt = otpExpiresAt;
@@ -103,7 +102,6 @@ const cookieOptions = {
  const loginDoctor = async(req,res)=>{
     try {
         const {email,password} = req.body;
-        console.log("body",req.body)
         const existingDoctor = await doctor.findOne({email});
         const rejectedDoctor = await RejectedDoctor.findOne({email});
         if(!existingDoctor){
@@ -131,7 +129,6 @@ const cookieOptions = {
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid credentials"});
         }
         const doctorToken = setToken(existingDoctor);
-        console.log("doctor token",doctorToken)
         res.cookie('doctortoken', doctorToken, cookieOptions);
         res.status(STATUS_CODE.OK).json({
             message:"Login successful",
@@ -158,7 +155,6 @@ const cookieOptions = {
     try {
         res.status(STATUS_CODE.OK).json({ doctor: req.doctor });
     } catch (error) {
-        console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
@@ -243,17 +239,14 @@ const resetPassword = async (req, res) => {
 
 
         if (!email) {
-            console.log("Email is missing or undefined");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Email is required' });
         }
 
         if (!otp) {
-            console.log("OTP is missing or undefined");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'OTP is required' });
         }
 
         if (!newPassword) {
-            console.log("New Password is missing or undefined");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'New password is required' });
         }
         
@@ -263,20 +256,14 @@ const resetPassword = async (req, res) => {
             return res.status(STATUS_CODE.FORBIDDEN).json({ message: 'Your account is rejected. Please contact the admin.' });
        }
         if (!doctorData) {
-            console.log("Doctor not found with email:", email);
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Doctor not found. Please register first.' });
         }
         
-        console.log("Stored Reset Password OTP:", doctorData.resetPasswordOtp);
         if(!doctorData.otp || doctorData.otp !== otp){
-            console.log("OTP Validation Failed");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'Invalid OTP' });
         }
 
-        console.log("OTP Expires:", doctorData.resetPasswordOtpExpires);
-        console.log("Current Time:", Date.now());
         if(doctorData.resetPasswordOtpExpires < Date.now()){
-            console.log("OTP Has Expired");
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'OTP has expired' });
         }
         
@@ -313,7 +300,6 @@ const doctorProfile = async (req, res) => {
         }
         res.status(STATUS_CODE.OK).json({ doctorData });
     } catch (error) {
-        console.log("Error in doctofjnjnjfnfjnjrProfile:", error);
         console.error('Error in doctorProfile:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -345,9 +331,7 @@ export const schedule = async (req, res) => {
     const { id: doctorId } = req.params;
     const { appointments } = req.body;
 
-    console.log("Received Scheduling Request:");
-    console.log("Doctor ID:", doctorId);
-    console.log("Appointments:", JSON.stringify(appointments, null, 2));
+   
 
     try {
         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
@@ -463,7 +447,6 @@ export const getSchedules = async (req, res) => {
     }
 };
 export const slots = async (req, res) => {
-     console.log(" happen after middlware verify token=====");
     const { id: doctorId } = req.params;
     try {
         const existingSchedule = await AppointmentSchedule.findOne({ doctorId });
@@ -497,7 +480,6 @@ export const slots = async (req, res) => {
 }
 export const fetchAppointments = async (req, res) => {
     const {doctor_Id} = req.params;
-    console.log("=============",doctor_Id)
     const appoiments = await Appointment.find({doctor:doctor_Id})
         .populate({
             path: 'user',
@@ -589,7 +571,6 @@ export const userDetails = async(req,res)=>
         const user = await User.findById(userId).select('-password');
         res.status(STATUS_CODE.OK).json(user);
     } catch (error) {
-        console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
@@ -600,9 +581,7 @@ export const chatDetails = async(req,res)=>
       const roomId = doctorId+'_'+userId;
         const chats = await Chat.find({roomId}).sort({ createdAt: 1 });
         res.status(STATUS_CODE.OK).json(chats);
-        console.log("chats",chats);
     } catch (error) {
-        console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
@@ -733,7 +712,6 @@ export const getDashboardData = async (req, res) => {
        
 
         const findReports = await Transaction.aggregate(reports);
-        console.log("reportsData",findReports);
         const [appointmentData, revenueData] = await Promise.all([
             Appointment.aggregate(appointmentPipeline),
             Transaction.aggregate(revenuePipeline)

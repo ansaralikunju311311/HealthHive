@@ -48,11 +48,9 @@ loadDepartments();
   const handleDepartmentClick = async (department) => {   
 
 
-    console.log("department",department)
 
     try {
       const data = await getAppointments(department.Departmentname);
-      console.log("datdddda", data);
       navigate('/bookings',{state: { data: data }})
     } catch (error) {
       console.error('Error fetching appointments:', error);

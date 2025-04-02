@@ -4,9 +4,7 @@ export const sendPrescription = async (req, res) => {
     try {
       const { doctorId, userId, uniquePre } = req.params;
       const data = req.body;  
-      console.log("doctorId", uniquePre);
-      console.log("userId", userId);
-      console.log("data", data);
+     
       const prescription = new Prescription({
         doctorId,
         userId,

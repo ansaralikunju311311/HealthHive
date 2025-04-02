@@ -53,7 +53,6 @@ const Profile = () => {
         try {
            
             const response = await drupdateDoctorProfile(id,doctor.consultFee,doctor.about)
-            console.log("Profile updated successfully:", response.data);
         } catch (error) {
             console.error("Error updating profile:", error);
         }

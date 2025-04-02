@@ -121,7 +121,6 @@ const Appointments = () => {
   };
 
   const handleChat = (doctorId,userId) => {
-    console.log("userName will happen", userName);
     navigate('/user/chats', { state: { doctorId, userId, userName } });
   };
 
@@ -138,7 +137,6 @@ const Appointments = () => {
   const generatePDF = () => {
     if (!prescriptionData) return;
     const { doctorDetails, prescription, user } = prescriptionData;
-    console.log(prescriptionData);
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();

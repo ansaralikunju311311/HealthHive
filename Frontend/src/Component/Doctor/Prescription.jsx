@@ -12,7 +12,6 @@ const PrescriptionModal = ({ isOpen, onClose, appointment, doctorId }) => {
 
     const uniquePre = appointment.date+appointment.time;
 
-    console.log("doctorId",doctorId)
   const { register, control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: { prescriptions: [{ medicines: "", dosage: "", duration: "" }] }
   });
@@ -33,15 +32,11 @@ const PrescriptionModal = ({ isOpen, onClose, appointment, doctorId }) => {
     {
       toast.error('duplicate medicine detected')
     }
-      // console.log("======= sample ",medicinesNames);
     
 
-      // await axios.post('/api/prescriptions', { doctorId, userID, data });
       const id = doctorId;
-      console.log("id",id)
 
       const datas = data;
-      console.log("datas",datas)
       await sendPrescription(doctorId, userID, datas,uniquePre);
     setIsSending(true);
     data.timeSent = new Date();

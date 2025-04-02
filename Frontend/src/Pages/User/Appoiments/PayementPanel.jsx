@@ -150,14 +150,11 @@ const PayementPanel = () => {
   const doctorData = location.state?.doctorData;
   const slot = location.state?.slot;
 
-  console.log("slot",slot)
   const userId = JSON.parse(localStorage.getItem('userId'));
-  console.log("=========here user",userId._id)
   const navigate = useNavigate();
 
   useEffect(() => {
     if (TransactionData) {
-      console.log("TransactionData updated:", TransactionData);
     }
   }, [TransactionData]);
 
@@ -169,7 +166,6 @@ const PayementPanel = () => {
       }
 
       const paymentResponse = await initiatePayment(doctorData.consultFee);
-      console.log('Payment initiated:', paymentResponse);
 
       if (!paymentResponse || !paymentResponse.id) {
         toast.error('Failed to initialize payment');

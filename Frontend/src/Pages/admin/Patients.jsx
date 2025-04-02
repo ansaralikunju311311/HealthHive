@@ -31,7 +31,6 @@ const limit = 10;
         setPatients(response?.patientsWithIndex);
         setTotalPages(response?.totalpage);
         setFilteredPatients(response?.patientsWithIndex);
-        console.log(response);
       } catch (error) {
         console.log(error);
       }

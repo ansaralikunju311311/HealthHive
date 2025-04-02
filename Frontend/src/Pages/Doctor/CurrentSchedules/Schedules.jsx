@@ -16,23 +16,18 @@ const Schedules = () => {
     } catch (error) {
         doctorId = storedDoctorId;
     }
-    console.log("Doctor ID in Schedules:", doctorId);
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
     const [existingSchedules, setExistingSchedules] = useState([]);
-    console.log("Selected Time Slots:", selectedTimeSlots);
 
     const handleSchedule = async () => {
-        console.log("Initial Selected Date:", selectedDate);
-        console.log("Initial Selected Time Slots:", selectedTimeSlots);
         if (!selectedDate) {
             toast.error("Please select a date");
             return;
         }
         const selectedDateKey = selectedDate.toDateString();
-        console.log("Selected Date Key:", selectedDateKey);
 
         if (!selectedTimeSlots[selectedDateKey] || selectedTimeSlots[selectedDateKey].length === 0) {
             toast.error("Please select a time slot");
@@ -42,11 +37,8 @@ const Schedules = () => {
         try {
             const appointmentsData = Object.entries(selectedTimeSlots).flatMap(([date, slots]) => 
                 slots.map(slot => {
-                    console.log("Processing Slot:", slot);
-                    console.log("Date:", date);
 
                     const [startTime, endTime] = slot.label.split(' - ');
-                    console.log("Start Time:", startTime);
 
                     const appointmentDate = new Date(date);
                     const [hour, period] = startTime.split(' ');
@@ -69,11 +61,9 @@ const Schedules = () => {
                     };
                 })
             );
-            console.log("Prepared Appointments Data:", appointmentsData);
            
             const response = await schedule(doctorId, appointmentsData);
 
-            console.log("Schedule Response:", response.data);
             
             const newSchedules = appointmentsData.map(appointment => ({
                 appointmentDate: appointment.appointmentDate,
@@ -135,7 +125,6 @@ const Schedules = () => {
         setSelectedTimeSlots((prev) => {
             const currentDateSlots = prev[dateKey] || [];
             const isSelected = currentDateSlots.some((selectedSlot) => selectedSlot.label === slot.label);
-            console.log("Is Selected:", isSelected);
             if (isSelected) {
                 return {
                     ...prev,
@@ -163,7 +152,6 @@ const Schedules = () => {
         try {
             const response = await exstingSchedules(doctorId);
             setExistingSchedules(response.schedules || []);
-            console.log("Existing Schedules:", response.schedules);
         } catch (error) {
             console.error('Error fetching schedules:', error);
             setExistingSchedules([]);

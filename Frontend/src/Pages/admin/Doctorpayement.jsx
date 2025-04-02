@@ -38,7 +38,7 @@ const DoctorPayment = () => {
     const fetchDoctorPayments = async () => {
       try {
         const response = await getDoctorPayment(currentPage, limit);
-        console.log("this is the response", response);
+      
         setPayments(response?.doctorWiseTotals);
         setTotalAmount(response?.totalAmount);
         setTotalPages(response?.totalPages || 1);
@@ -50,8 +50,7 @@ const DoctorPayment = () => {
     fetchDoctorPayments();
   },[currentPage, limit]);
   
-  console.log("payments",payments);
-  console.log("totalAmount",totalAmount);
+  
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
