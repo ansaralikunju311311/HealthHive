@@ -131,6 +131,7 @@ const cookieOptions = {
             return res.status(STATUS_CODE.BAD_REQUEST).json({message:"Invalid credentials"});
         }
         const doctorToken = setToken(existingDoctor);
+        console.log("doctor token",doctorToken)
         res.cookie('doctortoken', doctorToken, cookieOptions);
         res.status(STATUS_CODE.OK).json({
             message:"Login successful",
