@@ -39,6 +39,7 @@ apiuser.interceptors.response.use(
 
 export const verifyUserToken = async () => {
   try {
+    console.log("token jddjdj")
     const token = getUserToken();
     console.log("token jddjdj",token)
 

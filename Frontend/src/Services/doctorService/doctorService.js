@@ -31,7 +31,9 @@ apidoctor.interceptors.response.use(
 
 export const verifyDoctorToken = async () => {
   try {
+
     const token = getDoctorToken();
+    
     console.log("this is the token get", token)
     if (!token) {
       throw new Error('No token found');
@@ -49,6 +51,7 @@ export const verifyDoctorToken = async () => {
       cookie.remove('doctortoken', { path: '/doctor/login' });
       localStorage.removeItem('doctorId');
     }
+    console.log("error",error)
     console.error(error);
   }
 }
