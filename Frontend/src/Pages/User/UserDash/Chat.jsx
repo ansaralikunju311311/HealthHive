@@ -12,6 +12,7 @@ import { FaStar } from 'react-icons/fa';
 // import { Feedback } from '@mui/icons-material';
 
 const Chat = () => {
+  const BASE_URL = import.meta.env.VITE_API_URL
   const location = useLocation();
   const navigate = useNavigate();
   const { doctorId, userId,userName } = location.state || {};
@@ -138,7 +139,7 @@ const Chat = () => {
     fetchData();
 
     if (!socketRef.current) {
-      socketRef.current = io('http://localhost:5000', {
+      socketRef.current = io(`${BASE_URL}`, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
       });

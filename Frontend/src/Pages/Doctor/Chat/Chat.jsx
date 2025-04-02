@@ -11,6 +11,8 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import VideoRoom from '../../../Component/VideoCall/VideoRoom';
 
 const Chat = () => {
+  const BASE_URL = import.meta.env.VITE_API_URL
+
   const location = useLocation();
   const navigate = useNavigate();
   const { userId, doctorId,doctorName} = location.state || {};
@@ -82,7 +84,7 @@ const Chat = () => {
     chatData();
 
     if (!socketRef.current) {
-      socketRef.current = io('http://localhost:5000', {
+      socketRef.current = io(`${BASE_URL}`, {
         withCredentials: true,
         transports: ['websocket', 'polling'],
       });
