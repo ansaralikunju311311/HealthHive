@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import NavBar from '../../../Common/NavBar'
 import Footer from '../../../Common/Footer'
-import { FaUserMd, FaStethoscope, FaClock, FaCalendarCheck } from 'react-icons/fa'
+import { FaUserMd, FaStethoscope, FaClock, FaCalendarCheck, FaStar } from 'react-icons/fa'
+import FeedbackModal from '../../../Component/User/UserCommons/FeedbackModal.jsx'
 
 const Bookings = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const [doctors, setDoctors] = useState([])
+    const [selectedDoctor, setSelectedDoctor] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     useEffect(() => {
         if (location.state && location.state.data) {
@@ -17,6 +20,11 @@ const Bookings = () => {
 
     const handleBookAppointment = (doctor) => {
         navigate('/bookappointment', { state: { doctor } })
+    }
+
+    const handleOpenFeedbacks = (doctor) => {
+        setSelectedDoctor(doctor)
+        setIsModalOpen(true)
     }
 
     return (
@@ -67,6 +75,18 @@ const Bookings = () => {
                                                     <FaCalendarCheck className="mr-2 text-sky-500" />
                                                     <span>Availability: {doctor.availability}</span>
                                                 </div>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center">
+                                                        <FaStar className="mr-2 text-yellow-400" />
+                                                        <span>{doctor.averageRating?.toFixed(1) || "0.0"} ({doctor.feedbacks?.length || 0} reviews)</span>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => handleOpenFeedbacks(doctor)}
+                                                        className="text-sky-600 hover:text-sky-800 font-medium text-sm"
+                                                    >
+                                                        View Feedbacks
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <button 
@@ -85,6 +105,12 @@ const Bookings = () => {
             </main>
             
             <Footer />
+            <FeedbackModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                feedbacks={selectedDoctor?.feedbacks || []}
+                doctorName={selectedDoctor?.name}
+            />
         </div>
     )
 }

@@ -439,7 +439,6 @@ export const dptdoctor = async (req, res) => {
         const { departmentname } = req.params;
         console.log("Department Name:", departmentname);
         
-        
         const department = await Department.findOne({ Departmentname: departmentname });
         
         if (!department) {
@@ -458,8 +457,36 @@ export const dptdoctor = async (req, res) => {
             select: 'Departmentname'
         });
 
-        console.log("Found doctors:", doctors);
-        res.status(STATUS_CODE.OK).json({ doctors });
+        // Get all feedbacks for the retrieved doctors
+        const doctorIds = doctors.map(doctor => doctor._id);
+        const feedbacks = await FeedBack.find({ doctor: { $in: doctorIds } });
+
+        // Create a map of feedbacks by doctor ID
+        const feedbacksByDoctor = {};
+        feedbacks.forEach(feedback => {
+            if (!feedbacksByDoctor[feedback.doctor]) {
+                feedbacksByDoctor[feedback.doctor] = [];
+            }
+            feedbacksByDoctor[feedback.doctor].push({
+                feedback: feedback.feedback,
+                rating: feedback.rating
+            });
+        });
+
+        // Add feedbacks to each doctor
+        const doctorsWithFeedback = doctors.map(doctor => {
+            const doctorObj = doctor.toObject();
+            doctorObj.feedbacks = feedbacksByDoctor[doctor._id] || [];
+            // Calculate average rating if there are feedbacks
+            if (doctorObj.feedbacks.length > 0) {
+                doctorObj.averageRating = doctorObj.feedbacks.reduce((sum, fb) => sum + fb.rating, 0) / doctorObj.feedbacks.length;
+            } else {
+                doctorObj.averageRating = 0;
+            }
+            return doctorObj;
+        });
+
+        res.status(STATUS_CODE.OK).json({ doctors: doctorsWithFeedback });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
