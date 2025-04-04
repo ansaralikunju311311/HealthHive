@@ -164,7 +164,7 @@ export const googleSignIn = async(req,res)=>{
                     isActive:user.isActive,
                     profileCompletion:user.profileCompletion
                 }
-                ,usertoken:token
+                ,userToken:token
             });
     }   
 } catch(error)

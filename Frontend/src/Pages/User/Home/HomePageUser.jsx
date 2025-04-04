@@ -19,10 +19,10 @@ import Department from '../../../Component/User/UserCommons/Department.jsx';
 import { FaStar } from 'react-icons/fa';
 import FeedbackModal from '../../../Component/User/UserCommons/FeedbackModal.jsx';
 
-// Star Rating Component
+
 const StarRating = ({ rating }) => {
   const stars = [];
-  const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
+  const roundedRating = Math.round(rating * 2) / 2; 
 
   for (let i = 1; i <= 5; i++) {
     if (i <= roundedRating) {
