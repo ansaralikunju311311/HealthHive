@@ -105,7 +105,7 @@ const Wallet = () => {
       accessor: 'commission',
       render: (row) => (
         <div className="text-right text-green-600 font-bold">
-          ₹{row.amount * 0.1}
+          ₹{(row.amount * 0.1).toFixed(2)}
         </div>
       )
     }
@@ -146,7 +146,7 @@ const Wallet = () => {
                 Total Commission Balance
               </Typography>
               <Typography variant="h3" sx={{ mb: 1, fontWeight: 500 }}>
-                ₹{adminEarning}
+                ₹{(adminEarning * 0.1).toFixed(2)}
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9 }}>
                 Based on 10% commission rate

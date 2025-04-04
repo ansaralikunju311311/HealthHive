@@ -142,8 +142,6 @@ const SignUp = () => {
           </div>
         </div>
       </div>
-
-     
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="max-w-md w-full space-y-6 sm:space-y-8">
           <div className="text-center">
@@ -184,7 +182,6 @@ const SignUp = () => {
               </div>
               {errors.image && <span className="text-red-500 text-sm">{errors.image.message}</span>}
             </div>
-
             <div className="space-y-5">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
@@ -208,7 +205,6 @@ const SignUp = () => {
                 />
                 {errors.name && <p className="text-red-500">{errors.name.message}</p>}
               </div>
-
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <input
@@ -227,7 +223,6 @@ const SignUp = () => {
                 />
                 {errors.email && <p className="text-red-500">{errors.email.message}</p>}
               </div>
-
               <div>
                 <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
                 <select
@@ -249,7 +244,6 @@ const SignUp = () => {
                 </select>
                 {errors.bloodGroup && <p className="text-red-500">{errors.bloodGroup.message}</p>}
               </div>
-
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                 <input
@@ -266,7 +260,6 @@ const SignUp = () => {
                 />
                 {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
               </div>
-
               <div>
                 <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
                 <input
@@ -319,7 +312,7 @@ const SignUp = () => {
                 <input
                   type="date"
                   id="dateOfBirth"
-                  max={new Date().toISOString().split('T')[0]} // Prevents future dates
+                  max={new Date().toISOString().split('T')[0]}
                   {...register("dateOfBirth", {
                     required: "Date of birth is required",
                     onChange: (e) => calculateAge(e.target.value)

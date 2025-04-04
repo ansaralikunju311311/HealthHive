@@ -106,7 +106,7 @@ const AdminDashboard = () => {
     const boxes = [
       { title: 'Total Users', value: userCount },
       { title: 'Total Doctors', value: doctorCount },
-      { title: 'Total Revenue', value: `Rs. ${totalAmount * 0.1}` }
+      { title: 'Total Revenue', value: `Rs. ${(totalAmount * 0.1).toFixed(2)}` }
     ];
 
     boxes.forEach((box, index) => {
