@@ -21,6 +21,7 @@ const cookieOptions = {
 };
 const generateAndSendOTP = async (user, email) => {
     const otp = crypto.randomInt(100000, 999999).toString();
+    console.log("Generated OTP:", otp);
     
     const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
     
@@ -98,6 +99,7 @@ export const googleSignUp = async(req,res)=>{
     try{
         const { email, name, uid } = req.body;
 
+        console.log("req.body.userData",req.body);
         const user = await User.findOne({ email });
         if(user){
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: 'User already exists' });
@@ -123,7 +125,7 @@ export const googleSignUp = async(req,res)=>{
     }
     catch(error)
     {
-        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
+        console.log(error)
     }
 }
 export const googleSignIn = async(req,res)=>{
@@ -148,6 +150,7 @@ export const googleSignIn = async(req,res)=>{
         
         if(user.uid===uid && email===user.email){
             const token = setToken(user);
+            console.log("token   coolesdsjdnfjdfjdfr=====",token);
 
             res.cookie('usertoken', token, cookieOptions);
             res.status(STATUS_CODE.OK).json({
@@ -166,6 +169,7 @@ export const googleSignIn = async(req,res)=>{
     }   
 } catch(error)
     {
+        console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
@@ -186,6 +190,7 @@ const verifyOtp = async(req,res)=>{
         user.otp = undefined;
         user.otpExpiresAt = undefined;
         const token = setToken(user);
+    console.log("token   coolesdsjdnfjdfjdfr=====",token);
         res.cookie('usertoken', token, cookieOptions);
         await user.save();
        
@@ -262,11 +267,13 @@ const getOtpRemainingTime = async(req, res) => {
 const resendOtp = async(req, res) => {
     try {
         const { email } = req.body;
+        console.log("Resend OTP request for email:", email);
         
         if (!email) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ message: "Email is required" });
         }
         const user = await User.findOne({ email });
+        console.log("Found user:", user ? "yes" : "no");
         
         if (!user) {
             return res.status(STATUS_CODE.NOT_FOUND).json({ message: "User not found" });
@@ -278,6 +285,7 @@ const resendOtp = async(req, res) => {
 
         try {
             await generateAndSendOTP(user, email);
+            console.log("OTP sent successfully");
             
             res.status(STATUS_CODE.OK).json({ 
                 message: "New verification code sent to your email",
@@ -356,6 +364,7 @@ const verifyToken = async (req, res) => {
         }
         res.status(STATUS_CODE.OK).json({ user });
     } catch (error) {
+        console.log(error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 };
@@ -366,9 +375,12 @@ export const getDoctorsData = async (req, res) => {
             select: 'Departmentname'
         });
 
+        // Get all feedbacks for the retrieved doctors
         const doctorIds = doctors.map(doctor => doctor._id);
+        console.log("Doctor IDs:", doctorIds);      
         const feedbacks = await FeedBack.find({ doctor: { $in: doctorIds } });
-        
+        console.log("Feedbacks:", feedbacks);
+        // Create a map of feedbacks by doctor ID
         const feedbacksByDoctor = {};
         feedbacks.forEach(feedback => {
             if (!feedbacksByDoctor[feedback.doctor]) {
@@ -380,11 +392,11 @@ export const getDoctorsData = async (req, res) => {
             });
         });
 
+        // Add feedbacks to each doctor
         const doctorsWithFeedback = doctors.map(doctor => {
             const doctorObj = doctor.toObject();
             doctorObj.feedbacks = feedbacksByDoctor[doctor._id] || [];
-        
-
+            // Calculate average rating if there are feedbacks
             if (doctorObj.feedbacks.length > 0) {
                 doctorObj.averageRating = doctorObj.feedbacks.reduce((sum, fb) => sum + fb.rating, 0) / doctorObj.feedbacks.length;
             } else {
@@ -425,7 +437,7 @@ export const logout = async (req, res) => {
 export const dptdoctor = async (req, res) => {
     try {
         const { departmentname } = req.params;
-        
+        console.log("Department Name:", departmentname);
         
         const department = await Department.findOne({ Departmentname: departmentname });
         
@@ -445,7 +457,36 @@ export const dptdoctor = async (req, res) => {
             select: 'Departmentname'
         });
 
-        res.status(STATUS_CODE.OK).json({ doctors });
+        // Get all feedbacks for the retrieved doctors
+        const doctorIds = doctors.map(doctor => doctor._id);
+        const feedbacks = await FeedBack.find({ doctor: { $in: doctorIds } });
+
+        // Create a map of feedbacks by doctor ID
+        const feedbacksByDoctor = {};
+        feedbacks.forEach(feedback => {
+            if (!feedbacksByDoctor[feedback.doctor]) {
+                feedbacksByDoctor[feedback.doctor] = [];
+            }
+            feedbacksByDoctor[feedback.doctor].push({
+                feedback: feedback.feedback,
+                rating: feedback.rating
+            });
+        });
+
+        // Add feedbacks to each doctor
+        const doctorsWithFeedback = doctors.map(doctor => {
+            const doctorObj = doctor.toObject();
+            doctorObj.feedbacks = feedbacksByDoctor[doctor._id] || [];
+            // Calculate average rating if there are feedbacks
+            if (doctorObj.feedbacks.length > 0) {
+                doctorObj.averageRating = doctorObj.feedbacks.reduce((sum, fb) => sum + fb.rating, 0) / doctorObj.feedbacks.length;
+            } else {
+                doctorObj.averageRating = 0;
+            }
+            return doctorObj;
+        });
+
+        res.status(STATUS_CODE.OK).json({ doctors: doctorsWithFeedback });
     } catch (error) {
         console.error('Error fetching doctors by department:', error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -455,7 +496,10 @@ export const bookAppointment = async (req, res) => {
     try {
         const { doctorid, userid } = req.params;
         const { slots,transactionData} = req.body;
-       
+        console.log("Doctor ID:", doctorid);
+        console.log("User ID:", userid);
+        console.log("Slot details:", slots);
+        console.log("Transaction datanvnfjdjjjfdjccccf:", transactionData.order_id);
 
         if (!doctorid || !userid || !slots) {
             return res.status(STATUS_CODE.BAD_REQUEST).json({ 
@@ -531,9 +575,12 @@ export const fetchAppoiments = async(req, res) => {
 
     try {
 
+        console.log("userid",userid);
         const page = +(req.query.page || 1);
+        console.log(page)
         const limit = +(req.query.limit || 10);
         const skip = (page - 1) * limit;
+        console.log("now i am here ok correct")
         const appointments = await Appointment.find({ user: userid }).populate({
             path:'doctor',
             select:'name specialization consultFee profileImage',
@@ -588,6 +635,7 @@ export const profileSetup = async (req, res) => {
     try {
         const { email, profileImage, bloodGroup, address, dob, phone, gender,age } = req.body;
 
+        console.log("req.body:", req.body);
         const user = await User.findOne({ email }).select('-password');
 
         if (!user) {
@@ -626,7 +674,9 @@ export const getPrescription = async (req, res) => {
     try {
         const { unique } = req.params;
         const prescription = await Prescription.findOne({ uniquePre:unique }); 
+        console.log("Prescription:", prescription);   
         const doctorDetails = await Doctor.findById(prescription.doctorId).populate('specialization');
+        console.log("Doctor Details:", doctorDetails);
         const user = await User.findById(prescription.userId);  
         res.status(STATUS_CODE.OK).json({prescription,doctorDetails,user});
     } catch (error) {
@@ -637,6 +687,7 @@ export const getPrescription = async (req, res) => {
 export const feedBack = async (req, res) => {
     try {
         const { userId, doctorId,feedbackRating, feedbackComment } = req.body;
+         console.log("Feedback data:", { userId, doctorId, feedbackRating, feedbackComment });
         const user = await User.findById(userId);
         const doctor = await Doctor.findById(doctorId);
         const feedbackData = new FeedBack({
@@ -644,7 +695,8 @@ export const feedBack = async (req, res) => {
             doctor: doctorId,
             feedback: feedbackComment,
             rating: feedbackRating,
-            
+            // userImage: user.image,
+            // doctorImage: doctor.image
         });
         await feedbackData.save();
         res.status(STATUS_CODE.OK).json({ message: 'Feedback submitted successfully' });
