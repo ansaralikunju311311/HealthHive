@@ -264,7 +264,7 @@ const AdminDashboard = () => {
               <FaMoneyBillWave className="text-3xl text-yellow-500" />
               <div className="ml-4">
                 <h3 className="text-lg font-semibold">Total Revenue</h3>
-                <p className="text-2xl font-bold"> Rs. {totalAmount*0.1}</p>
+                <p className="text-2xl font-bold"> Rs. {(totalAmount*0.1).toFixed(2)}</p>
               </div>
             </div>
           </div>
