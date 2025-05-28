@@ -237,7 +237,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Image */}
-      <h1>helllooooooooooooooo</h1>
+      {/* <h1>helllooooooooooooooo</h1> */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <img 
           src={Bannerdoctor} 
