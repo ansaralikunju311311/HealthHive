@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'https://healthhive-7mi8.onrender.com',
+        origin: ['https://healthhive-7mi8.onrender.com', 'https://health-hive-lat51u3rs-ansar-as-projects.vercel.app', 'http://localhost:5173'],
         credentials: true,
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type", "Authorization"]
@@ -196,7 +196,7 @@ io.on('connection', (socket) => {
 dotenv.config();
 
 app.use(cors({
-    origin: 'https://healthhive-7mi8.onrender.com',
+    origin: ['https://healthhive-7mi8.onrender.com', 'https://health-hive-lat51u3rs-ansar-as-projects.vercel.app', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders:["Content-Type","Authorization","cookie"],
