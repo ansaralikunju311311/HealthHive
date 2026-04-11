@@ -82,6 +82,10 @@ const SignUp = () => {
   }
 
   const onSubmit = async (data) => {
+    if (!image) {
+      toast.error('Please upload a profile image');
+      return;
+    }
     if (data.password !== data.confirmPassword) {
       toast.error('Passwords do not match');
       return;

@@ -9,6 +9,9 @@ const handleApiError = (error, defaultMessage) => {
   if (error.response?.data?.message) {
     throw new Error(error.response.data.message);
   }
+  if (error.response?.data?.error) {
+    throw new Error(error.response.data.error);
+  }
   throw new Error(defaultMessage);
 };
 
@@ -84,10 +87,12 @@ export const logoutUser = async () => {
 };
 
 export const registerUser = async (userData) => {
-  
+  try {
     const response = await apiuser.post('/user/signup', userData);
     return response.data;
-
+  } catch (error) {
+    handleApiError(error, 'Registration failed');
+  }
 };
 
 export const getDepartments = async () => {

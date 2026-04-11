@@ -69,7 +69,7 @@ export const approveDoctor = async (req,res)=>
     
             await Doctor.findByIdAndDelete(doctorid);
     
-            res.status(STATUS_CODE.NO_CONTENT).json({message:"Doctor rejected successfully"});
+            res.status(STATUS_CODE.OK).json({message:"Doctor rejected successfully"});
         } catch(error){
             console.error("Error in rejectDoctor:", error);
             res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({message:error.message});
