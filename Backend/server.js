@@ -196,7 +196,7 @@ io.on('connection', (socket) => {
 dotenv.config();
 
 app.use(cors({
-    origin: 'https://healthhive.ansar.sbs',
+    origin: 'https://healthhive-7mi8.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders:["Content-Type","Authorization","cookie"],
