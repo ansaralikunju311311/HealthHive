@@ -1,8 +1,7 @@
 import axios from 'axios';
 import cookie from 'js-cookie';
 
-const BASE_URL = import.meta.env.VITE_API_URL;
-
+const BASE_URL = import.meta.env.VITE_API_URL + "/api";
 const getadminToken = () => cookie.get('admintoken');
 
 
